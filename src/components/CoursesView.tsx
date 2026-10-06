@@ -220,23 +220,23 @@ export const CoursesView: React.FC<CoursesViewProps> = ({
       <div
         style={{
           background: '#FFFFFF',
-          border: '2px solid var(--border-color)',
-          boxShadow: '0 4px 0 var(--border-shadow)',
+          border: '2px solid #CBD5E1',
+          boxShadow: '0 4px 0 #94A3B8',
           borderRadius: '18px',
-          padding: '14px 18px',
+          padding: '16px 18px',
           marginBottom: '16px'
         }}
       >
-        <h2 style={{ fontSize: '1.2rem', fontWeight: 900, color: '#0F172A', margin: '0 0 4px 0' }}>
+        <h2 style={{ fontSize: '1.25rem', fontWeight: 900, color: '#0F172A', margin: '0 0 6px 0' }}>
           {activeUnit?.title}
         </h2>
-        <p style={{ color: '#475569', fontSize: '0.88rem', margin: 0, lineHeight: 1.45 }}>
+        <p style={{ color: '#1E293B', fontSize: '0.92rem', margin: 0, lineHeight: 1.5, fontWeight: 600 }}>
           {activeUnit?.description}
         </p>
       </div>
 
       {/* Lista de Lecciones Teóricas */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
         {filteredLessons.map((lesson, idx) => {
           const prog = progress[lesson.id];
           const isCompleted = !!prog && (prog.starsEarned || 0) > 0;
@@ -247,10 +247,10 @@ export const CoursesView: React.FC<CoursesViewProps> = ({
               key={lesson.id}
               style={{
                 background: '#FFFFFF',
-                border: '2px solid var(--border-color)',
-                borderRadius: '18px',
-                padding: '16px',
-                boxShadow: '0 5px 0 var(--border-shadow)',
+                border: '2px solid #CBD5E1',
+                borderRadius: '20px',
+                padding: '18px',
+                boxShadow: '0 4px 0 #94A3B8',
                 display: 'flex',
                 flexDirection: 'column',
                 gap: '12px',
@@ -261,28 +261,28 @@ export const CoursesView: React.FC<CoursesViewProps> = ({
                 <div style={{ display: 'flex', alignItems: 'flex-start', gap: '12px' }}>
                   <div
                     style={{
-                      width: '36px',
-                      height: '36px',
+                      width: '38px',
+                      height: '38px',
                       borderRadius: '12px',
                       background: isCompleted ? '#22C55E' : '#EFF6FF',
-                      border: `1.5px solid ${isCompleted ? '#16A34A' : '#BFDBFE'}`,
-                      boxShadow: `0 2px 0 ${isCompleted ? '#15803D' : '#93C5FD'}`,
+                      border: `2px solid ${isCompleted ? '#16A34A' : '#93C5FD'}`,
+                      boxShadow: `0 2px 0 ${isCompleted ? '#15803D' : '#60A5FA'}`,
                       color: isCompleted ? '#FFFFFF' : '#0284C7',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
                       fontWeight: 900,
-                      fontSize: '0.9rem',
+                      fontSize: '0.92rem',
                       flexShrink: 0
                     }}
                   >
                     {isCompleted ? <CheckCircle2 size={20} color="#FFFFFF" /> : idx + 1}
                   </div>
                   <div>
-                    <h3 style={{ fontSize: '1rem', fontWeight: 900, color: '#1E293B', margin: '0 0 4px 0' }}>
+                    <h3 style={{ fontSize: '1.05rem', fontWeight: 900, color: '#0F172A', margin: '0 0 4px 0', lineHeight: 1.3 }}>
                       {lesson.title}
                     </h3>
-                    <p style={{ color: '#475569', fontSize: '0.84rem', margin: 0, lineHeight: 1.4 }}>
+                    <p style={{ color: '#1E293B', fontSize: '0.88rem', margin: 0, lineHeight: 1.45, fontWeight: 600 }}>
                       {th?.subtitle || 'Fundamentos explicados paso a paso con código de ejemplo.'}
                     </p>
                   </div>
@@ -293,16 +293,17 @@ export const CoursesView: React.FC<CoursesViewProps> = ({
                     display: 'flex',
                     alignItems: 'center',
                     gap: '4px',
-                    color: '#64748B',
-                    fontSize: '0.75rem',
-                    fontWeight: 800,
+                    color: '#0F172A',
+                    fontSize: '0.78rem',
+                    fontWeight: 900,
                     background: '#F1F5F9',
-                    padding: '3px 8px',
+                    border: '1px solid #CBD5E1',
+                    padding: '4px 10px',
                     borderRadius: '999px',
                     flexShrink: 0
                   }}
                 >
-                  <Clock size={13} />
+                  <Clock size={13} color="#0284C7" />
                   <span>{th?.estimatedMinutes || 3} min</span>
                 </div>
               </div>

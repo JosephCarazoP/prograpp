@@ -5,7 +5,8 @@ import {
   CheckCircle2,
   Play,
   BookOpen,
-  Sparkles
+  Sparkles,
+  ArrowUp
 } from 'lucide-react';
 import { TheoryLesson } from '../types/theory';
 import { soundService } from '../services/soundService';
@@ -32,15 +33,17 @@ export const TheoryViewer: React.FC<TheoryViewerProps> = ({
   const badgeBg = isKotlin ? '#E0F2FE' : '#EEF2FF';
 
   return (
-    <div style={{ padding: '8px 12px 60px 12px', maxWidth: '640px', margin: '0 auto', width: '100%', boxSizing: 'border-box' }}>
-      {/* Barra superior de navegación */}
+    <div style={{ padding: '4px 10px 60px 10px', maxWidth: '680px', margin: '0 auto', width: '100%', boxSizing: 'border-box' }}>
+      {/* ═══ BARRA SUPERIOR DE NAVEGACIÓN DEDICADA ═══ */}
       <div
         style={{
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
           marginBottom: '20px',
-          paddingTop: '6px'
+          padding: '6px 0',
+          gap: '10px',
+          flexWrap: 'wrap'
         }}
       >
         <button
@@ -53,99 +56,120 @@ export const TheoryViewer: React.FC<TheoryViewerProps> = ({
             alignItems: 'center',
             gap: '8px',
             color: '#0F172A',
-            fontSize: '0.88rem',
+            fontSize: '0.92rem',
             fontWeight: 800,
             cursor: 'pointer',
-            padding: '9px 16px',
+            padding: '10px 18px',
             borderRadius: '14px',
             background: '#FFFFFF',
             border: '2px solid #CBD5E1',
             boxShadow: '0 3px 0 #94A3B8',
             transition: 'all 0.15s ease'
           }}
-          title="Regresar a la lista de lecciones"
+          title="Regresar a la lista de temas"
         >
-          <ArrowLeft size={18} />
+          <ArrowLeft size={18} strokeWidth={2.5} />
           <span>Volver al índice</span>
         </button>
 
-        <div
-          style={{
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: '6px',
-            background: badgeBg,
-            color: accentColor,
-            border: `1.5px solid ${isKotlin ? '#BAE6FD' : '#C7D2FE'}`,
-            padding: '6px 14px',
-            borderRadius: '14px',
-            fontSize: '0.82rem',
-            fontWeight: 800
-          }}
-        >
-          <Clock size={15} />
-          <span>{theory.estimatedMinutes} min de lectura</span>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <div
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '6px',
+              background: badgeBg,
+              color: accentColor,
+              border: `1.5px solid ${isKotlin ? '#BAE6FD' : '#C7D2FE'}`,
+              padding: '8px 14px',
+              borderRadius: '14px',
+              fontSize: '0.84rem',
+              fontWeight: 900
+            }}
+          >
+            <Clock size={15} strokeWidth={2.5} />
+            <span>{theory.estimatedMinutes} min de lectura</span>
+          </div>
         </div>
       </div>
 
-      {/* Encabezado Principal de la Lección */}
+      {/* ═══ TARJETA HERO: TÍTULO Y DESCRIPCIÓN CON MÁXIMO CONTRASTE ═══ */}
       <div
         style={{
           background: '#FFFFFF',
-          border: '2px solid #E2E8F0',
+          border: '2px solid #CBD5E1',
           borderRadius: '22px',
-          padding: '24px 20px',
+          padding: '24px 22px',
           marginBottom: '22px',
-          boxShadow: '0 4px 14px rgba(15, 23, 42, 0.05), 0 3px 0 #CBD5E1'
+          boxShadow: '0 4px 0 #94A3B8'
         }}
       >
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: '8px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: '10px' }}>
           <span
             style={{
-              background: isKotlin ? 'rgba(2, 132, 199, 0.1)' : 'rgba(79, 70, 229, 0.1)',
+              background: isKotlin ? '#E0F2FE' : '#EEF2FF',
               color: accentColor,
-              fontSize: '0.76rem',
+              border: `1.5px solid ${isKotlin ? '#BAE6FD' : '#C7D2FE'}`,
+              fontSize: '0.78rem',
               fontWeight: 900,
               textTransform: 'uppercase',
               letterSpacing: '0.6px',
-              padding: '4px 10px',
-              borderRadius: '8px',
+              padding: '4px 12px',
+              borderRadius: '10px',
               display: 'inline-flex',
               alignItems: 'center',
-              gap: 4
+              gap: 6
             }}
           >
-            <BookOpen size={13} />
+            <BookOpen size={14} strokeWidth={2.5} />
             Unidad {theory.unitId} • Lección {theory.levelId} ({theory.pathId.toUpperCase()})
           </span>
         </div>
 
-        <h1 style={{ fontSize: '1.65rem', fontWeight: 900, margin: '6px 0 8px 0', lineHeight: 1.25, color: '#0F172A' }}>
+        <h1
+          style={{
+            fontSize: '1.75rem',
+            fontWeight: 900,
+            margin: '8px 0 10px 0',
+            lineHeight: 1.25,
+            color: '#0F172A',
+            letterSpacing: '-0.3px'
+          }}
+        >
           {theory.title}
         </h1>
-        <p style={{ color: '#334155', fontSize: '0.98rem', lineHeight: 1.55, margin: 0, fontWeight: 600 }}>
+
+        <p
+          style={{
+            color: '#1E293B',
+            fontSize: '1.05rem',
+            lineHeight: 1.6,
+            margin: 0,
+            fontWeight: 700
+          }}
+        >
           {theory.subtitle}
         </p>
       </div>
 
-      {/* Secciones de Contenido de la Lección */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '22px', marginBottom: '32px' }}>
+      {/* ═══ SECCIONES DE CONTENIDO DE LA LECCIÓN ═══ */}
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '22px', marginBottom: '28px' }}>
         {theory.sections.map((section, idx) => (
           <div
             key={idx}
             style={{
               background: '#FFFFFF',
-              border: '2px solid #E2E8F0',
+              border: '2px solid #CBD5E1',
               borderRadius: '22px',
               padding: '24px 22px',
-              boxShadow: '0 6px 18px rgba(15, 23, 42, 0.05), 0 3px 0 #CBD5E1'
+              boxShadow: '0 4px 0 #94A3B8'
             }}
           >
             <h2
               style={{
-                fontSize: '1.25rem',
+                fontSize: '1.3rem',
                 fontWeight: 900,
-                color: accentColor,
+                color: '#0F172A',
                 marginBottom: '14px',
                 display: 'flex',
                 alignItems: 'center',
@@ -155,8 +179,8 @@ export const TheoryViewer: React.FC<TheoryViewerProps> = ({
             >
               <span
                 style={{
-                  width: '10px',
-                  height: '10px',
+                  width: '12px',
+                  height: '12px',
                   borderRadius: '50%',
                   background: accentColor,
                   flexShrink: 0
@@ -165,15 +189,15 @@ export const TheoryViewer: React.FC<TheoryViewerProps> = ({
               <span>{section.title}</span>
             </h2>
 
-            {/* Texto de explicación con alto contraste y legibilidad óptima */}
+            {/* Texto de explicación con alto contraste y nitidez absoluta (Nunito 600, #0F172A) */}
             <p
               style={{
                 color: '#0F172A',
-                fontSize: '1rem',
-                lineHeight: 1.7,
+                fontSize: '1.02rem',
+                lineHeight: 1.75,
                 marginBottom: '18px',
                 whiteSpace: 'pre-line',
-                fontWeight: 500
+                fontWeight: 600
               }}
             >
               {section.explanation}
@@ -181,7 +205,7 @@ export const TheoryViewer: React.FC<TheoryViewerProps> = ({
 
             {/* Bloque de Código de Ejemplo estilo VS Code */}
             {section.codeSnippet && (
-              <div style={{ margin: '16px 0' }}>
+              <div style={{ margin: '18px 0' }}>
                 <VSCodeSnippet
                   code={section.codeSnippet}
                   language={(section.codeLanguage || theory.pathId) as 'kotlin' | 'sql'}
@@ -194,21 +218,21 @@ export const TheoryViewer: React.FC<TheoryViewerProps> = ({
               </div>
             )}
 
-            {/* Puntos Clave para Memorizar */}
+            {/* Puntos Clave para Memorizar - Verde Esmeralda Vibrante */}
             {section.keyPoints && section.keyPoints.length > 0 && (
               <div
                 style={{
                   background: '#F0FDF4',
-                  border: '2px solid #86EFAC',
-                  boxShadow: '0 3px 0 #BBF7D0',
+                  border: '2px solid #22C55E',
+                  boxShadow: '0 3px 0 #16A34A',
                   borderRadius: '16px',
                   padding: '16px 18px',
-                  marginTop: '18px'
+                  marginTop: '20px'
                 }}
               >
                 <div
                   style={{
-                    fontSize: '0.82rem',
+                    fontSize: '0.84rem',
                     fontWeight: 900,
                     color: '#15803D',
                     textTransform: 'uppercase',
@@ -219,14 +243,14 @@ export const TheoryViewer: React.FC<TheoryViewerProps> = ({
                     gap: '6px'
                   }}
                 >
-                  <CheckCircle2 size={16} color="#16A34A" />
+                  <CheckCircle2 size={18} color="#16A34A" strokeWidth={2.5} />
                   <span>Puntos Clave</span>
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '9px' }}>
                   {section.keyPoints.map((point, pIdx) => (
                     <div key={pIdx} style={{ display: 'flex', alignItems: 'flex-start', gap: '10px' }}>
-                      <span style={{ color: '#16A34A', fontWeight: 900, fontSize: '1rem', lineHeight: 1.2 }}>•</span>
-                      <span style={{ fontSize: '0.92rem', color: '#14532D', fontWeight: 700, lineHeight: 1.5 }}>
+                      <span style={{ color: '#16A34A', fontWeight: 900, fontSize: '1.1rem', lineHeight: 1.2 }}>•</span>
+                      <span style={{ fontSize: '0.96rem', color: '#14532D', fontWeight: 700, lineHeight: 1.5 }}>
                         {point}
                       </span>
                     </div>
@@ -238,20 +262,28 @@ export const TheoryViewer: React.FC<TheoryViewerProps> = ({
         ))}
       </div>
 
-      {/* Dock Inferior: Botón PONER A PRUEBA */}
+      {/* ═══ ACCIÓN FINAL: BOTÓN PONER A PRUEBA (EN FLUJO NATURAL, SIN BLUR QUE TAPE NADA) ═══ */}
       <div
         style={{
-          position: 'sticky',
-          bottom: '16px',
-          zIndex: 40,
-          background: 'rgba(255, 255, 255, 0.94)',
-          backdropFilter: 'blur(8px)',
-          border: '1.5px solid #E2E8F0',
-          borderRadius: '20px',
-          padding: '12px 16px',
-          boxShadow: '0 10px 25px -5px rgba(15, 23, 42, 0.15), 0 3px 0 #CBD5E1'
+          background: '#FFFFFF',
+          border: '2px solid #CBD5E1',
+          borderRadius: '22px',
+          padding: '20px',
+          boxShadow: '0 4px 0 #94A3B8',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '12px',
+          alignItems: 'center',
+          textAlign: 'center'
         }}
       >
+        <div style={{ fontSize: '1.05rem', fontWeight: 900, color: '#0F172A' }}>
+          ¿Listo para demostrar lo aprendido?
+        </div>
+        <div style={{ fontSize: '0.9rem', color: '#1E293B', fontWeight: 600 }}>
+          Pon a prueba tus conocimientos con ejercicios interactivos y gana experiencia.
+        </div>
+
         <button
           className="btn-3d btn-green"
           onClick={() => {
@@ -260,8 +292,9 @@ export const TheoryViewer: React.FC<TheoryViewerProps> = ({
           }}
           style={{
             width: '100%',
-            fontSize: '1.05rem',
-            padding: '14px 20px',
+            maxWidth: '440px',
+            fontSize: '1.1rem',
+            padding: '16px 24px',
             display: 'flex',
             justifyContent: 'center',
             alignItems: 'center',
@@ -269,9 +302,32 @@ export const TheoryViewer: React.FC<TheoryViewerProps> = ({
             borderRadius: '16px'
           }}
         >
-          <Play size={20} fill="#FFFFFF" />
+          <Play size={22} fill="#FFFFFF" />
           <span>PONER A PRUEBA LA LECCIÓN</span>
-          <Sparkles size={18} />
+          <Sparkles size={20} />
+        </button>
+
+        <button
+          onClick={() => {
+            soundService.playToken();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          }}
+          style={{
+            background: 'none',
+            border: 'none',
+            color: '#64748B',
+            fontSize: '0.85rem',
+            fontWeight: 800,
+            cursor: 'pointer',
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '6px',
+            padding: '6px 12px',
+            marginTop: '4px'
+          }}
+        >
+          <ArrowUp size={16} />
+          <span>Volver al inicio de la materia</span>
         </button>
       </div>
     </div>

@@ -706,8 +706,8 @@ export default function App() {
         />
       )}
 
-      {/* Barra de Estado Superior (solo visible en path y practice) */}
-      {view !== 'boss' && view !== 'lesson' && view !== 'academic' && (
+      {/* Barra de Estado Superior (solo visible en path y practice cuando no se está leyendo teoría) */}
+      {view !== 'boss' && view !== 'lesson' && view !== 'academic' && !activeTheory && (
         <Navbar
           user={user}
           isAdmin={authService.isCurrentUserAdmin()}
@@ -757,7 +757,7 @@ export default function App() {
       {view === 'path' && (
         <main
           style={{
-            padding: activeTheory ? '8px 8px 100px 8px' : '10px 12px 120px 12px',
+            padding: activeTheory ? '16px 10px 80px 10px' : '10px 12px 120px 12px',
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
