@@ -293,6 +293,12 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({
               <span>Nivel {currentLevel} · {getRankTitle(currentLevel)}</span>
             </div>
 
+            {user.idNumber && (
+              <div style={{ fontSize: '0.82rem', color: '#64748B', fontWeight: 700, marginTop: 4 }}>
+                Cédula: <span style={{ color: '#1E293B' }}>{user.idNumber}</span> {user.studentCode ? `• Código: ${user.studentCode}` : ''}
+              </div>
+            )}
+
             {/* Barra de Progreso de Nivel (XP) 3D */}
             <div className="profile-hero-xp-box">
               <div className="profile-xp-labels">

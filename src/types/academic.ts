@@ -10,6 +10,10 @@ export interface StudentIdentification {
   studentCode: string;            // Código anonimizado de investigación (ej: "E01", "E02")
   displayName: string;            // Nombre público visible
   email?: string;                 // Correo registrado
+  firstName?: string;             // Nombre(s)
+  firstLastName?: string;         // Primer apellido
+  secondLastName?: string;        // Segundo apellido
+  idNumber?: string;              // Número de cédula / identificación
   group: string;                  // Grupo de clase (ej: "Grupo A", "Informatica-2026")
   isResearchParticipant: boolean; // Si participa en el grupo de estudio (asignado por docente)
   createdAt: number;              // Timestamp de registro

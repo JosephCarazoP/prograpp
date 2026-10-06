@@ -35,6 +35,10 @@ export interface UserProfile {
   defeatedBosses: string[]; // IDs de jefes vencidos permanentemente
   createdAt: number;
   email?: string;
+  firstName?: string; // Nombre(s) del estudiante
+  firstLastName?: string; // Primer apellido
+  secondLastName?: string; // Segundo apellido
+  idNumber?: string; // Número de cédula o identificación
   studentCode?: string; // Código de estudiante único para investigación (ej. E01)
   group?: string; // Grupo al que pertenece
   isResearchParticipant?: boolean; // Solo asignado por el administrador

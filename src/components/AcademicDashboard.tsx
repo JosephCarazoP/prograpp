@@ -784,7 +784,12 @@ export const AcademicDashboard: React.FC<AcademicDashboardProps> = ({ currentUse
                           {st.studentCode || 'E01'}
                         </td>
                         <td style={{ padding: '12px 14px', color: '#FFFFFF', fontWeight: 700 }}>
-                          {st.displayName}
+                          <div>{st.displayName}</div>
+                          {st.idNumber && (
+                            <div style={{ fontSize: '0.72rem', color: '#94A3B8', fontWeight: 500, marginTop: 2 }}>
+                              Cédula: {st.idNumber}
+                            </div>
+                          )}
                         </td>
                         <td style={{ padding: '12px 14px', textTransform: 'uppercase', color: '#94A3B8' }}>
                           {st.currentPath}
@@ -871,6 +876,49 @@ export const AcademicDashboard: React.FC<AcademicDashboardProps> = ({ currentUse
               >
                 <FileText size={16} /> Exportar Reporte PDF
               </button>
+            </div>
+
+            {/* Ficha de Identificación del Estudiante */}
+            <div
+              style={{
+                background: 'rgba(255, 255, 255, 0.04)',
+                border: '1px solid rgba(255, 255, 255, 0.08)',
+                borderRadius: 14,
+                padding: '12px 18px',
+                marginBottom: 16,
+                display: 'flex',
+                flexWrap: 'wrap',
+                gap: 16,
+                alignItems: 'center',
+                justifyContent: 'space-between'
+              }}
+            >
+              <div>
+                <div style={{ fontSize: '1.1rem', fontWeight: 900, color: '#FFFFFF' }}>
+                  {selectedStudent.displayName}
+                </div>
+                <div style={{ fontSize: '0.8rem', color: '#94A3B8', marginTop: 3, display: 'flex', gap: 14, flexWrap: 'wrap' }}>
+                  {selectedStudent.idNumber && <span><strong>Cédula:</strong> <span style={{ color: '#E2E8F0' }}>{selectedStudent.idNumber}</span></span>}
+                  {selectedStudent.email && <span><strong>Correo:</strong> <span style={{ color: '#E2E8F0' }}>{selectedStudent.email}</span></span>}
+                  <span><strong>Código:</strong> <span style={{ color: '#38BDF8' }}>{selectedStudent.studentCode || 'E01'}</span></span>
+                  <span><strong>Grupo:</strong> {selectedStudent.group || 'Grupo A'}</span>
+                </div>
+              </div>
+              <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+                <span
+                  style={{
+                    fontSize: '0.74rem',
+                    fontWeight: 800,
+                    padding: '4px 10px',
+                    borderRadius: 8,
+                    background: selectedStudent.isResearchParticipant ? 'rgba(34, 197, 94, 0.15)' : 'rgba(148, 163, 184, 0.15)',
+                    color: selectedStudent.isResearchParticipant ? '#4ADE80' : '#94A3B8',
+                    border: `1px solid ${selectedStudent.isResearchParticipant ? 'rgba(34, 197, 94, 0.3)' : 'rgba(148, 163, 184, 0.3)'}`
+                  }}
+                >
+                  {selectedStudent.isResearchParticipant ? 'Participante Oficial' : 'Control / Observador'}
+                </span>
+              </div>
             </div>
 
             {/* Métricas del Estudiante */}

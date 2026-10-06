@@ -36,27 +36,34 @@ export const excelExportService = {
     const wb = XLSX.utils.book_new();
 
     // ─── HOJA 1: RESUMEN ───
-    const summaryRows = payload.indicatorsList.map(ind => ({
-      'Código Estudiante': ind.studentCode,
-      'Nombre': ind.displayName,
-      'Grupo': ind.group,
-      'Ruta': ind.pathId.toUpperCase(),
-      'Participante Investigación': ind.isResearchParticipant ? 'SÍ' : 'NO',
-      'Nivel Actual': ind.currentLevel,
-      'Días Activos': ind.activeDaysCount,
-      'Sesiones Práctica': ind.practiceSessionsCount,
-      'Tiempo Activo Estimado (min)': ind.estimatedActiveTimeMinutes,
-      'Lecciones Completadas': ind.lessonsCompleted,
-      'Módulos Completados': ind.modulesCompleted,
-      'Progreso Ruta (%)': ind.pathProgressPercent,
-      'Total Intentos': ind.totalAttempts,
-      'Aciertos 1er Intento (%)': ind.firstAttemptAccuracyPercent !== null ? ind.firstAttemptAccuracyPercent : 'Sin datos',
-      'Efectividad Calificada (%)': ind.qualifiedAccuracyPercent !== null ? ind.qualifiedAccuracyPercent : 'Sin datos',
-      'Promedio Intentos/Actividad': ind.attemptsPerActivityAverage !== null ? ind.attemptsPerActivityAverage : 'Sin datos',
-      'Diagnóstico (%)': ind.diagnosticPercentage !== null ? ind.diagnosticPercentage : 'Sin datos',
-      'Prueba Final (%)': ind.finalTestPercentage !== null ? ind.finalTestPercentage : 'Sin datos',
-      'Ganancia Neta (pts %)': ind.percentagePointGain !== null ? ind.percentagePointGain : 'Sin datos'
-    }));
+    const summaryRows = payload.indicatorsList.map(ind => {
+      const student = payload.students.find(s => s.studentCode === ind.studentCode);
+      return {
+        'Código Estudiante': ind.studentCode,
+        'Cédula / Identificación': student?.idNumber || 'Sin registrar',
+        'Primer Apellido': student?.firstLastName || '',
+        'Segundo Apellido': student?.secondLastName || '',
+        'Nombre(s)': student?.firstName || student?.displayName || ind.displayName,
+        'Nombre Completo': ind.displayName,
+        'Grupo': ind.group,
+        'Ruta': ind.pathId.toUpperCase(),
+        'Participante Investigación': ind.isResearchParticipant ? 'SÍ' : 'NO',
+        'Nivel Actual': ind.currentLevel,
+        'Días Activos': ind.activeDaysCount,
+        'Sesiones Práctica': ind.practiceSessionsCount,
+        'Tiempo Activo Estimado (min)': ind.estimatedActiveTimeMinutes,
+        'Lecciones Completadas': ind.lessonsCompleted,
+        'Módulos Completados': ind.modulesCompleted,
+        'Progreso Ruta (%)': ind.pathProgressPercent,
+        'Total Intentos': ind.totalAttempts,
+        'Aciertos 1er Intento (%)': ind.firstAttemptAccuracyPercent !== null ? ind.firstAttemptAccuracyPercent : 'Sin datos',
+        'Efectividad Calificada (%)': ind.qualifiedAccuracyPercent !== null ? ind.qualifiedAccuracyPercent : 'Sin datos',
+        'Promedio Intentos/Actividad': ind.attemptsPerActivityAverage !== null ? ind.attemptsPerActivityAverage : 'Sin datos',
+        'Diagnóstico (%)': ind.diagnosticPercentage !== null ? ind.diagnosticPercentage : 'Sin datos',
+        'Prueba Final (%)': ind.finalTestPercentage !== null ? ind.finalTestPercentage : 'Sin datos',
+        'Ganancia Neta (pts %)': ind.percentagePointGain !== null ? ind.percentagePointGain : 'Sin datos'
+      };
+    });
     const wsSummary = XLSX.utils.json_to_sheet(summaryRows);
     XLSX.utils.book_append_sheet(wb, wsSummary, 'Resumen');
 
