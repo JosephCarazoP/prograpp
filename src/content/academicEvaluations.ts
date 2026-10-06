@@ -260,9 +260,109 @@ export const SQL_FINAL_INSTRUMENT: EvaluationInstrument = {
   ]
 };
 
+// ─── 3. EVALUACIÓN DIAGNÓSTICA INICIAL INTEGRADA (KOTLIN + SQL) ───
+// Instrumento estandarizado que se aplica obligatoriamente la primera vez que un estudiante ingresa a la app
+export const INITIAL_COMPREHENSIVE_DIAGNOSTIC_INSTRUMENT: EvaluationInstrument = {
+  instrumentId: 'inst_initial_comprehensive_diag_v1',
+  version: '1.0.0',
+  pathId: 'kotlin', // Asociado como base para trazabilidad
+  type: 'diagnostic',
+  title: 'Evaluación Diagnóstica Inicial: Lógica, Kotlin y Bases de Datos (SQL)',
+  description: 'Instrumento inicial obligatorio para evaluar tus conocimientos previos en algoritmos y bases de datos antes de iniciar el aprendizaje.',
+  maxTotalScore: 40,
+  questions: [
+    // ── PARTE A: ALGORITMOS Y KOTLIN ──
+    {
+      questionId: 'init_k_q1',
+      topic: 'Kotlin: Variables e Inmutabilidad',
+      prompt: 'En Kotlin, ¿cuál es la diferencia principal entre declarar una variable con `val` y una con `var`?',
+      type: 'multiple_choice',
+      options: [
+        'val define una referencia de solo lectura (inmutable), mientras que var es reasignable (mutable).',
+        'val solo se utiliza para números y var únicamente para cadenas de texto.',
+        'val es una variable pública y var es estrictamente privada.',
+        'Son sinónimos idénticos y el compilador los procesa de igual forma.'
+      ],
+      correctOptionIndex: 0,
+      rubricCriteria: 'Identifica con exactitud la inmutabilidad de val frente a la mutabilidad de var.',
+      maxScore: 5
+    },
+    {
+      questionId: 'init_k_q2',
+      topic: 'Kotlin: Estructuras Condicionales',
+      prompt: 'Observa el siguiente código en Kotlin:\n```kotlin\nval puntos = 75\nval mensaje = if (puntos >= 90) "Excelente" else if (puntos >= 70) "Aprobado" else "Reprobado"\n```\n¿Cuál es el valor que contendrá `mensaje`?',
+      type: 'multiple_choice',
+      options: ['"Excelente"', '"Aprobado"', '"Reprobado"', 'Error de sintaxis'],
+      correctOptionIndex: 1,
+      rubricCriteria: 'Rastrea correctamente la condición encadenada.',
+      maxScore: 5
+    },
+    {
+      questionId: 'init_k_q3',
+      topic: 'Lógica: Bucles y Trazabilidad',
+      prompt: 'Analiza el siguiente ciclo iterativo:\n```kotlin\nvar acumulador = 0\nfor (i in 1..4) {\n  acumulador = acumulador + i\n}\n```\n¿Cuál es el valor numérico final de la variable `acumulador` al terminar el ciclo?',
+      type: 'open_answer',
+      rubricCriteria: 'El valor correcto es 10 (1+2+3+4). Calificar 5 pts si indica 10; 0 pts en caso contrario.',
+      maxScore: 5
+    },
+    {
+      questionId: 'init_k_q4',
+      topic: 'Kotlin: Funciones y Retorno',
+      prompt: 'Escribe una función en Kotlin llamada `esMayorDeEdad` que reciba `edad: Int` y devuelva `true` si la edad es mayor o igual a 18, o `false` de lo contrario.',
+      type: 'code',
+      rubricCriteria: 'Estructura `fun esMayorDeEdad(edad: Int): Boolean = edad >= 18` o equivalente con bloque `{ return edad >= 18 }`.',
+      maxScore: 5
+    },
+
+    // ── PARTE B: BASES DE DATOS RELACIONALES Y SQL ──
+    {
+      questionId: 'init_sql_q5',
+      topic: 'SQL: Consultas de Selección (SELECT)',
+      prompt: 'En el lenguaje SQL, ¿cuál es la palabra clave que se utiliza para especificar las columnas que se desean consultar de una tabla?',
+      type: 'multiple_choice',
+      options: ['SELECT', 'EXTRACT', 'GET', 'DISPLAY'],
+      correctOptionIndex: 0,
+      rubricCriteria: 'Reconoce el comando SELECT de proyección.',
+      maxScore: 5
+    },
+    {
+      questionId: 'init_sql_q6',
+      topic: 'SQL: Filtrado de Datos (WHERE)',
+      prompt: 'Dada la tabla `estudiantes` (id, nombre, calificacion), ¿cuál consulta filtra a quienes tienen calificación mayor o igual a 70?',
+      type: 'multiple_choice',
+      options: [
+        'SELECT * FROM estudiantes WHERE calificacion >= 70;',
+        'FILTER FROM estudiantes WHERE calificacion >= 70;',
+        'SELECT calificacion >= 70 FROM estudiantes;',
+        'SEARCH estudiantes IF calificacion >= 70;'
+      ],
+      correctOptionIndex: 0,
+      rubricCriteria: 'Aplica sintaxis correcta de la cláusula WHERE.',
+      maxScore: 5
+    },
+    {
+      questionId: 'init_sql_q7',
+      topic: 'SQL: Funciones de Agregación',
+      prompt: 'Escribe la consulta SQL para obtener el número total de registros existentes en una tabla llamada `usuarios`.',
+      type: 'code',
+      rubricCriteria: '`SELECT COUNT(*) FROM usuarios;` o `SELECT COUNT(id) FROM usuarios;`.',
+      maxScore: 5
+    },
+    {
+      questionId: 'init_sql_q8',
+      topic: 'Bases de Datos: Clave Primaria (Primary Key)',
+      prompt: 'Explica en tus propias palabras qué es una Clave Primaria (Primary Key) en una base de datos relacional y cuál es su función principal.',
+      type: 'open_answer',
+      rubricCriteria: 'Menciona que es un identificador único para cada registro en una tabla y que no puede ser nulo, permitiendo distinguir inequívocamente cada fila.',
+      maxScore: 5
+    }
+  ]
+};
+
 export function getInstrument(pathId: LearningPath, type: 'diagnostic' | 'final'): EvaluationInstrument {
   if (pathId === 'sql') {
     return type === 'diagnostic' ? SQL_DIAGNOSTIC_INSTRUMENT : SQL_FINAL_INSTRUMENT;
   }
   return type === 'diagnostic' ? KOTLIN_DIAGNOSTIC_INSTRUMENT : KOTLIN_FINAL_INSTRUMENT;
 }
+

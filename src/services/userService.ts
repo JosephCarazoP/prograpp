@@ -102,6 +102,7 @@ export function sanitizeUserProfile(raw: any, fallbackUid = 'guest_user_1'): Use
     studentCode: raw.studentCode || fallbackStudentCode,
     group: raw.group || 'Grupo A',
     isResearchParticipant: typeof raw.isResearchParticipant === 'boolean' ? raw.isResearchParticipant : false,
+    hasCompletedInitialDiagnostic: typeof raw.hasCompletedInitialDiagnostic === 'boolean' ? raw.hasCompletedInitialDiagnostic : false,
     totalActiveTimeSeconds: typeof raw.totalActiveTimeSeconds === 'number' ? raw.totalActiveTimeSeconds : 0,
     lastActiveAt: typeof raw.lastActiveAt === 'number' ? raw.lastActiveAt : Date.now()
   };

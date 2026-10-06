@@ -15,7 +15,7 @@ import { Lesson, Exercise } from './types/lesson';
 import { LessonProgress } from './types/progress';
 import { userService, DEFAULT_PROFILE, sanitizeUserProfile } from './services/userService';
 import { progressService } from './services/progressService';
-import { authService } from './services/authService';
+import { authService, ADMIN_AUTHORIZED_EMAIL } from './services/authService';
 import { soundService } from './services/soundService';
 import { storageService } from './services/storageService';
 import { progressionEngine } from './services/progressionEngine';
@@ -46,7 +46,11 @@ import { EvaluationModal } from './components/EvaluationModal';
 import { ActivityOpinionModal } from './components/ActivityOpinionModal';
 import { academicService } from './services/academicService';
 import { timeTrackingService } from './services/timeTrackingService';
-import { getInstrument, EvaluationInstrument } from './content/academicEvaluations';
+import {
+  getInstrument,
+  EvaluationInstrument,
+  INITIAL_COMPREHENSIVE_DIAGNOSTIC_INSTRUMENT
+} from './content/academicEvaluations';
 
 // Función para aleatorizar preguntas (Fisher-Yates shuffle)
 function shuffleArray<T>(items: T[]): T[] {
@@ -199,8 +203,14 @@ export default function App() {
           setIsAuthenticated(true);
           const u = await userService.getProfile(uid);
           const p = await progressService.getAllProgress(uid);
-          if (u) setUser(sanitizeUserProfile(u, uid));
+          const sanitizedUser = u ? sanitizeUserProfile(u, uid) : DEFAULT_PROFILE;
+          setUser(sanitizedUser);
           if (p) setProgress(p);
+
+          // Si es la primera vez que ingresa (o no ha completado el diagnóstico inicial de Kotlin y SQL), lanzarlo obligatoriamente
+          if (!sanitizedUser.hasCompletedInitialDiagnostic && sanitizedUser.email !== ADMIN_AUTHORIZED_EMAIL) {
+            setActiveEvaluationInstrument(INITIAL_COMPREHENSIVE_DIAGNOSTIC_INSTRUMENT);
+          }
         } else {
           // Si no hay usuario autenticado, bloquear acceso y abrir modal de registro/login
           setIsAuthenticated(false);
@@ -286,6 +296,7 @@ export default function App() {
       setIsCodePeekActive(false);
 
       setView('lesson');
+      window.scrollTo({ top: 0, behavior: 'instant' });
 
       // Tras 1.1s de Dev en pantalla naranja → abrir el círculo suavemente
       setTimeout(() => {
@@ -744,7 +755,18 @@ export default function App() {
 
       {/* VISTA 1: EL CAMINO (LEARNING PATH) / SECCIÓN DE CURSOS / TEORÍA */}
       {view === 'path' && (
-        <main style={{ padding: '10px 12px 120px 12px', display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%', maxWidth: '520px', margin: '0 auto', boxSizing: 'border-box' }}>
+        <main
+          style={{
+            padding: activeTheory ? '8px 8px 100px 8px' : '10px 12px 120px 12px',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            width: '100%',
+            maxWidth: activeTheory ? '680px' : '520px',
+            margin: '0 auto',
+            boxSizing: 'border-box'
+          }}
+        >
           {activeTheory ? (
             <TheoryViewer
               theory={activeTheory}
@@ -842,6 +864,7 @@ export default function App() {
                       setIrisTransition({ active: true, phase: 'holding' });
                       setIrisDevMessage('¡A estudiar!');
                       setActiveTheory(th);
+                      window.scrollTo({ top: 0, behavior: 'instant' });
                       setTimeout(() => {
                         setIrisDevMessage(null);
                         setIrisTransition({ active: true, phase: 'opening' });
@@ -865,7 +888,10 @@ export default function App() {
                     onOpenBoss={(bossId, unit) => handleOpenBoss(bossId, unit)}
                     onOpenTheory={(lesson) => {
                       const th = getTheoryByLessonId(lesson.id);
-                      if (th) setActiveTheory(th);
+                      if (th) {
+                        setActiveTheory(th);
+                        window.scrollTo({ top: 0, behavior: 'instant' });
+                      }
                     }}
                     onLockedNotice={(title, message) => {
                       setGameAlert({
@@ -1401,6 +1427,11 @@ export default function App() {
           setIsAuthOpen(false);
           const p = await progressService.getAllProgress(authProfile.uid);
           if (p) setProgress(p);
+
+          // Si es la primera vez que ingresa y no tiene diagnóstico previo, lanzarlo
+          if (!authProfile.hasCompletedInitialDiagnostic && authProfile.email !== ADMIN_AUTHORIZED_EMAIL) {
+            setActiveEvaluationInstrument(INITIAL_COMPREHENSIVE_DIAGNOSTIC_INSTRUMENT);
+          }
         }}
       />
 
@@ -1440,16 +1471,29 @@ export default function App() {
           isOpen={true}
           instrument={activeEvaluationInstrument}
           user={user}
+          isMandatory={
+            !user.hasCompletedInitialDiagnostic &&
+            activeEvaluationInstrument.instrumentId === INITIAL_COMPREHENSIVE_DIAGNOSTIC_INSTRUMENT.instrumentId
+          }
           onClose={() => setActiveEvaluationInstrument(null)}
           onComplete={async () => {
             setActiveEvaluationInstrument(null);
+            const isInitial =
+              activeEvaluationInstrument.instrumentId === INITIAL_COMPREHENSIVE_DIAGNOSTIC_INSTRUMENT.instrumentId;
+            if (isInitial || !user.hasCompletedInitialDiagnostic) {
+              const updatedUser: UserProfile = { ...user, hasCompletedInitialDiagnostic: true };
+              setUser(updatedUser);
+              await userService.updateProfile(updatedUser);
+            }
             soundService.playWin();
             setGameAlert({
               isOpen: true,
               type: 'success',
-              title: 'Evaluación Registrada',
-              message: `Tu entrega para "${activeEvaluationInstrument.title}" ha sido registrada para el seguimiento académico.`,
-              primaryButtonText: 'Continuar',
+              title: isInitial ? '¡Diagnóstico Inicial Completado!' : 'Evaluación Registrada',
+              message: isInitial
+                ? 'Tus conocimientos previos en Kotlin y SQL han sido registrados exitosamente. ¡Ya puedes comenzar a aprender en la aplicación!'
+                : `Tu entrega para "${activeEvaluationInstrument.title}" ha sido registrada para el seguimiento académico.`,
+              primaryButtonText: isInitial ? '¡A Aprender!' : 'Continuar',
               onPrimaryClick: () => setGameAlert(null)
             });
           }}

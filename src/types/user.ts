@@ -42,6 +42,7 @@ export interface UserProfile {
   studentCode?: string; // Código de estudiante único para investigación (ej. E01)
   group?: string; // Grupo al que pertenece
   isResearchParticipant?: boolean; // Solo asignado por el administrador
+  hasCompletedInitialDiagnostic?: boolean; // Si ya completó la prueba diagnóstica inicial obligatoria
   totalActiveTimeSeconds?: number; // Tiempo activo total de aprendizaje
   lastActiveAt?: number;
 }

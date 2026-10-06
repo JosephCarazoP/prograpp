@@ -12,9 +12,13 @@ import {
   Award,
   Edit3,
   PlusCircle,
-  CheckCircle2,
   AlertTriangle,
-  X
+  X,
+  ArrowLeft,
+  Eye,
+  EyeOff,
+  Shield,
+  MessageSquare
 } from 'lucide-react';
 import { UserProfile, LearningPath } from '../types/user';
 import {
@@ -44,6 +48,7 @@ export const AcademicDashboard: React.FC<AcademicDashboardProps> = ({ currentUse
 
   // Formulario de desbloqueo o creación de contraseña
   const [inputPassword, setInputPassword] = useState('');
+  const [showInputPass, setShowInputPass] = useState(false);
   const [newAdminPassword, setNewAdminPassword] = useState('');
   const [confirmAdminPassword, setConfirmAdminPassword] = useState('');
   const [reauthAccountPass, setReauthAccountPass] = useState('');
@@ -211,8 +216,9 @@ export const AcademicDashboard: React.FC<AcademicDashboardProps> = ({ currentUse
       const term = searchTerm.toLowerCase();
       const codeMatch = (st.studentCode || '').toLowerCase().includes(term);
       const nameMatch = st.displayName.toLowerCase().includes(term);
+      const idMatch = (st.idNumber || '').toLowerCase().includes(term);
       const emailMatch = (st.email || '').toLowerCase().includes(term);
-      if (!codeMatch && !nameMatch && !emailMatch) return false;
+      if (!codeMatch && !nameMatch && !idMatch && !emailMatch) return false;
     }
     return true;
   });
@@ -350,6 +356,14 @@ export const AcademicDashboard: React.FC<AcademicDashboardProps> = ({ currentUse
     soundService.playWin();
   };
 
+  // Asignar o retirar participante de investigación
+  const handleToggleResearchParticipant = async (student: UserProfile) => {
+    soundService.playToken();
+    const updatedStatus = !student.isResearchParticipant;
+    await userService.updateStudentAcademicInfo(student.uid, { isResearchParticipant: updatedStatus });
+    setStudents(prev => prev.map(s => s.uid === student.uid ? { ...s, isResearchParticipant: updatedStatus } : s));
+  };
+
   // Exportar Excel
   const handleExportExcel = () => {
     soundService.playToken();
@@ -380,236 +394,291 @@ export const AcademicDashboard: React.FC<AcademicDashboardProps> = ({ currentUse
     });
   };
 
-  // ─── PANTALLA DE BLOQUEO / CONTRASEÑA SECUNDARIA ───
+  // ─── PANTALLA DE BLOQUEO / CONTRASEÑA SECUNDARIA (DISEÑO BLANCO Y SEGURO) ───
   if (!isUnlocked) {
     return (
-      <div className="profile-page-root" role="dialog" aria-modal="true">
-        <div className="profile-page-container" style={{ maxWidth: 500 }}>
-          <header className="profile-page-header">
-            <button onClick={onBack} className="profile-icon-btn-3d" title="Volver">
-              <X size={20} />
-            </button>
-            <div className="profile-header-title">
-              <h1 style={{ fontSize: '1.1rem', fontWeight: 900 }}>Seguimiento Académico</h1>
-              <span>Zona Administrativa Protegida</span>
+      <div className="auth-backdrop" role="dialog" aria-modal="true">
+        <div className="auth-card" style={{ maxWidth: 460 }}>
+          <button
+            onClick={onBack}
+            className="modal-close"
+            style={{
+              position: 'absolute',
+              top: 18,
+              right: 18,
+              background: '#F1F5F9',
+              borderRadius: '50%',
+              width: 32,
+              height: 32,
+              border: 'none',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              cursor: 'pointer',
+              color: '#64748B'
+            }}
+            title="Volver a la App"
+          >
+            <X size={18} />
+          </button>
+
+          <div style={{ textAlign: 'center', marginBottom: 20 }}>
+            <div
+              style={{
+                width: 60,
+                height: 60,
+                borderRadius: 18,
+                background: 'linear-gradient(135deg, #F59E0B, #D97706)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                margin: '0 auto 14px auto',
+                boxShadow: '0 8px 20px -4px rgba(217, 119, 6, 0.4)',
+                color: '#FFFFFF'
+              }}
+            >
+              <Lock size={28} strokeWidth={2.4} />
             </div>
-          </header>
+            <h2 style={{ fontSize: '1.35rem', fontWeight: 900, color: '#0F172A', margin: '0 0 6px 0' }}>
+              {isPasswordConfigured ? 'Seguimiento Académico' : 'Configurar Acceso Docente'}
+            </h2>
+            <p style={{ color: '#64748B', fontSize: '0.85rem', margin: 0, lineHeight: 1.45 }}>
+              {isPasswordConfigured
+                ? 'Área protegida de investigación para Joseph Carazo. Ingresa tu contraseña secundaria.'
+                : 'Define tu contraseña secundaria con hash criptográfico para proteger los datos de los estudiantes.'}
+            </p>
+          </div>
 
-          <main className="profile-page-content" style={{ marginTop: 20 }}>
-            <div style={{ textAlign: 'center', marginBottom: 20 }}>
-              <div
-                style={{
-                  width: 64,
-                  height: 64,
-                  borderRadius: 20,
-                  background: '#D97706',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  margin: '0 auto 12px auto',
-                  boxShadow: '0 4px 0 #B45309'
-                }}
-              >
-                <Lock size={32} color="#FFFFFF" strokeWidth={2.4} />
-              </div>
-              <h2 style={{ fontSize: '1.35rem', fontWeight: 900, color: '#FFFFFF' }}>
-                {isPasswordConfigured ? 'Desbloquear Sección' : 'Configurar Contraseña Administrativa'}
-              </h2>
-              <p style={{ color: '#94A3B8', fontSize: '0.86rem', marginTop: 4, maxWidth: 380, margin: '4px auto 0 auto' }}>
-                {isPasswordConfigured
-                  ? 'Esta sección contiene los registros de los estudiantes para tu investigación. Ingresa tu contraseña secundaria con hash criptográfico.'
-                  : 'Es tu primera vez accediendo. Define tu contraseña de desbloqueo secundaria que se almacenará con salt y hash seguro PBKDF2.'}
-              </p>
+          {authError && (
+            <div className="auth-error-box" role="alert">
+              <AlertTriangle size={18} style={{ flexShrink: 0 }} />
+              <span>{authError}</span>
             </div>
+          )}
 
-            {authError && (
-              <div
-                style={{
-                  background: 'rgba(239, 68, 68, 0.15)',
-                  border: '1.5px solid #EF4444',
-                  color: '#F87171',
-                  padding: '12px 14px',
-                  borderRadius: 12,
-                  fontSize: '0.86rem',
-                  marginBottom: 16,
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: 8
-                }}
-              >
-                <AlertTriangle size={18} />
-                <span>{authError}</span>
+          {isPasswordConfigured ? (
+            /* Desbloquear con contraseña existente */
+            <form onSubmit={handleUnlock} style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+              <div className="auth-field">
+                <label className="auth-label" htmlFor="admin-unlock-pass">
+                  <span>Contraseña Secundaria</span>
+                </label>
+                <div className="auth-input-wrapper">
+                  <KeyRound size={18} color="#64748B" />
+                  <input
+                    id="admin-unlock-pass"
+                    type={showInputPass ? 'text' : 'password'}
+                    placeholder="••••••••••••"
+                    value={inputPassword}
+                    onChange={(e) => setInputPassword(e.target.value)}
+                    required
+                    autoFocus
+                  />
+                  <button
+                    type="button"
+                    className="auth-eye-btn"
+                    onClick={() => setShowInputPass(!showInputPass)}
+                    title={showInputPass ? 'Ocultar contraseña' : 'Ver contraseña'}
+                  >
+                    {showInputPass ? <EyeOff size={16} /> : <Eye size={16} />}
+                  </button>
+                </div>
               </div>
-            )}
 
-            {isPasswordConfigured ? (
-              // Formulario de Desbloqueo
-              <form onSubmit={handleUnlock} style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-                <div>
-                  <label style={{ fontSize: '0.82rem', fontWeight: 700, color: '#CBD5E1', display: 'block', marginBottom: 6 }}>
-                    Contraseña Administrativa
-                  </label>
-                  <div className="input-group">
-                    <KeyRound size={18} color="#64748B" />
-                    <input
-                      type="password"
-                      placeholder="••••••••••••"
-                      value={inputPassword}
-                      onChange={(e) => setInputPassword(e.target.value)}
-                      required
-                      autoFocus
-                    />
-                  </div>
+              <button
+                type="submit"
+                className="auth-btn-primary"
+                disabled={authLoading}
+                style={{ background: '#F59E0B', boxShadow: '0 4px 0 #D97706' }}
+              >
+                <Unlock size={18} />
+                <span>{authLoading ? 'Verificando...' : 'Desbloquear Panel'}</span>
+              </button>
+            </form>
+          ) : (
+            /* Configurar por primera vez */
+            <form onSubmit={handleInitialSetup} style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+              <div className="auth-field">
+                <label className="auth-label" htmlFor="admin-new-pass">
+                  <span>Nueva Contraseña Secundaria</span>
+                  <span className="auth-label-badge">Mínimo 8 caracteres</span>
+                </label>
+                <div className="auth-input-wrapper">
+                  <KeyRound size={18} color="#64748B" />
+                  <input
+                    id="admin-new-pass"
+                    type="password"
+                    placeholder="Mínimo 8 caracteres"
+                    value={newAdminPassword}
+                    onChange={(e) => setNewAdminPassword(e.target.value)}
+                    required
+                  />
                 </div>
+              </div>
 
-                <button
-                  type="submit"
-                  className="btn-3d btn-orange"
-                  disabled={authLoading}
-                  style={{ marginTop: 6 }}
-                >
-                  <Unlock size={18} />
-                  {authLoading ? 'Verificando Hash...' : 'Desbloquear Datos'}
-                </button>
-              </form>
-            ) : (
-              // Formulario de Configuración Inicial (Primera vez)
-              <form onSubmit={handleInitialSetup} style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-                <div>
-                  <label style={{ fontSize: '0.82rem', fontWeight: 700, color: '#CBD5E1', display: 'block', marginBottom: 6 }}>
-                    Nueva Contraseña Administrativa (Mínimo 8 caracteres)
-                  </label>
-                  <div className="input-group">
-                    <KeyRound size={18} color="#64748B" />
-                    <input
-                      type="password"
-                      placeholder="Crea una contraseña segura"
-                      value={newAdminPassword}
-                      onChange={(e) => setNewAdminPassword(e.target.value)}
-                      required
-                    />
-                  </div>
+              <div className="auth-field">
+                <label className="auth-label" htmlFor="admin-confirm-pass">
+                  <span>Confirmar Contraseña Secundaria</span>
+                </label>
+                <div className="auth-input-wrapper">
+                  <KeyRound size={18} color="#64748B" />
+                  <input
+                    id="admin-confirm-pass"
+                    type="password"
+                    placeholder="Repite la contraseña"
+                    value={confirmAdminPassword}
+                    onChange={(e) => setConfirmAdminPassword(e.target.value)}
+                    required
+                  />
                 </div>
+              </div>
 
-                <div>
-                  <label style={{ fontSize: '0.82rem', fontWeight: 700, color: '#CBD5E1', display: 'block', marginBottom: 6 }}>
-                    Confirmar Nueva Contraseña
-                  </label>
-                  <div className="input-group">
-                    <KeyRound size={18} color="#64748B" />
-                    <input
-                      type="password"
-                      placeholder="Repite la contraseña"
-                      value={confirmAdminPassword}
-                      onChange={(e) => setConfirmAdminPassword(e.target.value)}
-                      required
-                    />
-                  </div>
+              <div className="auth-field">
+                <label className="auth-label" htmlFor="admin-reauth-pass">
+                  <span>Contraseña Actual de tu Cuenta de Correo</span>
+                  <span className="auth-label-badge">Verificación de identidad</span>
+                </label>
+                <div className="auth-input-wrapper">
+                  <Lock size={18} color="#64748B" />
+                  <input
+                    id="admin-reauth-pass"
+                    type="password"
+                    placeholder="Contraseña de josephcarazo56@gmail.com"
+                    value={reauthAccountPass}
+                    onChange={(e) => setReauthAccountPass(e.target.value)}
+                    required
+                  />
                 </div>
+              </div>
 
-                <div>
-                  <label style={{ fontSize: '0.82rem', fontWeight: 700, color: '#CBD5E1', display: 'block', marginBottom: 6 }}>
-                    Contraseña actual de tu correo ({currentUser.email})
-                  </label>
-                  <div className="input-group">
-                    <Lock size={18} color="#64748B" />
-                    <input
-                      type="password"
-                      placeholder="Contraseña de tu cuenta Firebase"
-                      value={reauthAccountPass}
-                      onChange={(e) => setReauthAccountPass(e.target.value)}
-                      required
-                    />
-                  </div>
-                  <span style={{ fontSize: '0.74rem', color: '#94A3B8', marginTop: 4, display: 'block' }}>
-                    Requerido para reautenticación de seguridad antes de autorizar el primer hash.
-                  </span>
-                </div>
+              <button
+                type="submit"
+                className="auth-btn-primary"
+                disabled={authLoading}
+                style={{ background: '#10B981', boxShadow: '0 4px 0 #059669' }}
+              >
+                <span>{authLoading ? 'Configurando...' : 'Crear Contraseña y Acceder'}</span>
+              </button>
+            </form>
+          )}
 
-                <button
-                  type="submit"
-                  className="btn-3d btn-green"
-                  disabled={authLoading}
-                  style={{ marginTop: 6 }}
-                >
-                  <CheckCircle2 size={18} />
-                  {authLoading ? 'Derivando Hash PBKDF2...' : 'Establecer y Desbloquear'}
-                </button>
-              </form>
-            )}
-          </main>
+          <div className="auth-ethics-box" style={{ marginTop: 18 }}>
+            <Shield size={16} color="#059669" style={{ flexShrink: 0, marginTop: 2 }} />
+            <span>
+              <strong>Seguridad Criptográfica:</strong> La contraseña se almacena con hash PBKDF2-SHA256 (100.000 iteraciones) en Firestore y la sesión en memoria expira tras 30 minutos.
+            </span>
+          </div>
         </div>
       </div>
     );
   }
 
-  // ─── DASHBOARD DESBLOQUEADO ───
+  // ─── DASHBOARD PRINCIPAL DESBLOQUEADO (DISEÑO BLANCO Y RESPONSIVE DUOLINGO) ───
   return (
-    <div className="profile-page-root" role="dialog" aria-modal="true" style={{ padding: 12 }}>
-      <div className="profile-page-container" style={{ maxWidth: 1100 }}>
-        {/* Encabezado Superior */}
-        <header className="profile-page-header" style={{ paddingBottom: 12 }}>
-          <button onClick={onBack} className="profile-icon-btn-3d" title="Volver al Camino">
-            <X size={20} />
+    <div className="academic-page-container">
+      {/* ─── 1. BARRA SUPERIOR (HEADER) ─── */}
+      <header className="academic-header-bar">
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+          <button
+            onClick={() => {
+              soundService.playToken();
+              onBack();
+            }}
+            className="btn-3d btn-outline"
+            style={{ padding: '8px 14px', fontSize: '0.86rem' }}
+            title="Volver a la App"
+          >
+            <ArrowLeft size={16} /> Volver a la App
           </button>
-          <div className="profile-header-title">
-            <h1 style={{ fontSize: '1.25rem', fontWeight: 900 }}>Seguimiento Académico</h1>
-            <span style={{ color: '#06B6D4', fontWeight: 700 }}>
-              Panel de Investigación Docente • {currentUser.email}
-            </span>
+          <div>
+            <h1 style={{ fontSize: '1.25rem', fontWeight: 900, color: '#0F172A', margin: 0, display: 'flex', alignItems: 'center', gap: 8 }}>
+              <span>Seguimiento Académico</span>
+              <span style={{ fontSize: '0.74rem', background: '#E0F2FE', color: '#0284C7', padding: '2px 8px', borderRadius: 8, fontWeight: 800 }}>
+                Investigación Educativa
+              </span>
+            </h1>
+            <p style={{ margin: 0, fontSize: '0.78rem', color: '#64748B' }}>
+              Docente: <strong>{currentUser.displayName || currentUser.email}</strong> • {students.length} estudiantes registrados
+            </p>
           </div>
-          <div style={{ display: 'flex', gap: 8 }}>
-            <button
-              onClick={handleExportExcel}
-              className="btn-3d btn-green"
-              style={{ padding: '8px 14px', fontSize: '0.82rem' }}
-              title="Descargar libro Excel con las 7 hojas completas"
-            >
-              <FileSpreadsheet size={16} /> Excel (.xlsx)
-            </button>
-            <button
-              onClick={handleLockSession}
-              className="btn-3d btn-outline"
-              style={{ padding: '8px 12px', fontSize: '0.82rem', color: '#F87171' }}
-              title="Bloquear sección administrativa"
-            >
-              <Lock size={15} /> Bloquear
-            </button>
-          </div>
-        </header>
+        </div>
 
-        {/* Barra de Filtros */}
-        <div
-          style={{
-            background: 'rgba(255, 255, 255, 0.04)',
-            border: '1.5px solid rgba(255, 255, 255, 0.08)',
-            borderRadius: 16,
-            padding: '12px 16px',
-            marginBottom: 16,
-            display: 'flex',
-            flexWrap: 'wrap',
-            gap: 12,
-            alignItems: 'center',
-            justifyContent: 'space-between'
-          }}
-        >
-          <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', alignItems: 'center' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
+          <div
+            style={{
+              background: '#F0FDF4',
+              border: '1px solid #BBF7D0',
+              padding: '6px 12px',
+              borderRadius: 12,
+              fontSize: '0.76rem',
+              color: '#166534',
+              fontWeight: 800,
+              display: 'flex',
+              alignItems: 'center',
+              gap: 6
+            }}
+          >
+            <Unlock size={14} color="#16A34A" />
+            <span>Sesión Activa (30 min)</span>
+          </div>
+
+          <button
+            onClick={handleLockSession}
+            className="btn-3d btn-outline"
+            style={{ padding: '6px 12px', fontSize: '0.8rem', color: '#DC2626', borderColor: '#FCA5A5' }}
+            title="Bloquear sesión ahora"
+          >
+            <Lock size={14} /> Bloquear
+          </button>
+        </div>
+      </header>
+
+      {/* ─── 2. DOCK DE NAVEGACIÓN ENTRE SECCIONES (TABS) ─── */}
+      <nav className="academic-nav-dock" aria-label="Secciones del panel">
+        {[
+          { key: 'group' as const, label: 'Resumen Grupal', icon: <Users size={16} /> },
+          { key: 'student' as const, label: 'Ficha por Estudiante', icon: <UserCheck size={16} /> },
+          { key: 'evaluations' as const, label: 'Evaluaciones Diagnósticas y Finales', icon: <Award size={16} /> },
+          { key: 'attempts' as const, label: 'Historial de Intentos', icon: <BarChart3 size={16} /> },
+          { key: 'observations' as const, label: 'Observaciones y Opiniones', icon: <MessageSquare size={16} /> }
+        ].map(tab => (
+          <button
+            key={tab.key}
+            onClick={() => {
+              soundService.playToken();
+              setActiveTab(tab.key);
+            }}
+            className={`academic-tab-pill ${activeTab === tab.key ? 'active' : ''}`}
+          >
+            {tab.icon}
+            <span>{tab.label}</span>
+          </button>
+        ))}
+      </nav>
+
+      {/* ─── 3. BARRA DE FILTROS Y ACCIONES DE EXPORTACIÓN ─── */}
+      <section className="academic-card" style={{ padding: '14px 18px', marginBottom: 18 }}>
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12, alignItems: 'center', justifyContent: 'space-between' }}>
+          <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', alignItems: 'center', flex: 1, minWidth: 260 }}>
             {/* Buscar estudiante */}
-            <div style={{ position: 'relative', width: 220 }}>
-              <Search size={16} color="#94A3B8" style={{ position: 'absolute', left: 10, top: 10 }} />
+            <div style={{ position: 'relative', width: 230, minWidth: 200 }}>
+              <Search size={16} color="#64748B" style={{ position: 'absolute', left: 12, top: 11 }} />
               <input
                 type="text"
-                placeholder="Buscar código o nombre..."
+                placeholder="Buscar código, cédula o nombre..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 style={{
                   width: '100%',
-                  background: '#0B131E',
-                  border: '1px solid rgba(255, 255, 255, 0.15)',
-                  borderRadius: 10,
-                  padding: '7px 10px 7px 32px',
-                  color: '#FFFFFF',
-                  fontSize: '0.82rem'
+                  background: '#F8FAFC',
+                  border: '1.5px solid #CBD5E1',
+                  borderRadius: 12,
+                  padding: '8px 12px 8px 34px',
+                  color: '#0F172A',
+                  fontSize: '0.84rem',
+                  fontWeight: 600,
+                  outline: 'none',
+                  boxSizing: 'border-box'
                 }}
               />
             </div>
@@ -619,13 +688,14 @@ export const AcademicDashboard: React.FC<AcademicDashboardProps> = ({ currentUse
               value={selectedGroup}
               onChange={(e) => setSelectedGroup(e.target.value)}
               style={{
-                background: '#0B131E',
-                border: '1px solid rgba(255, 255, 255, 0.15)',
-                borderRadius: 10,
-                padding: '6px 10px',
-                color: '#CBD5E1',
-                fontSize: '0.8rem',
-                fontWeight: 700
+                background: '#F8FAFC',
+                border: '1.5px solid #CBD5E1',
+                borderRadius: 12,
+                padding: '8px 12px',
+                color: '#0F172A',
+                fontSize: '0.82rem',
+                fontWeight: 700,
+                outline: 'none'
               }}
             >
               <option value="all">Todos los Grupos</option>
@@ -635,860 +705,965 @@ export const AcademicDashboard: React.FC<AcademicDashboardProps> = ({ currentUse
             </select>
 
             {/* Filtro de Ruta */}
-            <div style={{ display: 'flex', gap: 4, background: '#0B131E', padding: 3, borderRadius: 10 }}>
+            <div style={{ display: 'flex', gap: 4, background: '#F1F5F9', padding: 4, borderRadius: 12, border: '1px solid #E2E8F0' }}>
               {(['all', 'kotlin', 'sql'] as const).map(p => (
                 <button
                   key={p}
-                  onClick={() => setSelectedPath(p)}
+                  onClick={() => {
+                    soundService.playToken();
+                    setSelectedPath(p);
+                  }}
                   style={{
-                    padding: '5px 12px',
-                    borderRadius: 8,
+                    background: selectedPath === p ? '#FFFFFF' : 'transparent',
+                    color: selectedPath === p ? '#0F172A' : '#64748B',
                     border: 'none',
+                    borderRadius: 8,
+                    padding: '6px 12px',
                     fontSize: '0.78rem',
-                    fontWeight: 800,
+                    fontWeight: selectedPath === p ? 900 : 700,
                     cursor: 'pointer',
-                    background: selectedPath === p ? '#06B6D4' : 'transparent',
-                    color: selectedPath === p ? '#FFFFFF' : '#94A3B8'
+                    boxShadow: selectedPath === p ? '0 1px 4px rgba(0,0,0,0.08)' : 'none',
+                    textTransform: 'uppercase'
                   }}
                 >
-                  {p === 'all' ? 'Todas las Rutas' : p.toUpperCase()}
+                  {p === 'all' ? 'Todas' : p}
                 </button>
               ))}
             </div>
           </div>
 
-          <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-            {loadingData && (
-              <span style={{ fontSize: '0.78rem', color: '#06B6D4', fontWeight: 700 }}>
-                Sincronizando datos...
-              </span>
-            )}
-            <span style={{ fontSize: '0.8rem', color: '#94A3B8' }}>
-              Estudiantes: <strong>{filteredStudents.length}</strong>
-            </span>
+          {/* Botones de Exportación */}
+          <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', alignItems: 'center' }}>
             <button
-              onClick={() => setShowObsModal(true)}
+              onClick={() => {
+                soundService.playToken();
+                if (students.length > 0) setExtEvalStudentUid(students[0].uid);
+                setShowExternalEvalModal(true);
+              }}
               className="btn-3d btn-outline"
-              style={{ padding: '7px 12px', fontSize: '0.8rem' }}
-            >
-              <PlusCircle size={15} /> Observación Docente
-            </button>
-            <button
-              onClick={() => setShowExternalEvalModal(true)}
-              className="btn-3d btn-outline"
-              style={{ padding: '7px 12px', fontSize: '0.8rem' }}
+              style={{ padding: '9px 14px', fontSize: '0.82rem' }}
+              title="Registrar diagnóstico aplicado en papel/aula"
             >
               <PlusCircle size={15} /> Diagnóstico Externo
             </button>
+
+            <button
+              onClick={handleExportExcel}
+              className="btn-3d btn-green"
+              style={{ padding: '9px 16px', fontSize: '0.84rem' }}
+              title="Descargar libro Excel con 7 hojas de datos de investigación"
+            >
+              <FileSpreadsheet size={16} /> Exportar Excel (.xlsx)
+            </button>
           </div>
         </div>
+      </section>
 
-        {/* Pestañas Principales */}
-        <div style={{ display: 'flex', gap: 8, borderBottom: '2px solid rgba(255, 255, 255, 0.08)', marginBottom: 16, overflowX: 'auto', paddingBottom: 4 }}>
-          {[
-            { id: 'group', label: 'Resumen del Grupo', icon: Users },
-            { id: 'student', label: 'Ficha por Estudiante', icon: UserCheck },
-            { id: 'evaluations', label: 'Evaluaciones y Calificación', icon: Award },
-            { id: 'attempts', label: 'Historial de Intentos', icon: BarChart3 },
-            { id: 'observations', label: 'Observaciones y Opiniones', icon: Edit3 }
-          ].map(t => {
-            const Icon = t.icon;
-            const isActive = activeTab === t.id;
-            return (
-              <button
-                key={t.id}
-                onClick={() => {
-                  soundService.playToken();
-                  setActiveTab(t.id as any);
-                }}
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: 8,
-                  padding: '9px 16px',
-                  borderRadius: '12px 12px 0 0',
-                  border: 'none',
-                  background: isActive ? 'rgba(6, 182, 212, 0.15)' : 'transparent',
-                  color: isActive ? '#38BDF8' : '#94A3B8',
-                  borderBottom: isActive ? '3px solid #06B6D4' : '3px solid transparent',
-                  fontWeight: 800,
-                  fontSize: '0.86rem',
-                  cursor: 'pointer',
-                  whiteSpace: 'nowrap'
-                }}
-              >
-                <Icon size={16} />
-                <span>{t.label}</span>
-              </button>
-            );
-          })}
+      {/* ─── CONTENIDO DE CADA PESTAÑA ─── */}
+      {loadingData ? (
+        <div style={{ textAlign: 'center', padding: '60px 20px', color: '#64748B', fontWeight: 700 }}>
+          <div className="node-current" style={{ margin: '0 auto 16px auto', width: 48, height: 48 }} />
+          <span>Cargando datos académicos e indicadores...</span>
         </div>
+      ) : (
+        <>
+          {/* ════════════ PESTAÑA 1: RESUMEN GRUPAL ════════════ */}
+          {activeTab === 'group' && (
+            <div>
+              {/* Tarjetas de Métricas Globales */}
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 14, marginBottom: 20 }}>
+                <div className="academic-metric-card" style={{ borderLeft: '4px solid #2563EB' }}>
+                  <span style={{ fontSize: '0.78rem', color: '#64748B', fontWeight: 800, textTransform: 'uppercase' }}>
+                    Estudiantes Registrados
+                  </span>
+                  <div style={{ fontSize: '1.8rem', fontWeight: 900, color: '#0F172A' }}>
+                    {filteredStudents.length}
+                  </div>
+                  <span style={{ fontSize: '0.74rem', color: '#0284C7', fontWeight: 700 }}>
+                    {filteredStudents.filter(s => s.isResearchParticipant).length} participantes de estudio
+                  </span>
+                </div>
 
-        {/* ═══ PESTAÑA 1: RESUMEN DEL GRUPO ═══ */}
-        {activeTab === 'group' && (
-          <div>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(210px, 1fr))', gap: 12, marginBottom: 18 }}>
-              <div className="profile-card-duo" style={{ margin: 0 }}>
-                <span className="profile-card-label">Total Participantes</span>
-                <div style={{ fontSize: '1.6rem', fontWeight: 900, color: '#38BDF8' }}>
-                  {filteredStudents.length}
+                <div className="academic-metric-card" style={{ borderLeft: '4px solid #10B981' }}>
+                  <span style={{ fontSize: '0.78rem', color: '#64748B', fontWeight: 800, textTransform: 'uppercase' }}>
+                    Tiempo Activo Promedio
+                  </span>
+                  <div style={{ fontSize: '1.8rem', fontWeight: 900, color: '#0F172A' }}>
+                    {filteredStudents.length > 0
+                      ? Math.round(
+                          filteredStudents.reduce((acc, s) => acc + (indicatorsMap[s.uid]?.estimatedActiveTimeMinutes || 0), 0) /
+                            filteredStudents.length
+                        )
+                      : 0}{' '}
+                    <span style={{ fontSize: '1rem', fontWeight: 700, color: '#64748B' }}>min</span>
+                  </div>
+                  <span style={{ fontSize: '0.74rem', color: '#16A34A', fontWeight: 700 }}>
+                    Interacción efectiva
+                  </span>
                 </div>
-                <span style={{ fontSize: '0.74rem', color: '#94A3B8' }}>Estudiantes registrados</span>
-              </div>
-              <div className="profile-card-duo" style={{ margin: 0 }}>
-                <span className="profile-card-label">Total Intentos Realizados</span>
-                <div style={{ fontSize: '1.6rem', fontWeight: 900, color: '#22C55E' }}>
-                  {attempts.length}
-                </div>
-                <span style={{ fontSize: '0.74rem', color: '#94A3B8' }}>Respuestas interactivas</span>
-              </div>
-              <div className="profile-card-duo" style={{ margin: 0 }}>
-                <span className="profile-card-label">Evaluaciones Registradas</span>
-                <div style={{ fontSize: '1.6rem', fontWeight: 900, color: '#A855F7' }}>
-                  {evaluations.length}
-                </div>
-                <span style={{ fontSize: '0.74rem', color: '#94A3B8' }}>Diagnósticos y Finales</span>
-              </div>
-              <div className="profile-card-duo" style={{ margin: 0 }}>
-                <span className="profile-card-label">Observaciones Docentes</span>
-                <div style={{ fontSize: '1.6rem', fontWeight: 900, color: '#F59E0B' }}>
-                  {observations.length}
-                </div>
-                <span style={{ fontSize: '0.74rem', color: '#94A3B8' }}>Bitácora de apoyo</span>
-              </div>
-            </div>
 
-            {/* Tabla del Grupo */}
-            <div style={{ background: 'rgba(255, 255, 255, 0.03)', borderRadius: 16, border: '1.5px solid rgba(255, 255, 255, 0.08)', overflowX: 'auto' }}>
-              <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.84rem' }}>
-                <thead>
-                  <tr style={{ background: 'rgba(255, 255, 255, 0.06)', borderBottom: '1px solid rgba(255, 255, 255, 0.1)', color: '#CBD5E1' }}>
-                    <th style={{ padding: '12px 14px' }}>Código</th>
-                    <th style={{ padding: '12px 14px' }}>Estudiante</th>
-                    <th style={{ padding: '12px 14px' }}>Ruta</th>
-                    <th style={{ padding: '12px 14px' }}>Días Activos</th>
-                    <th style={{ padding: '12px 14px' }}>Tiempo Activo</th>
-                    <th style={{ padding: '12px 14px' }}>1er Intento (%)</th>
-                    <th style={{ padding: '12px 14px' }}>Diagnóstico</th>
-                    <th style={{ padding: '12px 14px' }}>Prueba Final</th>
-                    <th style={{ padding: '12px 14px' }}>Ganancia</th>
-                    <th style={{ padding: '12px 14px' }}>Acción</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {filteredStudents.map((st) => {
-                    const ind = indicatorsMap[st.uid];
-                    return (
-                      <tr key={st.uid} style={{ borderBottom: '1px solid rgba(255, 255, 255, 0.04)' }}>
-                        <td style={{ padding: '12px 14px', fontWeight: 800, color: '#38BDF8' }}>
-                          {st.studentCode || 'E01'}
-                        </td>
-                        <td style={{ padding: '12px 14px', color: '#FFFFFF', fontWeight: 700 }}>
-                          <div>{st.displayName}</div>
-                          {st.idNumber && (
-                            <div style={{ fontSize: '0.72rem', color: '#94A3B8', fontWeight: 500, marginTop: 2 }}>
-                              Cédula: {st.idNumber}
-                            </div>
-                          )}
-                        </td>
-                        <td style={{ padding: '12px 14px', textTransform: 'uppercase', color: '#94A3B8' }}>
-                          {st.currentPath}
-                        </td>
-                        <td style={{ padding: '12px 14px' }}>
-                          {ind?.activeDaysCount ?? 0} días
-                        </td>
-                        <td style={{ padding: '12px 14px' }}>
-                          {ind?.estimatedActiveTimeMinutes ?? 0} min
-                        </td>
-                        <td style={{ padding: '12px 14px' }}>
-                          {ind?.firstAttemptAccuracyPercent !== null ? `${ind?.firstAttemptAccuracyPercent}%` : <span style={{ color: '#64748B' }}>Sin datos</span>}
-                        </td>
-                        <td style={{ padding: '12px 14px' }}>
-                          {ind?.diagnosticPercentage !== null ? `${ind?.diagnosticPercentage}%` : <span style={{ color: '#64748B' }}>Sin datos</span>}
-                        </td>
-                        <td style={{ padding: '12px 14px' }}>
-                          {ind?.finalTestPercentage !== null ? `${ind?.finalTestPercentage}%` : <span style={{ color: '#64748B' }}>Sin datos</span>}
-                        </td>
-                        <td style={{ padding: '12px 14px', fontWeight: 800, color: (ind?.percentagePointGain ?? 0) > 0 ? '#22C55E' : '#94A3B8' }}>
-                          {ind?.percentagePointGain !== null ? `${ind?.percentagePointGain > 0 ? '+' : ''}${ind?.percentagePointGain} pts` : <span style={{ color: '#64748B' }}>Sin datos</span>}
-                        </td>
-                        <td style={{ padding: '12px 14px' }}>
-                          <button
-                            onClick={() => {
-                              setSelectedStudentUid(st.uid);
-                              setActiveTab('student');
-                            }}
-                            className="btn-3d btn-outline"
-                            style={{ padding: '5px 10px', fontSize: '0.74rem' }}
-                          >
-                            Ver Ficha
-                          </button>
+                <div className="academic-metric-card" style={{ borderLeft: '4px solid #8B5CF6' }}>
+                  <span style={{ fontSize: '0.78rem', color: '#64748B', fontWeight: 800, textTransform: 'uppercase' }}>
+                    Precisión 1er Intento
+                  </span>
+                  <div style={{ fontSize: '1.8rem', fontWeight: 900, color: '#0F172A' }}>
+                    {(() => {
+                      const valid = filteredStudents
+                        .map(s => indicatorsMap[s.uid]?.firstAttemptAccuracyPercent)
+                        .filter((v): v is number => typeof v === 'number');
+                      if (valid.length === 0) return 'Sin datos';
+                      return `${Math.round(valid.reduce((a, b) => a + b, 0) / valid.length)}%`;
+                    })()}
+                  </div>
+                  <span style={{ fontSize: '0.74rem', color: '#7C3AED', fontWeight: 700 }}>
+                    Efectividad sin comodines
+                  </span>
+                </div>
+
+                <div className="academic-metric-card" style={{ borderLeft: '4px solid #F59E0B' }}>
+                  <span style={{ fontSize: '0.78rem', color: '#64748B', fontWeight: 800, textTransform: 'uppercase' }}>
+                    Ganancia Media Post-Test
+                  </span>
+                  <div style={{ fontSize: '1.8rem', fontWeight: 900, color: '#0F172A' }}>
+                    {(() => {
+                      const valid = filteredStudents
+                        .map(s => indicatorsMap[s.uid]?.percentagePointGain)
+                        .filter((v): v is number => typeof v === 'number');
+                      if (valid.length === 0) return 'Sin datos';
+                      const avg = (valid.reduce((a, b) => a + b, 0) / valid.length).toFixed(1);
+                      return `${Number(avg) > 0 ? '+' : ''}${avg} pts`;
+                    })()}
+                  </div>
+                  <span style={{ fontSize: '0.74rem', color: '#D97706', fontWeight: 700 }}>
+                    Final % − Diagnóstico %
+                  </span>
+                </div>
+              </div>
+
+              {/* Tabla Grupal de Estudiantes */}
+              <div className="academic-table-container">
+                <div style={{ padding: '12px 16px', background: '#F8FAFC', borderBottom: '1.5px solid #E2E8F0', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <span style={{ fontSize: '0.82rem', fontWeight: 800, color: '#475569' }}>
+                    Mostrando {filteredStudents.length} de {students.length} estudiantes
+                  </span>
+                  <span style={{ fontSize: '0.74rem', color: '#64748B' }}>
+                    ← Desliza horizontalmente para ver todos los indicadores →
+                  </span>
+                </div>
+
+                <table className="academic-table">
+                  <thead>
+                    <tr>
+                      <th>Código</th>
+                      <th>Estudiante & Cédula</th>
+                      <th>Grupo</th>
+                      <th>Ruta</th>
+                      <th>Días</th>
+                      <th>Tiempo Activo</th>
+                      <th>1er Intento %</th>
+                      <th>Diagnóstico %</th>
+                      <th>Prueba Final %</th>
+                      <th>Ganancia</th>
+                      <th>Estudio</th>
+                      <th>Acciones</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {filteredStudents.length === 0 ? (
+                      <tr>
+                        <td colSpan={12} style={{ textAlign: 'center', padding: '30px', color: '#64748B', fontWeight: 700 }}>
+                          No se encontraron estudiantes con los filtros seleccionados.
                         </td>
                       </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
+                    ) : (
+                      filteredStudents.map(st => {
+                        const ind = indicatorsMap[st.uid];
+                        return (
+                          <tr key={st.uid}>
+                            <td style={{ fontWeight: 900, color: '#0284C7' }}>
+                              {st.studentCode || 'E01'}
+                            </td>
+                            <td>
+                              <div style={{ fontWeight: 800, color: '#0F172A' }}>{st.displayName}</div>
+                              {st.idNumber && (
+                                <div style={{ fontSize: '0.74rem', color: '#64748B', fontWeight: 600 }}>
+                                  Cédula: {st.idNumber}
+                                </div>
+                              )}
+                            </td>
+                            <td style={{ fontWeight: 600, color: '#475569' }}>
+                              {st.group || 'Grupo A'}
+                            </td>
+                            <td>
+                              <span
+                                style={{
+                                  fontSize: '0.72rem',
+                                  fontWeight: 800,
+                                  textTransform: 'uppercase',
+                                  padding: '3px 8px',
+                                  borderRadius: 8,
+                                  background: st.currentPath === 'kotlin' ? '#E0F2FE' : '#EEF2FF',
+                                  color: st.currentPath === 'kotlin' ? '#0284C7' : '#4F46E5'
+                                }}
+                              >
+                                {st.currentPath}
+                              </span>
+                            </td>
+                            <td style={{ fontWeight: 700 }}>
+                              {ind?.activeDaysCount ?? 0} d
+                            </td>
+                            <td style={{ fontWeight: 700 }}>
+                              {ind?.estimatedActiveTimeMinutes ?? 0} min
+                            </td>
+                            <td style={{ fontWeight: 700 }}>
+                              {ind?.firstAttemptAccuracyPercent !== null ? `${ind?.firstAttemptAccuracyPercent}%` : <span style={{ color: '#94A3B8' }}>Sin datos</span>}
+                            </td>
+                            <td style={{ fontWeight: 700, color: '#7C3AED' }}>
+                              {ind?.diagnosticPercentage !== null ? `${ind?.diagnosticPercentage}%` : <span style={{ color: '#94A3B8' }}>Sin datos</span>}
+                            </td>
+                            <td style={{ fontWeight: 700, color: '#D97706' }}>
+                              {ind?.finalTestPercentage !== null ? `${ind?.finalTestPercentage}%` : <span style={{ color: '#94A3B8' }}>Sin datos</span>}
+                            </td>
+                            <td style={{ fontWeight: 900, color: (ind?.percentagePointGain ?? 0) > 0 ? '#16A34A' : '#64748B' }}>
+                              {ind?.percentagePointGain !== null ? `${ind?.percentagePointGain > 0 ? '+' : ''}${ind?.percentagePointGain} pts` : <span style={{ color: '#94A3B8' }}>Sin datos</span>}
+                            </td>
+                            <td>
+                              <button
+                                type="button"
+                                onClick={() => handleToggleResearchParticipant(st)}
+                                style={{
+                                  border: 'none',
+                                  background: st.isResearchParticipant ? '#DCFCE7' : '#F1F5F9',
+                                  color: st.isResearchParticipant ? '#15803D' : '#64748B',
+                                  padding: '4px 8px',
+                                  borderRadius: 8,
+                                  fontSize: '0.72rem',
+                                  fontWeight: 800,
+                                  cursor: 'pointer'
+                                }}
+                              >
+                                {st.isResearchParticipant ? 'SÍ' : 'NO'}
+                              </button>
+                            </td>
+                            <td>
+                              <button
+                                onClick={() => {
+                                  soundService.playToken();
+                                  setSelectedStudentUid(st.uid);
+                                  setActiveTab('student');
+                                }}
+                                className="btn-3d btn-outline"
+                                style={{ padding: '5px 10px', fontSize: '0.74rem' }}
+                              >
+                                Ver Ficha
+                              </button>
+                            </td>
+                          </tr>
+                        );
+                      })
+                    )}
+                  </tbody>
+                </table>
+              </div>
             </div>
-          </div>
-        )}
+          )}
 
-        {/* ═══ PESTAÑA 2: FICHA POR ESTUDIANTE ═══ */}
-        {activeTab === 'student' && selectedStudent && (
-          <div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                <select
-                  value={selectedStudent.uid}
-                  onChange={(e) => setSelectedStudentUid(e.target.value)}
-                  style={{
-                    background: '#0B131E',
-                    border: '1.5px solid rgba(255, 255, 255, 0.15)',
-                    borderRadius: 10,
-                    padding: '8px 12px',
-                    color: '#FFFFFF',
-                    fontSize: '0.88rem',
-                    fontWeight: 700
-                  }}
+          {/* ════════════ PESTAÑA 2: FICHA POR ESTUDIANTE ════════════ */}
+          {activeTab === 'student' && selectedStudent && (
+            <div>
+              {/* Barra superior de selección y PDF */}
+              <div
+                style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  marginBottom: 16,
+                  flexWrap: 'wrap',
+                  gap: 12
+                }}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
+                  <select
+                    value={selectedStudent.uid}
+                    onChange={(e) => {
+                      soundService.playToken();
+                      setSelectedStudentUid(e.target.value);
+                    }}
+                    style={{
+                      background: '#FFFFFF',
+                      border: '1.5px solid #CBD5E1',
+                      borderRadius: 12,
+                      padding: '8px 14px',
+                      color: '#0F172A',
+                      fontSize: '0.88rem',
+                      fontWeight: 800
+                    }}
+                  >
+                    {filteredStudents.map(s => (
+                      <option key={s.uid} value={s.uid}>
+                        [{s.studentCode || 'E01'}] {s.displayName} {s.idNumber ? `(${s.idNumber})` : ''} - {s.group || 'Grupo A'}
+                      </option>
+                    ))}
+                  </select>
+
+                  <label style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: '0.82rem', color: '#475569', fontWeight: 600, cursor: 'pointer' }}>
+                    <input
+                      type="checkbox"
+                      checked={anonymizePdf}
+                      onChange={(e) => setAnonymizePdf(e.target.checked)}
+                      style={{ width: 16, height: 16 }}
+                    />
+                    <span>Anonimizar en reporte PDF (solo código {selectedStudent.studentCode})</span>
+                  </label>
+                </div>
+
+                <button
+                  onClick={handleExportPdf}
+                  className="btn-3d btn-blue"
+                  style={{ padding: '9px 16px', fontSize: '0.84rem' }}
                 >
-                  {filteredStudents.map(s => (
-                    <option key={s.uid} value={s.uid}>
-                      [{s.studentCode || 'E01'}] {s.displayName} ({s.group || 'Grupo A'})
-                    </option>
-                  ))}
-                </select>
+                  <FileText size={16} /> Exportar Reporte PDF
+                </button>
+              </div>
 
-                <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: '0.8rem', color: '#94A3B8' }}>
-                  <input
-                    type="checkbox"
-                    id="anonPdf"
-                    checked={anonymizePdf}
-                    onChange={(e) => setAnonymizePdf(e.target.checked)}
-                  />
-                  <label htmlFor="anonPdf">Anonimizar en reporte PDF (solo código {selectedStudent.studentCode})</label>
+              {/* Ficha de Identificación del Estudiante */}
+              <div
+                className="academic-card"
+                style={{
+                  padding: '18px 20px',
+                  display: 'flex',
+                  flexWrap: 'wrap',
+                  gap: 16,
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  background: '#FFFFFF'
+                }}
+              >
+                <div>
+                  <div style={{ fontSize: '1.25rem', fontWeight: 900, color: '#0F172A' }}>
+                    {selectedStudent.displayName}
+                  </div>
+                  <div style={{ fontSize: '0.84rem', color: '#64748B', marginTop: 4, display: 'flex', gap: 14, flexWrap: 'wrap' }}>
+                    {selectedStudent.idNumber && (
+                      <span><strong>Cédula:</strong> <span style={{ color: '#0F172A' }}>{selectedStudent.idNumber}</span></span>
+                    )}
+                    {selectedStudent.email && (
+                      <span><strong>Correo:</strong> <span style={{ color: '#0F172A' }}>{selectedStudent.email}</span></span>
+                    )}
+                    <span><strong>Código Oficial:</strong> <span style={{ color: '#0284C7', fontWeight: 800 }}>{selectedStudent.studentCode || 'E01'}</span></span>
+                    <span><strong>Grupo:</strong> {selectedStudent.group || 'Grupo A'}</span>
+                    <span><strong>Ruta:</strong> {selectedStudent.currentPath.toUpperCase()}</span>
+                  </div>
+                </div>
+
+                <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
+                  <button
+                    type="button"
+                    onClick={() => handleToggleResearchParticipant(selectedStudent)}
+                    className="btn-3d"
+                    style={{
+                      background: selectedStudent.isResearchParticipant ? '#10B981' : '#E2E8F0',
+                      color: selectedStudent.isResearchParticipant ? '#FFFFFF' : '#475569',
+                      boxShadow: selectedStudent.isResearchParticipant ? '0 3px 0 #059669' : '0 3px 0 #CBD5E1',
+                      padding: '7px 14px',
+                      fontSize: '0.78rem'
+                    }}
+                  >
+                    {selectedStudent.isResearchParticipant ? '✓ Participante de Investigación' : 'Asignar como Participante'}
+                  </button>
                 </div>
               </div>
 
-              <button
-                onClick={handleExportPdf}
-                className="btn-3d btn-blue"
-                style={{ padding: '9px 16px', fontSize: '0.84rem' }}
-              >
-                <FileText size={16} /> Exportar Reporte PDF
+              {/* Métricas Principales del Estudiante en Cuadrícula */}
+              {indicatorsMap[selectedStudent.uid] && (
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 12, marginBottom: 18 }}>
+                  <div className="academic-metric-card" style={{ borderLeft: '4px solid #0284C7' }}>
+                    <span style={{ fontSize: '0.76rem', color: '#64748B', fontWeight: 800 }}>TIEMPO ACTIVO ESTIMADO</span>
+                    <div style={{ fontSize: '1.6rem', fontWeight: 900, color: '#0284C7' }}>
+                      {indicatorsMap[selectedStudent.uid].estimatedActiveTimeMinutes} min
+                    </div>
+                    <span style={{ fontSize: '0.72rem', color: '#64748B' }}>
+                      {indicatorsMap[selectedStudent.uid].activeDaysCount} días activos
+                    </span>
+                  </div>
+
+                  <div className="academic-metric-card" style={{ borderLeft: '4px solid #16A34A' }}>
+                    <span style={{ fontSize: '0.76rem', color: '#64748B', fontWeight: 800 }}>PRECISIÓN 1ER INTENTO</span>
+                    <div style={{ fontSize: '1.6rem', fontWeight: 900, color: '#16A34A' }}>
+                      {indicatorsMap[selectedStudent.uid].firstAttemptAccuracyPercent !== null
+                        ? `${indicatorsMap[selectedStudent.uid].firstAttemptAccuracyPercent}%`
+                        : 'Sin datos'}
+                    </div>
+                    <span style={{ fontSize: '0.72rem', color: '#64748B' }}>
+                      {indicatorsMap[selectedStudent.uid].totalAttempts} intentos registrados
+                    </span>
+                  </div>
+
+                  <div className="academic-metric-card" style={{ borderLeft: '4px solid #7C3AED' }}>
+                    <span style={{ fontSize: '0.76rem', color: '#64748B', fontWeight: 800 }}>DIAGNÓSTICO INICIAL</span>
+                    <div style={{ fontSize: '1.6rem', fontWeight: 900, color: '#7C3AED' }}>
+                      {indicatorsMap[selectedStudent.uid].diagnosticPercentage !== null
+                        ? `${indicatorsMap[selectedStudent.uid].diagnosticPercentage}%`
+                        : 'Sin datos'}
+                    </div>
+                    <span style={{ fontSize: '0.72rem', color: '#64748B' }}>Línea de base</span>
+                  </div>
+
+                  <div className="academic-metric-card" style={{ borderLeft: '4px solid #D97706' }}>
+                    <span style={{ fontSize: '0.76rem', color: '#64748B', fontWeight: 800 }}>PRUEBA FINAL</span>
+                    <div style={{ fontSize: '1.6rem', fontWeight: 900, color: '#D97706' }}>
+                      {indicatorsMap[selectedStudent.uid].finalTestPercentage !== null
+                        ? `${indicatorsMap[selectedStudent.uid].finalTestPercentage}%`
+                        : 'Sin datos'}
+                    </div>
+                    <span style={{ fontSize: '0.72rem', color: '#64748B' }}>Desempeño post-intervención</span>
+                  </div>
+
+                  <div className="academic-metric-card" style={{ borderLeft: '4px solid #10B981' }}>
+                    <span style={{ fontSize: '0.76rem', color: '#64748B', fontWeight: 800 }}>GANANCIA NETA</span>
+                    <div style={{ fontSize: '1.6rem', fontWeight: 900, color: (indicatorsMap[selectedStudent.uid].percentagePointGain ?? 0) > 0 ? '#10B981' : '#64748B' }}>
+                      {indicatorsMap[selectedStudent.uid].percentagePointGain !== null
+                        ? `${indicatorsMap[selectedStudent.uid].percentagePointGain! > 0 ? '+' : ''}${indicatorsMap[selectedStudent.uid].percentagePointGain} pts`
+                        : 'Sin datos'}
+                    </div>
+                    <span style={{ fontSize: '0.72rem', color: '#64748B' }}>Diferencia porcentual</span>
+                  </div>
+                </div>
+              )}
+
+              {/* Desglose Temático de Aciertos */}
+              {indicatorsMap[selectedStudent.uid] && (
+                <div className="academic-card">
+                  <h3 style={{ fontSize: '1.05rem', fontWeight: 900, color: '#0F172A', marginBottom: 14 }}>
+                    Desglose de Desempeño por Tópico Conceptual
+                  </h3>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                    {Object.entries(indicatorsMap[selectedStudent.uid].topicBreakdown).map(([topic, data]) => {
+                      const pct = data.attempts > 0 ? Math.round((data.correct / data.attempts) * 100) : 0;
+                      return (
+                        <div key={topic}>
+                          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.82rem', marginBottom: 4 }}>
+                            <span style={{ fontWeight: 800, color: '#1E293B' }}>{topic}</span>
+                            <span style={{ fontWeight: 700, color: '#64748B' }}>
+                              {data.correct} de {data.attempts} aciertos ({pct}%)
+                            </span>
+                          </div>
+                          <div style={{ height: 8, background: '#F1F5F9', borderRadius: 999, overflow: 'hidden' }}>
+                            <div
+                              style={{
+                                height: '100%',
+                                width: `${pct}%`,
+                                background: pct >= 80 ? '#10B981' : pct >= 60 ? '#F59E0B' : '#EF4444',
+                                borderRadius: 999
+                              }}
+                            />
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+
+              {/* Observaciones Docentes del Estudiante */}
+              <div className="academic-card">
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 14 }}>
+                  <h3 style={{ fontSize: '1.05rem', fontWeight: 900, color: '#0F172A', margin: 0 }}>
+                    Observaciones Cualitativas Docentes
+                  </h3>
+                  <button
+                    onClick={() => {
+                      soundService.playToken();
+                      setObsStudentUid(selectedStudent.uid);
+                      setShowObsModal(true);
+                    }}
+                    className="btn-3d btn-green"
+                    style={{ padding: '7px 14px', fontSize: '0.8rem' }}
+                  >
+                    <PlusCircle size={15} /> Añadir Observación
+                  </button>
+                </div>
+
+                {observations.filter(o => o.studentId === selectedStudent.uid).length === 0 ? (
+                  <p style={{ color: '#64748B', fontSize: '0.86rem', fontStyle: 'italic', margin: 0 }}>
+                    No hay observaciones cualitativas registradas para este estudiante aún.
+                  </p>
+                ) : (
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                    {observations
+                      .filter(o => o.studentId === selectedStudent.uid)
+                      .map(obs => (
+                        <div
+                          key={obs.obsId}
+                          style={{
+                            background: '#F8FAFC',
+                            border: '1.5px solid #E2E8F0',
+                            borderRadius: 14,
+                            padding: '12px 14px'
+                          }}
+                        >
+                          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.78rem', color: '#64748B', marginBottom: 4 }}>
+                            <span><strong>Fecha:</strong> {obs.date}</span>
+                            <span><strong>Dificultad:</strong> {obs.observedDifficulty}</span>
+                            <span><strong>Apoyo:</strong> {obs.supportGiven}</span>
+                          </div>
+                          <div style={{ color: '#0F172A', fontSize: '0.88rem', lineHeight: 1.45, fontWeight: 500 }}>
+                            {obs.teacherComment}
+                          </div>
+                        </div>
+                      ))}
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* ════════════ PESTAÑA 3: EVALUACIONES ════════════ */}
+          {activeTab === 'evaluations' && (
+            <div>
+              <div className="academic-table-container">
+                <table className="academic-table">
+                  <thead>
+                    <tr>
+                      <th>Fecha</th>
+                      <th>Estudiante</th>
+                      <th>Tipo</th>
+                      <th>Instrumento</th>
+                      <th>Puntaje</th>
+                      <th>% Calificado</th>
+                      <th>Estado</th>
+                      <th>Acción</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {evaluations.length === 0 ? (
+                      <tr>
+                        <td colSpan={8} style={{ textAlign: 'center', padding: '30px', color: '#64748B', fontWeight: 700 }}>
+                          No hay evaluaciones diagnósticas ni finales entregadas aún.
+                        </td>
+                      </tr>
+                    ) : (
+                      evaluations.map(ev => {
+                        const st = students.find(s => s.uid === ev.studentId);
+                        return (
+                          <tr key={ev.evalId}>
+                            <td style={{ fontSize: '0.78rem', color: '#64748B' }}>
+                              {new Date(ev.submittedAt || ev.startedAt).toLocaleDateString()}
+                            </td>
+                            <td>
+                              <div style={{ fontWeight: 800, color: '#0F172A' }}>{st?.displayName || ev.studentCode}</div>
+                              <div style={{ fontSize: '0.72rem', color: '#0284C7' }}>{ev.studentCode}</div>
+                            </td>
+                            <td>
+                              <span
+                                style={{
+                                  fontSize: '0.72rem',
+                                  fontWeight: 800,
+                                  padding: '3px 8px',
+                                  borderRadius: 8,
+                                  background: ev.type === 'diagnostic' ? '#E0F2FE' : '#FEF3C7',
+                                  color: ev.type === 'diagnostic' ? '#0369A1' : '#B45309'
+                                }}
+                              >
+                                {ev.type === 'diagnostic' ? 'Diagnóstico' : 'Prueba Final'}
+                              </span>
+                            </td>
+                            <td style={{ fontSize: '0.8rem', color: '#475569' }}>
+                              {ev.instrumentId}
+                            </td>
+                            <td style={{ fontWeight: 800 }}>
+                              {ev.totalScore} / {ev.maxScore}
+                            </td>
+                            <td style={{ fontWeight: 900, color: '#2563EB' }}>
+                              {ev.percentage !== null ? `${ev.percentage}%` : 'Pendiente'}
+                            </td>
+                            <td>
+                              <span
+                                style={{
+                                  fontSize: '0.72rem',
+                                  fontWeight: 800,
+                                  padding: '3px 8px',
+                                  borderRadius: 8,
+                                  background: ev.status === 'graded' ? '#DCFCE7' : '#FEE2E2',
+                                  color: ev.status === 'graded' ? '#15803D' : '#B91C1C'
+                                }}
+                              >
+                                {ev.status === 'graded' ? 'Calificada' : 'Por Calificar'}
+                              </span>
+                            </td>
+                            <td>
+                              <button
+                                onClick={() => handleOpenGrading(ev)}
+                                className="btn-3d btn-outline"
+                                style={{ padding: '5px 10px', fontSize: '0.74rem' }}
+                              >
+                                <Edit3 size={13} /> {ev.status === 'graded' ? 'Editar Nota' : 'Calificar'}
+                              </button>
+                            </td>
+                          </tr>
+                        );
+                      })
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
+
+          {/* ════════════ PESTAÑA 4: HISTORIAL DE INTENTOS ════════════ */}
+          {activeTab === 'attempts' && (
+            <div>
+              <div className="academic-table-container">
+                <table className="academic-table">
+                  <thead>
+                    <tr>
+                      <th>Fecha / Hora</th>
+                      <th>Estudiante</th>
+                      <th>Actividad</th>
+                      <th>Tópico</th>
+                      <th>Intento #</th>
+                      <th>Respuesta del Alumno</th>
+                      <th>Puntaje</th>
+                      <th>Resultado</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {attempts.length === 0 ? (
+                      <tr>
+                        <td colSpan={8} style={{ textAlign: 'center', padding: '30px', color: '#64748B', fontWeight: 700 }}>
+                          No hay intentos registrados aún. Cada respuesta de práctica se almacena automáticamente.
+                        </td>
+                      </tr>
+                    ) : (
+                      attempts.slice(0, 80).map(att => {
+                        const st = students.find(s => s.uid === att.studentId);
+                        return (
+                          <tr key={att.attemptId}>
+                            <td style={{ fontSize: '0.76rem', color: '#64748B' }}>
+                              {new Date(att.timestamp).toLocaleString()}
+                            </td>
+                            <td>
+                              <span style={{ fontWeight: 800, color: '#0284C7' }}>{att.studentCode}</span>
+                              <div style={{ fontSize: '0.74rem', color: '#475569' }}>{st?.displayName || ''}</div>
+                            </td>
+                            <td style={{ fontSize: '0.8rem', color: '#1E293B', fontWeight: 700 }}>
+                              {att.activityId}
+                            </td>
+                            <td style={{ fontSize: '0.78rem', color: '#64748B' }}>
+                              {att.theme}
+                            </td>
+                            <td style={{ textAlign: 'center', fontWeight: 800 }}>
+                              {att.attemptNumber}
+                            </td>
+                            <td style={{ fontSize: '0.8rem', maxWidth: 220, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                              <code>{att.userAnswer}</code>
+                            </td>
+                            <td style={{ fontWeight: 800 }}>
+                              {att.score}/{att.maxScore}
+                            </td>
+                            <td>
+                              <span
+                                style={{
+                                  fontSize: '0.72rem',
+                                  fontWeight: 800,
+                                  padding: '3px 8px',
+                                  borderRadius: 8,
+                                  background: att.status === 'correct' ? '#DCFCE7' : att.status === 'incorrect' ? '#FEE2E2' : '#EFF6FF',
+                                  color: att.status === 'correct' ? '#15803D' : att.status === 'incorrect' ? '#B91C1C' : '#1D4ED8'
+                                }}
+                              >
+                                {att.status === 'correct' ? 'Correcto' : att.status === 'incorrect' ? 'Incorrecto' : 'Revisión'}
+                              </span>
+                            </td>
+                          </tr>
+                        );
+                      })
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
+
+          {/* ════════════ PESTAÑA 5: OBSERVACIONES Y OPINIONES ════════════ */}
+          {activeTab === 'observations' && (
+            <div>
+              {/* Encuestas de Estudiantes */}
+              <div className="academic-card">
+                <h3 style={{ fontSize: '1.1rem', fontWeight: 900, color: '#0F172A', marginBottom: 14 }}>
+                  Opiniones de Estudiantes tras Prácticas (Encuestas de 30 Segundos)
+                </h3>
+                {opinions.length === 0 ? (
+                  <p style={{ color: '#64748B', fontSize: '0.86rem', fontStyle: 'italic' }}>
+                    No hay opiniones de estudiantes registradas aún.
+                  </p>
+                ) : (
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                    {opinions.map(op => (
+                      <div
+                        key={op.opinionId}
+                        style={{
+                          background: '#F8FAFC',
+                          border: '1.5px solid #E2E8F0',
+                          borderRadius: 14,
+                          padding: '14px 16px'
+                        }}
+                      >
+                        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.78rem', color: '#64748B', marginBottom: 6 }}>
+                          <span><strong>Estudiante:</strong> {op.studentCode}</span>
+                          <span><strong>Actividad:</strong> {op.activityId}</span>
+                          <span><strong>Claridad:</strong> {op.instructionClarity}/5 ★</span>
+                          <span><strong>Utilidad:</strong> {op.perceivedUtility}/5 ★</span>
+                        </div>
+                        {op.usageDifficulties && (
+                          <div style={{ fontSize: '0.84rem', color: '#B91C1C', marginBottom: 4 }}>
+                            <strong>Dificultades:</strong> {op.usageDifficulties}
+                          </div>
+                        )}
+                        {op.optionalComment && (
+                          <div style={{ fontSize: '0.86rem', color: '#0F172A' }}>
+                            "{op.optionalComment}"
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+        </>
+      )}
+
+      {/* ─── MODAL DE CALIFICACIÓN MANUAL DOCENTE (DISEÑO BLANCO) ─── */}
+      {editingEval && (
+        <div className="auth-backdrop" role="dialog" aria-modal="true">
+          <div className="auth-card" style={{ maxWidth: 650 }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
+              <div>
+                <h3 style={{ fontSize: '1.2rem', fontWeight: 900, color: '#0F172A', margin: 0 }}>
+                  Calificar Evaluación: {editingEval.studentCode}
+                </h3>
+                <span style={{ fontSize: '0.78rem', color: '#64748B' }}>
+                  {editingEval.instrumentId} • {editingEval.type.toUpperCase()}
+                </span>
+              </div>
+              <button onClick={() => setEditingEval(null)} style={{ background: '#F1F5F9', border: 'none', borderRadius: '50%', width: 32, height: 32, cursor: 'pointer' }}>
+                <X size={16} />
               </button>
             </div>
 
-            {/* Ficha de Identificación del Estudiante */}
-            <div
-              style={{
-                background: 'rgba(255, 255, 255, 0.04)',
-                border: '1px solid rgba(255, 255, 255, 0.08)',
-                borderRadius: 14,
-                padding: '12px 18px',
-                marginBottom: 16,
-                display: 'flex',
-                flexWrap: 'wrap',
-                gap: 16,
-                alignItems: 'center',
-                justifyContent: 'space-between'
-              }}
-            >
-              <div>
-                <div style={{ fontSize: '1.1rem', fontWeight: 900, color: '#FFFFFF' }}>
-                  {selectedStudent.displayName}
-                </div>
-                <div style={{ fontSize: '0.8rem', color: '#94A3B8', marginTop: 3, display: 'flex', gap: 14, flexWrap: 'wrap' }}>
-                  {selectedStudent.idNumber && <span><strong>Cédula:</strong> <span style={{ color: '#E2E8F0' }}>{selectedStudent.idNumber}</span></span>}
-                  {selectedStudent.email && <span><strong>Correo:</strong> <span style={{ color: '#E2E8F0' }}>{selectedStudent.email}</span></span>}
-                  <span><strong>Código:</strong> <span style={{ color: '#38BDF8' }}>{selectedStudent.studentCode || 'E01'}</span></span>
-                  <span><strong>Grupo:</strong> {selectedStudent.group || 'Grupo A'}</span>
-                </div>
-              </div>
-              <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-                <span
-                  style={{
-                    fontSize: '0.74rem',
-                    fontWeight: 800,
-                    padding: '4px 10px',
-                    borderRadius: 8,
-                    background: selectedStudent.isResearchParticipant ? 'rgba(34, 197, 94, 0.15)' : 'rgba(148, 163, 184, 0.15)',
-                    color: selectedStudent.isResearchParticipant ? '#4ADE80' : '#94A3B8',
-                    border: `1px solid ${selectedStudent.isResearchParticipant ? 'rgba(34, 197, 94, 0.3)' : 'rgba(148, 163, 184, 0.3)'}`
-                  }}
-                >
-                  {selectedStudent.isResearchParticipant ? 'Participante Oficial' : 'Control / Observador'}
-                </span>
-              </div>
-            </div>
-
-            {/* Métricas del Estudiante */}
-            {indicatorsMap[selectedStudent.uid] && (
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(190px, 1fr))', gap: 12, marginBottom: 18 }}>
-                <div className="profile-card-duo" style={{ margin: 0 }}>
-                  <span className="profile-card-label">Tiempo Activo Estimado</span>
-                  <div style={{ fontSize: '1.5rem', fontWeight: 900, color: '#38BDF8' }}>
-                    {indicatorsMap[selectedStudent.uid].estimatedActiveTimeMinutes} min
-                  </div>
-                  <span style={{ fontSize: '0.72rem', color: '#94A3B8' }}>Interacción constante</span>
-                </div>
-                <div className="profile-card-duo" style={{ margin: 0 }}>
-                  <span className="profile-card-label">Aciertos 1er Intento</span>
-                  <div style={{ fontSize: '1.5rem', fontWeight: 900, color: '#22C55E' }}>
-                    {indicatorsMap[selectedStudent.uid].firstAttemptAccuracyPercent !== null
-                      ? `${indicatorsMap[selectedStudent.uid].firstAttemptAccuracyPercent}%`
-                      : 'Sin datos'}
-                  </div>
-                  <span style={{ fontSize: '0.72rem', color: '#94A3B8' }}>Precisión inicial</span>
-                </div>
-                <div className="profile-card-duo" style={{ margin: 0 }}>
-                  <span className="profile-card-label">Diagnóstico Inicial</span>
-                  <div style={{ fontSize: '1.5rem', fontWeight: 900, color: '#A855F7' }}>
-                    {indicatorsMap[selectedStudent.uid].diagnosticPercentage !== null
-                      ? `${indicatorsMap[selectedStudent.uid].diagnosticPercentage}%`
-                      : 'Sin datos'}
-                  </div>
-                  <span style={{ fontSize: '0.72rem', color: '#94A3B8' }}>Línea base</span>
-                </div>
-                <div className="profile-card-duo" style={{ margin: 0 }}>
-                  <span className="profile-card-label">Prueba Final</span>
-                  <div style={{ fontSize: '1.5rem', fontWeight: 900, color: '#F59E0B' }}>
-                    {indicatorsMap[selectedStudent.uid].finalTestPercentage !== null
-                      ? `${indicatorsMap[selectedStudent.uid].finalTestPercentage}%`
-                      : 'Sin datos'}
-                  </div>
-                  <span style={{ fontSize: '0.72rem', color: '#94A3B8' }}>Desempeño post-test</span>
-                </div>
-                <div className="profile-card-duo" style={{ margin: 0 }}>
-                  <span className="profile-card-label">Ganancia Neta</span>
-                  <div style={{ fontSize: '1.5rem', fontWeight: 900, color: '#10B981' }}>
-                    {indicatorsMap[selectedStudent.uid].percentagePointGain !== null
-                      ? `${indicatorsMap[selectedStudent.uid].percentagePointGain! > 0 ? '+' : ''}${indicatorsMap[selectedStudent.uid].percentagePointGain} pts`
-                      : 'Sin datos'}
-                  </div>
-                  <span style={{ fontSize: '0.72rem', color: '#94A3B8' }}>Diferencia de aprendizaje</span>
-                </div>
-              </div>
-            )}
-
-            {/* Desglose Temático */}
-            <div className="profile-card-duo" style={{ marginBottom: 18 }}>
-              <span className="profile-card-label">Desglose por Concepto / Tema</span>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 10 }}>
-                {Object.keys(indicatorsMap[selectedStudent.uid]?.topicBreakdown || {}).map(topic => {
-                  const item = indicatorsMap[selectedStudent.uid].topicBreakdown[topic];
-                  return (
-                    <div
-                      key={topic}
-                      style={{
-                        background: 'rgba(255, 255, 255, 0.03)',
-                        border: '1px solid rgba(255, 255, 255, 0.08)',
-                        borderRadius: 12,
-                        padding: 10
-                      }}
-                    >
-                      <div style={{ fontWeight: 800, fontSize: '0.85rem', color: '#F1F5F9', marginBottom: 4 }}>
-                        {topic}
-                      </div>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.78rem', color: '#94A3B8' }}>
-                        <span>{item.correct} de {item.attempts} correctos</span>
-                        <strong style={{ color: '#38BDF8' }}>
-                          {item.scorePercent !== null ? `${item.scorePercent}%` : 'Sin datos'}
-                        </strong>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* ═══ PESTAÑA 3: EVALUACIONES Y CALIFICACIÓN ═══ */}
-        {activeTab === 'evaluations' && (
-          <div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 14 }}>
-              <h3 style={{ fontSize: '1.1rem', fontWeight: 900, color: '#FFFFFF' }}>
-                Instrumentos Aplicados ({evaluations.length})
-              </h3>
-            </div>
-
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-              {evaluations.map(ev => {
-                const st = students.find(s => s.uid === ev.studentId);
-                const isPending = ev.status === 'pending_review';
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 16, maxHeight: '60vh', overflowY: 'auto', paddingRight: 6 }}>
+              {editingEval.questions.map((q, idx) => {
+                const ans = editingEval.answers[q.questionId] || '(Sin respuesta)';
                 return (
-                  <div
-                    key={ev.evalId}
-                    style={{
-                      background: 'rgba(255, 255, 255, 0.04)',
-                      border: '1.5px solid rgba(255, 255, 255, 0.08)',
-                      borderRadius: 14,
-                      padding: '14px 18px',
-                      display: 'flex',
-                      justifyContent: 'space-between',
-                      alignItems: 'center',
-                      flexWrap: 'wrap',
-                      gap: 12
-                    }}
-                  >
-                    <div>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
-                        <span
-                          style={{
-                            background: ev.type === 'diagnostic' ? '#0284C7' : '#7E22CE',
-                            color: '#FFFFFF',
-                            fontSize: '0.72rem',
-                            fontWeight: 900,
-                            padding: '2px 8px',
-                            borderRadius: 6,
-                            textTransform: 'uppercase'
-                          }}
-                        >
-                          {ev.type === 'diagnostic' ? 'Diagnóstico' : 'Prueba Final'}
-                        </span>
-                        <strong style={{ color: '#FFFFFF', fontSize: '0.94rem' }}>
-                          {st ? `[${st.studentCode || 'E01'}] ${st.displayName}` : ev.studentId}
-                        </strong>
-                        <span style={{ fontSize: '0.75rem', color: '#94A3B8' }}>
-                          Ruta: {ev.pathId.toUpperCase()} • {new Date(ev.startedAt).toLocaleDateString()}
-                        </span>
-                      </div>
-                      <div style={{ fontSize: '0.8rem', color: '#CBD5E1' }}>
-                        Puntaje: <strong>{ev.totalScore} / {ev.maxScore}</strong> • Calificación:{' '}
-                        <strong>{ev.percentage !== null ? `${ev.percentage}%` : 'Pendiente de revisión'}</strong>
-                        {ev.isExternal && <span style={{ color: '#F59E0B', marginLeft: 8 }}>(Aplicado fuera de la app)</span>}
-                      </div>
+                  <div key={q.questionId} style={{ background: '#F8FAFC', border: '1.5px solid #E2E8F0', borderRadius: 14, padding: '14px 16px' }}>
+                    <div style={{ fontWeight: 800, color: '#0F172A', fontSize: '0.9rem', marginBottom: 6 }}>
+                      {idx + 1}. {q.prompt}
                     </div>
 
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                      {isPending ? (
-                        <span style={{ background: 'rgba(245, 158, 11, 0.2)', color: '#F59E0B', padding: '4px 10px', borderRadius: 8, fontSize: '0.75rem', fontWeight: 800 }}>
-                          Pendiente de Calificación
-                        </span>
-                      ) : (
-                        <span style={{ background: 'rgba(34, 197, 94, 0.2)', color: '#22C55E', padding: '4px 10px', borderRadius: 8, fontSize: '0.75rem', fontWeight: 800 }}>
-                          Calificada
-                        </span>
-                      )}
+                    <div style={{ background: '#FFFFFF', border: '1px solid #E2E8F0', borderRadius: 10, padding: '10px 12px', fontSize: '0.85rem', color: '#0F172A', marginBottom: 8, whiteSpace: 'pre-wrap' }}>
+                      <strong>Respuesta del alumno:</strong>
+                      <div style={{ marginTop: 4 }}>{ans}</div>
+                    </div>
 
-                      {!ev.isExternal && (
-                        <button
-                          onClick={() => handleOpenGrading(ev)}
-                          className="btn-3d btn-blue"
-                          style={{ padding: '6px 12px', fontSize: '0.76rem' }}
-                        >
-                          Revisar y Calificar
-                        </button>
-                      )}
+                    {q.rubricCriteria && (
+                      <div style={{ fontSize: '0.78rem', color: '#166534', background: '#F0FDF4', padding: '6px 10px', borderRadius: 8, marginBottom: 8 }}>
+                        <strong>Rúbrica de corrección:</strong> {q.rubricCriteria}
+                      </div>
+                    )}
+
+                    <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
+                      <label style={{ fontSize: '0.8rem', fontWeight: 800, color: '#475569' }}>
+                        Nota (0 a {q.maxScore} pts):
+                      </label>
+                      <input
+                        type="number"
+                        min={0}
+                        max={q.maxScore}
+                        value={manualScores[q.questionId] ?? 0}
+                        onChange={(e) => setManualScores(prev => ({ ...prev, [q.questionId]: Number(e.target.value) }))}
+                        style={{ width: 70, padding: '6px 10px', borderRadius: 8, border: '1.5px solid #CBD5E1', fontWeight: 800 }}
+                      />
                     </div>
                   </div>
                 );
               })}
             </div>
-          </div>
-        )}
 
-        {/* ═══ PESTAÑA 4: HISTORIAL DE INTENTOS ═══ */}
-        {activeTab === 'attempts' && (
-          <div>
-            <div style={{ background: 'rgba(255, 255, 255, 0.03)', borderRadius: 16, border: '1.5px solid rgba(255, 255, 255, 0.08)', overflowX: 'auto', maxHeight: 600 }}>
-              <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.82rem' }}>
-                <thead style={{ position: 'sticky', top: 0, background: '#111C2A', zIndex: 2 }}>
-                  <tr style={{ borderBottom: '1px solid rgba(255, 255, 255, 0.1)', color: '#CBD5E1' }}>
-                    <th style={{ padding: '10px 12px' }}>Estudiante</th>
-                    <th style={{ padding: '10px 12px' }}>Ruta</th>
-                    <th style={{ padding: '10px 12px' }}>Tema</th>
-                    <th style={{ padding: '10px 12px' }}>N° Intento</th>
-                    <th style={{ padding: '10px 12px' }}>Respuesta</th>
-                    <th style={{ padding: '10px 12px' }}>Estado</th>
-                    <th style={{ padding: '10px 12px' }}>Puntaje</th>
-                    <th style={{ padding: '10px 12px' }}>Fecha</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {attempts.slice(0, 150).map(att => (
-                    <tr key={att.attemptId} style={{ borderBottom: '1px solid rgba(255, 255, 255, 0.04)' }}>
-                      <td style={{ padding: '10px 12px', fontWeight: 700, color: '#38BDF8' }}>
-                        {att.studentCode}
-                      </td>
-                      <td style={{ padding: '10px 12px', textTransform: 'uppercase' }}>
-                        {att.pathId}
-                      </td>
-                      <td style={{ padding: '10px 12px' }}>
-                        {att.theme}
-                      </td>
-                      <td style={{ padding: '10px 12px', textAlign: 'center' }}>
-                        {att.attemptNumber}
-                      </td>
-                      <td style={{ padding: '10px 12px', maxWidth: 260, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontFamily: 'monospace' }}>
-                        {att.userAnswer}
-                      </td>
-                      <td style={{ padding: '10px 12px' }}>
-                        <span
-                          style={{
-                            padding: '2px 8px',
-                            borderRadius: 6,
-                            fontSize: '0.72rem',
-                            fontWeight: 800,
-                            background: att.status === 'correct' ? 'rgba(34, 197, 94, 0.2)' : 'rgba(239, 68, 68, 0.2)',
-                            color: att.status === 'correct' ? '#4ADE80' : '#F87171'
-                          }}
-                        >
-                          {att.status}
-                        </span>
-                      </td>
-                      <td style={{ padding: '10px 12px' }}>
-                        {att.score} / {att.maxScore}
-                      </td>
-                      <td style={{ padding: '10px 12px', color: '#94A3B8', fontSize: '0.76rem' }}>
-                        {new Date(att.timestamp).toLocaleString()}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
-        )}
-
-        {/* ═══ PESTAÑA 5: OBSERVACIONES Y OPINIONES ═══ */}
-        {activeTab === 'observations' && (
-          <div>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: 16 }}>
-              {/* Observaciones Docentes */}
-              <div>
-                <h3 style={{ fontSize: '1rem', fontWeight: 900, color: '#FFFFFF', marginBottom: 12 }}>
-                  Observaciones Docentes ({observations.length})
-                </h3>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-                  {observations.map(o => (
-                    <div
-                      key={o.obsId}
-                      style={{
-                        background: 'rgba(255, 255, 255, 0.04)',
-                        border: '1.5px solid rgba(255, 255, 255, 0.08)',
-                        borderRadius: 12,
-                        padding: 12
-                      }}
-                    >
-                      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
-                        <strong style={{ color: '#38BDF8' }}>Estudiante: {o.studentCode}</strong>
-                        <span style={{ fontSize: '0.74rem', color: '#94A3B8' }}>{o.date}</span>
-                      </div>
-                      <div style={{ fontSize: '0.8rem', color: '#F1F5F9', marginBottom: 4 }}>
-                        <strong>Dificultad:</strong> {o.observedDifficulty}
-                      </div>
-                      <div style={{ fontSize: '0.8rem', color: '#F1F5F9', marginBottom: 4 }}>
-                        <strong>Apoyo Brindado:</strong> {o.supportGiven}
-                      </div>
-                      <div style={{ fontSize: '0.8rem', color: '#CBD5E1', fontStyle: 'italic' }}>
-                        "{o.teacherComment}"
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* Opiniones de Estudiantes */}
-              <div>
-                <h3 style={{ fontSize: '1rem', fontWeight: 900, color: '#FFFFFF', marginBottom: 12 }}>
-                  Opiniones Pedagógicas de Estudiantes ({opinions.length})
-                </h3>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-                  {opinions.map(op => (
-                    <div
-                      key={op.opinionId}
-                      style={{
-                        background: 'rgba(255, 255, 255, 0.04)',
-                        border: '1.5px solid rgba(255, 255, 255, 0.08)',
-                        borderRadius: 12,
-                        padding: 12
-                      }}
-                    >
-                      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
-                        <strong style={{ color: '#A855F7' }}>Estudiante: {op.studentCode}</strong>
-                        <span style={{ fontSize: '0.74rem', color: '#94A3B8' }}>
-                          Claridad: {op.instructionClarity}/5 ★ | Utilidad: {op.perceivedUtility}/5 ★
-                        </span>
-                      </div>
-                      <div style={{ fontSize: '0.8rem', color: '#CBD5E1', marginBottom: 4 }}>
-                        <strong>Dificultades:</strong> {op.usageDifficulties}
-                      </div>
-                      {op.optionalComment && (
-                        <div style={{ fontSize: '0.8rem', color: '#94A3B8', fontStyle: 'italic' }}>
-                          "{op.optionalComment}"
-                        </div>
-                      )}
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* ═══ MODAL DE NUEVA OBSERVACIÓN DOCENTE ═══ */}
-        {showObsModal && (
-          <div className="modal-backdrop">
-            <div className="modal-card" style={{ maxWidth: 460 }}>
-              <button className="modal-close" onClick={() => setShowObsModal(false)}>
-                <X size={20} />
+            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 10, marginTop: 18 }}>
+              <button onClick={() => setEditingEval(null)} className="btn-3d btn-outline" style={{ padding: '8px 16px' }}>
+                Cancelar
               </button>
-              <h2 style={{ fontSize: '1.2rem', fontWeight: 900, color: '#FFFFFF', marginBottom: 14 }}>
-                Registrar Observación y Apoyo Docente
-              </h2>
+              <button onClick={handleSaveGrading} className="btn-3d btn-green" style={{ padding: '8px 20px' }}>
+                Guardar Calificación
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
-              <form onSubmit={handleSaveObservation} style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-                <div>
-                  <label style={{ fontSize: '0.8rem', fontWeight: 700, color: '#CBD5E1', display: 'block', marginBottom: 4 }}>
-                    Estudiante
-                  </label>
-                  <select
-                    value={obsStudentUid}
-                    onChange={(e) => setObsStudentUid(e.target.value)}
-                    required
-                    style={{ width: '100%', background: '#0B131E', border: '1px solid rgba(255, 255, 255, 0.15)', borderRadius: 10, padding: 8, color: '#FFFFFF' }}
-                  >
-                    <option value="">Selecciona un estudiante</option>
-                    {students.map(s => (
-                      <option key={s.uid} value={s.uid}>[{s.studentCode || 'E01'}] {s.displayName}</option>
-                    ))}
-                  </select>
-                </div>
+      {/* ─── MODAL PARA REGISTRAR OBSERVACIÓN DOCENTE ─── */}
+      {showObsModal && (
+        <div className="auth-backdrop" role="dialog" aria-modal="true">
+          <div className="auth-card" style={{ maxWidth: 500 }}>
+            <h3 style={{ fontSize: '1.2rem', fontWeight: 900, color: '#0F172A', marginBottom: 14 }}>
+              Registrar Observación Docente
+            </h3>
 
-                <div>
-                  <label style={{ fontSize: '0.8rem', fontWeight: 700, color: '#CBD5E1', display: 'block', marginBottom: 4 }}>
-                    Dificultad Observada
-                  </label>
-                  <input
-                    type="text"
-                    placeholder="ej: Confusión en bucles anidados"
-                    value={obsDifficulty}
-                    onChange={(e) => setObsDifficulty(e.target.value)}
-                    required
-                    style={{ width: '100%', background: '#0B131E', border: '1px solid rgba(255, 255, 255, 0.15)', borderRadius: 10, padding: 8, color: '#FFFFFF' }}
-                  />
-                </div>
+            <form onSubmit={handleSaveObservation} style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+              <div>
+                <label className="auth-label">Estudiante</label>
+                <select
+                  value={obsStudentUid}
+                  onChange={(e) => setObsStudentUid(e.target.value)}
+                  style={{ width: '100%', padding: '9px 12px', borderRadius: 10, border: '1.5px solid #CBD5E1', fontWeight: 700 }}
+                >
+                  {students.map(s => (
+                    <option key={s.uid} value={s.uid}>
+                      [{s.studentCode}] {s.displayName}
+                    </option>
+                  ))}
+                </select>
+              </div>
 
-                <div>
-                  <label style={{ fontSize: '0.8rem', fontWeight: 700, color: '#CBD5E1', display: 'block', marginBottom: 4 }}>
-                    Apoyo Pedagógico Brindado
-                  </label>
-                  <input
-                    type="text"
-                    placeholder="ej: Explicación con diagrama de flujo"
-                    value={obsSupport}
-                    onChange={(e) => setObsSupport(e.target.value)}
-                    required
-                    style={{ width: '100%', background: '#0B131E', border: '1px solid rgba(255, 255, 255, 0.15)', borderRadius: 10, padding: 8, color: '#FFFFFF' }}
-                  />
-                </div>
+              <div>
+                <label className="auth-label">Dificultad Observada</label>
+                <input
+                  type="text"
+                  placeholder="ej. Confusión en el retorno de funciones o sintaxis de WHERE"
+                  value={obsDifficulty}
+                  onChange={(e) => setObsDifficulty(e.target.value)}
+                  style={{ width: '100%', padding: '9px 12px', borderRadius: 10, border: '1.5px solid #CBD5E1' }}
+                  required
+                />
+              </div>
 
-                <div>
-                  <label style={{ fontSize: '0.8rem', fontWeight: 700, color: '#CBD5E1', display: 'block', marginBottom: 4 }}>
-                    Comentario Docente
-                  </label>
-                  <textarea
-                    rows={3}
-                    placeholder="Notas cualitativas..."
-                    value={obsComment}
-                    onChange={(e) => setObsComment(e.target.value)}
-                    required
-                    style={{ width: '100%', background: '#0B131E', border: '1px solid rgba(255, 255, 255, 0.15)', borderRadius: 10, padding: 8, color: '#FFFFFF', resize: 'none' }}
-                  />
-                </div>
+              <div>
+                <label className="auth-label">Apoyo o Intervención Brindada</label>
+                <input
+                  type="text"
+                  placeholder="ej. Explicación con diagrama IPO o analogía de tabla Excel"
+                  value={obsSupport}
+                  onChange={(e) => setObsSupport(e.target.value)}
+                  style={{ width: '100%', padding: '9px 12px', borderRadius: 10, border: '1.5px solid #CBD5E1' }}
+                  required
+                />
+              </div>
 
-                <button type="submit" className="btn-3d btn-green" style={{ marginTop: 6 }}>
+              <div>
+                <label className="auth-label">Comentarios Adicionales</label>
+                <textarea
+                  rows={3}
+                  placeholder="Anotaciones cualitativas para el marco de investigación..."
+                  value={obsComment}
+                  onChange={(e) => setObsComment(e.target.value)}
+                  style={{ width: '100%', padding: '9px 12px', borderRadius: 10, border: '1.5px solid #CBD5E1' }}
+                  required
+                />
+              </div>
+
+              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 10, marginTop: 10 }}>
+                <button type="button" onClick={() => setShowObsModal(false)} className="btn-3d btn-outline" style={{ padding: '8px 16px' }}>
+                  Cancelar
+                </button>
+                <button type="submit" className="btn-3d btn-green" style={{ padding: '8px 20px' }}>
                   Guardar Observación
                 </button>
-              </form>
-            </div>
+              </div>
+            </form>
           </div>
-        )}
+        </div>
+      )}
 
-        {/* ═══ MODAL DE DIAGNÓSTICO EXTERNO ═══ */}
-        {showExternalEvalModal && (
-          <div className="modal-backdrop">
-            <div className="modal-card" style={{ maxWidth: 460 }}>
-              <button className="modal-close" onClick={() => setShowExternalEvalModal(false)}>
-                <X size={20} />
-              </button>
-              <h2 style={{ fontSize: '1.2rem', fontWeight: 900, color: '#FFFFFF', marginBottom: 14 }}>
-                Registrar Diagnóstico Externo (Fuera de la App)
-              </h2>
+      {/* ─── MODAL PARA REGISTRAR DIAGNÓSTICO EXTERNO ─── */}
+      {showExternalEvalModal && (
+        <div className="auth-backdrop" role="dialog" aria-modal="true">
+          <div className="auth-card" style={{ maxWidth: 500 }}>
+            <h3 style={{ fontSize: '1.2rem', fontWeight: 900, color: '#0F172A', marginBottom: 14 }}>
+              Registrar Prueba Diagnóstica Externa
+            </h3>
+            <p style={{ fontSize: '0.84rem', color: '#64748B', margin: '0 0 14px 0' }}>
+              Utiliza esta opción si aplicaste el examen diagnóstico en papel o en otra plataforma y deseas integrarlo a la investigación.
+            </p>
 
-              <form onSubmit={handleSaveExternalEval} style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+            <form onSubmit={handleSaveExternalEval} style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+              <div>
+                <label className="auth-label">Estudiante</label>
+                <select
+                  value={extEvalStudentUid}
+                  onChange={(e) => setExtEvalStudentUid(e.target.value)}
+                  style={{ width: '100%', padding: '9px 12px', borderRadius: 10, border: '1.5px solid #CBD5E1', fontWeight: 700 }}
+                >
+                  {students.map(s => (
+                    <option key={s.uid} value={s.uid}>
+                      [{s.studentCode}] {s.displayName}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
                 <div>
-                  <label style={{ fontSize: '0.8rem', fontWeight: 700, color: '#CBD5E1', display: 'block', marginBottom: 4 }}>
-                    Estudiante
-                  </label>
-                  <select
-                    value={extEvalStudentUid}
-                    onChange={(e) => setExtEvalStudentUid(e.target.value)}
-                    required
-                    style={{ width: '100%', background: '#0B131E', border: '1px solid rgba(255, 255, 255, 0.15)', borderRadius: 10, padding: 8, color: '#FFFFFF' }}
-                  >
-                    <option value="">Selecciona un estudiante</option>
-                    {students.map(s => (
-                      <option key={s.uid} value={s.uid}>[{s.studentCode || 'E01'}] {s.displayName}</option>
-                    ))}
-                  </select>
-                </div>
-
-                <div>
-                  <label style={{ fontSize: '0.8rem', fontWeight: 700, color: '#CBD5E1', display: 'block', marginBottom: 4 }}>
-                    Ruta Evaluada
-                  </label>
+                  <label className="auth-label">Ruta</label>
                   <select
                     value={extEvalPath}
-                    onChange={(e) => setExtEvalPath(e.target.value as any)}
-                    style={{ width: '100%', background: '#0B131E', border: '1px solid rgba(255, 255, 255, 0.15)', borderRadius: 10, padding: 8, color: '#FFFFFF' }}
+                    onChange={(e) => setExtEvalPath(e.target.value as LearningPath)}
+                    style={{ width: '100%', padding: '9px 12px', borderRadius: 10, border: '1.5px solid #CBD5E1', fontWeight: 700 }}
                   >
-                    <option value="kotlin">Kotlin y Lógica</option>
-                    <option value="sql">Bases de Datos y SQL</option>
+                    <option value="kotlin">Kotlin</option>
+                    <option value="sql">SQL</option>
                   </select>
                 </div>
-
-                <div style={{ display: 'flex', gap: 10 }}>
-                  <div style={{ flex: 1 }}>
-                    <label style={{ fontSize: '0.8rem', fontWeight: 700, color: '#CBD5E1', display: 'block', marginBottom: 4 }}>
-                      Puntaje Obtenido
-                    </label>
-                    <input
-                      type="number"
-                      min={0}
-                      max={extEvalMaxScore}
-                      value={extEvalScore}
-                      onChange={(e) => setExtEvalScore(Number(e.target.value))}
-                      required
-                      style={{ width: '100%', background: '#0B131E', border: '1px solid rgba(255, 255, 255, 0.15)', borderRadius: 10, padding: 8, color: '#FFFFFF' }}
-                    />
-                  </div>
-                  <div style={{ flex: 1 }}>
-                    <label style={{ fontSize: '0.8rem', fontWeight: 700, color: '#CBD5E1', display: 'block', marginBottom: 4 }}>
-                      Puntaje Máximo
-                    </label>
-                    <input
-                      type="number"
-                      min={1}
-                      value={extEvalMaxScore}
-                      onChange={(e) => setExtEvalMaxScore(Number(e.target.value))}
-                      required
-                      style={{ width: '100%', background: '#0B131E', border: '1px solid rgba(255, 255, 255, 0.15)', borderRadius: 10, padding: 8, color: '#FFFFFF' }}
-                    />
-                  </div>
-                </div>
-
                 <div>
-                  <label style={{ fontSize: '0.8rem', fontWeight: 700, color: '#CBD5E1', display: 'block', marginBottom: 4 }}>
-                    Fecha Real de Aplicación Externa
-                  </label>
+                  <label className="auth-label">Fecha de Aplicación</label>
                   <input
                     type="date"
                     value={extEvalDate}
                     onChange={(e) => setExtEvalDate(e.target.value)}
+                    style={{ width: '100%', padding: '8px 12px', borderRadius: 10, border: '1.5px solid #CBD5E1' }}
                     required
-                    style={{ width: '100%', background: '#0B131E', border: '1px solid rgba(255, 255, 255, 0.15)', borderRadius: 10, padding: 8, color: '#FFFFFF' }}
                   />
                 </div>
+              </div>
 
-                <button type="submit" className="btn-3d btn-green" style={{ marginTop: 6 }}>
-                  Registrar Diagnóstico Externo
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
+                <div>
+                  <label className="auth-label">Puntaje Obtenido</label>
+                  <input
+                    type="number"
+                    min={0}
+                    value={extEvalScore}
+                    onChange={(e) => setExtEvalScore(Number(e.target.value))}
+                    style={{ width: '100%', padding: '9px 12px', borderRadius: 10, border: '1.5px solid #CBD5E1', fontWeight: 800 }}
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="auth-label">Puntaje Máximo</label>
+                  <input
+                    type="number"
+                    min={1}
+                    value={extEvalMaxScore}
+                    onChange={(e) => setExtEvalMaxScore(Number(e.target.value))}
+                    style={{ width: '100%', padding: '9px 12px', borderRadius: 10, border: '1.5px solid #CBD5E1', fontWeight: 800 }}
+                    required
+                  />
+                </div>
+              </div>
+
+              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 10, marginTop: 10 }}>
+                <button type="button" onClick={() => setShowExternalEvalModal(false)} className="btn-3d btn-outline" style={{ padding: '8px 16px' }}>
+                  Cancelar
                 </button>
-              </form>
-            </div>
-          </div>
-        )}
-
-        {/* ═══ MODAL DE CALIFICACIÓN DE PREGUNTAS ABIERTAS ═══ */}
-        {editingEval && (
-          <div className="modal-backdrop">
-            <div className="modal-card" style={{ maxWidth: 650, maxHeight: '90vh', overflowY: 'auto' }}>
-              <button className="modal-close" onClick={() => setEditingEval(null)}>
-                <X size={20} />
-              </button>
-              <h2 style={{ fontSize: '1.2rem', fontWeight: 900, color: '#FFFFFF', marginBottom: 14 }}>
-                Calificación Docente: {editingEval.type === 'diagnostic' ? 'Diagnóstico' : 'Prueba Final'}
-              </h2>
-
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-                {editingEval.questions.map((q, idx) => {
-                  const studentAnswer = editingEval.answers[q.questionId] || '(Sin respuesta)';
-                  const currentScore = manualScores[q.questionId] !== undefined ? manualScores[q.questionId] : (editingEval.scores[q.questionId] || 0);
-                  const currentComment = manualComments[q.questionId] || '';
-
-                  return (
-                    <div
-                      key={q.questionId}
-                      style={{
-                        background: 'rgba(255, 255, 255, 0.03)',
-                        border: '1px solid rgba(255, 255, 255, 0.08)',
-                        borderRadius: 12,
-                        padding: 14
-                      }}
-                    >
-                      <div style={{ fontWeight: 800, color: '#38BDF8', fontSize: '0.86rem', marginBottom: 4 }}>
-                        Pregunta {idx + 1}: {q.topic} (Máx: {q.maxScore} pts)
-                      </div>
-                      <div style={{ fontSize: '0.82rem', color: '#CBD5E1', marginBottom: 8, whiteSpace: 'pre-line' }}>
-                        {q.prompt}
-                      </div>
-
-                      <div style={{ background: '#0B131E', padding: 10, borderRadius: 8, marginBottom: 8, fontSize: '0.82rem', fontFamily: 'monospace', color: '#F8FAFC' }}>
-                        <strong>Respuesta del Estudiante:</strong><br />
-                        {studentAnswer}
-                      </div>
-
-                      {q.rubricCriteria && (
-                        <div style={{ fontSize: '0.74rem', color: '#F59E0B', marginBottom: 8 }}>
-                          <strong>Criterio de Rúbrica:</strong> {q.rubricCriteria}
-                        </div>
-                      )}
-
-                      <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
-                        <div style={{ width: 120 }}>
-                          <label style={{ fontSize: '0.74rem', color: '#CBD5E1', display: 'block', marginBottom: 2 }}>
-                            Puntaje (0 a {q.maxScore}):
-                          </label>
-                          <input
-                            type="number"
-                            min={0}
-                            max={q.maxScore}
-                            value={currentScore}
-                            onChange={(e) => setManualScores({ ...manualScores, [q.questionId]: Number(e.target.value) })}
-                            style={{ width: '100%', background: '#0B131E', border: '1px solid rgba(255, 255, 255, 0.15)', borderRadius: 8, padding: 6, color: '#FFFFFF' }}
-                          />
-                        </div>
-                        <div style={{ flex: 1 }}>
-                          <label style={{ fontSize: '0.74rem', color: '#CBD5E1', display: 'block', marginBottom: 2 }}>
-                            Comentario pedagógico al estudiante:
-                          </label>
-                          <input
-                            type="text"
-                            placeholder="Feedback cualitativo..."
-                            value={currentComment}
-                            onChange={(e) => setManualComments({ ...manualComments, [q.questionId]: e.target.value })}
-                            style={{ width: '100%', background: '#0B131E', border: '1px solid rgba(255, 255, 255, 0.15)', borderRadius: 8, padding: 6, color: '#FFFFFF' }}
-                          />
-                        </div>
-                      </div>
-                    </div>
-                  );
-                })}
-
-                <button
-                  type="button"
-                  onClick={handleSaveGrading}
-                  className="btn-3d btn-green"
-                  style={{ marginTop: 8 }}
-                >
-                  <CheckCircle2 size={16} /> Guardar Calificaciones y Emitir Nota
+                <button type="submit" className="btn-3d btn-green" style={{ padding: '8px 20px' }}>
+                  Registrar Evaluación
                 </button>
               </div>
-            </div>
+            </form>
           </div>
-        )}
-      </div>
+        </div>
+      )}
     </div>
   );
 };

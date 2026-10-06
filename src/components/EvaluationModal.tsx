@@ -19,6 +19,7 @@ interface EvaluationModalProps {
   user: UserProfile;
   onClose: () => void;
   onComplete: (evaluation: AcademicEvaluation) => void;
+  isMandatory?: boolean;
 }
 
 export const EvaluationModal: React.FC<EvaluationModalProps> = ({
@@ -26,7 +27,8 @@ export const EvaluationModal: React.FC<EvaluationModalProps> = ({
   instrument,
   user,
   onClose,
-  onComplete
+  onComplete,
+  isMandatory = false
 }) => {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [answers, setAnswers] = useState<Record<string, string>>({});
@@ -161,9 +163,11 @@ export const EvaluationModal: React.FC<EvaluationModalProps> = ({
   return (
     <div className="modal-backdrop" role="dialog" aria-modal="true">
       <div className="modal-card" style={{ maxWidth: 650, maxHeight: '90vh', overflowY: 'auto' }}>
-        <button className="modal-close" onClick={onClose} aria-label="Cerrar evaluación">
-          <X size={20} />
-        </button>
+        {!isMandatory && (
+          <button className="modal-close" onClick={onClose} aria-label="Cerrar evaluación">
+            <X size={20} />
+          </button>
+        )}
 
         {/* Encabezado */}
         <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 16 }}>
@@ -219,9 +223,21 @@ export const EvaluationModal: React.FC<EvaluationModalProps> = ({
             <h3 style={{ fontSize: '1.3rem', fontWeight: 900, color: '#FFFFFF', marginBottom: 8 }}>
               ¡Evaluación Entregada con Éxito!
             </h3>
-            <p style={{ color: '#94A3B8', fontSize: '0.9rem', maxWidth: 440, margin: '0 auto' }}>
+            <p style={{ color: '#94A3B8', fontSize: '0.9rem', maxWidth: 440, margin: '0 auto 20px auto' }}>
               Tus respuestas han sido registradas para el seguimiento de la investigación educativa.
             </p>
+            <button
+              type="button"
+              className="btn-3d btn-green"
+              style={{ padding: '12px 28px', fontSize: '0.96rem' }}
+              onClick={() => {
+                soundService.playToken();
+                onClose();
+              }}
+            >
+              <span>Comenzar a Aprender</span>
+              <ArrowRight size={18} />
+            </button>
           </div>
         ) : (
           <>
