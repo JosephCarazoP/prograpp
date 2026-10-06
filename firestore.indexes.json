@@ -1,0 +1,33 @@
+{
+  "indexes": [
+    {
+      "collectionGroup": "members",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "leagueId",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "weeklyXp",
+          "order": "DESCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "progress",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "pathId",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "completedAt",
+          "order": "DESCENDING"
+        }
+      ]
+    }
+  ],
+  "fieldOverrides": []
+}

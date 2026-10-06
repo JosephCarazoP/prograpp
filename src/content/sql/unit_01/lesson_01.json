@@ -1,0 +1,33 @@
+{
+  "id": "sql-u01-l01",
+  "path": "sql",
+  "unit": 1,
+  "level": 1,
+  "title": "Tablas y Primeras Consultas",
+  "description": "Comprende la estructura de tablas y cómo extraer información con SELECT.",
+  "exercises": [
+    {
+      "id": "sql-u01-l01-e01",
+      "type": "matching_pairs",
+      "prompt": "Empareja los componentes esenciales de una base de datos relacional:",
+      "pairs": [
+        { "left": "Tabla", "right": "Colección organizada de datos en filas y columnas" },
+        { "left": "Fila (Registro)", "right": "Un registro individual de información" },
+        { "left": "Columna (Campo)", "right": "Un atributo específico (ej. nombre, precio)" },
+        { "left": "Clave Primaria", "right": "Identificador único irrepetible de cada fila" }
+      ],
+      "explanation": "¡Correcto! Las tablas relacionales organizan toda su información en esta estructura cartesiana.",
+      "xpReward": 15
+    },
+    {
+      "id": "sql-u01-l01-e02",
+      "type": "code_builder",
+      "prompt": "Arma una consulta SQL para seleccionar todos los campos de la tabla 'estudiantes':",
+      "tokens": ["SELECT", "*", "FROM", "estudiantes", ";", "WHERE", "ORDER BY"],
+      "solution": ["SELECT", "*", "FROM", "estudiantes", ";"],
+      "hint": "En SQL usamos 'SELECT *' para indicar todas las columnas, y 'FROM' seguido del nombre de la tabla.",
+      "explanation": "¡Brillante! El asterisco '*' indica 'todas las columnas' en SQL.",
+      "xpReward": 10
+    }
+  ]
+}

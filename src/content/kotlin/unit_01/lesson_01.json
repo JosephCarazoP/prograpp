@@ -1,0 +1,55 @@
+{
+  "id": "kotlin-u01-l01",
+  "path": "kotlin",
+  "unit": 1,
+  "level": 1,
+  "title": "Pensar en Pasos y Algoritmos",
+  "description": "Comprende cómo descomponer un problema en una secuencia lógica ordenada.",
+  "exercises": [
+    {
+      "id": "kt-u01-l01-e01",
+      "type": "code_builder",
+      "prompt": "Arma la secuencia lógica para imprimir un saludo en Kotlin tocando los bloques en orden:",
+      "tokens": ["println", "(", "\"¡Hola, Mundo!\"", ")", "print", "val", "fun"],
+      "solution": ["println", "(", "\"¡Hola, Mundo!\"", ")"],
+      "hint": "En Kotlin usamos 'println' seguido de paréntesis que encierran el texto entre comillas.",
+      "explanation": "¡Excelente! 'println()' es la función estándar de Kotlin para mostrar un mensaje y dar un salto de línea.",
+      "xpReward": 10
+    },
+    {
+      "id": "kt-u01-l01-e02",
+      "type": "matching_pairs",
+      "prompt": "Empareja cada concepto de programación con su significado:",
+      "pairs": [
+        { "left": "Algoritmo", "right": "Pasos ordenados para resolver un problema" },
+        { "left": "Variable", "right": "Espacio en memoria para guardar un dato" },
+        { "left": "Bug", "right": "Un error o defecto en el código" },
+        { "left": "Compilador", "right": "Traductor de código a lenguaje máquina" }
+      ],
+      "explanation": "¡Bien hecho! Estos son los 4 pilares conceptuales que todo desarrollador debe dominar.",
+      "xpReward": 15
+    },
+    {
+      "id": "kt-u01-l01-e03",
+      "type": "predict_output",
+      "prompt": "¿Qué mostrará este código al ejecutarse en consola?",
+      "code": "val paso1 = \"Preparar taza\"\nval paso2 = \"Servir café\"\nprintln(paso2)",
+      "options": ["Preparar taza", "Servir café", "paso2", "Error"],
+      "correctOptionIndex": 1,
+      "hint": "Observa cuál es la variable que se pasa como argumento dentro de println().",
+      "explanation": "La función println() recibe la variable 'paso2', por lo que imprime su contenido: 'Servir café'.",
+      "xpReward": 10
+    },
+    {
+      "id": "kt-u01-l01-e04",
+      "type": "code_cloze",
+      "prompt": "Completa la palabra clave para declarar una variable inmutable (de solo lectura):",
+      "codeWithBlank": "___ nombre = \"Alex\"",
+      "options": ["val", "var", "const"],
+      "correctOption": "val",
+      "hint": "En Kotlin, 'val' viene de 'value' (inmutable) y 'var' viene de 'variable' (mutable).",
+      "explanation": "¡Correcto! Usamos 'val' siempre que el valor no deba cambiar después de su asignación.",
+      "xpReward": 10
+    }
+  ]
+}

@@ -1,0 +1,60 @@
+{
+  "id": "kotlin-u01-l02",
+  "path": "kotlin",
+  "unit": 1,
+  "level": 2,
+  "title": "Inmutabilidad, Trazas y Rompecabezas",
+  "description": "Diferencia 'val' de 'var', rastrea bucles paso a paso y reordena algoritmos.",
+  "exercises": [
+    {
+      "id": "kt-u01-l02-e01",
+      "type": "spot_the_bug",
+      "prompt": "Toca la línea de código que causa un error de compilación por reasignación:",
+      "codeSnippet": [
+        "val vidas = 3",
+        "vidas = 2",
+        "println(vidas)"
+      ],
+      "bugLineIndex": 1,
+      "hint": "Recuerda que una variable declarada con 'val' es inmutable y no puede cambiar.",
+      "explanation": "¡Exacto! La línea 2 intenta modificar 'vidas', pero fue declarada con 'val'. Para permitir cambios se debe usar 'var'.",
+      "xpReward": 15
+    },
+    {
+      "id": "kt-u01-l02-e02",
+      "type": "trace_step",
+      "prompt": "Rastrea el valor de la variable 'total' en cada iteración del bucle:",
+      "code": "var total = 0\nfor (paso in 1..3) {\n    total += 2\n}",
+      "iterations": [
+        {
+          "iteration": 1,
+          "expectedVariables": { "total": "2" }
+        },
+        {
+          "iteration": 2,
+          "expectedVariables": { "total": "4" }
+        },
+        {
+          "iteration": 3,
+          "expectedVariables": { "total": "6" }
+        }
+      ],
+      "explanation": "¡Brillante seguimiento! En cada iteración 'total' se incrementa en 2 (0 -> 2 -> 4 -> 6).",
+      "xpReward": 20
+    },
+    {
+      "id": "kt-u01-l02-e03",
+      "type": "parsons_puzzle",
+      "prompt": "Ordena las líneas usando las flechas para preparar una función ejecutable:",
+      "lines": [
+        "fun main() {",
+        "    val mensaje = \"Listo para compilar\"",
+        "    println(mensaje)",
+        "}"
+      ],
+      "correctOrder": [0, 1, 2, 3],
+      "explanation": "¡Excelente estructura! Primero se abre 'fun main()', luego se declara la variable, se imprime y se cierra con '}'.",
+      "xpReward": 20
+    }
+  ]
+}
