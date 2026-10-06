@@ -42,12 +42,12 @@ export const TraceStepComponent: React.FC<TraceStepProps> = ({
       <pre
         style={{
           background: '#0F172A',
-          padding: '16px',
-          borderRadius: '16px',
-          fontFamily: 'JetBrains Mono',
+          padding: '16px 18px',
+          borderRadius: '18px',
+          fontFamily: 'JetBrains Mono, monospace',
           color: '#F8FAFC',
-          fontSize: '0.95rem',
-          lineHeight: 1.55,
+          fontSize: '0.94rem',
+          lineHeight: 1.6,
           marginBottom: '18px',
           border: '2px solid #E2E8F0',
           boxShadow: '0 5px 0 #CBD5E1',
@@ -57,51 +57,99 @@ export const TraceStepComponent: React.FC<TraceStepProps> = ({
         {exercise.code}
       </pre>
 
-      <div style={{ background: '#FFFFFF', borderRadius: '16px', padding: '16px', border: '2px solid var(--border-color)', boxShadow: '0 4px 0 var(--border-shadow)' }}>
-        <div style={{ fontSize: '0.85rem', fontWeight: 800, color: 'var(--orange-main)', marginBottom: '12px' }}>
-          TABLA DE SEGUIMIENTO (VALOR POR CADA ITERACIÓN)
+      <div
+        style={{
+          background: '#FFFFFF',
+          borderRadius: '20px',
+          padding: '18px 20px',
+          border: '2px solid #CBD5E1',
+          boxShadow: '0 4px 0 #94A3B8'
+        }}
+      >
+        <div
+          style={{
+            fontSize: '0.82rem',
+            fontWeight: 900,
+            color: '#0284C7',
+            marginBottom: '14px',
+            textTransform: 'uppercase',
+            letterSpacing: '0.6px',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '6px'
+          }}
+        >
+          <span>Tabla de Seguimiento • Valor por Cada Iteración</span>
         </div>
 
-        <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'center' }}>
-          <thead>
-            <tr style={{ borderBottom: '2px solid var(--border-color)', color: '#1E293B', fontSize: '0.88rem' }}>
-              <th style={{ padding: '8px' }}>Iteración</th>
-              {Object.keys(exercise.iterations[0].expectedVariables).map(v => (
-                <th key={v} style={{ padding: '8px' }}>{v}</th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {exercise.iterations.map(iter => (
-              <tr key={iter.iteration} style={{ borderBottom: '1px solid var(--border-color)' }}>
-                <td style={{ padding: '10px', fontWeight: 800, color: 'var(--orange-main)' }}>
-                  Paso {iter.iteration}
-                </td>
-                {Object.keys(iter.expectedVariables).map(varName => (
-                  <td key={varName} style={{ padding: '8px' }}>
-                    <input
-                      type="text"
-                      placeholder="valor"
-                      value={userInputs[iter.iteration]?.[varName] || ''}
-                      onChange={(e) => handleInputChange(iter.iteration, varName, e.target.value)}
-                      style={{
-                        width: '74px',
-                        textAlign: 'center',
-                        background: '#F8FAFC',
-                        border: '2px solid var(--border-color)',
-                        borderRadius: '8px',
-                        padding: '6px',
-                        color: '#1E293B',
-                        fontWeight: 700,
-                        fontFamily: 'JetBrains Mono'
-                      }}
-                    />
-                  </td>
+        <div style={{ overflowX: 'auto' }}>
+          <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'center', minWidth: '280px' }}>
+            <thead>
+              <tr style={{ borderBottom: '2px solid #E2E8F0', color: '#0F172A', fontSize: '0.88rem' }}>
+                <th style={{ padding: '10px 12px', fontWeight: 900, textAlign: 'left' }}>Iteración</th>
+                {Object.keys(exercise.iterations[0].expectedVariables).map(v => (
+                  <th key={v} style={{ padding: '10px 12px', fontWeight: 900, fontFamily: 'JetBrains Mono, monospace' }}>
+                    {v}
+                  </th>
                 ))}
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {exercise.iterations.map(iter => (
+                <tr key={iter.iteration} style={{ borderBottom: '1px solid #F1F5F9' }}>
+                  <td style={{ padding: '12px 10px', fontWeight: 900, color: '#EA580C', textAlign: 'left' }}>
+                    <span
+                      style={{
+                        background: '#FFF7ED',
+                        border: '1.5px solid #FFEDD5',
+                        color: '#EA580C',
+                        padding: '3px 10px',
+                        borderRadius: '8px',
+                        fontSize: '0.82rem'
+                      }}
+                    >
+                      Paso {iter.iteration}
+                    </span>
+                  </td>
+                  {Object.keys(iter.expectedVariables).map(varName => (
+                    <td key={varName} style={{ padding: '10px 8px' }}>
+                      <input
+                        type="text"
+                        placeholder="valor"
+                        value={userInputs[iter.iteration]?.[varName] || ''}
+                        onChange={(e) => handleInputChange(iter.iteration, varName, e.target.value)}
+                        style={{
+                          width: '84px',
+                          textAlign: 'center',
+                          background: '#FFFFFF',
+                          border: '2px solid #CBD5E1',
+                          borderRadius: '12px',
+                          padding: '8px 10px',
+                          color: '#0F172A',
+                          fontWeight: 800,
+                          fontSize: '0.94rem',
+                          fontFamily: 'JetBrains Mono, monospace',
+                          boxShadow: '0 2px 0 #E2E8F0',
+                          outline: 'none',
+                          boxSizing: 'border-box',
+                          transition: 'border-color 0.15s ease'
+                        }}
+                        onFocus={(e) => {
+                          e.target.style.borderColor = '#0284C7';
+                          e.target.style.boxShadow = '0 2px 0 #0284C7';
+                        }}
+                        onBlur={(e) => {
+                          e.target.style.borderColor = '#CBD5E1';
+                          e.target.style.boxShadow = '0 2px 0 #E2E8F0';
+                        }}
+                      />
+                    </td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   );

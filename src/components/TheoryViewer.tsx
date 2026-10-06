@@ -12,6 +12,8 @@ import { TheoryLesson } from '../types/theory';
 import { soundService } from '../services/soundService';
 import { VSCodeSnippet } from './VSCodeSnippet';
 
+import { ConsoleDevAvatar } from './ConsoleAvatar';
+
 interface TheoryViewerProps {
   theory: TheoryLesson;
   onBack: () => void;
@@ -68,8 +70,8 @@ export const TheoryViewer: React.FC<TheoryViewerProps> = ({
           }}
           title="Regresar a la lista de temas"
         >
-          <ArrowLeft size={18} strokeWidth={2.5} />
-          <span>Volver al índice</span>
+          <ArrowLeft size={18} strokeWidth={2.8} />
+          <span>Volver a Cursos</span>
         </button>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
@@ -93,63 +95,73 @@ export const TheoryViewer: React.FC<TheoryViewerProps> = ({
         </div>
       </div>
 
-      {/* ═══ TARJETA HERO: TÍTULO Y DESCRIPCIÓN CON MÁXIMO CONTRASTE ═══ */}
+      {/* ═══ TARJETA HERO: TÍTULO Y DESCRIPCIÓN ESTILO GUÍA DUOLINGO ═══ */}
       <div
         style={{
           background: '#FFFFFF',
           border: '2px solid #CBD5E1',
-          borderRadius: '22px',
+          borderRadius: '24px',
           padding: '24px 22px',
           marginBottom: '22px',
-          boxShadow: '0 4px 0 #94A3B8'
+          boxShadow: '0 5px 0 #94A3B8',
+          position: 'relative',
+          overflow: 'hidden'
         }}
       >
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: '10px' }}>
-          <span
-            style={{
-              background: isKotlin ? '#E0F2FE' : '#EEF2FF',
-              color: accentColor,
-              border: `1.5px solid ${isKotlin ? '#BAE6FD' : '#C7D2FE'}`,
-              fontSize: '0.78rem',
-              fontWeight: 900,
-              textTransform: 'uppercase',
-              letterSpacing: '0.6px',
-              padding: '4px 12px',
-              borderRadius: '10px',
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: 6
-            }}
-          >
-            <BookOpen size={14} strokeWidth={2.5} />
-            Unidad {theory.unitId} • Lección {theory.levelId} ({theory.pathId.toUpperCase()})
-          </span>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '14px' }}>
+          <div style={{ flex: 1 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: '10px' }}>
+              <span
+                style={{
+                  background: isKotlin ? '#E0F2FE' : '#EEF2FF',
+                  color: accentColor,
+                  border: `1.5px solid ${isKotlin ? '#BAE6FD' : '#C7D2FE'}`,
+                  fontSize: '0.78rem',
+                  fontWeight: 900,
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.6px',
+                  padding: '4px 12px',
+                  borderRadius: '10px',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: 6
+                }}
+              >
+                <BookOpen size={14} strokeWidth={2.5} />
+                Guía Curricular • Unidad {theory.unitId} • Lección {theory.levelId}
+              </span>
+            </div>
+
+            <h1
+              style={{
+                fontSize: '1.75rem',
+                fontWeight: 900,
+                margin: '8px 0 10px 0',
+                lineHeight: 1.25,
+                color: '#0F172A',
+                letterSpacing: '-0.3px'
+              }}
+            >
+              {theory.title}
+            </h1>
+
+            <p
+              style={{
+                color: '#1E293B',
+                fontSize: '1.05rem',
+                lineHeight: 1.6,
+                margin: 0,
+                fontWeight: 700
+              }}
+            >
+              {theory.subtitle}
+            </p>
+          </div>
+
+          <div style={{ flexShrink: 0, marginTop: '4px' }}>
+            <ConsoleDevAvatar size={62} mood="happy" />
+          </div>
         </div>
-
-        <h1
-          style={{
-            fontSize: '1.75rem',
-            fontWeight: 900,
-            margin: '8px 0 10px 0',
-            lineHeight: 1.25,
-            color: '#0F172A',
-            letterSpacing: '-0.3px'
-          }}
-        >
-          {theory.title}
-        </h1>
-
-        <p
-          style={{
-            color: '#1E293B',
-            fontSize: '1.05rem',
-            lineHeight: 1.6,
-            margin: 0,
-            fontWeight: 700
-          }}
-        >
-          {theory.subtitle}
-        </p>
       </div>
 
       {/* ═══ SECCIONES DE CONTENIDO DE LA LECCIÓN ═══ */}
@@ -165,6 +177,24 @@ export const TheoryViewer: React.FC<TheoryViewerProps> = ({
               boxShadow: '0 4px 0 #94A3B8'
             }}
           >
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
+              <span
+                style={{
+                  background: badgeBg,
+                  color: accentColor,
+                  border: `1.5px solid ${isKotlin ? '#BAE6FD' : '#C7D2FE'}`,
+                  fontSize: '0.74rem',
+                  fontWeight: 900,
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.6px',
+                  padding: '3px 10px',
+                  borderRadius: '8px'
+                }}
+              >
+                Parte {idx + 1}
+              </span>
+            </div>
+
             <h2
               style={{
                 fontSize: '1.3rem',
@@ -179,8 +209,8 @@ export const TheoryViewer: React.FC<TheoryViewerProps> = ({
             >
               <span
                 style={{
-                  width: '12px',
-                  height: '12px',
+                  width: '10px',
+                  height: '10px',
                   borderRadius: '50%',
                   background: accentColor,
                   flexShrink: 0

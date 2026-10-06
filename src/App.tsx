@@ -2,12 +2,14 @@ import { useState, useEffect } from 'react';
 import confetti from 'canvas-confetti';
 import {
   ArrowLeft,
+  X,
   CheckCircle2,
   XCircle,
   RotateCcw,
   Gamepad2,
   GraduationCap,
-  ShieldCheck
+  ShieldCheck,
+  Zap
 } from 'lucide-react';
 
 import { UserProfile, LearningPath as PathType, UserPowerUps } from './types/user';
@@ -38,7 +40,7 @@ import { VSCodeSnippet } from './components/VSCodeSnippet';
 import { TraceStepComponent } from './components/exercises/TraceStepExercise';
 import { ParsonsPuzzleComponent } from './components/exercises/ParsonsPuzzleExercise';
 import { LoadingScreen } from './components/LoadingScreen';
-import { ConsoleMascot } from './components/ConsoleAvatar';
+import { ConsoleMascot, ConsoleDevAvatar } from './components/ConsoleAvatar';
 import { GameAlertModal, GameAlertState } from './components/GameAlertModal';
 import { AnimatedDoodleBackground } from './components/AnimatedDoodleBackground';
 import { AcademicDashboard } from './components/AcademicDashboard';
@@ -913,24 +915,39 @@ export default function App() {
 
       {/* VISTA 2: SESIÓN DE LECCIÓN INTERACTIVA (CON COMODINES Y VS CODE SNIPPET) */}
       {view === 'lesson' && activeLesson && currentExercise && (
-        <div style={{ display: 'flex', flexDirection: 'column', height: '100%', padding: '16px 16px 120px 16px', maxWidth: '640px', margin: '0 auto', width: '100%', boxSizing: 'border-box' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', padding: '16px 16px 140px 16px', maxWidth: '640px', margin: '0 auto', width: '100%', boxSizing: 'border-box' }}>
           {/* Barra de Progreso Superior Duolingo 3D */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '10px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px' }}>
             <button
               onClick={() => {
                 soundService.playToken();
                 setView('path');
               }}
-              style={{ background: 'none', border: 'none', color: '#475569', cursor: 'pointer', padding: '4px', display: 'flex', alignItems: 'center' }}
+              style={{
+                width: '42px',
+                height: '42px',
+                borderRadius: '14px',
+                background: '#FFFFFF',
+                border: '2px solid #CBD5E1',
+                boxShadow: '0 3px 0 #94A3B8',
+                color: '#64748B',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                flexShrink: 0,
+                transition: 'all 0.1s ease'
+              }}
+              title="Salir de la lección"
             >
-              <ArrowLeft size={24} />
+              <X size={22} strokeWidth={2.8} />
             </button>
             <div
               style={{
                 flex: 1,
-                height: '16px',
+                height: '18px',
                 background: '#E2E8F0',
-                borderRadius: '10px',
+                borderRadius: '9999px',
                 overflow: 'hidden',
                 position: 'relative',
                 boxShadow: 'inset 0 2px 4px rgba(0,0,0,0.06)'
@@ -941,9 +958,9 @@ export default function App() {
                   height: '100%',
                   width: `${Math.min(100, Math.round((masteredExerciseIds.size / Math.max(1, initialExercisesCount)) * 100))}%`,
                   background: isReviewPhase ? '#F59E0B' : '#22C55E',
-                  borderRadius: '10px',
+                  borderRadius: '9999px',
                   boxShadow: isReviewPhase ? '0 2px 0 #D97706' : '0 2px 0 #15803D',
-                  transition: 'width 0.3s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.3s ease',
+                  transition: 'width 0.35s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.3s ease',
                   position: 'relative'
                 }}
               >
@@ -952,18 +969,56 @@ export default function App() {
                   style={{
                     position: 'absolute',
                     top: '2px',
-                    left: '6px',
-                    right: '6px',
-                    height: '3px',
-                    background: 'rgba(255, 255, 255, 0.45)',
+                    left: '8px',
+                    right: '8px',
+                    height: '4px',
+                    background: 'rgba(255, 255, 255, 0.6)',
                     borderRadius: '4px'
                   }}
                 />
               </div>
             </div>
-            <span style={{ fontSize: '0.9rem', fontWeight: 900, color: isReviewPhase ? '#D97706' : '#64748B', minWidth: '42px', textAlign: 'right' }}>
+            {/* Pill de Baterías Overdrive (Vidas de Duolingo) */}
+            <div
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '5px',
+                background: '#FFFFFF',
+                border: '2px solid #CBD5E1',
+                boxShadow: '0 3px 0 #94A3B8',
+                padding: '6px 12px',
+                borderRadius: '14px',
+                fontSize: '0.86rem',
+                fontWeight: 900,
+                color: '#EA580C',
+                flexShrink: 0
+              }}
+              title="Baterías Overdrive (+50% XP)"
+            >
+              <Zap size={16} fill="#EA580C" color="#EA580C" />
+              <span>{user.batteries || 0}</span>
+            </div>
+            {/* Contador de ejercicios */}
+            <div
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '4px',
+                background: '#F1F5F9',
+                border: '1.5px solid #CBD5E1',
+                padding: '6px 10px',
+                borderRadius: '14px',
+                fontSize: '0.84rem',
+                fontWeight: 900,
+                color: isReviewPhase ? '#D97706' : '#0F172A',
+                minWidth: '50px',
+                justifyContent: 'center',
+                flexShrink: 0
+              }}
+            >
               {masteredExerciseIds.size}/{initialExercisesCount}
-            </span>
+            </div>
           </div>
 
           {/* Barra Táctica de Comodines Integrada (Requisito 2) */}
@@ -1041,9 +1096,17 @@ export default function App() {
             </div>
           )}
 
-          <h3 style={{ fontSize: '1.25rem', fontWeight: 900, margin: '8px 0 16px 0', color: '#0F172A', lineHeight: 1.35 }}>
-            {currentExercise.prompt}
-          </h3>
+          {/* Diálogo Duolingo con Mascota Dev y Burbuja de Pregunta */}
+          <div className="duo-speech-container">
+            <div style={{ flexShrink: 0, marginTop: '2px' }}>
+              <ConsoleDevAvatar size={50} mood={isReviewPhase ? 'thinking' : 'happy'} />
+            </div>
+            <div className="duo-speech-bubble">
+              <h3 style={{ fontSize: '1.18rem', fontWeight: 900, margin: 0, color: '#0F172A', lineHeight: 1.4 }}>
+                {currentExercise.prompt}
+              </h3>
+            </div>
+          </div>
 
           {/* EJERCICIO 1: BANCO DE TOKENS (CODE BUILDER) */}
           {currentExercise.type === 'code_builder' && (
@@ -1167,31 +1230,25 @@ export default function App() {
                 filename="main.kt"
                 highlightLine={isCodePeekActive ? 2 : undefined}
               />
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginTop: '14px' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginTop: '16px' }}>
                 {currentExercise.options.map((opt, idx) => {
                   const isEliminated = eliminatedOptionIndices.includes(idx);
                   const isSelected = selectedOption === idx;
+                  const letterBadge = String.fromCharCode(65 + idx);
                   return (
                     <button
                       key={idx}
                       disabled={isEliminated}
-                      className={`btn-3d ${isSelected ? 'btn-orange' : 'btn-outline'}`}
-                      style={{
-                        opacity: isEliminated ? 0.3 : 1,
-                        textDecoration: isEliminated ? 'line-through' : 'none',
-                        textTransform: 'none',
-                        fontFamily: 'var(--font-code), var(--font-ui)',
-                        fontSize: '1rem',
-                        fontWeight: 800,
-                        padding: '16px 14px',
-                        borderRadius: '16px'
-                      }}
+                      className={`duo-option-card ${isSelected ? 'selected' : ''} ${isEliminated ? 'eliminated' : ''}`}
                       onClick={() => {
                         soundService.playToken();
                         setSelectedOption(idx);
                       }}
                     >
-                      {opt}
+                      <div className="duo-option-badge">{letterBadge}</div>
+                      <span className="duo-option-text" style={{ fontFamily: 'JetBrains Mono, monospace' }}>
+                        {opt}
+                      </span>
                     </button>
                   );
                 })}
@@ -1245,32 +1302,25 @@ export default function App() {
                 code={currentExercise.codeWithBlank}
                 filename="cloze.kt"
               />
-              <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap', marginTop: '14px' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '12px', marginTop: '16px' }}>
                 {currentExercise.options.map((opt, idx) => {
                   const isEliminated = eliminatedOptionIndices.includes(idx);
                   const isSelected = selectedOption === idx;
+                  const letterBadge = String.fromCharCode(65 + idx);
                   return (
                     <button
                       key={idx}
                       disabled={isEliminated}
-                      className={`btn-3d ${isSelected ? 'btn-orange' : 'btn-outline'}`}
-                      style={{
-                        flex: '1 1 45%',
-                        opacity: isEliminated ? 0.3 : 1,
-                        textDecoration: isEliminated ? 'line-through' : 'none',
-                        textTransform: 'none',
-                        fontFamily: 'var(--font-code), var(--font-ui)',
-                        fontSize: '1.02rem',
-                        fontWeight: 800,
-                        padding: '16px 14px',
-                        borderRadius: '16px'
-                      }}
+                      className={`duo-option-card ${isSelected ? 'selected' : ''} ${isEliminated ? 'eliminated' : ''}`}
                       onClick={() => {
                         soundService.playToken();
                         setSelectedOption(idx);
                       }}
                     >
-                      {opt}
+                      <div className="duo-option-badge">{letterBadge}</div>
+                      <span className="duo-option-text" style={{ fontFamily: 'JetBrains Mono, monospace' }}>
+                        {opt}
+                      </span>
                     </button>
                   );
                 })}
@@ -1297,42 +1347,95 @@ export default function App() {
             />
           )}
 
-          {/* Botón Comprobar */}
-          {feedbackState === 'idle' && (
-            <div style={{ marginTop: 'auto', paddingTop: '24px' }}>
+          {/* ═══ BARRA INFERIOR DUOLINGO AUTÉNTICA (STICKY FOOTER CHECK/CONTINUE) ═══ */}
+          {feedbackState === 'idle' ? (
+            <div className="duo-lesson-footer">
               <button
                 className="btn-3d btn-green"
                 disabled={!isAnswerReady()}
                 onClick={handleCheckAnswer}
+                style={{
+                  width: '100%',
+                  fontSize: '1.1rem',
+                  padding: '16px 20px',
+                  borderRadius: '16px',
+                  letterSpacing: '0.8px'
+                }}
               >
-                Comprobar
+                COMPROBAR
               </button>
             </div>
-          )}
+          ) : (
+            <div className={`duo-lesson-footer ${feedbackState}`}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                  {feedbackState === 'success' ? (
+                    <>
+                      <div
+                        style={{
+                          width: '42px',
+                          height: '42px',
+                          borderRadius: '50%',
+                          background: '#22C55E',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          flexShrink: 0
+                        }}
+                      >
+                        <CheckCircle2 size={26} color="#FFFFFF" strokeWidth={2.5} />
+                      </div>
+                      <div>
+                        <div style={{ fontSize: '1.25rem', fontWeight: 900, color: '#15803D' }}>
+                          ¡Compilación Exitosa!
+                        </div>
+                        <div style={{ fontSize: '0.92rem', color: '#166534', fontWeight: 700 }}>
+                          {feedbackExplanation}
+                        </div>
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      <div
+                        style={{
+                          width: '42px',
+                          height: '42px',
+                          borderRadius: '50%',
+                          background: '#EF4444',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          flexShrink: 0
+                        }}
+                      >
+                        <XCircle size={26} color="#FFFFFF" strokeWidth={2.5} />
+                      </div>
+                      <div>
+                        <div style={{ fontSize: '1.25rem', fontWeight: 900, color: '#B91C1C' }}>
+                          Bug Detectado
+                        </div>
+                        <div style={{ fontSize: '0.92rem', color: '#991B1B', fontWeight: 700 }}>
+                          {feedbackExplanation}
+                        </div>
+                      </div>
+                    </>
+                  )}
+                </div>
 
-          {/* Hoja Inferior de Retroalimentación */}
-          {feedbackState !== 'idle' && (
-            <div className={`bottom-sheet ${feedbackState}`}>
-              <div className="feedback-header">
-                {feedbackState === 'success' ? (
-                  <>
-                    <CheckCircle2 size={32} color="#16A34A" />
-                    <span className="feedback-title success">¡Compilación Exitosa!</span>
-                  </>
-                ) : (
-                  <>
-                    <XCircle size={32} color="#DC2626" />
-                    <span className="feedback-title error">Bug Detectado</span>
-                  </>
-                )}
+                <button
+                  className={`btn-3d ${feedbackState === 'success' ? 'btn-green' : 'btn-red'}`}
+                  onClick={handleContinue}
+                  style={{
+                    width: '100%',
+                    fontSize: '1.1rem',
+                    padding: '16px 20px',
+                    borderRadius: '16px',
+                    letterSpacing: '0.8px'
+                  }}
+                >
+                  {currentQueueIndex < lessonQueue.length - 1 ? 'CONTINUAR' : 'FINALIZAR LECCIÓN'}
+                </button>
               </div>
-              <p className="feedback-explanation">{feedbackExplanation}</p>
-              <button
-                className={`btn-3d ${feedbackState === 'success' ? 'btn-green' : 'btn-red'}`}
-                onClick={handleContinue}
-              >
-                {currentQueueIndex < lessonQueue.length - 1 ? 'Continuar' : 'Finalizar Lección'}
-              </button>
             </div>
           )}
         </div>

@@ -45,11 +45,25 @@ export const ParsonsPuzzleComponent: React.FC<ParsonsProps> = ({
 
   return (
     <div>
-      <div style={{ color: '#475569', fontSize: '0.88rem', fontWeight: 700, marginBottom: '12px' }}>
-        Usa las flechas para ordenar las líneas hasta que el algoritmo sea correcto:
+      <div
+        style={{
+          display: 'inline-flex',
+          alignItems: 'center',
+          gap: '6px',
+          background: '#F1F5F9',
+          border: '1.5px solid #CBD5E1',
+          padding: '4px 12px',
+          borderRadius: '10px',
+          color: '#0F172A',
+          fontSize: '0.82rem',
+          fontWeight: 800,
+          marginBottom: '14px'
+        }}
+      >
+        <span>🧩 Ordena las líneas de código de arriba a abajo</span>
       </div>
 
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
         {currentOrder.map((lineIdx, position) => (
           <div
             key={lineIdx}
@@ -58,47 +72,91 @@ export const ParsonsPuzzleComponent: React.FC<ParsonsProps> = ({
               alignItems: 'center',
               justifyContent: 'space-between',
               background: '#FFFFFF',
-              border: '2px solid var(--border-color)',
-              borderRadius: '14px',
+              border: '2px solid #CBD5E1',
+              borderRadius: '16px',
               padding: '12px 14px',
-              fontFamily: 'JetBrains Mono',
-              fontSize: '0.92rem',
-              color: '#1E293B',
-              boxShadow: '0 3px 0 var(--border-shadow)'
+              gap: '12px',
+              boxShadow: '0 4px 0 #94A3B8',
+              boxSizing: 'border-box',
+              transition: 'all 0.12s ease'
             }}
           >
-            <code style={{ color: '#1E293B', fontWeight: 600 }}>{exercise.lines[lineIdx]}</code>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flex: 1, minWidth: 0 }}>
+              <div
+                style={{
+                  width: '26px',
+                  height: '26px',
+                  borderRadius: '8px',
+                  background: '#F1F5F9',
+                  border: '1px solid #CBD5E1',
+                  color: '#64748B',
+                  fontSize: '0.8rem',
+                  fontWeight: 900,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  flexShrink: 0
+                }}
+              >
+                {position + 1}
+              </div>
+              <code
+                style={{
+                  color: '#0F172A',
+                  fontWeight: 700,
+                  fontFamily: 'JetBrains Mono, monospace',
+                  fontSize: '0.92rem',
+                  lineHeight: 1.4,
+                  wordBreak: 'break-word',
+                  flex: 1
+                }}
+              >
+                {exercise.lines[lineIdx]}
+              </code>
+            </div>
 
-            <div style={{ display: 'flex', gap: '6px' }}>
+            <div style={{ display: 'flex', gap: '6px', flexShrink: 0 }}>
               <button
                 disabled={position === 0}
                 onClick={() => moveLine(position, 'up')}
                 style={{
                   background: position === 0 ? '#F1F5F9' : '#FFFFFF',
-                  border: '1.5px solid var(--border-color)',
-                  color: position === 0 ? '#CBD5E1' : '#475569',
-                  borderRadius: '8px',
-                  padding: '6px 8px',
+                  border: '2px solid',
+                  borderColor: position === 0 ? '#E2E8F0' : '#CBD5E1',
+                  color: position === 0 ? '#CBD5E1' : '#0F172A',
+                  borderRadius: '10px',
+                  padding: '7px 9px',
                   cursor: position === 0 ? 'default' : 'pointer',
-                  boxShadow: position === 0 ? 'none' : '0 2px 0 var(--border-shadow)'
+                  boxShadow: position === 0 ? 'none' : '0 3px 0 #94A3B8',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  transition: 'all 0.1s ease'
                 }}
+                title="Subir línea"
               >
-                <ArrowUp size={16} />
+                <ArrowUp size={16} strokeWidth={2.8} />
               </button>
               <button
                 disabled={position === currentOrder.length - 1}
                 onClick={() => moveLine(position, 'down')}
                 style={{
                   background: position === currentOrder.length - 1 ? '#F1F5F9' : '#FFFFFF',
-                  border: '1.5px solid var(--border-color)',
-                  color: position === currentOrder.length - 1 ? '#CBD5E1' : '#475569',
-                  borderRadius: '8px',
-                  padding: '6px 8px',
+                  border: '2px solid',
+                  borderColor: position === currentOrder.length - 1 ? '#E2E8F0' : '#CBD5E1',
+                  color: position === currentOrder.length - 1 ? '#CBD5E1' : '#0F172A',
+                  borderRadius: '10px',
+                  padding: '7px 9px',
                   cursor: position === currentOrder.length - 1 ? 'default' : 'pointer',
-                  boxShadow: position === currentOrder.length - 1 ? 'none' : '0 2px 0 var(--border-shadow)'
+                  boxShadow: position === currentOrder.length - 1 ? 'none' : '0 3px 0 #94A3B8',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  transition: 'all 0.1s ease'
                 }}
+                title="Bajar línea"
               >
-                <ArrowDown size={16} />
+                <ArrowDown size={16} strokeWidth={2.8} />
               </button>
             </div>
           </div>

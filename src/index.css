@@ -842,6 +842,154 @@ button, a, input, select, .path-node, .token-chip, .pair-card {
   font-weight: 600;
 }
 
+/* === DIÁLOGO Y BURBUJA DE LA MASCOTA DEV EN LECCIONES DUOLINGO === */
+.duo-speech-container {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin: 10px 0 18px 0;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.duo-speech-bubble {
+  position: relative;
+  background: #FFFFFF;
+  border: 2px solid #CBD5E1;
+  box-shadow: 0 4px 0 #94A3B8;
+  border-radius: 18px;
+  padding: 14px 18px;
+  flex: 1;
+  box-sizing: border-box;
+}
+
+.duo-speech-bubble::before {
+  content: '';
+  position: absolute;
+  left: -11px;
+  top: 18px;
+  width: 0;
+  height: 0;
+  border-top: 8px solid transparent;
+  border-bottom: 8px solid transparent;
+  border-right: 11px solid #CBD5E1;
+  pointer-events: none;
+}
+
+.duo-speech-bubble::after {
+  content: '';
+  position: absolute;
+  left: -8px;
+  top: 18px;
+  width: 0;
+  height: 0;
+  border-top: 6px solid transparent;
+  border-bottom: 6px solid transparent;
+  border-right: 9px solid #FFFFFF;
+  pointer-events: none;
+}
+
+/* === BARRA INFERIOR DUOLINGO AUTÉNTICA (STICKY FOOTER CHECK/CONTINUE) === */
+.duo-lesson-footer {
+  position: fixed;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 640px;
+  background: #FFFFFF;
+  border-top: 2.5px solid #E2E8F0;
+  padding: 16px 20px max(18px, calc(env(safe-area-inset-bottom, 0px) + 12px)) 20px;
+  z-index: 100;
+  box-sizing: border-box;
+  box-shadow: 0 -4px 16px rgba(15, 23, 42, 0.06);
+}
+
+.duo-lesson-footer.success {
+  background-color: #D7FFB8;
+  border-top: 2.5px solid #86EFAC;
+}
+
+.duo-lesson-footer.error {
+  background-color: #FFDFE0;
+  border-top: 2.5px solid #FCA5A5;
+}
+
+/* === TARJETAS DE OPCIONES DUOLINGO 3D (PREDICT OUTPUT / CLOZE) === */
+.duo-option-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+  padding: 14px 18px;
+  background: #FFFFFF;
+  border: 2px solid #CBD5E1;
+  border-radius: 18px;
+  box-shadow: 0 4px 0 #94A3B8;
+  cursor: pointer;
+  font-family: var(--font-ui);
+  text-align: left;
+  transition: transform 0.08s ease, border-color 0.15s ease, background-color 0.15s ease, box-shadow 0.08s ease;
+  user-select: none;
+  box-sizing: border-box;
+}
+
+.duo-option-card:hover:not(:disabled) {
+  background: #F8FAFC;
+  border-color: #0284C7;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 0 #94A3B8;
+}
+
+.duo-option-card:active:not(:disabled) {
+  transform: translateY(4px);
+  box-shadow: 0 0 0 transparent !important;
+}
+
+.duo-option-card.selected {
+  background: #E0F2FE !important;
+  border-color: #0284C7 !important;
+  box-shadow: 0 4px 0 #0369A1 !important;
+}
+
+.duo-option-card.eliminated {
+  opacity: 0.35;
+  cursor: not-allowed;
+  text-decoration: line-through;
+  filter: grayscale(1);
+}
+
+.duo-option-badge {
+  width: 32px;
+  height: 32px;
+  border-radius: 10px;
+  background: #F1F5F9;
+  border: 1.5px solid #CBD5E1;
+  color: #0F172A;
+  font-weight: 900;
+  font-size: 0.88rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: all 0.15s ease;
+}
+
+.duo-option-card.selected .duo-option-badge {
+  background: #0284C7;
+  border-color: #0284C7;
+  color: #FFFFFF;
+}
+
+.duo-option-text {
+  flex: 1;
+  font-size: 1.02rem;
+  font-weight: 800;
+  color: #0F172A;
+  line-height: 1.4;
+  word-break: break-word;
+}
+
 /* === MODALES (AUTH, PERFIL, MISIONES, COFRE) === */
 .modal-backdrop {
   position: fixed;
