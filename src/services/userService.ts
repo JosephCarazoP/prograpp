@@ -1,4 +1,4 @@
-import { doc, getDoc, setDoc } from 'firebase/firestore';
+import { doc, getDoc, setDoc, collection, getDocs } from 'firebase/firestore';
 import { db, isLocalMockMode } from '../config/firebase';
 import { UserProfile, LeagueTier } from '../types/user';
 import { storageService } from './storageService';
@@ -68,6 +68,13 @@ export function sanitizeUserProfile(raw: any, fallbackUid = 'guest_user_1'): Use
   const openedChests = Array.isArray(raw.openedChests) ? raw.openedChests : [];
   const defeatedBosses = Array.isArray(raw.defeatedBosses) ? raw.defeatedBosses : [];
 
+  // Generar código de estudiante amigable (ej: E01, E02...) basado en UID si no existe
+  let fallbackStudentCode = 'E01';
+  if (fallbackUid && fallbackUid.length >= 3) {
+    const numericPart = Math.abs(fallbackUid.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0)) % 99 + 1;
+    fallbackStudentCode = `E${numericPart < 10 ? '0' : ''}${numericPart}`;
+  }
+
   return {
     uid: raw.uid || fallbackUid,
     displayName: raw.displayName || DEFAULT_PROFILE.displayName,
@@ -86,9 +93,16 @@ export function sanitizeUserProfile(raw: any, fallbackUid = 'guest_user_1'): Use
     powerups,
     openedChests,
     defeatedBosses,
-    createdAt: typeof raw.createdAt === 'number' ? raw.createdAt : Date.now()
+    createdAt: typeof raw.createdAt === 'number' ? raw.createdAt : Date.now(),
+    email: raw.email || '',
+    studentCode: raw.studentCode || fallbackStudentCode,
+    group: raw.group || 'Grupo A',
+    isResearchParticipant: typeof raw.isResearchParticipant === 'boolean' ? raw.isResearchParticipant : false,
+    totalActiveTimeSeconds: typeof raw.totalActiveTimeSeconds === 'number' ? raw.totalActiveTimeSeconds : 0,
+    lastActiveAt: typeof raw.lastActiveAt === 'number' ? raw.lastActiveAt : Date.now()
   };
 }
+
 
 export const userService = {
   // Obtener perfil (Primero local para velocidad instantánea, luego Firestore)
@@ -303,5 +317,56 @@ export const userService = {
 
     await this.updateProfile(updated);
     return updated;
+  },
+
+  // Obtener lista completa de estudiantes (Solo Administrador)
+  async getAllStudents(): Promise<UserProfile[]> {
+    if (!isLocalMockMode && db) {
+      try {
+        const usersCol = collection(db, 'users');
+        const snapshot = await getDocs(usersCol);
+        const list: UserProfile[] = [];
+        snapshot.forEach(docSnap => {
+          list.push(sanitizeUserProfile(docSnap.data(), docSnap.id));
+        });
+        return list;
+      } catch (err) {
+        console.warn('[userService] Error al obtener lista de alumnos remota:', err);
+      }
+    }
+    // Fallback local
+    const local = storageService.getItem<any>('user_profile', DEFAULT_PROFILE);
+    return [sanitizeUserProfile(local)];
+  },
+
+  // Actualizar datos académicos de investigación del estudiante (Solo Administrador)
+  async updateStudentAcademicInfo(
+    uid: string,
+    data: {
+      studentCode?: string;
+      group?: string;
+      isResearchParticipant?: boolean;
+    }
+  ): Promise<void> {
+    const profile = await this.getProfile(uid);
+    const updated: UserProfile = {
+      ...profile,
+      studentCode: data.studentCode !== undefined ? data.studentCode : profile.studentCode,
+      group: data.group !== undefined ? data.group : profile.group,
+      isResearchParticipant: data.isResearchParticipant !== undefined ? data.isResearchParticipant : profile.isResearchParticipant
+    };
+    await this.updateProfile(updated);
+  },
+
+  // Registrar tiempo activo acumulado de aprendizaje
+  async addActiveTime(uid: string, seconds: number): Promise<void> {
+    const profile = await this.getProfile(uid);
+    const updated: UserProfile = {
+      ...profile,
+      totalActiveTimeSeconds: (profile.totalActiveTimeSeconds || 0) + seconds,
+      lastActiveAt: Date.now()
+    };
+    await this.updateProfile(updated);
   }
 };
+

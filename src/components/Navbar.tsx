@@ -8,7 +8,9 @@ import {
   Target,
   Volume2,
   VolumeX,
-  ChevronDown
+  ChevronDown,
+  ShieldCheck,
+  LogOut
 } from 'lucide-react';
 import { UserProfile } from '../types/user';
 import { soundService } from '../services/soundService';
@@ -16,18 +18,24 @@ import { DevAvatar } from './Avatars';
 
 interface NavbarProps {
   user: UserProfile;
+  isAdmin?: boolean;
   onPathToggle: () => void;
   onOpenQuests: () => void;
   onOpenPractice: () => void;
   onOpenProfile: () => void;
+  onOpenAcademic?: () => void;
+  onSignOut?: () => void;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
   user,
+  isAdmin = false,
   onPathToggle,
   onOpenQuests,
   onOpenPractice,
-  onOpenProfile
+  onOpenProfile,
+  onOpenAcademic,
+  onSignOut
 }) => {
   const [isMuted, setIsMuted] = useState(soundService.getMuted());
 
@@ -141,6 +149,42 @@ export const Navbar: React.FC<NavbarProps> = ({
         >
           <DevAvatar avatarId={user?.avatarId || 'robot_byte'} size={34} />
         </button>
+
+        {/* Botón Exclusivo de Seguimiento Académico para josephcarazo56@gmail.com */}
+        {isAdmin && onOpenAcademic && (
+          <button
+            className="btn-3d btn-orange"
+            onClick={() => {
+              soundService.playToken();
+              onOpenAcademic();
+            }}
+            title="Seguimiento Académico (Exclusivo Docente)"
+            type="button"
+            style={{
+              padding: '6px 12px',
+              fontSize: '0.78rem',
+              display: 'flex',
+              alignItems: 'center',
+              gap: 6,
+              marginLeft: 4
+            }}
+          >
+            <ShieldCheck size={16} color="#FFFFFF" strokeWidth={2.5} />
+            <span>Seguimiento</span>
+          </button>
+        )}
+
+        {onSignOut && (
+          <button
+            className="nav-icon-btn"
+            onClick={onSignOut}
+            title="Cerrar Sesión Segura"
+            type="button"
+            style={{ color: '#F87171' }}
+          >
+            <LogOut size={16} />
+          </button>
+        )}
       </div>
     </header>
   );

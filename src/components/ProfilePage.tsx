@@ -21,7 +21,8 @@ import {
   Volume2,
   VolumeX,
   RotateCcw,
-  BookOpen
+  BookOpen,
+  Award
 } from 'lucide-react';
 import { UserProfile, LearningPath as PathType } from '../types/user';
 import { userService } from '../services/userService';
@@ -36,13 +37,21 @@ interface ProfilePageProps {
   onBack: () => void;
   onUpdate: (updated: UserProfile) => void;
   onOpenAuth: () => void;
+  onOpenAcademic?: () => void;
+  onOpenDiagnostic?: () => void;
+  onOpenFinalTest?: () => void;
+  onSignOut?: () => void;
 }
 
 export const ProfilePage: React.FC<ProfilePageProps> = ({
   user,
   onBack,
   onUpdate,
-  onOpenAuth
+  onOpenAuth,
+  onOpenAcademic,
+  onOpenDiagnostic,
+  onOpenFinalTest,
+  onSignOut
 }) => {
   const [displayName, setDisplayName] = useState(user.displayName);
   const [selectedAvatar, setSelectedAvatar] = useState(user.avatarId || 'robot_byte');
@@ -185,10 +194,14 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({
   const handleSignOut = async () => {
     soundService.playToken();
     await authService.signOutUser();
-    const g = await userService.getProfile('guest_user_1');
-    onUpdate(g);
-    onBack();
+    if (onSignOut) {
+      onSignOut();
+    } else {
+      onBack();
+      onOpenAuth();
+    }
   };
+
 
   // Cartas de comodines con la paleta y estilo visual 3D coherente con la app
   const powerupCards = [
@@ -748,8 +761,53 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({
             </section>
           )}
 
+          {/* ─── ZONA ACADÉMICA / INVESTIGACIÓN ─── */}
+          {authService.isCurrentUserAdmin() && onOpenAcademic && (
+            <div style={{ marginTop: 16 }}>
+              <button
+                className="btn-3d btn-orange"
+                style={{ width: '100%', padding: '14px 18px', fontSize: '0.94rem' }}
+                onClick={() => {
+                  soundService.playToken();
+                  onOpenAcademic();
+                }}
+              >
+                <ShieldCheck size={18} />
+                Panel de Seguimiento Académico (Docente)
+              </button>
+            </div>
+          )}
+
+          {/* Evaluaciones Estandarizadas para Estudiantes */}
+          <div style={{ display: 'flex', gap: 10, marginTop: 14 }}>
+            {onOpenDiagnostic && (
+              <button
+                className="btn-3d btn-blue"
+                style={{ flex: 1, padding: 12, fontSize: '0.84rem' }}
+                onClick={() => {
+                  soundService.playToken();
+                  onOpenDiagnostic();
+                }}
+              >
+                <Award size={16} /> Evaluación Diagnóstica
+              </button>
+            )}
+            {onOpenFinalTest && (
+              <button
+                className="btn-3d btn-purple"
+                style={{ flex: 1, padding: 12, fontSize: '0.84rem' }}
+                onClick={() => {
+                  soundService.playToken();
+                  onOpenFinalTest();
+                }}
+              >
+                <Trophy size={16} /> Prueba Final
+              </button>
+            )}
+          </div>
+
           {/* ─── ACCIONES DE CUENTA DUOLINGO 3D ─── */}
-          <div style={{ display: 'flex', gap: 10, marginTop: 18 }}>
+          <div style={{ display: 'flex', gap: 10, marginTop: 14 }}>
             <button
               className="btn-3d btn-outline"
               style={{ flex: 1, padding: 13, fontSize: '0.85rem' }}
@@ -761,6 +819,7 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({
             >
               Gestionar Cuenta
             </button>
+
             <button
               className="btn-3d btn-outline"
               style={{

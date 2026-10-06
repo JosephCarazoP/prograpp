@@ -34,5 +34,11 @@ export interface UserProfile {
   openedChests: string[]; // IDs de cofres abiertos permanentemente
   defeatedBosses: string[]; // IDs de jefes vencidos permanentemente
   createdAt: number;
+  email?: string;
+  studentCode?: string; // Código de estudiante único para investigación (ej. E01)
+  group?: string; // Grupo al que pertenece
+  isResearchParticipant?: boolean; // Solo asignado por el administrador
+  totalActiveTimeSeconds?: number; // Tiempo activo total de aprendizaje
+  lastActiveAt?: number;
 }
 

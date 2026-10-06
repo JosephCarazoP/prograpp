@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, Lock, Mail, User as UserIcon, Sparkles } from 'lucide-react';
+import { X, Lock, Mail, User as UserIcon, Sparkles, Shield, Monitor } from 'lucide-react';
 import { authService } from '../services/authService';
 import { userService } from '../services/userService';
 import { UserProfile } from '../types/user';
@@ -9,13 +9,20 @@ interface AuthModalProps {
   isOpen: boolean;
   onClose: () => void;
   onAuthSuccess: (user: UserProfile) => void;
+  isMandatory?: boolean; // Si es obligatorio para acceder a la app
 }
 
-export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onAuthSuccess }) => {
+export const AuthModal: React.FC<AuthModalProps> = ({
+  isOpen,
+  onClose,
+  onAuthSuccess,
+  isMandatory = false
+}) => {
   const [isRegister, setIsRegister] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
+  const [isSharedDevice, setIsSharedDevice] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
@@ -31,17 +38,18 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onAuthSuc
       let uid: string;
       if (isRegister) {
         if (!name.trim()) throw new Error('Por favor ingresa tu nombre de desarrollador');
-        uid = await authService.signUpWithEmail(email, password, name);
+        uid = await authService.signUpWithEmail(email, password, name, isSharedDevice);
       } else {
-        uid = await authService.signInWithEmail(email, password);
+        uid = await authService.signInWithEmail(email, password, isSharedDevice);
       }
 
-      // Obtener o crear perfil con el nuevo UID
+      // Obtener o inicializar perfil con el nuevo UID
       const profile = await userService.getProfile(uid);
       if (name.trim()) {
         profile.displayName = name;
-        await userService.updateProfile(profile);
       }
+      profile.email = email;
+      await userService.updateProfile(profile);
 
       soundService.playWin();
       onAuthSuccess(profile);
@@ -57,12 +65,14 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onAuthSuc
 
   return (
     <div className="modal-backdrop">
-      <div className="modal-card">
-        <button className="modal-close" onClick={onClose}>
-          <X size={20} />
-        </button>
+      <div className="modal-card" style={{ maxWidth: 440 }}>
+        {!isMandatory && (
+          <button className="modal-close" onClick={onClose} aria-label="Cerrar ventana">
+            <X size={20} />
+          </button>
+        )}
 
-        <div style={{ textAlign: 'center', marginBottom: '20px' }}>
+        <div style={{ textAlign: 'center', marginBottom: '18px' }}>
           <div
             style={{
               width: '56px',
@@ -72,16 +82,19 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onAuthSuc
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              margin: '0 auto 12px auto'
+              margin: '0 auto 12px auto',
+              boxShadow: '0 4px 0 #0891B2'
             }}
           >
             <Sparkles size={28} color="#FFFFFF" />
           </div>
           <h2 style={{ fontSize: '1.4rem', fontWeight: 900 }}>
-            {isRegister ? 'Crea tu Cuenta PrograApp' : 'Conecta con tu Código'}
+            {isRegister ? 'Registro de Estudiante' : 'Inicio de Sesión'}
           </h2>
-          <p style={{ color: '#94A3B8', fontSize: '0.88rem', marginTop: '4px' }}>
-            Guarda tu racha, estrellas y progreso en la nube.
+          <p style={{ color: '#94A3B8', fontSize: '0.86rem', marginTop: '4px' }}>
+            {isMandatory
+              ? 'Inicia sesión o regístrate para acceder a las lecciones y registrar tu avance.'
+              : 'Guarda tu progreso de aprendizaje en la nube.'}
           </p>
         </div>
 
@@ -105,13 +118,13 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onAuthSuc
           {isRegister && (
             <div>
               <label style={{ fontSize: '0.8rem', fontWeight: 700, color: '#CBD5E1', display: 'block', marginBottom: '6px' }}>
-                Nombre Visible
+                Nombre Completo o de Usuario
               </label>
               <div className="input-group">
                 <UserIcon size={18} color="#64748B" />
                 <input
                   type="text"
-                  placeholder="ej. AlexDev"
+                  placeholder="ej. Alex Gómez"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   required
@@ -122,13 +135,13 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onAuthSuc
 
           <div>
             <label style={{ fontSize: '0.8rem', fontWeight: 700, color: '#CBD5E1', display: 'block', marginBottom: '6px' }}>
-              Correo Electrónico
+              Correo Institucional o Personal
             </label>
             <div className="input-group">
               <Mail size={18} color="#64748B" />
               <input
                 type="email"
-                placeholder="dev@ejemplo.com"
+                placeholder="estudiante@ejemplo.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
@@ -152,13 +165,43 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onAuthSuc
             </div>
           </div>
 
+          {/* Opción para dispositivos compartidos (Laboratorios / Aulas) */}
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 10,
+              padding: '8px 12px',
+              background: 'rgba(255, 255, 255, 0.04)',
+              borderRadius: 10,
+              border: '1px solid rgba(255, 255, 255, 0.08)',
+              cursor: 'pointer'
+            }}
+            onClick={() => setIsSharedDevice(!isSharedDevice)}
+          >
+            <input
+              type="checkbox"
+              id="shared-device-check"
+              checked={isSharedDevice}
+              onChange={(e) => setIsSharedDevice(e.target.checked)}
+              style={{ cursor: 'pointer', width: 16, height: 16 }}
+            />
+            <label
+              htmlFor="shared-device-check"
+              style={{ fontSize: '0.8rem', color: '#94A3B8', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6 }}
+            >
+              <Monitor size={15} color="#38BDF8" />
+              <span>Equipo compartido (cerrar sesión al salir del navegador)</span>
+            </label>
+          </div>
+
           <button
             type="submit"
             className="btn-3d btn-green"
             disabled={loading}
             style={{ marginTop: '8px' }}
           >
-            {loading ? 'Procesando...' : isRegister ? 'Registrarse Gratis' : 'Iniciar Sesión'}
+            {loading ? 'Procesando...' : isRegister ? 'Registrarse y Comenzar' : 'Iniciar Sesión'}
           </button>
         </form>
 
@@ -182,6 +225,28 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onAuthSuc
           >
             {isRegister ? 'Inicia sesión' : 'Regístrate aquí'}
           </button>
+        </div>
+
+        {/* Aviso de Privacidad e Investigación */}
+        <div
+          style={{
+            marginTop: 18,
+            padding: '10px 12px',
+            background: 'rgba(6, 182, 212, 0.06)',
+            border: '1px dashed rgba(6, 182, 212, 0.3)',
+            borderRadius: 10,
+            display: 'flex',
+            alignItems: 'flex-start',
+            gap: 8,
+            fontSize: '0.74rem',
+            color: '#94A3B8',
+            lineHeight: 1.35
+          }}
+        >
+          <Shield size={16} color="#06B6D4" style={{ flexShrink: 0, marginTop: 2 }} />
+          <span>
+            <strong>Finalidad Educativa:</strong> Esta aplicación registra progreso e intentos para seguimiento del aprendizaje e investigación docente. No se solicita cédula ni datos personales innecesarios.
+          </span>
         </div>
       </div>
     </div>

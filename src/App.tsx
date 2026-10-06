@@ -41,6 +41,12 @@ import { LoadingScreen } from './components/LoadingScreen';
 import { ConsoleMascot } from './components/ConsoleAvatar';
 import { GameAlertModal, GameAlertState } from './components/GameAlertModal';
 import { AnimatedDoodleBackground } from './components/AnimatedDoodleBackground';
+import { AcademicDashboard } from './components/AcademicDashboard';
+import { EvaluationModal } from './components/EvaluationModal';
+import { ActivityOpinionModal } from './components/ActivityOpinionModal';
+import { academicService } from './services/academicService';
+import { timeTrackingService } from './services/timeTrackingService';
+import { getInstrument, EvaluationInstrument } from './content/academicEvaluations';
 
 // Función para aleatorizar preguntas (Fisher-Yates shuffle)
 function shuffleArray<T>(items: T[]): T[] {
@@ -68,14 +74,24 @@ export default function App() {
     return raw && typeof raw === 'object' ? raw : {};
   });
 
-  // Vistas principales: path, lesson, practice, boss (combate a pantalla completa, nunca modal)
-  const [view, setView] = useState<'path' | 'lesson' | 'practice' | 'boss' | 'profile'>(() => {
+  // Vistas principales: path, lesson, practice, boss, profile, academic
+  const [view, setView] = useState<'path' | 'lesson' | 'practice' | 'boss' | 'profile' | 'academic'>(() => {
     if (typeof window !== 'undefined') {
       const params = new URLSearchParams(window.location.search);
       if (params.get('view') === 'boss') return 'boss';
+      if (params.get('view') === 'academic') return 'academic';
     }
     return 'path';
   });
+
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(() => {
+    return Boolean(storageService.getItem<string | null>('last_authenticated_uid', null));
+  });
+  const [activeSessionId, setActiveSessionId] = useState<string>(() => 'ses_' + Date.now());
+  const [exerciseAttemptsMap, setExerciseAttemptsMap] = useState<Record<string, number>>({});
+  const [activeEvaluationInstrument, setActiveEvaluationInstrument] = useState<EvaluationInstrument | null>(null);
+  const [opinionActivityId, setOpinionActivityId] = useState<string | null>(null);
+
   const [mainTab, setMainTab] = useState<'play' | 'courses'>(() => {
     if (typeof window !== 'undefined') {
       const params = new URLSearchParams(window.location.search);
@@ -174,17 +190,28 @@ export default function App() {
   const [showLoading, setShowLoading] = useState(true);
   const [loadingTitle, setLoadingTitle] = useState('Inicializando PrograApp...');
 
-  // Sincronización transparente en segundo plano
+  // Sincronización obligatoria de sesión: No permite aprendizaje como invitado
   useEffect(() => {
     async function loadData() {
       try {
         const uid = await authService.initAuth();
-        const u = await userService.getProfile(uid);
-        const p = await progressService.getAllProgress(uid);
-        if (u) setUser(sanitizeUserProfile(u, uid));
-        if (p) setProgress(p);
+        if (uid) {
+          setIsAuthenticated(true);
+          const u = await userService.getProfile(uid);
+          const p = await progressService.getAllProgress(uid);
+          if (u) setUser(sanitizeUserProfile(u, uid));
+          if (p) setProgress(p);
+        } else {
+          // Si no hay usuario autenticado, bloquear acceso y abrir modal de registro/login
+          setIsAuthenticated(false);
+          setIsAuthOpen(true);
+        }
       } catch (err) {
-        console.warn('Sincronización en segundo plano:', err);
+        console.warn('Verificación de sesión:', err);
+        setIsAuthenticated(false);
+        setIsAuthOpen(true);
+      } finally {
+        setShowLoading(false);
       }
     }
     loadData();
@@ -193,8 +220,15 @@ export default function App() {
   const currentPath: PathType = user?.currentPath === 'sql' ? 'sql' : 'kotlin';
   const units = getUnitsByPath(currentPath);
 
-  // Iniciar lección o prueba: Control del Sistema + Banco de 20 preguntas (10 aleatorias) + Transición de Círculo Naranja (1.2s)
+  // Iniciar lección o prueba: Control del Sistema + Banco de preguntas + Seguimiento de Tiempo
   const handleStartLesson = (lesson: Lesson) => {
+    // 0. Comprobación obligatoria de autenticación (No permitir invitados)
+    if (!isAuthenticated || !user.uid || user.uid === 'guest_user_1') {
+      soundService.playError();
+      setIsAuthOpen(true);
+      return;
+    }
+
     // 1. Control de Progresión Secuencial Estricta a Nivel de Sistema (Requisitos 1 y 4)
     const unitObj = units.find(u => u.id === lesson.unit);
     if (unitObj) {
@@ -216,6 +250,11 @@ export default function App() {
     if (irisTransition.active) return;
 
     soundService.playToken();
+
+    // Iniciar conteo de tiempo activo para esta sesión de lección
+    timeTrackingService.startLessonTracking(user.uid);
+    setActiveSessionId('ses_' + Date.now());
+    setExerciseAttemptsMap({});
 
     // Fase 1: Círculo naranja cerrándose (0.4s)
     setIrisTransition({ active: true, phase: 'closing' });
@@ -336,6 +375,50 @@ export default function App() {
         parsonsOrder.every((val, index) => val === currentExercise.correctOrder[index]);
     }
 
+    // Extraer respuesta textual para trazabilidad en la investigación
+    let userAnswerStr = '';
+    if (currentExercise.type === 'code_builder') {
+      userAnswerStr = selectedTokenIndices.map(idx => currentExercise.tokens[idx]).join(' ');
+    } else if (currentExercise.type === 'spot_the_bug') {
+      userAnswerStr = `Línea ${selectedBugLine !== null ? selectedBugLine + 1 : 'N/A'}`;
+    } else if (currentExercise.type === 'predict_output') {
+      userAnswerStr = selectedOption !== null ? currentExercise.options[selectedOption] : '';
+    } else if (currentExercise.type === 'code_cloze') {
+      userAnswerStr = selectedOption !== null ? currentExercise.options[selectedOption] : '';
+    } else if (currentExercise.type === 'matching_pairs') {
+      userAnswerStr = matchedPairs.join(' | ');
+    } else if (currentExercise.type === 'trace_step') {
+      userAnswerStr = JSON.stringify(traceUserValues);
+    } else if (currentExercise.type === 'parsons_puzzle') {
+      userAnswerStr = parsonsOrder.map(idx => currentExercise.lines[idx]).join('\n');
+    }
+
+    const currentAttemptNum = (exerciseAttemptsMap[currentExercise.id] || 0) + 1;
+    setExerciseAttemptsMap(prev => ({ ...prev, [currentExercise.id]: currentAttemptNum }));
+
+    if (activeLesson && user.uid && user.uid !== 'guest_user_1') {
+      academicService.recordAttempt({
+        attemptId: `att_${user.uid}_${currentExercise.id}_${Date.now()}`,
+        studentId: user.uid,
+        studentCode: user.studentCode || 'E01',
+        sessionId: activeSessionId,
+        pathId: activeLesson.path,
+        unitId: activeLesson.unit,
+        lessonId: activeLesson.id,
+        activityId: currentExercise.id,
+        contentVersion: '1.0.0',
+        theme: activeLesson.title,
+        difficulty: 'medium',
+        attemptNumber: currentAttemptNum,
+        userAnswer: userAnswerStr || '(Vacío)',
+        status: isCorrect ? 'correct' : 'incorrect',
+        score: isCorrect ? currentExercise.xpReward : 0,
+        maxScore: currentExercise.xpReward,
+        hintUsed: Boolean(teacherHintText || isCodePeekActive || eliminatedOptionIndices.length > 0),
+        timestamp: Date.now()
+      }).catch(err => console.warn('Error al registrar intento:', err));
+    }
+
     if (isCorrect) {
       soundService.playCorrect();
       setFeedbackState('success');
@@ -440,6 +523,10 @@ export default function App() {
       setEliminatedOptionIndices([]);
       setIsCodePeekActive(false);
     } else {
+      // Detener conteo de tiempo activo
+      timeTrackingService.stopLessonTracking();
+      const finishedLessonId = activeLesson.id;
+
       soundService.playWin();
       confetti({ particleCount: 90, spread: 75, origin: { y: 0.6 } });
 
@@ -471,6 +558,9 @@ export default function App() {
       setView('path');
       setActiveLesson(null);
       setLessonQueue([]);
+
+      // Abrir breve encuesta de opinión pedagógica tras entregar la práctica
+      setOpinionActivityId(finishedLessonId);
     }
   };
 
@@ -606,9 +696,10 @@ export default function App() {
       )}
 
       {/* Barra de Estado Superior (solo visible en path y practice) */}
-      {view !== 'boss' && view !== 'lesson' && (
+      {view !== 'boss' && view !== 'lesson' && view !== 'academic' && (
         <Navbar
           user={user}
+          isAdmin={authService.isCurrentUserAdmin()}
           onPathToggle={() => {
             soundService.playToken();
             const nextPath: PathType = user.currentPath === 'kotlin' ? 'sql' : 'kotlin';
@@ -633,6 +724,20 @@ export default function App() {
           onOpenProfile={() => {
             soundService.playToken();
             setView('profile');
+          }}
+          onOpenAcademic={() => {
+            soundService.playToken();
+            setView('academic');
+          }}
+          onSignOut={async () => {
+            soundService.playToken();
+            timeTrackingService.stopLessonTracking();
+            await authService.signOutUser();
+            setIsAuthenticated(false);
+            setUser(DEFAULT_PROFILE);
+            setProgress({});
+            setView('path');
+            setIsAuthOpen(true);
           }}
         />
       )}
@@ -1286,10 +1391,16 @@ export default function App() {
       {/* MODALES DEL SISTEMA */}
       <AuthModal
         isOpen={isAuthOpen}
-        onClose={() => setIsAuthOpen(false)}
-        onAuthSuccess={(authProfile) => {
+        isMandatory={!isAuthenticated}
+        onClose={() => {
+          if (isAuthenticated) setIsAuthOpen(false);
+        }}
+        onAuthSuccess={async (authProfile) => {
           setUser(authProfile);
+          setIsAuthenticated(true);
           setIsAuthOpen(false);
+          const p = await progressService.getAllProgress(authProfile.uid);
+          if (p) setProgress(p);
         }}
       />
 
@@ -1299,6 +1410,60 @@ export default function App() {
           onBack={() => setView('path')}
           onUpdate={(updated) => setUser(updated)}
           onOpenAuth={() => { setView('path'); setIsAuthOpen(true); }}
+          onOpenAcademic={() => setView('academic')}
+          onOpenDiagnostic={() => setActiveEvaluationInstrument(getInstrument(currentPath, 'diagnostic'))}
+          onOpenFinalTest={() => setActiveEvaluationInstrument(getInstrument(currentPath, 'final'))}
+          onSignOut={async () => {
+            soundService.playToken();
+            timeTrackingService.stopLessonTracking();
+            await authService.signOutUser();
+            setIsAuthenticated(false);
+            setUser(DEFAULT_PROFILE);
+            setProgress({});
+            setView('path');
+            setIsAuthOpen(true);
+          }}
+        />
+      )}
+
+      {/* SECCIÓN PRIVADA DE SEGUIMIENTO ACADÉMICO (SOLO ADMIN CON CONTRASEÑA HASH) */}
+      {view === 'academic' && (
+        <AcademicDashboard
+          currentUser={user}
+          onBack={() => setView('path')}
+        />
+      )}
+
+      {/* MODAL DE EVALUACIÓN ESTANDARIZADA (DIAGNÓSTICO Y PRUEBA FINAL) */}
+      {activeEvaluationInstrument && (
+        <EvaluationModal
+          isOpen={true}
+          instrument={activeEvaluationInstrument}
+          user={user}
+          onClose={() => setActiveEvaluationInstrument(null)}
+          onComplete={async () => {
+            setActiveEvaluationInstrument(null);
+            soundService.playWin();
+            setGameAlert({
+              isOpen: true,
+              type: 'success',
+              title: 'Evaluación Registrada',
+              message: `Tu entrega para "${activeEvaluationInstrument.title}" ha sido registrada para el seguimiento académico.`,
+              primaryButtonText: 'Continuar',
+              onPrimaryClick: () => setGameAlert(null)
+            });
+          }}
+        />
+      )}
+
+      {/* MODAL DE OPINIÓN PEDAGÓGICA BREVE TRAS ENTREGAR PRÁCTICA */}
+      {opinionActivityId && (
+        <ActivityOpinionModal
+          isOpen={true}
+          studentId={user.uid}
+          studentCode={user.studentCode || 'E01'}
+          activityId={opinionActivityId}
+          onClose={() => setOpinionActivityId(null)}
         />
       )}
 
