@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import {
   Flame,
   Zap,
-  Dumbbell,
   Code2,
   Database,
   Target,
@@ -21,7 +20,7 @@ interface NavbarProps {
   isAdmin?: boolean;
   onPathToggle: () => void;
   onOpenQuests: () => void;
-  onOpenPractice: () => void;
+  onOpenPractice?: () => void;
   onOpenProfile: () => void;
   onOpenAcademic?: () => void;
   onSignOut?: () => void;
@@ -32,7 +31,6 @@ export const Navbar: React.FC<NavbarProps> = ({
   isAdmin = false,
   onPathToggle,
   onOpenQuests,
-  onOpenPractice,
   onOpenProfile,
   onOpenAcademic,
   onSignOut
@@ -96,20 +94,6 @@ export const Navbar: React.FC<NavbarProps> = ({
         >
           <Zap size={17} color="#06B6D4" fill="#06B6D4" />
           <span className="stat-number">{user?.bytes ?? 0}</span>
-        </button>
-
-        {/* Baterías / Gimnasio de Práctica (Acceso directo al gimnasio) */}
-        <button
-          className="stat-pill energy-pill"
-          onClick={() => {
-            soundService.playToken();
-            onOpenPractice();
-          }}
-          title={`Gimnasio de Práctica: ${user?.batteries ?? 5}/5 Baterías. Toca para recargar`}
-          type="button"
-        >
-          <Dumbbell size={16} strokeWidth={2.5} color="#22C55E" />
-          <span className="stat-number">{user?.batteries ?? 5}</span>
         </button>
 
         {/* Botón 3D de Misiones Diarias */}

@@ -1,15 +1,13 @@
 import { useState, useEffect } from 'react';
 import confetti from 'canvas-confetti';
 import {
-  ArrowLeft,
   X,
   CheckCircle2,
   XCircle,
   RotateCcw,
   Gamepad2,
   GraduationCap,
-  ShieldCheck,
-  Zap
+  ShieldCheck
 } from 'lucide-react';
 
 import { UserProfile, LearningPath as PathType, UserPowerUps } from './types/user';
@@ -20,7 +18,7 @@ import { progressService } from './services/progressService';
 import { authService, ADMIN_AUTHORIZED_EMAIL } from './services/authService';
 import { soundService } from './services/soundService';
 import { storageService } from './services/storageService';
-import { progressionEngine } from './services/progressionEngine';
+import { progressionEngine, ProgressionChestRewards } from './services/progressionEngine';
 import { getUnitsByPath, getLessonById } from './content';
 import { TheoryLesson } from './types/theory';
 import { getTheoryByLessonId, getTheoriesByPath } from './content/theoryIndex';
@@ -33,7 +31,7 @@ import { TheoryViewer } from './components/TheoryViewer';
 import { AuthModal } from './components/AuthModal';
 import { ProfilePage } from './components/ProfilePage';
 import { DailyQuestsModal } from './components/DailyQuestsModal';
-import { ChestModal, ChestRewardPayload } from './components/ChestModal';
+import { ChestModal } from './components/ChestModal';
 import { BossFightArena } from './components/BossFight';
 import { PowerUpsBar } from './components/PowerUpsBar';
 import { VSCodeSnippet } from './components/VSCodeSnippet';
@@ -44,14 +42,15 @@ import { ConsoleMascot, ConsoleDevAvatar } from './components/ConsoleAvatar';
 import { GameAlertModal, GameAlertState } from './components/GameAlertModal';
 import { AnimatedDoodleBackground } from './components/AnimatedDoodleBackground';
 import { AcademicDashboard } from './components/AcademicDashboard';
-import { EvaluationModal } from './components/EvaluationModal';
+import { EvaluationPage } from './components/EvaluationPage';
 import { ActivityOpinionModal } from './components/ActivityOpinionModal';
 import { academicService } from './services/academicService';
 import { timeTrackingService } from './services/timeTrackingService';
 import {
   getInstrument,
   EvaluationInstrument,
-  INITIAL_COMPREHENSIVE_DIAGNOSTIC_INSTRUMENT
+  INITIAL_COMPREHENSIVE_DIAGNOSTIC_INSTRUMENT,
+  getDiagnosticInstrumentById
 } from './content/academicEvaluations';
 
 // Función para aleatorizar preguntas (Fisher-Yates shuffle)
@@ -134,7 +133,7 @@ export default function App() {
   });
   const [activeChestData, setActiveChestData] = useState<{
     chestId: string;
-    rewards?: ChestRewardPayload;
+    rewards?: ProgressionChestRewards;
   } | null>(null);
 
   // Combate de Jefe activo a pantalla completa
@@ -196,6 +195,35 @@ export default function App() {
   const [showLoading, setShowLoading] = useState(true);
   const [loadingTitle, setLoadingTitle] = useState('Inicializando PrograApp...');
 
+  // Estado de diagnóstico pendiente asignado por el profesor
+  const [activePendingAssignment, setActivePendingAssignment] = useState<any | null>(null);
+
+  const checkPendingAssignedDiagnostic = async (studentProfile: UserProfile) => {
+    if (studentProfile.email === ADMIN_AUTHORIZED_EMAIL) return;
+    try {
+      const pending = await academicService.getPendingDiagnosticForStudent(studentProfile.uid);
+      if (pending) {
+        const inst = getDiagnosticInstrumentById(pending.instrumentId);
+        if (inst) {
+          setActivePendingAssignment(pending);
+          setGameAlert({
+            isOpen: true,
+            type: 'info',
+            title: '🔔 El Profesor te ha enviado un Diagnóstico',
+            message: `El profesor Joseph Carazo te ha enviado la evaluación: "${pending.title}". Debes completarla obligatoriamente para registrar tus avances.`,
+            primaryButtonText: 'Comenzar Diagnóstico Obligatorio',
+            onPrimaryClick: () => {
+              setGameAlert(null);
+              setActiveEvaluationInstrument(inst);
+            }
+          });
+        }
+      }
+    } catch (err) {
+      console.warn('Error al verificar diagnósticos pendientes:', err);
+    }
+  };
+
   // Sincronización obligatoria de sesión: No permite aprendizaje como invitado
   useEffect(() => {
     async function loadData() {
@@ -212,6 +240,9 @@ export default function App() {
           // Si es la primera vez que ingresa (o no ha completado el diagnóstico inicial de Kotlin y SQL), lanzarlo obligatoriamente
           if (!sanitizedUser.hasCompletedInitialDiagnostic && sanitizedUser.email !== ADMIN_AUTHORIZED_EMAIL) {
             setActiveEvaluationInstrument(INITIAL_COMPREHENSIVE_DIAGNOSTIC_INSTRUMENT);
+          } else {
+            // Verificar si el docente Joseph Carazo le ha enviado una nueva evaluación diagnóstica
+            checkPendingAssignedDiagnostic(sanitizedUser);
           }
         } else {
           // Si no hay usuario autenticado, bloquear acceso y abrir modal de registro/login
@@ -460,39 +491,48 @@ export default function App() {
 
       // Re-encolar el reto fallado al final de la cola para responderlo bien obligatoriamente
       setLessonQueue(prev => [...prev, currentExercise]);
-
-      // Descontar batería Overdrive solo en fase inicial (nunca bloquea el aprendizaje)
-      if (!isReviewPhase && user.batteries > 0) {
-        const updatedUser = await userService.consumeBattery(user);
-        setUser(updatedUser);
-      }
     }
   };
 
-  // Manejo de comodines durante la lección
-  const handleUsePowerUpInLesson = async (key: keyof UserPowerUps) => {
+  // Manejo de comodines durante la lección - EJECUCIÓN INSTANTÁNEA (0ms latencia)
+  const handleUsePowerUpInLesson = (key: keyof UserPowerUps) => {
     if (!user.powerups || (user.powerups[key] || 0) <= 0) {
       soundService.playError();
       setGameAlert({
         isOpen: true,
         type: 'lock',
         title: 'Comodín Agotado',
-        message: 'No tienes unidades disponibles de este comodín. Abre más cofres de aventura para conseguir nuevos recursos tácticos.',
+        message: 'No tienes unidades disponibles de este comodín. Abre más cofres de aventura o avanza en el pase para conseguir nuevos recursos tácticos.',
         primaryButtonText: 'Entendido',
         onPrimaryClick: () => setGameAlert(null)
       });
       return;
     }
 
-    const updatedUser = await userService.consumePowerUp(user, key);
+    // 1. Actualización optimista inmediata en estado local
+    const currentCount = user.powerups[key] || 1;
+    const newCount = Math.max(0, currentCount - 1);
+    const updatedUser: UserProfile = {
+      ...user,
+      powerups: {
+        ...user.powerups,
+        [key]: newCount
+      }
+    };
     setUser(updatedUser);
 
+    // 2. Persistencia en segundo plano sin congelar la interfaz
+    userService.consumePowerUp(user, key).catch(err => {
+      console.error('Error al sincronizar consumo de comodín:', err);
+    });
+
+    // 3. Activación instantánea del efecto sonoro y visual del comodín
+    soundService.playCorrect();
+
     if (key === 'teacherHint') {
-      soundService.playCorrect();
       const hint = currentExercise?.hint || currentExercise?.explanation || 'Analiza detalladamente la sintaxis y tipos de datos requeridos.';
       setTeacherHintText(hint);
     } else if (key === 'eliminateOptions') {
-      soundService.playCorrect();
       if (currentExercise?.type === 'predict_output') {
         const wrongIndices = currentExercise.options
           .map((_, i) => i)
@@ -514,10 +554,8 @@ export default function App() {
         });
       }
     } else if (key === 'secondChance') {
-      soundService.playCorrect();
       setIsSecondChanceActive(true);
     } else if (key === 'codePeek') {
-      soundService.playCorrect();
       setIsCodePeekActive(true);
     }
   };
@@ -543,10 +581,7 @@ export default function App() {
       soundService.playWin();
       confetti({ particleCount: 90, spread: 75, origin: { y: 0.6 } });
 
-      // Bonificación Overdrive: si tiene baterías disponibles, recibe +50% XP
-      const hasOverdrive = (user.batteries || 0) > 0;
-      const baseXp = 30;
-      const finalXp = hasOverdrive ? Math.round(baseXp * 1.5) : baseXp;
+      const finalXp = 35;
 
       const stars: 1 | 2 | 3 = lessonMistakes === 0 ? 3 : lessonMistakes <= 2 ? 2 : 1;
       const lessonProgress: LessonProgress = {
@@ -608,26 +643,8 @@ export default function App() {
     setActiveRightPair(null);
   };
 
-  // Práctica en gimnasio
-  const handlePracticeSession = async () => {
-    soundService.playWin();
-    const updated = await userService.addPracticeBattery(user);
-    setUser(updated);
-    setGameAlert({
-      isOpen: true,
-      type: 'success',
-      title: '¡Entrenamiento Exitoso!',
-      message: `Has reforzado tus conceptos de programación y recuperado +1 Batería Overdrive. Baterías actuales: ${updated.batteries}/${updated.maxBatteries || 5}.`,
-      primaryButtonText: 'Volver a la Ruta',
-      onPrimaryClick: () => {
-        setGameAlert(null);
-        setView('path');
-      }
-    });
-  };
-
   // Apertura de Cofre con validación de un solo uso
-  const handleOpenChest = (chestId: string, rewards?: ChestRewardPayload) => {
+  const handleOpenChest = (chestId: string, rewards?: ProgressionChestRewards) => {
     if ((user.openedChests || []).includes(chestId)) {
       soundService.playToken();
       setGameAlert({
@@ -665,7 +682,6 @@ export default function App() {
       rewards: rewards || {
         bytes: 40,
         xp: 30,
-        batteries: 2,
         powerups: { teacherHint: 1, eliminateOptions: 1, secondChance: 1, codePeek: 1 }
       }
     });
@@ -695,6 +711,53 @@ export default function App() {
     });
     setView('boss');
   };
+
+  // ─── PÁGINA APARTE: EVALUACIÓN DIAGNÓSTICA O FINAL (FULL-PAGE VIEW) ───
+  if (activeEvaluationInstrument && user) {
+    return (
+      <EvaluationPage
+        instrument={activeEvaluationInstrument}
+        user={user}
+        isMandatory={
+          (!user.hasCompletedInitialDiagnostic &&
+            activeEvaluationInstrument.instrumentId === INITIAL_COMPREHENSIVE_DIAGNOSTIC_INSTRUMENT.instrumentId) ||
+          Boolean(activePendingAssignment)
+        }
+        onClose={() => {
+          setActiveEvaluationInstrument(null);
+        }}
+        onComplete={async () => {
+          setActiveEvaluationInstrument(null);
+          const isInitial =
+            activeEvaluationInstrument.instrumentId === INITIAL_COMPREHENSIVE_DIAGNOSTIC_INSTRUMENT.instrumentId;
+
+          if (isInitial || !user.hasCompletedInitialDiagnostic) {
+            const updatedUser: UserProfile = { ...user, hasCompletedInitialDiagnostic: true };
+            setUser(updatedUser);
+            await userService.updateProfile(updatedUser);
+          }
+
+          // Si correspondía a una asignación enviada por el profesor Joseph Carazo
+          if (activePendingAssignment) {
+            await academicService.markDiagnosticCompleted(activePendingAssignment.assignmentId, user.uid);
+            setActivePendingAssignment(null);
+          }
+
+          soundService.playWin();
+          setGameAlert({
+            isOpen: true,
+            type: 'success',
+            title: isInitial ? '¡Diagnóstico Inicial Completado!' : 'Evaluación Entregada',
+            message: isInitial
+              ? 'Tus conocimientos previos en Kotlin y SQL han sido registrados exitosamente. ¡Ya puedes comenzar a aprender en la aplicación!'
+              : `Tu entrega para "${activeEvaluationInstrument.title}" ha sido guardada y enviada al profesor Joseph Carazo.`,
+            primaryButtonText: isInitial ? '¡A Aprender!' : 'Continuar',
+            onPrimaryClick: () => setGameAlert(null)
+          });
+        }}
+      />
+    );
+  }
 
   return (
     <>
@@ -729,10 +792,6 @@ export default function App() {
           onOpenQuests={() => {
             soundService.playToken();
             setIsQuestsOpen(true);
-          }}
-          onOpenPractice={() => {
-            soundService.playToken();
-            setView('practice');
           }}
           onOpenProfile={() => {
             soundService.playToken();
@@ -857,6 +916,7 @@ export default function App() {
                   theories={getTheoriesByPath(currentPath)}
                   progress={progress}
                   currentPath={currentPath}
+                  user={user}
                   onSelectTheory={(th) => {
                     // Transición iris naranja + Dev '¡A jugar!' en 'Leer Materia'
                     if (irisTransition.active) return;
@@ -977,27 +1037,6 @@ export default function App() {
                   }}
                 />
               </div>
-            </div>
-            {/* Pill de Baterías Overdrive (Vidas de Duolingo) */}
-            <div
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '5px',
-                background: '#FFFFFF',
-                border: '2px solid #CBD5E1',
-                boxShadow: '0 3px 0 #94A3B8',
-                padding: '6px 12px',
-                borderRadius: '14px',
-                fontSize: '0.86rem',
-                fontWeight: 900,
-                color: '#EA580C',
-                flexShrink: 0
-              }}
-              title="Baterías Overdrive (+50% XP)"
-            >
-              <Zap size={16} fill="#EA580C" color="#EA580C" />
-              <span>{user.batteries || 0}</span>
             </div>
             {/* Contador de ejercicios */}
             <div
@@ -1160,9 +1199,9 @@ export default function App() {
                 style={{
                   background: '#0F172A',
                   borderRadius: '16px',
-                  border: '2px solid #E2E8F0',
+                  border: '2.5px solid #EF4444',
                   overflow: 'hidden',
-                  boxShadow: '0 5px 0 #CBD5E1'
+                  boxShadow: '0 5px 0 #B91C1C'
                 }}
               >
                 <div
@@ -1441,42 +1480,6 @@ export default function App() {
         </div>
       )}
 
-      {/* VISTA 3: GIMNASIO DE PRÁCTICA */}
-      {view === 'practice' && (
-        <div style={{ padding: '24px 16px', display: 'flex', flexDirection: 'column', gap: '20px', maxWidth: '600px', margin: '0 auto', width: '100%', boxSizing: 'border-box' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-            <button
-              onClick={() => {
-                soundService.playToken();
-                setView('path');
-              }}
-              style={{ background: 'none', border: 'none', color: '#94A3B8', cursor: 'pointer' }}
-            >
-              <ArrowLeft size={24} />
-            </button>
-            <h2 style={{ fontSize: '1.4rem', fontWeight: 900 }}>Gimnasio de Práctica</h2>
-          </div>
-
-          <div style={{ background: 'var(--bg-card)', padding: '20px', borderRadius: '18px', border: '2px solid var(--border-color)', boxShadow: '0 6px 0 var(--border-shadow)' }}>
-            <h3 style={{ fontSize: '1.15rem', fontWeight: 800, color: 'var(--orange-main)', marginBottom: '8px' }}>
-              Entrena sin riesgo y activa tu Bonificación Overdrive (+50% XP)
-            </h3>
-            <p style={{ color: 'var(--text-muted)', fontSize: '0.92rem', lineHeight: 1.5, marginBottom: '16px' }}>
-              En PrograApp nunca te quedas bloqueado para aprender. Tener baterías disponibles te otorga una bonificación de +50% de experiencia en cada nivel. Completa sesiones de entrenamiento para recargar tus baterías al máximo.
-            </p>
-            <div style={{ fontSize: '0.95rem', fontWeight: 700, marginBottom: '16px', color: '#F87171' }}>
-              Baterías actuales: {user.batteries}/5
-            </div>
-            <button
-              className="btn-3d btn-green"
-              disabled={user.batteries >= 5}
-              onClick={handlePracticeSession}
-            >
-              {user.batteries >= 5 ? 'Overdrive al Máximo (5/5)' : 'Entrenar (+1 Batería)'}
-            </button>
-          </div>
-        </div>
-      )}
 
       {/* VISTA 4: COMBATE CONTRA JEFE A PANTALLA COMPLETA (Requisito 5 - No es un modal) */}
       {view === 'boss' && activeBossData && (
@@ -1534,6 +1537,9 @@ export default function App() {
           // Si es la primera vez que ingresa y no tiene diagnóstico previo, lanzarlo
           if (!authProfile.hasCompletedInitialDiagnostic && authProfile.email !== ADMIN_AUTHORIZED_EMAIL) {
             setActiveEvaluationInstrument(INITIAL_COMPREHENSIVE_DIAGNOSTIC_INSTRUMENT);
+          } else {
+            // Verificar si el profesor le ha asignado una evaluación
+            checkPendingAssignedDiagnostic(authProfile);
           }
         }}
       />
@@ -1568,41 +1574,6 @@ export default function App() {
         />
       )}
 
-      {/* MODAL DE EVALUACIÓN ESTANDARIZADA (DIAGNÓSTICO Y PRUEBA FINAL) */}
-      {activeEvaluationInstrument && (
-        <EvaluationModal
-          isOpen={true}
-          instrument={activeEvaluationInstrument}
-          user={user}
-          isMandatory={
-            !user.hasCompletedInitialDiagnostic &&
-            activeEvaluationInstrument.instrumentId === INITIAL_COMPREHENSIVE_DIAGNOSTIC_INSTRUMENT.instrumentId
-          }
-          onClose={() => setActiveEvaluationInstrument(null)}
-          onComplete={async () => {
-            setActiveEvaluationInstrument(null);
-            const isInitial =
-              activeEvaluationInstrument.instrumentId === INITIAL_COMPREHENSIVE_DIAGNOSTIC_INSTRUMENT.instrumentId;
-            if (isInitial || !user.hasCompletedInitialDiagnostic) {
-              const updatedUser: UserProfile = { ...user, hasCompletedInitialDiagnostic: true };
-              setUser(updatedUser);
-              await userService.updateProfile(updatedUser);
-            }
-            soundService.playWin();
-            setGameAlert({
-              isOpen: true,
-              type: 'success',
-              title: isInitial ? '¡Diagnóstico Inicial Completado!' : 'Evaluación Registrada',
-              message: isInitial
-                ? 'Tus conocimientos previos en Kotlin y SQL han sido registrados exitosamente. ¡Ya puedes comenzar a aprender en la aplicación!'
-                : `Tu entrega para "${activeEvaluationInstrument.title}" ha sido registrada para el seguimiento académico.`,
-              primaryButtonText: isInitial ? '¡A Aprender!' : 'Continuar',
-              onPrimaryClick: () => setGameAlert(null)
-            });
-          }}
-        />
-      )}
-
       {/* MODAL DE OPINIÓN PEDAGÓGICA BREVE TRAS ENTREGAR PRÁCTICA */}
       {opinionActivityId && (
         <ActivityOpinionModal
@@ -1617,6 +1588,8 @@ export default function App() {
       <DailyQuestsModal
         isOpen={isQuestsOpen}
         onClose={() => setIsQuestsOpen(false)}
+        user={user}
+        progress={progress}
         onRewardClaimed={async (xp, bytes, powerupKey) => {
           let updated = await userService.rewardUser(user, xp, bytes);
           if (powerupKey) {

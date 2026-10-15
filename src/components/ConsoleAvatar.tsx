@@ -22,7 +22,7 @@ export const DEFAULT_DEV_TIPS: Record<ConsoleMood, string[]> = {
     '¡Cada lección completada te acerca a desbloquear el siguiente nivel y nuevos cofres!',
     '¡Resuelve ejercicios para ganar Bytes y conseguir poderosos comodines en la tienda!',
     '¿Sabías qué? Kotlin compila tanto a bytecode de la JVM como a JavaScript y binarios nativos.',
-    '¡El Gimnasio de Práctica te espera tocando tus baterías para recargar tu energía!',
+    '¡Avanza en el Pase de Batalla completando tus misiones para desbloquear increíbles recompensas!',
     '¡Mantén encendida tu racha diaria de código para multiplicar tus recompensas!',
     '¡El compilador celebra cada reto que resuelves con éxito!'
   ],

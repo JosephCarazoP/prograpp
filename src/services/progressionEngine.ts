@@ -7,7 +7,7 @@ export type TrackNodeType = 'lesson' | 'chest' | 'boss';
 export interface ProgressionChestRewards {
   bytes: number;
   xp: number;
-  batteries: number;
+  batteries?: number;
   powerups: Partial<UserPowerUps>;
 }
 
@@ -62,7 +62,6 @@ export const progressionEngine = {
           chestRewards: {
             bytes: 40,
             xp: 30,
-            batteries: 2,
             powerups: {
               teacherHint: chestNumber === 1 ? 2 : 1,
               eliminateOptions: 1,
@@ -128,10 +127,9 @@ export const progressionEngine = {
 
   /**
    * Regla de Desbloqueo Secuencial Estricto:
-   * Un nodo está desbloqueado SI Y SOLO SI:
-   * 1. La unidad está desbloqueada.
-   * 2. Si es el primer nodo (index 0) de la Unidad 1 -> SIEMPRE desbloqueado.
-   * 3. Si es el nodo i > 0 -> el nodo i-1 en el track está COMPLETADO.
+   * 1. Las lecciones se desbloquean al completar la lección previa (los cofres no bloquean lecciones).
+   * 2. REGLA DE COFRE: Un cofre entre A y B se desbloquea una vez que el usuario alcanza o supera B ("cuando estoy en B").
+   * 3. El jefe se desbloquea cuando todas las lecciones de la unidad están completadas.
    */
   isNodeUnlocked(
     node: TrackNode,
@@ -143,27 +141,46 @@ export const progressionEngine = {
       return false;
     }
 
-    // Primer nodo de la unidad 1 siempre abierto
-    if (node.unitId === 1 && node.indexInTrack === 0) {
-      return true;
+    // Caso 1: Nodos de Lección
+    if (node.type === 'lesson') {
+      const prevLesson = track
+        .slice(0, node.indexInTrack)
+        .reverse()
+        .find(n => n.type === 'lesson');
+
+      // Si es la primera lección de la unidad
+      if (!prevLesson) {
+        return this.isUnitUnlocked(node.unitId, user.currentPath, user);
+      }
+
+      return this.isNodeCompleted(prevLesson, user, progress);
     }
 
-    // Primer nodo de unidades superiores (2+) abierto si la unidad está desbloqueada
-    if (node.unitId > 1 && node.indexInTrack === 0) {
-      return this.isUnitUnlocked(node.unitId, user.currentPath, user);
+    // Caso 2: Nodos de Cofre
+    // "Los cofres deben abrirse hasta que uno pase por ellos. Es decir si hay un cofre entre A y B, debe poder abrirse cuando estoy en B."
+    if (node.type === 'chest') {
+      const nextNode = track[node.indexInTrack + 1];
+      if (nextNode) {
+        // Se puede abrir cuando el estudiante ha alcanzado B (B está desbloqueado) o ya completó B
+        return this.isNodeUnlocked(nextNode, track, user, progress) || this.isNodeCompleted(nextNode, user, progress);
+      }
+      // Fallback si no hubiera nodo posterior: verificar el anterior
+      const previousNode = track[node.indexInTrack - 1];
+      return previousNode ? this.isNodeCompleted(previousNode, user, progress) : false;
     }
 
-    // Nodo intermedio: requiere que el nodo previo en el track esté completado
-    const previousNode = track[node.indexInTrack - 1];
-    if (!previousNode) return false;
+    // Caso 3: Jefe de Unidad
+    if (node.type === 'boss') {
+      const lessonsInUnit = track.filter(n => n.type === 'lesson');
+      return lessonsInUnit.length > 0 && lessonsInUnit.every(l => this.isNodeCompleted(l, user, progress));
+    }
 
-    return this.isNodeCompleted(previousNode, user, progress);
+    return false;
   },
 
   /**
    * Control del Sistema de Acceso:
    * Valida en lógica de negocio si el usuario tiene permiso para iniciar una lección, cofre o jefe.
-   * Protege contra accesos directos por URL, modificación de estado o botones no autorizados.
    */
   canAccessNode(
     nodeId: string,
@@ -189,8 +206,27 @@ export const progressionEngine = {
       return { allowed: true };
     }
 
-    const previousNode = track[node.indexInTrack - 1];
-    const prevTitle = previousNode ? previousNode.title : 'el desafío anterior';
+    if (node.type === 'chest') {
+      const nextNode = track[node.indexInTrack + 1];
+      const nextTitle = nextNode ? nextNode.title : 'el siguiente nivel';
+      return {
+        allowed: false,
+        reason: `Cofre en el camino: Debes avanzar y alcanzar "${nextTitle}" para poder abrir este cofre.`
+      };
+    }
+
+    if (node.type === 'boss') {
+      return {
+        allowed: false,
+        reason: 'Debes superar todas las lecciones de la unidad antes de enfrentar al Jefe.'
+      };
+    }
+
+    const prevLesson = track
+      .slice(0, node.indexInTrack)
+      .reverse()
+      .find(n => n.type === 'lesson');
+    const prevTitle = prevLesson ? prevLesson.title : 'el nivel anterior';
 
     return {
       allowed: false,

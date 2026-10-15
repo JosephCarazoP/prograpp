@@ -62,8 +62,8 @@ export const TraceStepComponent: React.FC<TraceStepProps> = ({
           background: '#FFFFFF',
           borderRadius: '20px',
           padding: '18px 20px',
-          border: '2px solid #CBD5E1',
-          boxShadow: '0 4px 0 #94A3B8'
+          border: '2.5px solid #38BDF8',
+          boxShadow: '0 5px 0 #0284C7'
         }}
       >
         <div

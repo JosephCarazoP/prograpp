@@ -18,7 +18,18 @@ import {
   Eye,
   EyeOff,
   Shield,
-  MessageSquare
+  MessageSquare,
+  Send,
+  CheckCircle2,
+  Clock,
+  CheckSquare,
+  Square,
+  Target,
+  LayoutGrid,
+  List,
+  ChevronLeft,
+  ChevronRight,
+  Filter
 } from 'lucide-react';
 import { UserProfile, LearningPath } from '../types/user';
 import {
@@ -26,8 +37,14 @@ import {
   ExerciseAttempt,
   AcademicEvaluation,
   TeacherObservation,
-  ActivityOpinion
+  ActivityOpinion,
+  DiagnosticAssignment
 } from '../types/academic';
+import {
+  KOTLIN_DIAGNOSTICS_LIST,
+  SQL_DIAGNOSTICS_LIST,
+  ALL_DIAGNOSTIC_INSTRUMENTS
+} from '../content/academicEvaluations';
 import { adminSecurityService } from '../services/adminSecurityService';
 import { academicService } from '../services/academicService';
 import { userService } from '../services/userService';
@@ -35,6 +52,7 @@ import { progressService } from '../services/progressService';
 import { excelExportService } from '../services/excelExportService';
 import { pdfExportService } from '../services/pdfExportService';
 import { soundService } from '../services/soundService';
+import { DevAvatar } from './Avatars';
 
 interface AcademicDashboardProps {
   currentUser: UserProfile;
@@ -51,12 +69,11 @@ export const AcademicDashboard: React.FC<AcademicDashboardProps> = ({ currentUse
   const [showInputPass, setShowInputPass] = useState(false);
   const [newAdminPassword, setNewAdminPassword] = useState('');
   const [confirmAdminPassword, setConfirmAdminPassword] = useState('');
-  const [reauthAccountPass, setReauthAccountPass] = useState('');
   const [authError, setAuthError] = useState('');
   const [authLoading, setAuthLoading] = useState(false);
 
   // Pestañas del Panel
-  const [activeTab, setActiveTab] = useState<'group' | 'student' | 'evaluations' | 'attempts' | 'observations'>('group');
+  const [activeTab, setActiveTab] = useState<'group' | 'student' | 'assignDiagnostic' | 'evaluations' | 'attempts' | 'observations'>('group');
 
   // Datos del Panel
   const [loadingData, setLoadingData] = useState(false);
@@ -66,12 +83,24 @@ export const AcademicDashboard: React.FC<AcademicDashboardProps> = ({ currentUse
   const [observations, setObservations] = useState<TeacherObservation[]>([]);
   const [opinions, setOpinions] = useState<ActivityOpinion[]>([]);
   const [progressMapByUser, setProgressMapByUser] = useState<Record<string, Record<string, any>>>({});
+  const [assignments, setAssignments] = useState<DiagnosticAssignment[]>([]);
 
-  // Filtros
+  // Estados para Asignación de Diagnósticos por el Docente
+  const [selectedDiagPath, setSelectedDiagPath] = useState<'kotlin' | 'sql'>('kotlin');
+  const [selectedInstrumentId, setSelectedInstrumentId] = useState<string>(KOTLIN_DIAGNOSTICS_LIST[0].instrumentId);
+  const [targetMode, setTargetMode] = useState<'all' | 'specific'>('all');
+  const [selectedStudentUids, setSelectedStudentUids] = useState<string[]>([]);
+  const [assignmentNotice, setAssignmentNotice] = useState<string>('El profesor te ha enviado un diagnóstico obligatorio. Debes completarlo para continuar.');
+  const [assignSuccessMsg, setAssignSuccessMsg] = useState<string>('');
+  const [assignLoading, setAssignLoading] = useState<boolean>(false);
+
+  // Filtros y Modo de Vista
   const [selectedGroup, setSelectedGroup] = useState<string>('all');
   const [selectedPath, setSelectedPath] = useState<LearningPath | 'all'>('all');
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedStudentUid, setSelectedStudentUid] = useState<string | null>(null);
+  const [groupViewMode, setGroupViewMode] = useState<'cards' | 'table'>('cards');
+  const [statusFilter, setStatusFilter] = useState<'all' | 'evaluated' | 'pending' | 'participants'>('all');
 
   // Modal para agregar observación docente
   const [showObsModal, setShowObsModal] = useState(false);
@@ -135,6 +164,9 @@ export const AcademicDashboard: React.FC<AcademicDashboardProps> = ({ currentUse
       const allOps = await academicService.getAllOpinions();
       setOpinions(allOps);
 
+      const allAss = await academicService.getAllAssignments();
+      setAssignments(allAss);
+
       // Cargar mapa de progresos
       const pMap: Record<string, Record<string, any>> = {};
       for (const st of studentList) {
@@ -181,8 +213,8 @@ export const AcademicDashboard: React.FC<AcademicDashboardProps> = ({ currentUse
       setAuthError('Las contraseñas no coinciden.');
       return;
     }
-    if (newAdminPassword.length < 8) {
-      setAuthError('La contraseña debe tener al menos 8 caracteres.');
+    if (newAdminPassword.length < 6) {
+      setAuthError('La contraseña secundaria debe tener al menos 6 caracteres.');
       return;
     }
 
@@ -190,7 +222,7 @@ export const AcademicDashboard: React.FC<AcademicDashboardProps> = ({ currentUse
     soundService.playToken();
 
     try {
-      await adminSecurityService.setupInitialPassword(newAdminPassword, reauthAccountPass);
+      await adminSecurityService.setupInitialPassword(newAdminPassword);
       setIsUnlocked(true);
       setIsPasswordConfigured(true);
       soundService.playWin();
@@ -208,24 +240,7 @@ export const AcademicDashboard: React.FC<AcademicDashboardProps> = ({ currentUse
     setIsUnlocked(false);
   };
 
-  // Filtrado de estudiantes
-  const filteredStudents = students.filter(st => {
-    if (selectedGroup !== 'all' && (st.group || 'Grupo A') !== selectedGroup) return false;
-    if (selectedPath !== 'all' && st.currentPath !== selectedPath) return false;
-    if (searchTerm.trim()) {
-      const term = searchTerm.toLowerCase();
-      const codeMatch = (st.studentCode || '').toLowerCase().includes(term);
-      const nameMatch = st.displayName.toLowerCase().includes(term);
-      const idMatch = (st.idNumber || '').toLowerCase().includes(term);
-      const emailMatch = (st.email || '').toLowerCase().includes(term);
-      if (!codeMatch && !nameMatch && !idMatch && !emailMatch) return false;
-    }
-    return true;
-  });
-
-  const selectedStudent = students.find(s => s.uid === selectedStudentUid) || students[0];
-
-  // Cálculo de indicadores para cada estudiante
+  // 1. Cálculo de indicadores para cada estudiante (100% datos reales)
   const indicatorsMap: Record<string, EducationalIndicators> = {};
   students.forEach(st => {
     const studentAttempts = attempts.filter(a => a.studentId === st.uid);
@@ -239,6 +254,41 @@ export const AcademicDashboard: React.FC<AcademicDashboardProps> = ({ currentUse
       selectedPath === 'all' ? undefined : selectedPath
     );
   });
+
+  // 2. Filtrado de estudiantes con distinción clara por estado y búsqueda
+  const filteredStudents = students.filter(st => {
+    if (selectedGroup !== 'all' && (st.group || 'Grupo A') !== selectedGroup) return false;
+    if (selectedPath !== 'all' && st.currentPath !== selectedPath) return false;
+    if (statusFilter === 'evaluated' && indicatorsMap[st.uid]?.diagnosticPercentage === null) return false;
+    if (statusFilter === 'pending' && indicatorsMap[st.uid]?.diagnosticPercentage !== null) return false;
+    if (statusFilter === 'participants' && !st.isResearchParticipant) return false;
+    if (searchTerm.trim()) {
+      const term = searchTerm.toLowerCase();
+      const codeMatch = (st.studentCode || '').toLowerCase().includes(term);
+      const nameMatch = st.displayName.toLowerCase().includes(term);
+      const idMatch = (st.idNumber || '').toLowerCase().includes(term);
+      const emailMatch = (st.email || '').toLowerCase().includes(term);
+      if (!codeMatch && !nameMatch && !idMatch && !emailMatch) return false;
+    }
+    return true;
+  });
+
+  const selectedStudent = students.find(s => s.uid === selectedStudentUid) || filteredStudents[0] || students[0];
+  const selectedStudentIndex = filteredStudents.findIndex(s => s.uid === (selectedStudent?.uid || ''));
+
+  const handlePrevStudent = () => {
+    if (filteredStudents.length === 0) return;
+    soundService.playToken();
+    const prevIdx = selectedStudentIndex > 0 ? selectedStudentIndex - 1 : filteredStudents.length - 1;
+    setSelectedStudentUid(filteredStudents[prevIdx].uid);
+  };
+
+  const handleNextStudent = () => {
+    if (filteredStudents.length === 0) return;
+    soundService.playToken();
+    const nextIdx = selectedStudentIndex < filteredStudents.length - 1 ? selectedStudentIndex + 1 : 0;
+    setSelectedStudentUid(filteredStudents[nextIdx].uid);
+  };
 
   // Guardar Observación Docente
   const handleSaveObservation = async (e: React.FormEvent) => {
@@ -362,6 +412,58 @@ export const AcademicDashboard: React.FC<AcademicDashboardProps> = ({ currentUse
     const updatedStatus = !student.isResearchParticipant;
     await userService.updateStudentAcademicInfo(student.uid, { isResearchParticipant: updatedStatus });
     setStudents(prev => prev.map(s => s.uid === student.uid ? { ...s, isResearchParticipant: updatedStatus } : s));
+  };
+
+  // Gestión de Asignación de Diagnósticos por el Docente
+  const handleAssignDiagnostic = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!selectedInstrumentId) return;
+    setAssignLoading(true);
+    setAssignSuccessMsg('');
+    soundService.playToken();
+
+    try {
+      const inst = ALL_DIAGNOSTIC_INSTRUMENTS.find(i => i.instrumentId === selectedInstrumentId);
+      const title = inst ? inst.title : 'Diagnóstico Académico';
+      const targetUids = targetMode === 'all' 
+        ? ['all'] 
+        : selectedStudentUids;
+
+      await academicService.assignDiagnostic(
+        selectedInstrumentId,
+        selectedDiagPath,
+        title,
+        targetUids
+      );
+
+      soundService.playWin();
+      setAssignSuccessMsg(`¡Diagnóstico "${title}" asignado con éxito a ${targetUids.length} estudiante(s)!`);
+      const refreshed = await academicService.getAllAssignments();
+      setAssignments(refreshed);
+    } catch (err) {
+      console.error('Error al asignar diagnóstico:', err);
+      soundService.playError();
+      alert('Ocurrió un error al asignar el diagnóstico.');
+    } finally {
+      setAssignLoading(false);
+    }
+  };
+
+  const toggleSelectStudent = (uid: string) => {
+    soundService.playToken();
+    setSelectedStudentUids(prev => 
+      prev.includes(uid) ? prev.filter(id => id !== uid) : [...prev, uid]
+    );
+  };
+
+  const selectAllStudents = () => {
+    soundService.playToken();
+    setSelectedStudentUids(filteredStudents.map(s => s.uid));
+  };
+
+  const deselectAllStudents = () => {
+    soundService.playToken();
+    setSelectedStudentUids([]);
   };
 
   // Exportar Excel
@@ -501,14 +603,14 @@ export const AcademicDashboard: React.FC<AcademicDashboardProps> = ({ currentUse
               <div className="auth-field">
                 <label className="auth-label" htmlFor="admin-new-pass">
                   <span>Nueva Contraseña Secundaria</span>
-                  <span className="auth-label-badge">Mínimo 8 caracteres</span>
+                  <span className="auth-label-badge badge-orange">Mínimo 6 caracteres</span>
                 </label>
                 <div className="auth-input-wrapper">
                   <KeyRound size={18} color="#64748B" />
                   <input
                     id="admin-new-pass"
                     type="password"
-                    placeholder="Mínimo 8 caracteres"
+                    placeholder="Crea una contraseña secundaria para este panel"
                     value={newAdminPassword}
                     onChange={(e) => setNewAdminPassword(e.target.value)}
                     required
@@ -525,27 +627,9 @@ export const AcademicDashboard: React.FC<AcademicDashboardProps> = ({ currentUse
                   <input
                     id="admin-confirm-pass"
                     type="password"
-                    placeholder="Repite la contraseña"
+                    placeholder="Repite la contraseña secundaria"
                     value={confirmAdminPassword}
                     onChange={(e) => setConfirmAdminPassword(e.target.value)}
-                    required
-                  />
-                </div>
-              </div>
-
-              <div className="auth-field">
-                <label className="auth-label" htmlFor="admin-reauth-pass">
-                  <span>Contraseña Actual de tu Cuenta de Correo</span>
-                  <span className="auth-label-badge">Verificación de identidad</span>
-                </label>
-                <div className="auth-input-wrapper">
-                  <Lock size={18} color="#64748B" />
-                  <input
-                    id="admin-reauth-pass"
-                    type="password"
-                    placeholder="Contraseña de josephcarazo56@gmail.com"
-                    value={reauthAccountPass}
-                    onChange={(e) => setReauthAccountPass(e.target.value)}
                     required
                   />
                 </div>
@@ -555,7 +639,7 @@ export const AcademicDashboard: React.FC<AcademicDashboardProps> = ({ currentUse
                 type="submit"
                 className="auth-btn-primary"
                 disabled={authLoading}
-                style={{ background: '#10B981', boxShadow: '0 4px 0 #059669' }}
+                style={{ background: '#58CC02', boxShadow: '0 4px 0 #46A302' }}
               >
                 <span>{authLoading ? 'Configurando...' : 'Crear Contraseña y Acceder'}</span>
               </button>
@@ -638,7 +722,8 @@ export const AcademicDashboard: React.FC<AcademicDashboardProps> = ({ currentUse
         {[
           { key: 'group' as const, label: 'Resumen Grupal', icon: <Users size={16} /> },
           { key: 'student' as const, label: 'Ficha por Estudiante', icon: <UserCheck size={16} /> },
-          { key: 'evaluations' as const, label: 'Evaluaciones Diagnósticas y Finales', icon: <Award size={16} /> },
+          { key: 'assignDiagnostic' as const, label: '🚀 Asignar Diagnósticos', icon: <Send size={16} /> },
+          { key: 'evaluations' as const, label: 'Evaluaciones y Entregas', icon: <Award size={16} /> },
           { key: 'attempts' as const, label: 'Historial de Intentos', icon: <BarChart3 size={16} /> },
           { key: 'observations' as const, label: 'Observaciones y Opiniones', icon: <MessageSquare size={16} /> }
         ].map(tab => (
@@ -840,149 +925,439 @@ export const AcademicDashboard: React.FC<AcademicDashboardProps> = ({ currentUse
                 </div>
               </div>
 
-              {/* Tabla Grupal de Estudiantes */}
-              <div className="academic-table-container">
-                <div style={{ padding: '12px 16px', background: '#F8FAFC', borderBottom: '1.5px solid #E2E8F0', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <span style={{ fontSize: '0.82rem', fontWeight: 800, color: '#475569' }}>
-                    Mostrando {filteredStudents.length} de {students.length} estudiantes
+              {/* Barra de Filtro Rápido de Estado y Selector de Vista (Tarjetas 3D vs Tabla) */}
+              <div
+                style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  flexWrap: 'wrap',
+                  gap: 12,
+                  marginBottom: 14,
+                  background: '#FFFFFF',
+                  padding: '12px 16px',
+                  borderRadius: 16,
+                  border: '1.5px solid #E2E8F0',
+                  boxShadow: '0 2px 0 #CBD5E1'
+                }}
+              >
+                {/* Filtros de Estado */}
+                <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', alignItems: 'center' }}>
+                  <span style={{ fontSize: '0.78rem', fontWeight: 800, color: '#64748B', marginRight: 4, display: 'flex', alignItems: 'center', gap: 4 }}>
+                    <Filter size={14} /> Filtro:
                   </span>
-                  <span style={{ fontSize: '0.74rem', color: '#64748B' }}>
-                    ← Desliza horizontalmente para ver todos los indicadores →
-                  </span>
+                  {[
+                    { key: 'all' as const, label: `Todos (${students.length})` },
+                    { key: 'evaluated' as const, label: `✓ Evaluados (${students.filter(s => indicatorsMap[s.uid]?.diagnosticPercentage !== null).length})` },
+                    { key: 'pending' as const, label: `⏳ Pendientes (${students.filter(s => indicatorsMap[s.uid]?.diagnosticPercentage === null).length})` },
+                    { key: 'participants' as const, label: `🧪 Participantes (${students.filter(s => s.isResearchParticipant).length})` }
+                  ].map(btn => (
+                    <button
+                      key={btn.key}
+                      onClick={() => {
+                        soundService.playToken();
+                        setStatusFilter(btn.key);
+                      }}
+                      style={{
+                        border: 'none',
+                        background: statusFilter === btn.key ? '#0284C7' : '#F1F5F9',
+                        color: statusFilter === btn.key ? '#FFFFFF' : '#475569',
+                        padding: '6px 12px',
+                        borderRadius: 10,
+                        fontSize: '0.76rem',
+                        fontWeight: 800,
+                        cursor: 'pointer',
+                        boxShadow: statusFilter === btn.key ? '0 2px 0 #0369A1' : 'none',
+                        transition: 'all 0.15s ease'
+                      }}
+                    >
+                      {btn.label}
+                    </button>
+                  ))}
                 </div>
 
-                <table className="academic-table">
-                  <thead>
-                    <tr>
-                      <th>Código</th>
-                      <th>Estudiante & Cédula</th>
-                      <th>Grupo</th>
-                      <th>Ruta</th>
-                      <th>Días</th>
-                      <th>Tiempo Activo</th>
-                      <th>1er Intento %</th>
-                      <th>Diagnóstico %</th>
-                      <th>Prueba Final %</th>
-                      <th>Ganancia</th>
-                      <th>Estudio</th>
-                      <th>Acciones</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {filteredStudents.length === 0 ? (
-                      <tr>
-                        <td colSpan={12} style={{ textAlign: 'center', padding: '30px', color: '#64748B', fontWeight: 700 }}>
-                          No se encontraron estudiantes con los filtros seleccionados.
-                        </td>
-                      </tr>
-                    ) : (
-                      filteredStudents.map(st => {
-                        const ind = indicatorsMap[st.uid];
-                        return (
-                          <tr key={st.uid}>
-                            <td style={{ fontWeight: 900, color: '#0284C7' }}>
-                              {st.studentCode || 'E01'}
-                            </td>
-                            <td>
-                              <div style={{ fontWeight: 800, color: '#0F172A' }}>{st.displayName}</div>
-                              {st.idNumber && (
-                                <div style={{ fontSize: '0.74rem', color: '#64748B', fontWeight: 600 }}>
-                                  Cédula: {st.idNumber}
-                                </div>
-                              )}
-                            </td>
-                            <td style={{ fontWeight: 600, color: '#475569' }}>
-                              {st.group || 'Grupo A'}
-                            </td>
-                            <td>
-                              <span
-                                style={{
-                                  fontSize: '0.72rem',
-                                  fontWeight: 800,
-                                  textTransform: 'uppercase',
-                                  padding: '3px 8px',
-                                  borderRadius: 8,
-                                  background: st.currentPath === 'kotlin' ? '#E0F2FE' : '#EEF2FF',
-                                  color: st.currentPath === 'kotlin' ? '#0284C7' : '#4F46E5'
-                                }}
-                              >
-                                {st.currentPath}
-                              </span>
-                            </td>
-                            <td style={{ fontWeight: 700 }}>
-                              {ind?.activeDaysCount ?? 0} d
-                            </td>
-                            <td style={{ fontWeight: 700 }}>
-                              {ind?.estimatedActiveTimeMinutes ?? 0} min
-                            </td>
-                            <td style={{ fontWeight: 700 }}>
-                              {ind?.firstAttemptAccuracyPercent !== null ? `${ind?.firstAttemptAccuracyPercent}%` : <span style={{ color: '#94A3B8' }}>Sin datos</span>}
-                            </td>
-                            <td style={{ fontWeight: 700, color: '#7C3AED' }}>
-                              {ind?.diagnosticPercentage !== null ? `${ind?.diagnosticPercentage}%` : <span style={{ color: '#94A3B8' }}>Sin datos</span>}
-                            </td>
-                            <td style={{ fontWeight: 700, color: '#D97706' }}>
-                              {ind?.finalTestPercentage !== null ? `${ind?.finalTestPercentage}%` : <span style={{ color: '#94A3B8' }}>Sin datos</span>}
-                            </td>
-                            <td style={{ fontWeight: 900, color: (ind?.percentagePointGain ?? 0) > 0 ? '#16A34A' : '#64748B' }}>
-                              {ind?.percentagePointGain !== null ? `${ind?.percentagePointGain > 0 ? '+' : ''}${ind?.percentagePointGain} pts` : <span style={{ color: '#94A3B8' }}>Sin datos</span>}
-                            </td>
-                            <td>
-                              <button
-                                type="button"
-                                onClick={() => handleToggleResearchParticipant(st)}
-                                style={{
-                                  border: 'none',
-                                  background: st.isResearchParticipant ? '#DCFCE7' : '#F1F5F9',
-                                  color: st.isResearchParticipant ? '#15803D' : '#64748B',
-                                  padding: '4px 8px',
-                                  borderRadius: 8,
-                                  fontSize: '0.72rem',
-                                  fontWeight: 800,
-                                  cursor: 'pointer'
-                                }}
-                              >
-                                {st.isResearchParticipant ? 'SÍ' : 'NO'}
-                              </button>
-                            </td>
-                            <td>
-                              <button
-                                onClick={() => {
-                                  soundService.playToken();
-                                  setSelectedStudentUid(st.uid);
-                                  setActiveTab('student');
-                                }}
-                                className="btn-3d btn-outline"
-                                style={{ padding: '5px 10px', fontSize: '0.74rem' }}
-                              >
-                                Ver Ficha
-                              </button>
-                            </td>
-                          </tr>
-                        );
-                      })
-                    )}
-                  </tbody>
-                </table>
+                {/* Selector de Modo de Vista (Tarjetas 3D vs Tabla) */}
+                <div className="academic-view-toggle">
+                  <button
+                    onClick={() => {
+                      soundService.playToken();
+                      setGroupViewMode('cards');
+                    }}
+                    className={`academic-view-btn ${groupViewMode === 'cards' ? 'active' : ''}`}
+                    title="Vista de Tarjetas 3D (Recomendado para identificar a cada alumno)"
+                  >
+                    <LayoutGrid size={15} />
+                    <span>Tarjetas 3D</span>
+                  </button>
+                  <button
+                    onClick={() => {
+                      soundService.playToken();
+                      setGroupViewMode('table');
+                    }}
+                    className={`academic-view-btn ${groupViewMode === 'table' ? 'active' : ''}`}
+                    title="Vista en Tabla Completa"
+                  >
+                    <List size={15} />
+                    <span>Tabla</span>
+                  </button>
+                </div>
               </div>
+
+              {/* VISTA 1: TARJETAS 3D DE ESTUDIANTES (MÁXIMA DISTINCIÓN Y CLARIDAD) */}
+              {groupViewMode === 'cards' ? (
+                filteredStudents.length === 0 ? (
+                  <div className="academic-card" style={{ textAlign: 'center', padding: '40px 20px', color: '#64748B' }}>
+                    <div style={{ fontSize: '2rem', marginBottom: 8 }}>🔍</div>
+                    <div style={{ fontWeight: 800, fontSize: '1rem', color: '#0F172A' }}>No se encontraron estudiantes</div>
+                    <p style={{ fontSize: '0.84rem', margin: '4px 0 0 0' }}>Prueba cambiando los filtros de grupo, ruta o estado.</p>
+                  </div>
+                ) : (
+                  <div className="academic-student-duo-grid">
+                    {filteredStudents.map(st => {
+                      const ind = indicatorsMap[st.uid];
+                      const isEval = ind?.diagnosticPercentage !== null;
+                      return (
+                        <div key={st.uid} className="academic-student-duo-card">
+                          {/* Cabecera de la Tarjeta con Avatar y Datos */}
+                          <div className="academic-student-card-header">
+                            <div className="academic-student-avatar-wrap">
+                              <DevAvatar avatarId={st.avatarId || 'robot_byte'} size={46} />
+                              <div
+                                style={{
+                                  position: 'absolute',
+                                  bottom: -5,
+                                  right: -5,
+                                  background: st.currentPath === 'kotlin' ? '#7C3AED' : '#0284C7',
+                                  color: '#FFFFFF',
+                                  fontSize: '0.62rem',
+                                  fontWeight: 900,
+                                  padding: '1px 5px',
+                                  borderRadius: 6,
+                                  border: '1.5px solid #FFFFFF'
+                                }}
+                              >
+                                {st.currentPath === 'kotlin' ? 'KT' : 'SQL'}
+                              </div>
+                            </div>
+
+                            <div style={{ flex: 1, minWidth: 0 }}>
+                              <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap', marginBottom: 2 }}>
+                                <span className="academic-student-code-badge">
+                                  [{st.studentCode || 'E01'}]
+                                </span>
+                                <span
+                                  style={{
+                                    fontSize: '0.68rem',
+                                    fontWeight: 800,
+                                    padding: '2px 6px',
+                                    borderRadius: 6,
+                                    background: '#F1F5F9',
+                                    color: '#475569'
+                                  }}
+                                >
+                                  {st.group || 'Grupo A'}
+                                </span>
+                              </div>
+
+                              <div
+                                style={{
+                                  fontWeight: 900,
+                                  fontSize: '1rem',
+                                  color: '#0F172A',
+                                  overflow: 'hidden',
+                                  textOverflow: 'ellipsis',
+                                  whiteSpace: 'nowrap'
+                                }}
+                                title={st.displayName}
+                              >
+                                {st.displayName}
+                              </div>
+
+                              <div style={{ fontSize: '0.74rem', color: '#64748B', fontWeight: 600 }}>
+                                {st.idNumber ? `Cédula: ${st.idNumber}` : (st.email ? st.email : 'Sin cédula')}
+                              </div>
+                            </div>
+
+                            {/* Badge de Diagnóstico */}
+                            <div>
+                              {isEval ? (
+                                <span
+                                  style={{
+                                    background: '#DCFCE7',
+                                    color: '#15803D',
+                                    border: '1.5px solid #86EFAC',
+                                    padding: '4px 8px',
+                                    borderRadius: 8,
+                                    fontSize: '0.72rem',
+                                    fontWeight: 900,
+                                    display: 'inline-flex',
+                                    alignItems: 'center',
+                                    gap: 3
+                                  }}
+                                >
+                                  ✓ {ind.diagnosticPercentage}%
+                                </span>
+                              ) : (
+                                <span
+                                  style={{
+                                    background: '#FEF3C7',
+                                    color: '#B45309',
+                                    border: '1.5px solid #FDE68A',
+                                    padding: '4px 8px',
+                                    borderRadius: 8,
+                                    fontSize: '0.72rem',
+                                    fontWeight: 800
+                                  }}
+                                >
+                                  ⏳ Pendiente
+                                </span>
+                              )}
+                            </div>
+                          </div>
+
+                          {/* Cuadrícula de 4 Métricas Reales Clave */}
+                          <div className="academic-student-pill-grid">
+                            <div className="academic-student-pill-box">
+                              <span className="academic-student-pill-label">Tiempo Activo</span>
+                              <div className="academic-student-pill-val" style={{ color: '#0284C7' }}>
+                                {ind?.estimatedActiveTimeMinutes ?? 0} <span style={{ fontSize: '0.74rem', fontWeight: 700, color: '#64748B' }}>min</span>
+                              </div>
+                              <span style={{ fontSize: '0.68rem', color: '#64748B' }}>{ind?.activeDaysCount ?? 0} días activos</span>
+                            </div>
+
+                            <div className="academic-student-pill-box">
+                              <span className="academic-student-pill-label">1er Intento</span>
+                              <div className="academic-student-pill-val" style={{ color: '#16A34A' }}>
+                                {ind?.firstAttemptAccuracyPercent !== null ? `${ind.firstAttemptAccuracyPercent}%` : <span style={{ color: '#94A3B8', fontSize: '0.86rem' }}>Sin datos</span>}
+                              </div>
+                              <span style={{ fontSize: '0.68rem', color: '#64748B' }}>{ind?.totalAttempts ?? 0} intentos</span>
+                            </div>
+
+                            <div className="academic-student-pill-box">
+                              <span className="academic-student-pill-label">Diagnóstico</span>
+                              <div className="academic-student-pill-val" style={{ color: '#7C3AED' }}>
+                                {ind?.diagnosticPercentage !== null ? `${ind.diagnosticPercentage}%` : <span style={{ color: '#94A3B8', fontSize: '0.86rem' }}>Pendiente</span>}
+                              </div>
+                              <span style={{ fontSize: '0.68rem', color: '#64748B' }}>Línea de base</span>
+                            </div>
+
+                            <div className="academic-student-pill-box">
+                              <span className="academic-student-pill-label">Ganancia Neta</span>
+                              <div
+                                className="academic-student-pill-val"
+                                style={{
+                                  color: (ind?.percentagePointGain ?? 0) > 0 ? '#10B981' : (ind?.percentagePointGain ?? 0) < 0 ? '#EF4444' : '#64748B'
+                                }}
+                              >
+                                {ind?.percentagePointGain !== null ? `${ind.percentagePointGain > 0 ? '+' : ''}${ind.percentagePointGain} pts` : <span style={{ color: '#94A3B8', fontSize: '0.86rem' }}>—</span>}
+                              </div>
+                              <span style={{ fontSize: '0.68rem', color: '#64748B' }}>
+                                {ind?.finalTestPercentage !== null ? `Final: ${ind.finalTestPercentage}%` : 'Post-test pend.'}
+                              </span>
+                            </div>
+                          </div>
+
+                          {/* Botones de Acción de la Tarjeta */}
+                          <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+                            <button
+                              onClick={() => {
+                                soundService.playToken();
+                                setSelectedStudentUid(st.uid);
+                                setActiveTab('student');
+                              }}
+                              className="btn-3d btn-green"
+                              style={{ flex: 1, padding: '9px 12px', fontSize: '0.82rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}
+                            >
+                              <UserCheck size={16} /> Ver Ficha y Desglose
+                            </button>
+
+                            <button
+                              onClick={() => {
+                                soundService.playToken();
+                                setObsStudentUid(st.uid);
+                                setShowObsModal(true);
+                              }}
+                              className="btn-3d btn-outline"
+                              style={{ padding: '9px 12px', fontSize: '0.82rem' }}
+                              title="Añadir Observación Docente a este Estudiante"
+                            >
+                              <PlusCircle size={15} />
+                            </button>
+
+                            <button
+                              type="button"
+                              onClick={() => handleToggleResearchParticipant(st)}
+                              className="btn-3d"
+                              style={{
+                                background: st.isResearchParticipant ? '#DCFCE7' : '#F1F5F9',
+                                color: st.isResearchParticipant ? '#15803D' : '#64748B',
+                                border: '1.5px solid #CBD5E1',
+                                padding: '9px 10px',
+                                fontSize: '0.72rem',
+                                fontWeight: 800
+                              }}
+                              title={st.isResearchParticipant ? 'Estudiante marcado como Participante de Estudio' : 'Hacer clic para marcar como Participante'}
+                            >
+                              {st.isResearchParticipant ? '🧪 Sí' : 'No'}
+                            </button>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )
+              ) : (
+                /* VISTA 2: TABLA ENRIQUECIDA 3D */
+                <div className="academic-table-container">
+                  <div style={{ padding: '12px 16px', background: '#F8FAFC', borderBottom: '1.5px solid #E2E8F0', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <span style={{ fontSize: '0.82rem', fontWeight: 800, color: '#475569' }}>
+                      Mostrando {filteredStudents.length} de {students.length} estudiantes
+                    </span>
+                    <span style={{ fontSize: '0.74rem', color: '#64748B' }}>
+                      ← Desliza horizontalmente para ver todos los indicadores reales →
+                    </span>
+                  </div>
+
+                  <table className="academic-table">
+                    <thead>
+                      <tr>
+                        <th>Avatar</th>
+                        <th>Código</th>
+                        <th>Estudiante & Cédula</th>
+                        <th>Grupo</th>
+                        <th>Ruta</th>
+                        <th>Días</th>
+                        <th>Tiempo Activo</th>
+                        <th>1er Intento %</th>
+                        <th>Diagnóstico %</th>
+                        <th>Prueba Final %</th>
+                        <th>Ganancia</th>
+                        <th>Estudio</th>
+                        <th>Acción</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {filteredStudents.length === 0 ? (
+                        <tr>
+                          <td colSpan={13} style={{ textAlign: 'center', padding: '30px', color: '#64748B', fontWeight: 700 }}>
+                            No se encontraron estudiantes con los filtros seleccionados.
+                          </td>
+                        </tr>
+                      ) : (
+                        filteredStudents.map(st => {
+                          const ind = indicatorsMap[st.uid];
+                          return (
+                            <tr key={st.uid}>
+                              <td style={{ width: 40, padding: '8px 10px' }}>
+                                <DevAvatar avatarId={st.avatarId || 'robot_byte'} size={32} />
+                              </td>
+                              <td>
+                                <span className="academic-student-code-badge">
+                                  {st.studentCode || 'E01'}
+                                </span>
+                              </td>
+                              <td>
+                                <div style={{ fontWeight: 800, color: '#0F172A' }}>{st.displayName}</div>
+                                {st.idNumber && (
+                                  <div style={{ fontSize: '0.74rem', color: '#64748B', fontWeight: 600 }}>
+                                    Cédula: {st.idNumber}
+                                  </div>
+                                )}
+                              </td>
+                              <td style={{ fontWeight: 600, color: '#475569' }}>
+                                {st.group || 'Grupo A'}
+                              </td>
+                              <td>
+                                <span
+                                  style={{
+                                    fontSize: '0.72rem',
+                                    fontWeight: 800,
+                                    textTransform: 'uppercase',
+                                    padding: '3px 8px',
+                                    borderRadius: 8,
+                                    background: st.currentPath === 'kotlin' ? '#E0F2FE' : '#EEF2FF',
+                                    color: st.currentPath === 'kotlin' ? '#0284C7' : '#4F46E5'
+                                  }}
+                                >
+                                  {st.currentPath}
+                                </span>
+                              </td>
+                              <td style={{ fontWeight: 700 }}>
+                                {ind?.activeDaysCount ?? 0} d
+                              </td>
+                              <td style={{ fontWeight: 700, color: '#0284C7' }}>
+                                {ind?.estimatedActiveTimeMinutes ?? 0} min
+                              </td>
+                              <td style={{ fontWeight: 700, color: '#16A34A' }}>
+                                {ind?.firstAttemptAccuracyPercent !== null ? `${ind.firstAttemptAccuracyPercent}%` : <span style={{ color: '#94A3B8' }}>Sin datos</span>}
+                              </td>
+                              <td style={{ fontWeight: 700, color: '#7C3AED' }}>
+                                {ind?.diagnosticPercentage !== null ? `${ind.diagnosticPercentage}%` : <span style={{ color: '#94A3B8' }}>Pendiente</span>}
+                              </td>
+                              <td style={{ fontWeight: 700, color: '#D97706' }}>
+                                {ind?.finalTestPercentage !== null ? `${ind.finalTestPercentage}%` : <span style={{ color: '#94A3B8' }}>Pendiente</span>}
+                              </td>
+                              <td style={{ fontWeight: 900, color: (ind?.percentagePointGain ?? 0) > 0 ? '#16A34A' : '#64748B' }}>
+                                {ind?.percentagePointGain !== null ? `${ind.percentagePointGain > 0 ? '+' : ''}${ind.percentagePointGain} pts` : <span style={{ color: '#94A3B8' }}>—</span>}
+                              </td>
+                              <td>
+                                <button
+                                  type="button"
+                                  onClick={() => handleToggleResearchParticipant(st)}
+                                  style={{
+                                    border: 'none',
+                                    background: st.isResearchParticipant ? '#DCFCE7' : '#F1F5F9',
+                                    color: st.isResearchParticipant ? '#15803D' : '#64748B',
+                                    padding: '4px 8px',
+                                    borderRadius: 8,
+                                    fontSize: '0.72rem',
+                                    fontWeight: 800,
+                                    cursor: 'pointer'
+                                  }}
+                                >
+                                  {st.isResearchParticipant ? 'SÍ' : 'NO'}
+                                </button>
+                              </td>
+                              <td>
+                                <button
+                                  onClick={() => {
+                                    soundService.playToken();
+                                    setSelectedStudentUid(st.uid);
+                                    setActiveTab('student');
+                                  }}
+                                  className="btn-3d btn-outline"
+                                  style={{ padding: '5px 10px', fontSize: '0.74rem' }}
+                                >
+                                  Ver Ficha
+                                </button>
+                              </td>
+                            </tr>
+                          );
+                        })
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+              )}
             </div>
           )}
 
           {/* ════════════ PESTAÑA 2: FICHA POR ESTUDIANTE ════════════ */}
           {activeTab === 'student' && selectedStudent && (
             <div>
-              {/* Barra superior de selección y PDF */}
-              <div
-                style={{
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  alignItems: 'center',
-                  marginBottom: 16,
-                  flexWrap: 'wrap',
-                  gap: 12
-                }}
-              >
-                <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
+              {/* Barra de Navegación Rápida entre Estudiantes (Estilo Duolingo 3D) */}
+              <div className="academic-student-nav-bar">
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+                  <button
+                    onClick={handlePrevStudent}
+                    className="btn-3d btn-outline"
+                    style={{ padding: '8px 12px', fontSize: '0.82rem', display: 'flex', alignItems: 'center', gap: 4 }}
+                    title="Ver estudiante anterior"
+                  >
+                    <ChevronLeft size={16} />
+                    <span>Anterior</span>
+                  </button>
+
                   <select
                     value={selectedStudent.uid}
                     onChange={(e) => {
@@ -993,106 +1368,174 @@ export const AcademicDashboard: React.FC<AcademicDashboardProps> = ({ currentUse
                       background: '#FFFFFF',
                       border: '1.5px solid #CBD5E1',
                       borderRadius: 12,
-                      padding: '8px 14px',
+                      padding: '8px 12px',
                       color: '#0F172A',
                       fontSize: '0.88rem',
-                      fontWeight: 800
+                      fontWeight: 800,
+                      maxWidth: '360px'
                     }}
                   >
-                    {filteredStudents.map(s => (
+                    {filteredStudents.map((s, idx) => (
                       <option key={s.uid} value={s.uid}>
-                        [{s.studentCode || 'E01'}] {s.displayName} {s.idNumber ? `(${s.idNumber})` : ''} - {s.group || 'Grupo A'}
+                        #{idx + 1} [{s.studentCode || 'E01'}] {s.displayName} {s.idNumber ? `(${s.idNumber})` : ''} - {s.group || 'Grupo A'}
                       </option>
                     ))}
                   </select>
 
-                  <label style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: '0.82rem', color: '#475569', fontWeight: 600, cursor: 'pointer' }}>
+                  <button
+                    onClick={handleNextStudent}
+                    className="btn-3d btn-outline"
+                    style={{ padding: '8px 12px', fontSize: '0.82rem', display: 'flex', alignItems: 'center', gap: 4 }}
+                    title="Ver estudiante siguiente"
+                  >
+                    <span>Siguiente</span>
+                    <ChevronRight size={16} />
+                  </button>
+                </div>
+
+                <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
+                  <span style={{ fontSize: '0.8rem', fontWeight: 800, color: '#64748B' }}>
+                    Estudiante {selectedStudentIndex + 1} de {filteredStudents.length}
+                  </span>
+
+                  <label style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: '0.8rem', color: '#475569', fontWeight: 600, cursor: 'pointer' }}>
                     <input
                       type="checkbox"
                       checked={anonymizePdf}
                       onChange={(e) => setAnonymizePdf(e.target.checked)}
                       style={{ width: 16, height: 16 }}
                     />
-                    <span>Anonimizar en reporte PDF (solo código {selectedStudent.studentCode})</span>
+                    <span>Anonimizar PDF ({selectedStudent.studentCode})</span>
                   </label>
-                </div>
 
-                <button
-                  onClick={handleExportPdf}
-                  className="btn-3d btn-blue"
-                  style={{ padding: '9px 16px', fontSize: '0.84rem' }}
-                >
-                  <FileText size={16} /> Exportar Reporte PDF
-                </button>
+                  <button
+                    onClick={handleExportPdf}
+                    className="btn-3d btn-blue"
+                    style={{ padding: '8px 14px', fontSize: '0.82rem', display: 'flex', alignItems: 'center', gap: 6 }}
+                  >
+                    <FileText size={15} /> Exportar Reporte PDF
+                  </button>
+                </div>
               </div>
 
-              {/* Ficha de Identificación del Estudiante */}
-              <div
-                className="academic-card"
-                style={{
-                  padding: '18px 20px',
-                  display: 'flex',
-                  flexWrap: 'wrap',
-                  gap: 16,
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                  background: '#FFFFFF'
-                }}
-              >
-                <div>
-                  <div style={{ fontSize: '1.25rem', fontWeight: 900, color: '#0F172A' }}>
-                    {selectedStudent.displayName}
+              {/* Ficha de Identificación Hero con Avatar 3D */}
+              <div className="academic-student-hero">
+                <div
+                  style={{
+                    width: 78,
+                    height: 78,
+                    borderRadius: 22,
+                    background: '#F8FAFC',
+                    border: '2.5px solid #E2E8F0',
+                    boxShadow: '0 4px 0 #CBD5E1',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    flexShrink: 0
+                  }}
+                >
+                  <DevAvatar avatarId={selectedStudent.avatarId || 'robot_byte'} size={68} />
+                </div>
+
+                <div style={{ flex: 1, minWidth: 240 }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap', marginBottom: 4 }}>
+                    <span className="academic-student-code-badge" style={{ fontSize: '0.88rem', padding: '3px 10px' }}>
+                      Código Oficial: {selectedStudent.studentCode || 'E01'}
+                    </span>
+                    <span
+                      style={{
+                        fontSize: '0.74rem',
+                        fontWeight: 800,
+                        padding: '3px 8px',
+                        borderRadius: 8,
+                        background: '#EEF2FF',
+                        color: '#4F46E5'
+                      }}
+                    >
+                      {selectedStudent.group || 'Grupo A'}
+                    </span>
+                    <span
+                      style={{
+                        fontSize: '0.74rem',
+                        fontWeight: 800,
+                        textTransform: 'uppercase',
+                        padding: '3px 8px',
+                        borderRadius: 8,
+                        background: selectedStudent.currentPath === 'kotlin' ? '#E0F2FE' : '#FEF3C7',
+                        color: selectedStudent.currentPath === 'kotlin' ? '#0284C7' : '#B45309'
+                      }}
+                    >
+                      Ruta: {selectedStudent.currentPath}
+                    </span>
                   </div>
-                  <div style={{ fontSize: '0.84rem', color: '#64748B', marginTop: 4, display: 'flex', gap: 14, flexWrap: 'wrap' }}>
+
+                  <h2 style={{ fontSize: '1.35rem', fontWeight: 900, color: '#0F172A', margin: '0 0 6px 0' }}>
+                    {selectedStudent.displayName}
+                  </h2>
+
+                  <div style={{ fontSize: '0.82rem', color: '#64748B', display: 'flex', gap: 14, flexWrap: 'wrap' }}>
                     {selectedStudent.idNumber && (
                       <span><strong>Cédula:</strong> <span style={{ color: '#0F172A' }}>{selectedStudent.idNumber}</span></span>
                     )}
                     {selectedStudent.email && (
                       <span><strong>Correo:</strong> <span style={{ color: '#0F172A' }}>{selectedStudent.email}</span></span>
                     )}
-                    <span><strong>Código Oficial:</strong> <span style={{ color: '#0284C7', fontWeight: 800 }}>{selectedStudent.studentCode || 'E01'}</span></span>
-                    <span><strong>Grupo:</strong> {selectedStudent.group || 'Grupo A'}</span>
-                    <span><strong>Ruta:</strong> {selectedStudent.currentPath.toUpperCase()}</span>
+                    <span>
+                      <strong>Registro:</strong> {selectedStudent.createdAt ? new Date(selectedStudent.createdAt).toLocaleDateString() : 'Activo'}
+                    </span>
                   </div>
                 </div>
 
-                <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
+                <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
                   <button
                     type="button"
                     onClick={() => handleToggleResearchParticipant(selectedStudent)}
                     className="btn-3d"
                     style={{
-                      background: selectedStudent.isResearchParticipant ? '#10B981' : '#E2E8F0',
+                      background: selectedStudent.isResearchParticipant ? '#10B981' : '#F1F5F9',
                       color: selectedStudent.isResearchParticipant ? '#FFFFFF' : '#475569',
                       boxShadow: selectedStudent.isResearchParticipant ? '0 3px 0 #059669' : '0 3px 0 #CBD5E1',
-                      padding: '7px 14px',
-                      fontSize: '0.78rem'
+                      border: '1.5px solid #CBD5E1',
+                      padding: '8px 14px',
+                      fontSize: '0.8rem'
                     }}
                   >
-                    {selectedStudent.isResearchParticipant ? '✓ Participante de Investigación' : 'Asignar como Participante'}
+                    {selectedStudent.isResearchParticipant ? '✓ Participante de Investigación' : '+ Marcar como Participante'}
+                  </button>
+
+                  <button
+                    onClick={() => {
+                      soundService.playToken();
+                      setObsStudentUid(selectedStudent.uid);
+                      setShowObsModal(true);
+                    }}
+                    className="btn-3d btn-green"
+                    style={{ padding: '8px 14px', fontSize: '0.8rem' }}
+                  >
+                    <PlusCircle size={15} /> Añadir Observación
                   </button>
                 </div>
               </div>
 
-              {/* Métricas Principales del Estudiante en Cuadrícula */}
+              {/* 5 Métricas Principales del Estudiante en Tarjetas 3D (100% Datos Reales) */}
               {indicatorsMap[selectedStudent.uid] && (
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 12, marginBottom: 18 }}>
                   <div className="academic-metric-card" style={{ borderLeft: '4px solid #0284C7' }}>
-                    <span style={{ fontSize: '0.76rem', color: '#64748B', fontWeight: 800 }}>TIEMPO ACTIVO ESTIMADO</span>
+                    <span style={{ fontSize: '0.74rem', color: '#64748B', fontWeight: 800 }}>TIEMPO ACTIVO ESTIMADO</span>
                     <div style={{ fontSize: '1.6rem', fontWeight: 900, color: '#0284C7' }}>
                       {indicatorsMap[selectedStudent.uid].estimatedActiveTimeMinutes} min
                     </div>
                     <span style={{ fontSize: '0.72rem', color: '#64748B' }}>
-                      {indicatorsMap[selectedStudent.uid].activeDaysCount} días activos
+                      {indicatorsMap[selectedStudent.uid].activeDaysCount} días activos reales
                     </span>
                   </div>
 
                   <div className="academic-metric-card" style={{ borderLeft: '4px solid #16A34A' }}>
-                    <span style={{ fontSize: '0.76rem', color: '#64748B', fontWeight: 800 }}>PRECISIÓN 1ER INTENTO</span>
+                    <span style={{ fontSize: '0.74rem', color: '#64748B', fontWeight: 800 }}>PRECISIÓN 1ER INTENTO</span>
                     <div style={{ fontSize: '1.6rem', fontWeight: 900, color: '#16A34A' }}>
                       {indicatorsMap[selectedStudent.uid].firstAttemptAccuracyPercent !== null
                         ? `${indicatorsMap[selectedStudent.uid].firstAttemptAccuracyPercent}%`
-                        : 'Sin datos'}
+                        : <span style={{ color: '#94A3B8' }}>Sin datos</span>}
                     </div>
                     <span style={{ fontSize: '0.72rem', color: '#64748B' }}>
                       {indicatorsMap[selectedStudent.uid].totalAttempts} intentos registrados
@@ -1100,33 +1543,39 @@ export const AcademicDashboard: React.FC<AcademicDashboardProps> = ({ currentUse
                   </div>
 
                   <div className="academic-metric-card" style={{ borderLeft: '4px solid #7C3AED' }}>
-                    <span style={{ fontSize: '0.76rem', color: '#64748B', fontWeight: 800 }}>DIAGNÓSTICO INICIAL</span>
+                    <span style={{ fontSize: '0.74rem', color: '#64748B', fontWeight: 800 }}>DIAGNÓSTICO INICIAL</span>
                     <div style={{ fontSize: '1.6rem', fontWeight: 900, color: '#7C3AED' }}>
                       {indicatorsMap[selectedStudent.uid].diagnosticPercentage !== null
                         ? `${indicatorsMap[selectedStudent.uid].diagnosticPercentage}%`
-                        : 'Sin datos'}
+                        : <span style={{ color: '#94A3B8' }}>Pendiente</span>}
                     </div>
-                    <span style={{ fontSize: '0.72rem', color: '#64748B' }}>Línea de base</span>
+                    <span style={{ fontSize: '0.72rem', color: '#64748B' }}>Línea de base investigativa</span>
                   </div>
 
                   <div className="academic-metric-card" style={{ borderLeft: '4px solid #D97706' }}>
-                    <span style={{ fontSize: '0.76rem', color: '#64748B', fontWeight: 800 }}>PRUEBA FINAL</span>
+                    <span style={{ fontSize: '0.74rem', color: '#64748B', fontWeight: 800 }}>PRUEBA FINAL</span>
                     <div style={{ fontSize: '1.6rem', fontWeight: 900, color: '#D97706' }}>
                       {indicatorsMap[selectedStudent.uid].finalTestPercentage !== null
                         ? `${indicatorsMap[selectedStudent.uid].finalTestPercentage}%`
-                        : 'Sin datos'}
+                        : <span style={{ color: '#94A3B8' }}>Pendiente</span>}
                     </div>
                     <span style={{ fontSize: '0.72rem', color: '#64748B' }}>Desempeño post-intervención</span>
                   </div>
 
                   <div className="academic-metric-card" style={{ borderLeft: '4px solid #10B981' }}>
-                    <span style={{ fontSize: '0.76rem', color: '#64748B', fontWeight: 800 }}>GANANCIA NETA</span>
-                    <div style={{ fontSize: '1.6rem', fontWeight: 900, color: (indicatorsMap[selectedStudent.uid].percentagePointGain ?? 0) > 0 ? '#10B981' : '#64748B' }}>
+                    <span style={{ fontSize: '0.74rem', color: '#64748B', fontWeight: 800 }}>GANANCIA NETA</span>
+                    <div
+                      style={{
+                        fontSize: '1.6rem',
+                        fontWeight: 900,
+                        color: (indicatorsMap[selectedStudent.uid].percentagePointGain ?? 0) > 0 ? '#10B981' : '#64748B'
+                      }}
+                    >
                       {indicatorsMap[selectedStudent.uid].percentagePointGain !== null
                         ? `${indicatorsMap[selectedStudent.uid].percentagePointGain! > 0 ? '+' : ''}${indicatorsMap[selectedStudent.uid].percentagePointGain} pts`
-                        : 'Sin datos'}
+                        : <span style={{ color: '#94A3B8' }}>Pendiente</span>}
                     </div>
-                    <span style={{ fontSize: '0.72rem', color: '#64748B' }}>Diferencia porcentual</span>
+                    <span style={{ fontSize: '0.72rem', color: '#64748B' }}>Diferencia porcentual real</span>
                   </div>
                 </div>
               )}
@@ -1164,6 +1613,168 @@ export const AcademicDashboard: React.FC<AcademicDashboardProps> = ({ currentUse
                   </div>
                 </div>
               )}
+
+              {/* ─── TABLA DE INDICADORES PEDAGÓGICOS CLAVE (SEGÚN MARCO DE INVESTIGACIÓN) ─── */}
+              {indicatorsMap[selectedStudent.uid] && (() => {
+                const ind = indicatorsMap[selectedStudent.uid];
+                return (
+                  <div className="academic-card" style={{ marginBottom: 18 }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 14 }}>
+                      <h3 style={{ fontSize: '1.05rem', fontWeight: 900, color: '#0F172A', margin: 0, display: 'flex', alignItems: 'center', gap: 8 }}>
+                        <Target size={20} color="#0284C7" />
+                        <span>Matriz de Indicadores de Aprendizaje y Práctica</span>
+                      </h3>
+                      <span style={{ fontSize: '0.74rem', background: '#E0F2FE', color: '#0284C7', padding: '3px 10px', borderRadius: 8, fontWeight: 800 }}>
+                        Datos Reales y Sin Relleno
+                      </span>
+                    </div>
+
+                    <div style={{ overflowX: 'auto' }}>
+                      <table className="academic-table" style={{ fontSize: '0.84rem' }}>
+                        <thead>
+                          <tr>
+                            <th style={{ width: '22%' }}>Dimensión / Dato</th>
+                            <th style={{ width: '38%' }}>Registro en la App</th>
+                            <th style={{ width: '40%' }}>Observación Pedagógica</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr>
+                            <td style={{ fontWeight: 800, color: '#0F172A' }}>Tiempo de juego o práctica</td>
+                            <td>
+                              <span style={{ fontWeight: 900, color: '#0284C7' }}>{ind.estimatedActiveTimeMinutes} min totales</span>
+                              <span style={{ color: '#64748B', marginLeft: 8 }}>({ind.weeklyActiveMinutes} min últimos 7 días)</span>
+                              <div style={{ fontSize: '0.72rem', color: '#64748B', marginTop: 2 }}>*Filtra tiempo de inactividad / idle</div>
+                            </td>
+                            <td style={{ color: '#475569' }}>
+                              Cuánto practica activamente el estudiante en sesiones efectivas.
+                            </td>
+                          </tr>
+                          <tr>
+                            <td style={{ fontWeight: 800, color: '#0F172A' }}>Frecuencia de uso</td>
+                            <td>
+                              <span style={{ fontWeight: 900, color: '#16A34A' }}>{ind.weeklySessionsCount} sesiones/semana</span>
+                              <span style={{ color: '#64748B', marginLeft: 8 }}>({ind.activeDaysCount} días con actividad total)</span>
+                            </td>
+                            <td style={{ color: '#475569' }}>
+                              {ind.weeklySessionsCount >= 3 ? 'Practica regularmente con constancia semanal.' : 'Uso ocasional; requiere estímulo de constancia.'}
+                            </td>
+                          </tr>
+                          <tr>
+                            <td style={{ fontWeight: 800, color: '#0F172A' }}>Ejercicios completados</td>
+                            <td>
+                              <span style={{ fontWeight: 900, color: '#0284C7' }}>{ind.distinctActivitiesCompleted} resueltos</span>
+                              <span style={{ color: '#64748B', marginLeft: 8 }}>/ {ind.pendingExercisesCount} pendientes</span>
+                            </td>
+                            <td style={{ color: '#475569' }}>
+                              Avance curricular en la ruta de aprendizaje activa.
+                            </td>
+                          </tr>
+                          <tr>
+                            <td style={{ fontWeight: 800, color: '#0F172A' }}>Respuestas correctas</td>
+                            <td>
+                              <span style={{ fontWeight: 900, color: '#7C3AED' }}>
+                                {ind.firstAttemptAccuracyPercent !== null ? `${ind.firstAttemptAccuracyPercent}%` : 'Sin datos'}
+                              </span>
+                              <span style={{ color: '#64748B', marginLeft: 6 }}>de acierto en 1er intento</span>
+                            </td>
+                            <td style={{ color: '#475569' }}>
+                              {ind.firstAttemptAccuracyPercent && ind.firstAttemptAccuracyPercent >= 70 ? 'Alta precisión conceptual sin requerir reintentos.' : 'Precisión moderada; aprende por ensayo y ajuste.'}
+                            </td>
+                          </tr>
+                          <tr>
+                            <td style={{ fontWeight: 800, color: '#0F172A' }}>Intentos por ejercicio</td>
+                            <td>
+                              <span style={{ fontWeight: 900, color: '#D97706' }}>
+                                {ind.attemptsPerActivityAverage !== null ? `${ind.attemptsPerActivityAverage} intentos/reto` : 'Sin datos'}
+                              </span>
+                            </td>
+                            <td style={{ color: '#475569' }}>
+                              Promedio de intentos requeridos antes de superar un reto con éxito.
+                            </td>
+                          </tr>
+                          <tr>
+                            <td style={{ fontWeight: 800, color: '#0F172A' }}>Uso de pistas o ayuda</td>
+                            <td>
+                              <span style={{ fontWeight: 900, color: '#EC4899' }}>{ind.hintsUsedCount} pistas utilizadas</span>
+                            </td>
+                            <td style={{ color: '#475569' }}>
+                              {ind.hintsUsedCount <= 2 ? 'Alto grado de autonomía al resolver retos.' : 'Apoyado con andamiaje de pistas.'}
+                            </td>
+                          </tr>
+                          <tr>
+                            <td style={{ fontWeight: 800, color: '#0F172A' }}>Tiempo de resolución</td>
+                            <td>
+                              <span style={{ fontWeight: 900, color: '#0284C7' }}>
+                                {ind.distinctActivitiesCompleted > 0 ? Math.round((ind.estimatedActiveTimeMinutes * 60) / ind.distinctActivitiesCompleted) : 0} seg
+                              </span>
+                              <span style={{ color: '#64748B', marginLeft: 6 }}>promedio por reto</span>
+                            </td>
+                            <td style={{ color: '#475569' }}>
+                              Velocidad y fluidez de resolución manteniendo la precisión.
+                            </td>
+                          </tr>
+                          <tr>
+                            <td style={{ fontWeight: 800, color: '#0F172A' }}>Errores por tema</td>
+                            <td>
+                              {Object.keys(ind.errorsByTopic || {}).length === 0 ? (
+                                <span style={{ color: '#16A34A', fontWeight: 700 }}>Sin fallos registrados</span>
+                              ) : (
+                                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4 }}>
+                                  {Object.entries(ind.errorsByTopic || {}).map(([top, count]) => (
+                                    <span key={top} style={{ background: '#FEE2E2', color: '#B91C1C', padding: '2px 6px', borderRadius: 6, fontSize: '0.72rem', fontWeight: 800 }}>
+                                      {top}: {count}
+                                    </span>
+                                  ))}
+                                </div>
+                              )}
+                            </td>
+                            <td style={{ color: '#475569' }}>
+                              Contenidos específicos que requieren refuerzo pedagógico.
+                            </td>
+                          </tr>
+                          <tr>
+                            <td style={{ fontWeight: 800, color: '#0F172A' }}>Progreso por tema</td>
+                            <td>
+                              {Object.keys(ind.progressByTopic || {}).length === 0 ? (
+                                <span style={{ color: '#64748B' }}>Iniciando ruta</span>
+                              ) : (
+                                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4 }}>
+                                  {Object.entries(ind.progressByTopic || {}).map(([top, data]) => (
+                                    <span key={top} style={{ background: '#DCFCE7', color: '#15803D', padding: '2px 6px', borderRadius: 6, fontSize: '0.72rem', fontWeight: 800 }}>
+                                      {top}: {data.completed}/{data.total} superados
+                                    </span>
+                                  ))}
+                                </div>
+                              )}
+                            </td>
+                            <td style={{ color: '#475569' }}>
+                              Tópicos consolidados en los que demuestra dominio.
+                            </td>
+                          </tr>
+                          <tr>
+                            <td style={{ fontWeight: 800, color: '#0F172A' }}>Resultado inicial y final</td>
+                            <td>
+                              <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
+                                <span>Diag: <strong>{ind.diagnosticPercentage !== null ? `${ind.diagnosticPercentage}%` : 'Pendiente'}</strong></span>
+                                <span>Final: <strong>{ind.finalTestPercentage !== null ? `${ind.finalTestPercentage}%` : 'Pendiente'}</strong></span>
+                                {ind.percentagePointGain !== null && (
+                                  <span style={{ color: ind.percentagePointGain > 0 ? '#16A34A' : '#64748B', fontWeight: 900 }}>
+                                    ({ind.percentagePointGain > 0 ? '+' : ''}{ind.percentagePointGain} pts)
+                                  </span>
+                                )}
+                              </div>
+                            </td>
+                            <td style={{ color: '#475569' }}>
+                              Cambio de desempeño entre la prueba de entrada y la prueba de cierre.
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                );
+              })()}
 
               {/* Observaciones Docentes del Estudiante */}
               <div className="academic-card">
@@ -1212,6 +1823,438 @@ export const AcademicDashboard: React.FC<AcademicDashboardProps> = ({ currentUse
                           </div>
                         </div>
                       ))}
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* ════════════ PESTAÑA: ASIGNACIÓN DE DIAGNÓSTICOS ════════════ */}
+          {activeTab === 'assignDiagnostic' && (
+            <div>
+              <div className="academic-card" style={{ marginBottom: 20 }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 12 }}>
+                  <div
+                    style={{
+                      width: 44,
+                      height: 44,
+                      borderRadius: 14,
+                      background: 'linear-gradient(135deg, #0284C7, #0369A1)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      color: '#FFFFFF'
+                    }}
+                  >
+                    <Send size={22} />
+                  </div>
+                  <div>
+                    <h2 style={{ fontSize: '1.25rem', fontWeight: 900, color: '#0F172A', margin: 0 }}>
+                      Asignar Diagnóstico a Estudiantes
+                    </h2>
+                    <p style={{ margin: 0, fontSize: '0.84rem', color: '#64748B' }}>
+                      Envía evaluaciones diagnósticas a todo el grupo o a estudiantes específicos. El estudiante recibirá una alerta al ingresar y deberá responderlo obligatoriamente para continuar.
+                    </p>
+                  </div>
+                </div>
+
+                {assignSuccessMsg && (
+                  <div
+                    style={{
+                      background: '#F0FDF4',
+                      border: '1.5px solid #86EFAC',
+                      borderRadius: 12,
+                      padding: '12px 16px',
+                      marginBottom: 16,
+                      color: '#166534',
+                      fontWeight: 800,
+                      fontSize: '0.88rem',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 10
+                    }}
+                  >
+                    <CheckCircle2 size={20} color="#16A34A" />
+                    <span>{assignSuccessMsg}</span>
+                  </div>
+                )}
+
+                <form onSubmit={handleAssignDiagnostic} style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+                  {/* PASO 1: SELECCIONAR RUTA (KOTLIN O SQL) */}
+                  <div>
+                    <label style={{ fontSize: '0.85rem', fontWeight: 900, color: '#1E293B', display: 'block', marginBottom: 8 }}>
+                      1. Selecciona la Ruta de Aprendizaje
+                    </label>
+                    <div style={{ display: 'flex', gap: 10 }}>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          soundService.playToken();
+                          setSelectedDiagPath('kotlin');
+                          setSelectedInstrumentId(KOTLIN_DIAGNOSTICS_LIST[0].instrumentId);
+                        }}
+                        style={{
+                          flex: 1,
+                          padding: '12px 16px',
+                          borderRadius: 12,
+                          border: selectedDiagPath === 'kotlin' ? '2.5px solid #0284C7' : '1.5px solid #CBD5E1',
+                          background: selectedDiagPath === 'kotlin' ? '#F0F9FF' : '#FFFFFF',
+                          color: selectedDiagPath === 'kotlin' ? '#0284C7' : '#475569',
+                          fontWeight: 900,
+                          fontSize: '0.95rem',
+                          cursor: 'pointer',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          gap: 8,
+                          transition: 'all 0.15s ease'
+                        }}
+                      >
+                        <span style={{ fontSize: '1.2rem' }}>🟣</span>
+                        <span>Kotlin (5 Diagnósticos)</span>
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => {
+                          soundService.playToken();
+                          setSelectedDiagPath('sql');
+                          setSelectedInstrumentId(SQL_DIAGNOSTICS_LIST[0].instrumentId);
+                        }}
+                        style={{
+                          flex: 1,
+                          padding: '12px 16px',
+                          borderRadius: 12,
+                          border: selectedDiagPath === 'sql' ? '2.5px solid #0284C7' : '1.5px solid #CBD5E1',
+                          background: selectedDiagPath === 'sql' ? '#F0F9FF' : '#FFFFFF',
+                          color: selectedDiagPath === 'sql' ? '#0284C7' : '#475569',
+                          fontWeight: 900,
+                          fontSize: '0.95rem',
+                          cursor: 'pointer',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          gap: 8,
+                          transition: 'all 0.15s ease'
+                        }}
+                      >
+                        <span style={{ fontSize: '1.2rem' }}>🔵</span>
+                        <span>SQL (5 Diagnósticos)</span>
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* PASO 2: SELECCIONAR INSTRUMENTO DE LOS 5 DISPONIBLES */}
+                  <div>
+                    <label style={{ fontSize: '0.85rem', fontWeight: 900, color: '#1E293B', display: 'block', marginBottom: 8 }}>
+                      2. Elige el Instrumento Diagnóstico ({selectedDiagPath === 'kotlin' ? 'Kotlin' : 'SQL'})
+                    </label>
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: 12 }}>
+                      {(selectedDiagPath === 'kotlin' ? KOTLIN_DIAGNOSTICS_LIST : SQL_DIAGNOSTICS_LIST).map((inst, index) => {
+                        const isSelected = selectedInstrumentId === inst.instrumentId;
+                        return (
+                          <div
+                            key={inst.instrumentId}
+                            onClick={() => {
+                              soundService.playToken();
+                              setSelectedInstrumentId(inst.instrumentId);
+                            }}
+                            style={{
+                              padding: '14px 16px',
+                              borderRadius: 14,
+                              border: isSelected ? '2.5px solid #0284C7' : '1.5px solid #E2E8F0',
+                              background: isSelected ? '#F0F9FF' : '#FFFFFF',
+                              cursor: 'pointer',
+                              display: 'flex',
+                              flexDirection: 'column',
+                              justifyContent: 'space-between',
+                              transition: 'all 0.15s ease',
+                              boxShadow: isSelected ? '0 4px 12px -2px rgba(2, 132, 199, 0.2)' : 'none'
+                            }}
+                          >
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 8 }}>
+                              <span style={{ fontSize: '0.74rem', fontWeight: 900, color: '#0284C7', background: '#E0F2FE', padding: '2px 8px', borderRadius: 6 }}>
+                                Diagnóstico #{index + 1}
+                              </span>
+                              {isSelected ? (
+                                <CheckCircle2 size={18} color="#0284C7" />
+                              ) : (
+                                <div style={{ width: 18, height: 18, borderRadius: '50%', border: '2px solid #CBD5E1' }} />
+                              )}
+                            </div>
+                            <div style={{ fontWeight: 900, color: '#0F172A', fontSize: '0.92rem', marginBottom: 4 }}>
+                              {inst.title}
+                            </div>
+                            <div style={{ fontSize: '0.78rem', color: '#64748B', lineHeight: 1.4, marginBottom: 10 }}>
+                              {inst.description}
+                            </div>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.74rem', color: '#475569', fontWeight: 700, borderTop: '1px solid #E2E8F0', paddingTop: 8 }}>
+                              <span>{inst.questions.length} preguntas obligatorias</span>
+                              <span style={{ color: '#16A34A' }}>Autocalificable</span>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+
+                  {/* VISTA PREVIA DEL DIAGNÓSTICO SELECCIONADO */}
+                  {(() => {
+                    const activeInst = ALL_DIAGNOSTIC_INSTRUMENTS.find(i => i.instrumentId === selectedInstrumentId);
+                    if (!activeInst) return null;
+                    return (
+                      <div style={{ background: '#F8FAFC', border: '1.5px solid #E2E8F0', borderRadius: 14, padding: '14px 18px' }}>
+                        <div style={{ fontSize: '0.8rem', fontWeight: 800, color: '#0284C7', textTransform: 'uppercase', marginBottom: 4 }}>
+                          Vista Previa de Preguntas del Instrumento
+                        </div>
+                        <div style={{ fontWeight: 900, color: '#0F172A', fontSize: '0.95rem', marginBottom: 8 }}>
+                          {activeInst.title} ({activeInst.questions.length} preguntas)
+                        </div>
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                          {activeInst.questions.map((q, idx) => (
+                            <div key={q.questionId} style={{ fontSize: '0.82rem', color: '#334155', display: 'flex', gap: 8 }}>
+                              <span style={{ fontWeight: 900, color: '#0284C7' }}>{idx + 1}.</span>
+                              <span>{q.prompt}</span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    );
+                  })()}
+
+                  {/* PASO 3: SELECCIONAR DESTINATARIOS */}
+                  <div>
+                    <label style={{ fontSize: '0.85rem', fontWeight: 900, color: '#1E293B', display: 'block', marginBottom: 8 }}>
+                      3. Selecciona los Destinatarios
+                    </label>
+                    <div style={{ display: 'flex', gap: 16, marginBottom: 12 }}>
+                      <label style={{ display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer', fontWeight: 800, fontSize: '0.86rem', color: '#0F172A' }}>
+                        <input
+                          type="radio"
+                          name="targetMode"
+                          checked={targetMode === 'all'}
+                          onChange={() => {
+                            soundService.playToken();
+                            setTargetMode('all');
+                          }}
+                          style={{ width: 18, height: 18 }}
+                        />
+                        <span>Todos los estudiantes registrados ({students.length})</span>
+                      </label>
+
+                      <label style={{ display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer', fontWeight: 800, fontSize: '0.86rem', color: '#0F172A' }}>
+                        <input
+                          type="radio"
+                          name="targetMode"
+                          checked={targetMode === 'specific'}
+                          onChange={() => {
+                            soundService.playToken();
+                            setTargetMode('specific');
+                          }}
+                          style={{ width: 18, height: 18 }}
+                        />
+                        <span>Seleccionar estudiantes específicos ({selectedStudentUids.length} seleccionados)</span>
+                      </label>
+                    </div>
+
+                    {/* LISTA DE ESTUDIANTES SI ES MODO ESPECÍFICO */}
+                    {targetMode === 'specific' && (
+                      <div style={{ background: '#F8FAFC', border: '1.5px solid #CBD5E1', borderRadius: 14, padding: 14 }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
+                          <span style={{ fontSize: '0.8rem', fontWeight: 800, color: '#475569' }}>
+                            Haz clic para marcar o desmarcar estudiantes:
+                          </span>
+                          <div style={{ display: 'flex', gap: 8 }}>
+                            <button
+                              type="button"
+                              onClick={selectAllStudents}
+                              className="btn-3d btn-outline"
+                              style={{ padding: '4px 10px', fontSize: '0.74rem' }}
+                            >
+                              Seleccionar Todos ({filteredStudents.length})
+                            </button>
+                            <button
+                              type="button"
+                              onClick={deselectAllStudents}
+                              className="btn-3d btn-outline"
+                              style={{ padding: '4px 10px', fontSize: '0.74rem' }}
+                            >
+                              Deseleccionar Todos
+                            </button>
+                          </div>
+                        </div>
+
+                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: 8, maxHeight: 220, overflowY: 'auto' }}>
+                          {filteredStudents.map(st => {
+                            const isChecked = selectedStudentUids.includes(st.uid);
+                            return (
+                              <div
+                                key={st.uid}
+                                onClick={() => toggleSelectStudent(st.uid)}
+                                style={{
+                                  background: isChecked ? '#E0F2FE' : '#FFFFFF',
+                                  border: isChecked ? '1.5px solid #0284C7' : '1px solid #CBD5E1',
+                                  borderRadius: 10,
+                                  padding: '8px 12px',
+                                  cursor: 'pointer',
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  gap: 10,
+                                  transition: 'all 0.15s ease'
+                                }}
+                              >
+                                {isChecked ? (
+                                  <CheckSquare size={18} color="#0284C7" />
+                                ) : (
+                                  <Square size={18} color="#94A3B8" />
+                                )}
+                                <div style={{ fontSize: '0.82rem' }}>
+                                  <div style={{ fontWeight: 800, color: '#0F172A' }}>
+                                    {st.displayName}
+                                  </div>
+                                  <div style={{ fontSize: '0.72rem', color: '#64748B' }}>
+                                    [{st.studentCode || 'E01'}] • {st.group || 'Grupo A'}
+                                  </div>
+                                </div>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* PASO 4: MENSAJE DEL AVISO PARA EL ESTUDIANTE */}
+                  <div>
+                    <label style={{ fontSize: '0.85rem', fontWeight: 900, color: '#1E293B', display: 'block', marginBottom: 6 }}>
+                      4. Mensaje de Alerta en Pantalla para el Estudiante
+                    </label>
+                    <input
+                      type="text"
+                      value={assignmentNotice}
+                      onChange={(e) => setAssignmentNotice(e.target.value)}
+                      placeholder="El profesor te ha enviado un diagnóstico obligatorio..."
+                      style={{
+                        width: '100%',
+                        padding: '10px 14px',
+                        borderRadius: 12,
+                        border: '1.5px solid #CBD5E1',
+                        fontSize: '0.86rem',
+                        fontWeight: 600,
+                        color: '#0F172A',
+                        boxSizing: 'border-box'
+                      }}
+                      required
+                    />
+                    <span style={{ fontSize: '0.74rem', color: '#64748B', marginTop: 4, display: 'block' }}>
+                      Este mensaje aparecerá en un pop-up obligatorio apenas el alumno abra o recargue la app.
+                    </span>
+                  </div>
+
+                  {/* BOTÓN DE ASIGNACIÓN */}
+                  <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 10 }}>
+                    <button
+                      type="submit"
+                      disabled={assignLoading}
+                      className="btn-3d btn-blue"
+                      style={{
+                        padding: '12px 28px',
+                        fontSize: '0.92rem',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: 10
+                      }}
+                    >
+                      <Send size={18} />
+                      <span>{assignLoading ? 'Asignando diagnóstico...' : '🚀 Enviar Diagnóstico Asignado'}</span>
+                    </button>
+                  </div>
+                </form>
+              </div>
+
+              {/* HISTORIAL DE ASIGNACIONES REALIZADAS */}
+              <div className="academic-card">
+                <h3 style={{ fontSize: '1.05rem', fontWeight: 900, color: '#0F172A', marginBottom: 14, display: 'flex', alignItems: 'center', gap: 8 }}>
+                  <Clock size={18} color="#0284C7" />
+                  <span>Historial de Diagnósticos Asignados</span>
+                </h3>
+
+                {assignments.length === 0 ? (
+                  <div style={{ textAlign: 'center', padding: '30px', color: '#64748B', fontWeight: 600, fontSize: '0.86rem' }}>
+                    No has asignado diagnósticos adicionales aún.
+                  </div>
+                ) : (
+                  <div className="academic-table-container">
+                    <table className="academic-table">
+                      <thead>
+                        <tr>
+                          <th>Fecha Asignación</th>
+                          <th>Instrumento</th>
+                          <th>Ruta</th>
+                          <th>Destinatarios</th>
+                          <th>Progreso de Entregas</th>
+                          <th>Estado</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {assignments.map(asg => {
+                          const completedCount = (asg.completedByUids || []).length;
+                          const isAll = (asg.assignedToUids || []).includes('all');
+                          const totalTargets = isAll ? students.length : (asg.assignedToUids || []).length;
+                          const pctDone = totalTargets > 0 ? Math.round((completedCount / totalTargets) * 100) : 0;
+                          return (
+                            <tr key={asg.assignmentId}>
+                              <td style={{ fontSize: '0.78rem', color: '#64748B' }}>
+                                {new Date(asg.createdAt).toLocaleString('es-CR', { dateStyle: 'short', timeStyle: 'short' })}
+                              </td>
+                              <td style={{ fontWeight: 800, color: '#0F172A' }}>
+                                {asg.title}
+                              </td>
+                              <td>
+                                <span
+                                  style={{
+                                    fontSize: '0.72rem',
+                                    fontWeight: 800,
+                                    textTransform: 'uppercase',
+                                    padding: '2px 8px',
+                                    borderRadius: 6,
+                                    background: asg.pathId === 'kotlin' ? '#E0F2FE' : '#EEF2FF',
+                                    color: asg.pathId === 'kotlin' ? '#0284C7' : '#4F46E5'
+                                  }}
+                                >
+                                  {asg.pathId}
+                                </span>
+                              </td>
+                              <td style={{ fontWeight: 700, color: '#334155' }}>
+                                {isAll ? `Todos (${students.length})` : `${asg.assignedToUids.length} estudiante(s)`}
+                              </td>
+                              <td>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                                  <div style={{ flex: 1, height: 8, background: '#F1F5F9', borderRadius: 999, overflow: 'hidden', minWidth: 60 }}>
+                                    <div
+                                      style={{
+                                        height: '100%',
+                                        width: `${pctDone}%`,
+                                        background: pctDone === 100 ? '#10B981' : '#0284C7',
+                                        borderRadius: 999
+                                      }}
+                                    />
+                                  </div>
+                                  <span style={{ fontSize: '0.76rem', fontWeight: 800, color: '#475569' }}>
+                                    {completedCount}/{totalTargets} ({pctDone}%)
+                                  </span>
+                                </div>
+                              </td>
+                              <td>
+                                <span style={{ background: '#DCFCE7', color: '#15803D', fontSize: '0.72rem', fontWeight: 800, padding: '3px 8px', borderRadius: 8 }}>
+                                  Activo
+                                </span>
+                              </td>
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                    </table>
                   </div>
                 )}
               </div>

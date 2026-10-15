@@ -404,20 +404,32 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({
                   return (
                     <div
                       key={ach.id}
-                      className={`profile-ach-card ${ach.unlocked ? '' : 'locked'}`}
+                      style={{
+                        background: ach.unlocked ? '#FFFFFF' : '#F8FAFC',
+                        border: '2px solid #E2E8F0',
+                        borderBottom: `4px solid ${ach.unlocked ? '#CBD5E1' : '#E2E8F0'}`,
+                        borderRadius: 16,
+                        padding: '12px 14px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: 12,
+                        opacity: ach.unlocked ? 1 : 0.65
+                      }}
                     >
                       <div
-                        className="profile-ach-icon"
                         style={{
-                          background: ach.unlocked ? ach.color : '#182635',
-                          color: ach.unlocked ? '#FFFFFF' : '#64748B'
+                          width: 44,
+                          height: 44,
+                          borderRadius: 14,
+                          background: ach.unlocked ? `${ach.color}20` : '#F1F5F9',
+                          border: `2px solid ${ach.unlocked ? ach.color : '#CBD5E1'}`,
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          flexShrink: 0
                         }}
                       >
-                        {ach.unlocked ? (
-                          <Icon size={24} strokeWidth={2.4} />
-                        ) : (
-                          <Lock size={20} strokeWidth={2.4} />
-                        )}
+                        <Icon size={22} color={ach.unlocked ? ach.color : '#94A3B8'} strokeWidth={2.4} />
                       </div>
 
                       <div style={{ flex: 1, minWidth: 0 }}>
@@ -425,7 +437,7 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({
                           style={{
                             fontSize: '0.94rem',
                             fontWeight: 900,
-                            color: '#FFFFFF',
+                            color: ach.unlocked ? '#0F172A' : '#64748B',
                             marginBottom: 2
                           }}
                         >
@@ -434,8 +446,8 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({
                         <div
                           style={{
                             fontSize: '0.76rem',
-                            fontWeight: 700,
-                            color: 'var(--text-dim)',
+                            fontWeight: 600,
+                            color: '#64748B',
                             lineHeight: 1.3
                           }}
                         >
@@ -444,12 +456,38 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({
                       </div>
 
                       {ach.unlocked ? (
-                        <div className="profile-ach-badge-unlocked">
+                        <div
+                          style={{
+                            background: '#DCFCE7',
+                            color: '#15803D',
+                            border: '1.5px solid #86EFAC',
+                            padding: '4px 10px',
+                            borderRadius: 10,
+                            fontSize: '0.72rem',
+                            fontWeight: 900,
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: 4
+                          }}
+                        >
                           <Check size={14} strokeWidth={3} />
                           <span>LISTO</span>
                         </div>
                       ) : (
-                        <div className="profile-ach-badge-locked">
+                        <div
+                          style={{
+                            background: '#F1F5F9',
+                            color: '#94A3B8',
+                            border: '1.5px solid #CBD5E1',
+                            padding: '4px 10px',
+                            borderRadius: 10,
+                            fontSize: '0.72rem',
+                            fontWeight: 800,
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: 4
+                          }}
+                        >
                           <Lock size={12} strokeWidth={2.5} />
                           <span>BLOQUEADO</span>
                         </div>
@@ -555,8 +593,8 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({
                           width: 34,
                           height: 34,
                           borderRadius: 10,
-                          background: '#14202E',
-                          border: '1.5px solid var(--border-color)',
+                          background: '#F8FAFC',
+                          border: '1.5px solid #CBD5E1',
                           display: 'flex',
                           alignItems: 'center',
                           justifyContent: 'center',

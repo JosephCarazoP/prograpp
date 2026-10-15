@@ -72,11 +72,11 @@ export const ParsonsPuzzleComponent: React.FC<ParsonsProps> = ({
               alignItems: 'center',
               justifyContent: 'space-between',
               background: '#FFFFFF',
-              border: '2px solid #CBD5E1',
+              border: '2.5px solid #38BDF8',
               borderRadius: '16px',
               padding: '12px 14px',
               gap: '12px',
-              boxShadow: '0 4px 0 #94A3B8',
+              boxShadow: '0 4px 0 #0284C7',
               boxSizing: 'border-box',
               transition: 'all 0.12s ease'
             }}
@@ -84,13 +84,13 @@ export const ParsonsPuzzleComponent: React.FC<ParsonsProps> = ({
             <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flex: 1, minWidth: 0 }}>
               <div
                 style={{
-                  width: '26px',
-                  height: '26px',
+                  width: '28px',
+                  height: '28px',
                   borderRadius: '8px',
-                  background: '#F1F5F9',
-                  border: '1px solid #CBD5E1',
-                  color: '#64748B',
-                  fontSize: '0.8rem',
+                  background: '#E0F2FE',
+                  border: '1.5px solid #0284C7',
+                  color: '#0284C7',
+                  fontSize: '0.85rem',
                   fontWeight: 900,
                   display: 'flex',
                   alignItems: 'center',

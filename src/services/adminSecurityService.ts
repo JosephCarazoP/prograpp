@@ -114,8 +114,8 @@ export const adminSecurityService = {
     return Boolean(config && config.passwordHash && config.salt);
   },
 
-  // Crear la contraseña administrativa por primera vez (Requiere reautenticación de cuenta)
-  async setupInitialPassword(newPassword: string, reauthAccountPassword: string): Promise<boolean> {
+  // Crear o configurar la contraseña secundaria administrativa
+  async setupInitialPassword(newPassword: string): Promise<boolean> {
     const currentUser = authService.getCurrentUser();
     if (!currentUser || !currentUser.email) {
       throw new Error('Debes haber iniciado sesión con la cuenta autorizada.');
@@ -125,14 +125,8 @@ export const adminSecurityService = {
       throw new Error('Esta acción está restringida exclusivamente a ' + ADMIN_AUTHORIZED_EMAIL);
     }
 
-    if (newPassword.length < 8) {
-      throw new Error('La contraseña administrativa debe tener al menos 8 caracteres.');
-    }
-
-    // Exigir reautenticación reciente de la cuenta para impedir que una sesión desatendida cree la clave
-    const reauthed = await authService.reauthenticateCurrentUser(reauthAccountPassword);
-    if (!reauthed) {
-      throw new Error('La contraseña de tu cuenta de correo no es correcta.');
+    if (newPassword.length < 6) {
+      throw new Error('La contraseña secundaria debe tener al menos 6 caracteres.');
     }
 
     const salt = generateRandomSalt();
@@ -235,18 +229,17 @@ export const adminSecurityService = {
     return true;
   },
 
-  // Cambiar contraseña administrativa (Requiere contraseña actual y reautenticación)
+  // Cambiar contraseña administrativa (Requiere contraseña secundaria actual)
   async changePassword(
     currentAdminPassword: string,
-    newAdminPassword: string,
-    reauthAccountPassword: string
+    newAdminPassword: string
   ): Promise<boolean> {
     const isUnlocked = await this.unlockWithPassword(currentAdminPassword);
     if (!isUnlocked) {
       throw new Error('Contraseña administrativa actual incorrecta.');
     }
 
-    return this.setupInitialPassword(newAdminPassword, reauthAccountPassword);
+    return this.setupInitialPassword(newAdminPassword);
   },
 
   // Bloquear manualmente la sección administrativa

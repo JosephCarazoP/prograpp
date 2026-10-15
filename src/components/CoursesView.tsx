@@ -7,12 +7,15 @@ import {
   CheckCircle2,
   Code2,
   Database,
-  GraduationCap
+  GraduationCap,
+  Lock
 } from 'lucide-react';
 import { Unit } from '../types/lesson';
 import { TheoryLesson } from '../types/theory';
 import { LessonProgress } from '../types/progress';
+import { UserProfile } from '../types/user';
 import { soundService } from '../services/soundService';
+import { progressionEngine } from '../services/progressionEngine';
 
 interface CoursesViewProps {
   units: Unit[];
@@ -21,6 +24,7 @@ interface CoursesViewProps {
   currentPath: 'kotlin' | 'sql';
   onSelectTheory: (theory: TheoryLesson) => void;
   onSelectPractice: (lessonId: string) => void;
+  user?: UserProfile;
 }
 
 export const CoursesView: React.FC<CoursesViewProps> = ({
@@ -29,7 +33,8 @@ export const CoursesView: React.FC<CoursesViewProps> = ({
   progress,
   currentPath,
   onSelectTheory,
-  onSelectPractice
+  onSelectPractice,
+  user
 }) => {
   const [selectedUnitId, setSelectedUnitId] = useState<number>(1);
   const [searchQuery, setSearchQuery] = useState('');
@@ -258,8 +263,8 @@ export const CoursesView: React.FC<CoursesViewProps> = ({
       <div
         style={{
           background: '#FFFFFF',
-          border: '2px solid #CBD5E1',
-          boxShadow: '0 4px 0 #94A3B8',
+          border: `2.5px solid ${currentPath === 'kotlin' ? '#0284C7' : '#4F46E5'}`,
+          boxShadow: `0 5px 0 ${currentPath === 'kotlin' ? '#0369A1' : '#3730A3'}, 0 8px 20px rgba(15, 23, 42, 0.05)`,
           borderRadius: '20px',
           padding: '18px 20px',
           marginBottom: '18px'
@@ -295,19 +300,37 @@ export const CoursesView: React.FC<CoursesViewProps> = ({
           const isCompleted = !!prog && (prog.starsEarned || 0) > 0;
           const th = theories[lesson.id];
 
+          const access = user
+            ? progressionEngine.canAccessNode(lesson.id, activeUnit, user, progress)
+            : { allowed: idx === 0 && activeUnit.id === 1 };
+          const isUnlocked = access.allowed || isCompleted;
+
           return (
             <div
               key={lesson.id}
               style={{
                 background: '#FFFFFF',
-                border: '2px solid #CBD5E1',
+                border: `2.5px solid ${
+                  isCompleted
+                    ? '#22C55E'
+                    : isUnlocked
+                    ? (currentPath === 'kotlin' ? '#38BDF8' : '#818CF8')
+                    : '#CBD5E1'
+                }`,
                 borderRadius: '22px',
                 padding: '18px 20px',
-                boxShadow: '0 4px 0 #94A3B8',
+                boxShadow: `0 4px 0 ${
+                  isCompleted
+                    ? '#16A34A'
+                    : isUnlocked
+                    ? (currentPath === 'kotlin' ? '#0284C7' : '#4F46E5')
+                    : '#94A3B8'
+                }`,
                 display: 'flex',
                 flexDirection: 'column',
                 gap: '14px',
-                boxSizing: 'border-box'
+                boxSizing: 'border-box',
+                opacity: isUnlocked || isCompleted ? 1 : 0.85
               }}
             >
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '12px' }}>
@@ -317,10 +340,10 @@ export const CoursesView: React.FC<CoursesViewProps> = ({
                       width: '42px',
                       height: '42px',
                       borderRadius: '14px',
-                      background: isCompleted ? '#22C55E' : '#EFF6FF',
-                      border: `2px solid ${isCompleted ? '#16A34A' : '#93C5FD'}`,
-                      boxShadow: `0 3px 0 ${isCompleted ? '#15803D' : '#60A5FA'}`,
-                      color: isCompleted ? '#FFFFFF' : '#0284C7',
+                      background: isCompleted ? '#22C55E' : isUnlocked ? '#EFF6FF' : '#F1F5F9',
+                      border: `2px solid ${isCompleted ? '#16A34A' : isUnlocked ? '#93C5FD' : '#CBD5E1'}`,
+                      boxShadow: `0 3px 0 ${isCompleted ? '#15803D' : isUnlocked ? '#60A5FA' : '#94A3B8'}`,
+                      color: isCompleted ? '#FFFFFF' : isUnlocked ? '#0284C7' : '#64748B',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
@@ -329,12 +352,53 @@ export const CoursesView: React.FC<CoursesViewProps> = ({
                       flexShrink: 0
                     }}
                   >
-                    {isCompleted ? <CheckCircle2 size={24} color="#FFFFFF" strokeWidth={2.5} /> : idx + 1}
+                    {isCompleted ? (
+                      <CheckCircle2 size={24} color="#FFFFFF" strokeWidth={2.5} />
+                    ) : isUnlocked ? (
+                      idx + 1
+                    ) : (
+                      <Lock size={20} color="#64748B" />
+                    )}
                   </div>
                   <div>
-                    <h3 style={{ fontSize: '1.1rem', fontWeight: 900, color: '#0F172A', margin: '0 0 4px 0', lineHeight: 1.3 }}>
-                      {lesson.title}
-                    </h3>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
+                      <h3 style={{ fontSize: '1.1rem', fontWeight: 900, color: '#0F172A', margin: 0, lineHeight: 1.3 }}>
+                        {lesson.title}
+                      </h3>
+                      {!isUnlocked && (
+                        <span
+                          style={{
+                            background: '#F1F5F9',
+                            border: '1px solid #CBD5E1',
+                            color: '#64748B',
+                            fontSize: '0.72rem',
+                            fontWeight: 900,
+                            padding: '1px 7px',
+                            borderRadius: '6px'
+                          }}
+                        >
+                          Bloqueado
+                        </span>
+                      )}
+                      {th?.video && (
+                        <span
+                          style={{
+                            background: '#FEE2E2',
+                            border: '1px solid #FECACA',
+                            color: '#DC2626',
+                            fontSize: '0.72rem',
+                            fontWeight: 900,
+                            padding: '1px 7px',
+                            borderRadius: '6px',
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: '3px'
+                          }}
+                        >
+                          <Play size={10} fill="#DC2626" /> Video
+                        </span>
+                      )}
+                    </div>
                     <p style={{ color: '#1E293B', fontSize: '0.9rem', margin: 0, lineHeight: 1.45, fontWeight: 600 }}>
                       {th?.subtitle || 'Fundamentos explicados paso a paso con código de ejemplo.'}
                     </p>
@@ -405,11 +469,16 @@ export const CoursesView: React.FC<CoursesViewProps> = ({
                 </button>
 
                 <button
+                  disabled={!isUnlocked}
                   onClick={() => {
+                    if (!isUnlocked) {
+                      soundService.playError();
+                      return;
+                    }
                     soundService.playToken();
                     onSelectPractice(lesson.id);
                   }}
-                  className="btn-3d btn-green"
+                  className={`btn-3d ${isUnlocked ? 'btn-green' : 'btn-disabled'}`}
                   style={{
                     flex: 1,
                     padding: '12px 16px',
@@ -420,9 +489,10 @@ export const CoursesView: React.FC<CoursesViewProps> = ({
                     gap: '8px',
                     borderRadius: '16px'
                   }}
+                  title={isUnlocked ? 'Comenzar práctica interactiva' : 'Debes completar el nivel anterior para desbloquear este reto'}
                 >
-                  <Play size={18} fill="#FFFFFF" />
-                  <span>Practicar Reto</span>
+                  {isUnlocked ? <Play size={18} fill="#FFFFFF" /> : <Lock size={16} />}
+                  <span>{isUnlocked ? 'Practicar Reto' : 'Bloqueado'}</span>
                 </button>
               </div>
             </div>

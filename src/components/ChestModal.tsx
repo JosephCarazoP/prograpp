@@ -1,6 +1,5 @@
 import React, { useState, useRef } from 'react';
 import {
-  Zap,
   Sparkles,
   Check,
   GraduationCap,
@@ -12,21 +11,16 @@ import {
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { soundService } from '../services/soundService';
-import { UserPowerUps } from '../types/user';
+import { ProgressionChestRewards } from '../services/progressionEngine';
 
-export interface ChestRewardPayload {
-  bytes: number;
-  xp: number;
-  batteries: number;
-  powerups: Partial<UserPowerUps>;
-}
+export type ChestRewardPayload = ProgressionChestRewards;
 
 interface ChestModalProps {
   isOpen: boolean;
   chestId: string;
-  rewards?: ChestRewardPayload;
+  rewards?: ProgressionChestRewards;
   onClose: () => void;
-  onClaim: (chestId: string, rewards: ChestRewardPayload) => void;
+  onClaim: (chestId: string, rewards: ProgressionChestRewards) => void;
 }
 
 export const ChestModal: React.FC<ChestModalProps> = ({
@@ -35,7 +29,6 @@ export const ChestModal: React.FC<ChestModalProps> = ({
   rewards = {
     bytes: 40,
     xp: 30,
-    batteries: 2,
     powerups: {
       teacherHint: 1,
       eliminateOptions: 1,
@@ -171,18 +164,6 @@ export const ChestModal: React.FC<ChestModalProps> = ({
       tokenBorder: '#FCD34D',
       tokenShadow: '#B45309',
       icon: <Award size={24} color="#FFFFFF" strokeWidth={2.4} />
-    });
-  }
-
-  if (rewards.batteries && rewards.batteries > 0) {
-    powerupRewardItems.push({
-      id: 'batt',
-      title: 'Energía',
-      badge: `+${rewards.batteries} OVERDRIVE`,
-      tokenBg: '#E11D48',
-      tokenBorder: '#FDA4AF',
-      tokenShadow: '#9F1239',
-      icon: <Zap size={24} color="#FFFFFF" strokeWidth={2.4} />
     });
   }
 

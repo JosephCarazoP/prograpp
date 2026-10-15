@@ -139,6 +139,18 @@ export interface ActivityOpinion {
   createdAt: number;
 }
 
+// Asignación de Diagnósticos por el Docente (josephcarazo56@gmail.com)
+export interface DiagnosticAssignment {
+  assignmentId: string;
+  instrumentId: string;
+  pathId: LearningPath;
+  title: string;
+  assignedBy: string;             // 'josephcarazo56@gmail.com'
+  assignedToUids: string[];       // ['all'] o lista de UIDs específicos
+  createdAt: number;
+  completedByUids: string[];      // Estudiantes que ya lo resolvieron
+}
+
 // Configuración de Seguridad Administrativa
 export interface AdminSecurityConfig {
   adminEmail: string;
@@ -160,8 +172,11 @@ export interface EducationalIndicators {
   activeDaysCount: number;
   practiceSessionsCount: number;
   estimatedActiveTimeMinutes: number;
+  weeklyActiveMinutes: number;                // Minutos activos en los últimos 7 días
+  weeklySessionsCount: number;                // Sesiones activas en la última semana
   distinctActivitiesAttempted: number;
   distinctActivitiesCompleted: number;
+  pendingExercisesCount: number;              // Cantidad pendiente de la ruta
   lessonsCompleted: number;
   modulesCompleted: number;
   totalAttempts: number;
@@ -170,7 +185,8 @@ export interface EducationalIndicators {
   pendingReviewCount: number;
   firstAttemptAccuracyPercent: number | null; // % aciertos al primer intento
   qualifiedAccuracyPercent: number | null;    // % aciertos sobre calificadas
-  attemptsPerActivityAverage: number | null;
+  attemptsPerActivityAverage: number | null;  // Intentos por ejercicio antes de acertar
+  hintsUsedCount: number;                     // Uso de pistas o ayudas solicitadas
   currentLevel: number;
   pathProgressPercent: number;
   diagnosticPercentage: number | null;       // null si no hay datos
@@ -181,4 +197,7 @@ export interface EducationalIndicators {
     correct: number;
     scorePercent: number | null;
   }>;
+  errorsByTopic: Record<string, number>;      // Conteo de fallos por contenido
+  progressByTopic: Record<string, { completed: number; total: number }>; // Avance por contenido
 }
+

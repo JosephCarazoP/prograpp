@@ -317,8 +317,27 @@ export const academicService = {
       ? Number((finalTestPercentage - diagnosticPercentage).toFixed(2))
       : null;
 
-    // 13. Desglose por tema
+    // 13. Conteo de pistas y comodines utilizados (Autonomía de resolución)
+    const hintsUsedCount = filteredAttempts.filter(a => a.hintUsed).length;
+
+    // 14. Métricas semanales (últimos 7 días)
+    const sevenDaysAgo = Date.now() - 7 * 24 * 60 * 60 * 1000;
+    const weeklyAttempts = filteredAttempts.filter(a => a.timestamp >= sevenDaysAgo);
+    const weeklySessionsSet = new Set(weeklyAttempts.map(a => a.sessionId).filter(Boolean));
+    const weeklySessionsCount = weeklySessionsSet.size;
+    // Estimación proporcional de minutos en la semana o mínimo de sesiones * 8 min
+    const weeklyActiveMinutes = weeklyAttempts.length > 0
+      ? Math.max(Math.round(weeklyAttempts.length * 1.5), weeklySessionsCount * 6)
+      : 0;
+
+    // 15. Ejercicios pendientes
+    const pendingExercisesCount = Math.max(0, totalPathLessons - lessonsCompleted);
+
+    // 16. Desglose y Errores por tema (Qué contenidos necesita reforzar)
     const topicBreakdown: Record<string, { attempts: number; correct: number; scorePercent: number | null }> = {};
+    const errorsByTopic: Record<string, number> = {};
+    const progressByTopic: Record<string, { completed: number; total: number }> = {};
+
     filteredAttempts.forEach(a => {
       const topicName = a.theme || 'Fundamentos';
       if (!topicBreakdown[topicName]) {
@@ -327,6 +346,8 @@ export const academicService = {
       topicBreakdown[topicName].attempts += 1;
       if (a.status === 'correct') {
         topicBreakdown[topicName].correct += 1;
+      } else if (a.status === 'incorrect') {
+        errorsByTopic[topicName] = (errorsByTopic[topicName] || 0) + 1;
       }
     });
 
@@ -335,6 +356,10 @@ export const academicService = {
       item.scorePercent = item.attempts > 0
         ? Math.round((item.correct / item.attempts) * 100)
         : null;
+      progressByTopic[topic] = {
+        completed: item.correct,
+        total: item.attempts
+      };
     });
 
     const level = Math.floor((student.totalXp || 0) / 100) + 1;
@@ -348,8 +373,11 @@ export const academicService = {
       activeDaysCount,
       practiceSessionsCount,
       estimatedActiveTimeMinutes,
+      weeklyActiveMinutes,
+      weeklySessionsCount,
       distinctActivitiesAttempted,
       distinctActivitiesCompleted,
+      pendingExercisesCount,
       lessonsCompleted,
       modulesCompleted,
       totalAttempts,
@@ -359,12 +387,113 @@ export const academicService = {
       firstAttemptAccuracyPercent,
       qualifiedAccuracyPercent,
       attemptsPerActivityAverage,
+      hintsUsedCount,
       currentLevel: level,
       pathProgressPercent,
       diagnosticPercentage,
       finalTestPercentage,
       percentagePointGain,
-      topicBreakdown
+      topicBreakdown,
+      errorsByTopic,
+      progressByTopic
     };
+  },
+
+  // ─── 6. ASIGNACIÓN DE DIAGNÓSTICOS POR EL PROFESOR (josephcarazo56@gmail.com) ───
+
+  // Asignar un diagnóstico a todos o a estudiantes específicos
+  async assignDiagnostic(
+    instrumentId: string,
+    pathId: LearningPath,
+    title: string,
+    assignedToUids: string[] = ['all']
+  ): Promise<any> {
+    const assignmentId = `assign_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
+    const newAssignment = {
+      assignmentId,
+      instrumentId,
+      pathId,
+      title,
+      assignedBy: 'josephcarazo56@gmail.com',
+      assignedToUids,
+      createdAt: Date.now(),
+      completedByUids: []
+    };
+
+    const localAssignments = storageService.getItem<any[]>('academic_diagnostic_assignments', []);
+    localAssignments.unshift(newAssignment);
+    storageService.setItem('academic_diagnostic_assignments', localAssignments);
+
+    if (!isLocalMockMode && db) {
+      try {
+        const assignRef = doc(db, 'diagnostic_assignments', assignmentId);
+        await setDoc(assignRef, newAssignment);
+      } catch (err) {
+        console.warn('[academicService] Guardado de asignación en caché local:', err);
+      }
+    }
+
+    return newAssignment;
+  },
+
+  // Obtener todas las asignaciones realizadas por el profesor
+  async getAllAssignments(): Promise<any[]> {
+    if (!isLocalMockMode && db) {
+      try {
+        const col = collection(db, 'diagnostic_assignments');
+        const snapshot = await getDocs(col);
+        const list: any[] = [];
+        snapshot.forEach(d => list.push(d.data()));
+        if (list.length > 0) {
+          list.sort((a, b) => b.createdAt - a.createdAt);
+          storageService.setItem('academic_diagnostic_assignments', list);
+          return list;
+        }
+      } catch (err) {
+        console.warn('[academicService] Error al obtener asignaciones de Firestore:', err);
+      }
+    }
+    return storageService.getItem<any[]>('academic_diagnostic_assignments', []);
+  },
+
+  // Comprobar si un estudiante tiene un diagnóstico pendiente asignado por el profesor
+  async getPendingDiagnosticForStudent(studentUid: string): Promise<any | null> {
+    if (!studentUid || studentUid === 'guest_user_1') return null;
+
+    const allAssignments = await this.getAllAssignments();
+    // Buscar la asignación más reciente que aplique a este estudiante y que aún no haya completado
+    for (const assign of allAssignments) {
+      const isTarget = assign.assignedToUids.includes('all') || assign.assignedToUids.includes(studentUid);
+      const isCompleted = (assign.completedByUids || []).includes(studentUid);
+
+      if (isTarget && !isCompleted) {
+        return assign;
+      }
+    }
+
+    return null;
+  },
+
+  // Marcar asignación diagnóstica como completada por el estudiante
+  async markDiagnosticCompleted(assignmentId: string, studentUid: string): Promise<void> {
+    const assignments = await this.getAllAssignments();
+    const target = assignments.find(a => a.assignmentId === assignmentId);
+    if (!target) return;
+
+    if (!target.completedByUids) target.completedByUids = [];
+    if (!target.completedByUids.includes(studentUid)) {
+      target.completedByUids.push(studentUid);
+    }
+
+    storageService.setItem('academic_diagnostic_assignments', assignments);
+
+    if (!isLocalMockMode && db) {
+      try {
+        const ref = doc(db, 'diagnostic_assignments', assignmentId);
+        await setDoc(ref, target, { merge: true });
+      } catch (err) {
+        console.warn('[academicService] Error actualizando entrega de asignación:', err);
+      }
+    }
   }
 };

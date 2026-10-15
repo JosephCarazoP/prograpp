@@ -8,153 +8,321 @@ interface AvatarProps {
   className?: string;
 }
 
-// 1. Byte el Robot: Androide cibernético futurista, visor curvo y auriculares con ecualizador
+/**
+ * 1. Byte el Robot: Compañero androide 3D estilo juguete tangible Duolingo (0% Neón / 0% IA).
+ * Casco redondeado celeste, antena 3D con orbe dorado, auriculares y ojos brillantes.
+ */
 export const ByteBotAvatar: React.FC<AvatarProps> = ({ size = 48, className = '' }) => (
   <svg width={size} height={size} viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
-    {/* Fondo halo circular con gradiente cian */}
-    <circle cx="50" cy="50" r="48" fill="#082F49" stroke="#0284C7" strokeWidth="2.5" />
-    
-    {/* Antena cibernética con nodo de datos dorado */}
-    <rect x="47" y="10" width="6" height="12" rx="3" fill="#38BDF8" />
-    <circle cx="50" cy="8" r="5" fill="#FBBF24" />
-    <circle cx="50" cy="8" r="2.5" fill="#FFFFFF" />
-
-    {/* Casco redondeado de titanio pulido */}
-    <rect x="22" y="20" width="56" height="48" rx="20" fill="url(#byte-helmet-grad)" stroke="#E0F2FE" strokeWidth="2.5" />
-    
-    {/* Visor panorámico curvo de vidrio negro */}
-    <rect x="28" y="30" width="44" height="26" rx="10" fill="#030712" stroke="#0284C7" strokeWidth="1.5" />
-    
-    {/* Ojos digitales expresivos en neón cian */}
-    <circle cx="40" cy="42" r="4.5" fill="#38BDF8" />
-    <circle cx="41.5" cy="40.5" r="1.5" fill="#FFFFFF" />
-    <circle cx="60" cy="42" r="4.5" fill="#38BDF8" />
-    <circle cx="61.5" cy="40.5" r="1.5" fill="#FFFFFF" />
-    
-    {/* Sonrisa digital LED */}
-    <path d="M43 49 Q50 54 57 49" stroke="#38BDF8" strokeWidth="2.2" strokeLinecap="round" fill="none" />
-    
-    {/* Auriculares laterales con LEDs de ecualizador */}
-    <rect x="15" y="32" width="7" height="22" rx="3.5" fill="#0369A1" stroke="#38BDF8" strokeWidth="1.5" />
-    <rect x="17" y="36" width="3" height="3" rx="1" fill="#4ADE80" />
-    <rect x="17" y="41" width="3" height="4" rx="1" fill="#FBBF24" />
-    <rect x="17" y="47" width="3" height="3" rx="1" fill="#F43F5E" />
-
-    <rect x="78" y="32" width="7" height="22" rx="3.5" fill="#0369A1" stroke="#38BDF8" strokeWidth="1.5" />
-    <rect x="80" y="36" width="3" height="3" rx="1" fill="#4ADE80" />
-    <rect x="80" y="41" width="3" height="4" rx="1" fill="#FBBF24" />
-    <rect x="80" y="47" width="3" height="3" rx="1" fill="#F43F5E" />
-
-    {/* Cuello y armadura de pecho con núcleo de energía */}
-    <path d="M36 68 L64 68 L76 96 L24 96 Z" fill="#0284C7" stroke="#38BDF8" strokeWidth="1.5" />
-    <circle cx="50" cy="80" r="5" fill="#38BDF8" />
-    <circle cx="50" cy="80" r="2.5" fill="#FFFFFF" />
-
     <defs>
-      <linearGradient id="byte-helmet-grad" x1="22" y1="20" x2="78" y2="68" gradientUnits="userSpaceOnUse">
-        <stop stopColor="#0EA5E9" />
-        <stop offset="1" stopColor="#0369A1" />
+      <linearGradient id="byte-bg" x1="50" y1="2" x2="50" y2="98" gradientUnits="userSpaceOnUse">
+        <stop stopColor="#F0F9FF" />
+        <stop offset="100%" stopColor="#BAE6FD" />
+      </linearGradient>
+      <linearGradient id="byte-chassis" x1="24" y1="20" x2="76" y2="76" gradientUnits="userSpaceOnUse">
+        <stop stopColor="#38BDF8" />
+        <stop offset="50%" stopColor="#0EA5E9" />
+        <stop offset="100%" stopColor="#0284C7" />
+      </linearGradient>
+      <linearGradient id="byte-visor" x1="30" y1="32" x2="70" y2="58" gradientUnits="userSpaceOnUse">
+        <stop stopColor="#0F172A" />
+        <stop offset="100%" stopColor="#1E293B" />
+      </linearGradient>
+      <radialGradient id="byte-gold" cx="40%" cy="35%" r="65%">
+        <stop stopColor="#FFFBEB" />
+        <stop offset="40%" stopColor="#FBBF24" />
+        <stop offset="100%" stopColor="#D97706" />
+      </radialGradient>
+      <linearGradient id="byte-ear" x1="0" y1="0" x2="0" y2="1">
+        <stop stopColor="#0284C7" />
+        <stop offset="100%" stopColor="#0369A1" />
       </linearGradient>
     </defs>
+
+    {/* Fondo base circular 3D */}
+    <circle cx="50" cy="50" r="47" fill="url(#byte-bg)" stroke="#7DD3FC" strokeWidth="2.5" />
+    <ellipse cx="50" cy="91" rx="28" ry="4" fill="#0284C7" fillOpacity="0.22" />
+
+    {/* Antena 3D con esfera de oro */}
+    <rect x="47" y="10" width="6" height="12" rx="3" fill="#94A3B8" stroke="#475569" strokeWidth="1" />
+    <circle cx="50" cy="8" r="6" fill="url(#byte-gold)" stroke="#B45309" strokeWidth="1.2" />
+    <circle cx="48" cy="6" r="2" fill="#FFFFFF" fillOpacity="0.8" />
+
+    {/* Auriculares 3D con almohadillas redondeadas */}
+    <rect x="15" y="34" width="8" height="22" rx="4" fill="url(#byte-ear)" stroke="#0284C7" strokeWidth="1.2" />
+    <circle cx="19" cy="45" r="2" fill="#22C55E" />
+    <rect x="77" y="34" width="8" height="22" rx="4" fill="url(#byte-ear)" stroke="#0284C7" strokeWidth="1.2" />
+    <circle cx="81" cy="45" r="2" fill="#22C55E" />
+
+    {/* Casco / Cabeza esférica 3D */}
+    <rect x="22" y="18" width="56" height="52" rx="22" fill="url(#byte-chassis)" stroke="#0284C7" strokeWidth="2.5" />
+    {/* Reflejo especular curvo */}
+    <path d="M28 24 C40 20 60 20 72 24" stroke="#FFFFFF" strokeWidth="2.5" strokeLinecap="round" strokeOpacity="0.75" />
+
+    {/* Visor 3D oscuro y lustroso */}
+    <rect x="28" y="30" width="44" height="28" rx="12" fill="url(#byte-visor)" stroke="#0369A1" strokeWidth="1.5" />
+    {/* Reflejo de cristal en el visor */}
+    <path d="M32 32 L48 32 L38 56 L32 56 Z" fill="#FFFFFF" fillOpacity="0.08" />
+
+    {/* Ojos expresivos grandes y tiernos estilo Duolingo */}
+    <ellipse cx="40" cy="42" rx="4.5" ry="6" fill="#38BDF8" />
+    <ellipse cx="40" cy="42" rx="3.5" ry="4.5" fill="#0EA5E9" />
+    <circle cx="41.5" cy="40" r="1.8" fill="#FFFFFF" />
+
+    <ellipse cx="60" cy="42" rx="4.5" ry="6" fill="#38BDF8" />
+    <ellipse cx="60" cy="42" rx="3.5" ry="4.5" fill="#0EA5E9" />
+    <circle cx="61.5" cy="40" r="1.8" fill="#FFFFFF" />
+
+    {/* Mejillas sonrosadas digitales */}
+    <circle cx="33" cy="48" r="2.5" fill="#F472B6" fillOpacity="0.6" />
+    <circle cx="67" cy="48" r="2.5" fill="#F472B6" fillOpacity="0.6" />
+
+    {/* Sonrisa amigable */}
+    <path d="M44 49 Q50 54 56 49" stroke="#38BDF8" strokeWidth="2.4" strokeLinecap="round" fill="none" />
+
+    {/* Cuello y armadura de pecho con botón de energía verde */}
+    <path d="M34 70 L66 70 L74 96 L26 96 Z" fill="#0284C7" stroke="#0369A1" strokeWidth="2" />
+    <rect x="42" y="76" width="16" height="12" rx="6" fill="#0369A1" />
+    <circle cx="50" cy="82" r="4" fill="#22C55E" />
+    <circle cx="51" cy="81" r="1.2" fill="#FFFFFF" />
   </svg>
 );
 
-// 2. Ada la Hacker: Especialista en ciberseguridad, sudadera con capucha, gafas HUD terminal
+/**
+ * 2. Ada la Coder: Programadora audaz, sudadera 3D coral, gafas de montura gruesa y headset gamer.
+ */
 export const AdaHackerAvatar: React.FC<AvatarProps> = ({ size = 48, className = '' }) => (
   <svg width={size} height={size} viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
-    {/* Fondo halo circular magenta/violeta */}
-    <circle cx="50" cy="50" r="48" fill="#500724" stroke="#F472B6" strokeWidth="2.5" />
+    <defs>
+      <linearGradient id="ada-bg" x1="50" y1="2" x2="50" y2="98" gradientUnits="userSpaceOnUse">
+        <stop stopColor="#FFF1F2" />
+        <stop offset="100%" stopColor="#FECDD3" />
+      </linearGradient>
+      <linearGradient id="ada-hoodie" x1="20" y1="20" x2="80" y2="90" gradientUnits="userSpaceOnUse">
+        <stop stopColor="#FB7185" />
+        <stop offset="50%" stopColor="#E11D48" />
+        <stop offset="100%" stopColor="#9F1239" />
+      </linearGradient>
+      <linearGradient id="ada-skin" x1="30" y1="30" x2="70" y2="70" gradientUnits="userSpaceOnUse">
+        <stop stopColor="#FED7AA" />
+        <stop offset="100%" stopColor="#FDBA74" />
+      </linearGradient>
+    </defs>
 
-    {/* Capucha / Cabello fondo */}
-    <path d="M20 48 C20 18, 80 18, 80 48 C80 75, 78 88, 78 88 L22 88 C22 88, 20 75, 20 48 Z" fill="#831843" />
-    
-    {/* Rostro estilizado */}
-    <rect x="30" y="34" width="40" height="40" rx="16" fill="#FED7AA" />
-    
-    {/* Flequillo asimétrico cyberpunk */}
-    <path d="M24 38 C34 26, 68 28, 76 38 C64 42, 54 36, 42 42 Z" fill="#9D174D" />
+    {/* Fondo base circular 3D */}
+    <circle cx="50" cy="50" r="47" fill="url(#ada-bg)" stroke="#FDA4AF" strokeWidth="2.5" />
+    <ellipse cx="50" cy="91" rx="28" ry="4" fill="#BE123C" fillOpacity="0.22" />
 
-    {/* Gafas inteligentes de realidad aumentada HUD */}
-    <rect x="31" y="41" width="17" height="13" rx="3.5" fill="#090D16" stroke="#F472B6" strokeWidth="2" />
-    <rect x="52" y="41" width="17" height="13" rx="3.5" fill="#090D16" stroke="#F472B6" strokeWidth="2" />
-    <line x1="48" y1="47" x2="52" y2="47" stroke="#F472B6" strokeWidth="2" />
-    <text x="33.5" y="50.5" fill="#4ADE80" fontSize="7.5" fontFamily="monospace" fontWeight="bold">&gt;_</text>
-    <text x="54.5" y="50.5" fill="#38BDF8" fontSize="7.5" fontFamily="monospace" fontWeight="bold">{}</text>
+    {/* Capucha 3D envolvente */}
+    <path d="M20 48 C20 16 80 16 80 48 C80 76 76 88 76 88 L24 88 C24 88 20 76 20 48 Z" fill="url(#ada-hoodie)" stroke="#9F1239" strokeWidth="2.2" />
+    {/* Borde exterior de la capucha con brillo */}
+    <path d="M24 46 C24 22 76 22 76 46" stroke="#FDA4AF" strokeWidth="2" fill="none" />
 
-    {/* Sonrisa audaz */}
-    <path d="M44 62 Q50 66 56 62" stroke="#9F1239" strokeWidth="2.2" strokeLinecap="round" fill="none" />
+    {/* Rostro redondeado suave 3D */}
+    <rect x="30" y="34" width="40" height="38" rx="16" fill="url(#ada-skin)" />
 
-    {/* Auriculares con micrófono gamer */}
-    <path d="M22 42 C22 22, 78 22, 78 42" stroke="#FB7185" strokeWidth="3" fill="none" />
-    <rect x="18" y="40" width="7" height="16" rx="3" fill="#E11D48" />
-    <rect x="75" y="40" width="7" height="16" rx="3" fill="#E11D48" />
-    <path d="M78 52 Q82 66 70 66" stroke="#FB7185" strokeWidth="2" fill="none" strokeLinecap="round" />
-    <circle cx="70" cy="66" r="2" fill="#4ADE80" />
+    {/* Cabello / Mechones morados estilizados */}
+    <path d="M26 38 C34 26 66 28 74 38 C62 40 54 35 44 40 Z" fill="#881337" />
 
-    {/* Sudadera tech de hacker */}
-    <path d="M24 78 L76 78 L88 98 L12 98 Z" fill="#9D174D" stroke="#F472B6" strokeWidth="1.5" />
-    <polygon points="50,78 55,88 45,88" fill="#F43F5E" />
+    {/* Gafas de código gruesas 3D estilo hipster coder */}
+    <rect x="31" y="40" width="17" height="14" rx="4.5" fill="#0F172A" stroke="#E11D48" strokeWidth="2.2" />
+    <rect x="52" y="40" width="17" height="14" rx="4.5" fill="#0F172A" stroke="#E11D48" strokeWidth="2.2" />
+    <line x1="48" y1="46" x2="52" y2="46" stroke="#E11D48" strokeWidth="2.5" />
+
+    {/* Ojos expresivos detrás de los lentes */}
+    <circle cx="39.5" cy="46" r="3" fill="#38BDF8" />
+    <circle cx="40.5" cy="45" r="1.2" fill="#FFFFFF" />
+    <circle cx="60.5" cy="46" r="3" fill="#38BDF8" />
+    <circle cx="61.5" cy="45" r="1.2" fill="#FFFFFF" />
+
+    {/* Mejillas sonrosadas */}
+    <circle cx="34" cy="58" r="3" fill="#FB7185" fillOpacity="0.8" />
+    <circle cx="66" cy="58" r="3" fill="#FB7185" fillOpacity="0.8" />
+
+    {/* Sonrisa audaz y simpática */}
+    <path d="M44 60 Q50 65 56 60" stroke="#9F1239" strokeWidth="2.2" strokeLinecap="round" fill="none" />
+
+    {/* Headset gamer 3D con micrófono */}
+    <path d="M21 42 C21 21 79 21 79 42" stroke="#FB7185" strokeWidth="3" fill="none" />
+    <rect x="18" y="38" width="6" height="16" rx="3" fill="#BE123C" stroke="#FB7185" strokeWidth="1" />
+    <rect x="76" y="38" width="6" height="16" rx="3" fill="#BE123C" stroke="#FB7185" strokeWidth="1" />
+    <path d="M78 50 Q82 64 70 65" stroke="#FB7185" strokeWidth="2" fill="none" strokeLinecap="round" />
+    <circle cx="70" cy="65" r="2.2" fill="#22C55E" />
+
+    {/* Pecho de sudadera con cordones */}
+    <path d="M24 78 L76 78 L86 98 L14 98 Z" fill="#9F1239" stroke="#881337" strokeWidth="1.5" />
+    <circle cx="46" cy="84" r="1.5" fill="#FFFFFF" />
+    <line x1="46" y1="86" x2="46" y2="94" stroke="#FFFFFF" strokeWidth="1.5" strokeLinecap="round" />
+    <circle cx="54" cy="84" r="1.5" fill="#FFFFFF" />
+    <line x1="54" y1="86" x2="54" y2="94" stroke="#FFFFFF" strokeWidth="1.5" strokeLinecap="round" />
   </svg>
 );
 
-// 3. Linus el Coder: Desarrollador de sistemas con gafas de monitor y corbata de código
+/**
+ * 3. Linus el Coder: Pingüino desarrollador 3D con gafas de montura redonda y corbata verde Duolingo.
+ */
 export const LinusDevAvatar: React.FC<AvatarProps> = ({ size = 48, className = '' }) => (
   <svg width={size} height={size} viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
-    {/* Fondo halo circular verde bosque */}
-    <circle cx="50" cy="50" r="48" fill="#064E3B" stroke="#34D399" strokeWidth="2.5" />
+    <defs>
+      <linearGradient id="linus-bg" x1="50" y1="2" x2="50" y2="98" gradientUnits="userSpaceOnUse">
+        <stop stopColor="#F0FDF4" />
+        <stop offset="100%" stopColor="#DCFCE7" />
+      </linearGradient>
+      <linearGradient id="linus-body" x1="30" y1="20" x2="70" y2="90" gradientUnits="userSpaceOnUse">
+        <stop stopColor="#334155" />
+        <stop offset="60%" stopColor="#1E293B" />
+        <stop offset="100%" stopColor="#0F172A" />
+      </linearGradient>
+      <linearGradient id="linus-belly" x1="50" y1="50" x2="50" y2="90" gradientUnits="userSpaceOnUse">
+        <stop stopColor="#FFFFFF" />
+        <stop offset="100%" stopColor="#F1F5F9" />
+      </linearGradient>
+      <linearGradient id="linus-tie" x1="0" y1="0" x2="0" y2="1">
+        <stop stopColor="#22C55E" />
+        <stop offset="100%" stopColor="#15803D" />
+      </linearGradient>
+    </defs>
 
-    {/* Cuerpo pingüino tech */}
-    <ellipse cx="50" cy="56" rx="28" ry="34" fill="#0F172A" stroke="#334155" strokeWidth="2" />
-    <ellipse cx="50" cy="63" rx="19" ry="24" fill="#F8FAFC" />
+    {/* Fondo base circular 3D */}
+    <circle cx="50" cy="50" r="47" fill="url(#linus-bg)" stroke="#86EFAC" strokeWidth="2.5" />
+    <ellipse cx="50" cy="91" rx="28" ry="4" fill="#15803D" fillOpacity="0.22" />
 
-    {/* Gafas de código con reflejo esmeralda */}
-    <rect x="31" y="38" width="16" height="13" rx="3.5" fill="#022C22" stroke="#34D399" strokeWidth="2" />
-    <rect x="53" y="38" width="16" height="13" rx="3.5" fill="#022C22" stroke="#34D399" strokeWidth="2" />
-    <line x1="47" y1="44" x2="53" y2="44" stroke="#34D399" strokeWidth="2" />
-    <circle cx="39" cy="44" r="3" fill="#34D399" />
-    <circle cx="40" cy="43" r="1" fill="#FFFFFF" />
-    <circle cx="61" cy="44" r="3" fill="#34D399" />
-    <circle cx="62" cy="43" r="1" fill="#FFFFFF" />
+    {/* Cuerpo pingüino 3D suave */}
+    <ellipse cx="50" cy="56" rx="29" ry="34" fill="url(#linus-body)" stroke="#0F172A" strokeWidth="2" />
+    {/* Vientre blanco limpio */}
+    <ellipse cx="50" cy="64" rx="20" ry="24" fill="url(#linus-belly)" />
 
-    {/* Pico naranja */}
-    <polygon points="45,53 55,53 50,60" fill="#F59E0B" />
+    {/* Aletas laterales */}
+    <path d="M22 52 C16 60 16 72 24 76 C26 77 28 68 28 60 Z" fill="#1E293B" />
+    <path d="M78 52 C84 60 84 72 76 76 C74 77 72 68 72 60 Z" fill="#1E293B" />
 
-    {/* Corbata de circuitos binarios */}
-    <path d="M46 66 L54 66 L57 82 L50 87 L43 82 Z" fill="#059669" stroke="#10B981" strokeWidth="1" />
-    <circle cx="50" cy="72" r="1.5" fill="#6EE7B7" />
-    <circle cx="50" cy="78" r="1.5" fill="#6EE7B7" />
+    {/* Gafas inteligentes de programador (gruesas y simpáticas) */}
+    <circle cx="39" cy="43" r="8.5" fill="#0F172A" stroke="#10B981" strokeWidth="2.4" />
+    <circle cx="61" cy="43" r="8.5" fill="#0F172A" stroke="#10B981" strokeWidth="2.4" />
+    <line x1="47.5" y1="43" x2="52.5" y2="43" stroke="#10B981" strokeWidth="2.5" />
+
+    {/* Ojos brillantes en las gafas */}
+    <circle cx="39" cy="43" r="4" fill="#34D399" />
+    <circle cx="40.5" cy="41.5" r="1.5" fill="#FFFFFF" />
+    <circle cx="61" cy="43" r="4" fill="#34D399" />
+    <circle cx="62.5" cy="41.5" r="1.5" fill="#FFFFFF" />
+
+    {/* Pico naranja 3D de pingüino */}
+    <path d="M44 51 Q50 49 56 51 Q50 62 44 51 Z" fill="#FF9600" stroke="#D97706" strokeWidth="1.8" />
+    <path d="M47 51 Q50 50 53 51" stroke="#FEF08A" strokeWidth="1.5" strokeLinecap="round" />
+
+    {/* Corbata verde Duolingo con nudo 3D */}
+    <polygon points="46,63 54,63 52,67 48,67" fill="#16A34A" />
+    <path d="M47 67 L53 67 L56 86 L50 91 L44 86 Z" fill="url(#linus-tie)" stroke="#166534" strokeWidth="1.2" />
+    {/* Pines en la corbata */}
+    <circle cx="50" cy="74" r="1.8" fill="#FACC15" />
+    <circle cx="50" cy="81" r="1.8" fill="#38BDF8" />
   </svg>
 );
 
-// 4. Turing el Sabio: Arquitecto cuántico con halo de datos y runas matemáticas
+/**
+ * 4. Turing el Sabio: Arquitecto de algoritmos 3D con cabello de nube plateada, gafas doradas y túnica.
+ */
 export const TuringSageAvatar: React.FC<AvatarProps> = ({ size = 48, className = '' }) => (
   <svg width={size} height={size} viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
-    {/* Fondo halo circular violeta místico */}
-    <circle cx="50" cy="50" r="48" fill="#3B0764" stroke="#C084FC" strokeWidth="2.5" />
+    <defs>
+      <linearGradient id="turing-bg" x1="50" y1="2" x2="50" y2="98" gradientUnits="userSpaceOnUse">
+        <stop stopColor="#FAF5FF" />
+        <stop offset="100%" stopColor="#F3E8FF" />
+      </linearGradient>
+      <linearGradient id="turing-robe" x1="20" y1="60" x2="80" y2="100" gradientUnits="userSpaceOnUse">
+        <stop stopColor="#7E22CE" />
+        <stop offset="100%" stopColor="#581C87" />
+      </linearGradient>
+      <linearGradient id="turing-hair" x1="30" y1="20" x2="70" y2="60" gradientUnits="userSpaceOnUse">
+        <stop stopColor="#FFFFFF" />
+        <stop offset="100%" stopColor="#E2E8F0" />
+      </linearGradient>
+    </defs>
 
-    {/* Halo cuántico de datos en rotación */}
-    <circle cx="50" cy="50" r="41" stroke="#A855F7" strokeWidth="1.5" strokeDasharray="5 3" />
-    <circle cx="50" cy="11" r="2.5" fill="#FDE047" />
-    <circle cx="89" cy="50" r="2" fill="#38BDF8" />
-    <circle cx="11" cy="50" r="2" fill="#34D399" />
+    {/* Fondo base circular 3D */}
+    <circle cx="50" cy="50" r="47" fill="url(#turing-bg)" stroke="#D8B4FE" strokeWidth="2.5" />
+    <ellipse cx="50" cy="91" rx="28" ry="4" fill="#6B21A8" fillOpacity="0.22" />
 
-    {/* Cabello sabio plateado */}
-    <ellipse cx="50" cy="45" rx="25" ry="26" fill="#E2E8F0" />
-    {/* Rostro */}
-    <ellipse cx="50" cy="44" rx="18" ry="18" fill="#FDE68A" />
-    {/* Barba geométrica de código */}
-    <path d="M36 52 C36 69, 64 69, 64 52 Z" fill="#E2E8F0" />
+    {/* Cabello sabio plateado 3D */}
+    <circle cx="34" cy="38" r="14" fill="url(#turing-hair)" />
+    <circle cx="66" cy="38" r="14" fill="url(#turing-hair)" />
+    <ellipse cx="50" cy="36" rx="24" ry="18" fill="url(#turing-hair)" />
 
-    {/* Gafas circulares de sabio con reflejo arcano */}
-    <circle cx="41" cy="43" r="6" fill="#1E1B4B" stroke="#C084FC" strokeWidth="1.8" />
-    <circle cx="59" cy="43" r="6" fill="#1E1B4B" stroke="#C084FC" strokeWidth="1.8" />
-    <line x1="47" y1="43" x2="53" y2="43" stroke="#C084FC" strokeWidth="1.8" />
-    <circle cx="41" cy="43" r="2.5" fill="#38BDF8" />
-    <circle cx="59" cy="43" r="2.5" fill="#38BDF8" />
+    {/* Rostro sabio sonriente */}
+    <ellipse cx="50" cy="46" rx="19" ry="18" fill="#FED7AA" />
+
+    {/* Barba nube suave 3D */}
+    <path d="M34 50 C30 62 38 72 50 72 C62 72 70 62 66 50 Z" fill="url(#turing-hair)" stroke="#CBD5E1" strokeWidth="1" />
+
+    {/* Gafas doradas redondas de erudito */}
+    <circle cx="41" cy="44" r="7" fill="#1E1B4B" stroke="#F59E0B" strokeWidth="2.2" />
+    <circle cx="59" cy="44" r="7" fill="#1E1B4B" stroke="#F59E0B" strokeWidth="2.2" />
+    <line x1="48" y1="44" x2="52" y2="44" stroke="#F59E0B" strokeWidth="2.2" />
+
+    {/* Ojos sabios con brillo */}
+    <circle cx="41" cy="44" r="3" fill="#A855F7" />
+    <circle cx="42" cy="43" r="1.2" fill="#FFFFFF" />
+    <circle cx="59" cy="44" r="3" fill="#A855F7" />
+    <circle cx="60" cy="43" r="1.2" fill="#FFFFFF" />
+
+    {/* Sonrisa amable en la barba */}
+    <path d="M46 56 Q50 60 54 56" stroke="#9A3412" strokeWidth="2" strokeLinecap="round" fill="none" />
 
     {/* Túnica cuántica con broche de oro */}
-    <path d="M28 75 L72 75 L84 98 L16 98 Z" fill="#581C87" stroke="#A855F7" strokeWidth="1.5" />
-    <polygon points="50,77 55,85 45,85" fill="#F59E0B" />
+    <path d="M26 74 L74 74 L84 98 L16 98 Z" fill="url(#turing-robe)" stroke="#3B0764" strokeWidth="1.5" />
+    <circle cx="50" cy="80" r="5" fill="#FBBF24" stroke="#D97706" strokeWidth="1.2" />
+    <circle cx="51" cy="79" r="1.5" fill="#FFFFFF" />
+  </svg>
+);
+
+/**
+ * 5. Consola Dev: Terminal interactiva 3D con visor CRT, auriculares y sonrisa digital.
+ */
+export const ConsoleMascotAvatar: React.FC<AvatarProps> = ({ size = 48, className = '' }) => (
+  <svg width={size} height={size} viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
+    <defs>
+      <linearGradient id="cmd-bg" x1="50" y1="2" x2="50" y2="98" gradientUnits="userSpaceOnUse">
+        <stop stopColor="#F0FDF4" />
+        <stop offset="100%" stopColor="#D1FAE5" />
+      </linearGradient>
+      <linearGradient id="cmd-body" x1="20" y1="20" x2="80" y2="80" gradientUnits="userSpaceOnUse">
+        <stop stopColor="#10B981" />
+        <stop offset="60%" stopColor="#059669" />
+        <stop offset="100%" stopColor="#047857" />
+      </linearGradient>
+      <linearGradient id="cmd-screen" x1="28" y1="30" x2="72" y2="60" gradientUnits="userSpaceOnUse">
+        <stop stopColor="#064E3B" />
+        <stop offset="100%" stopColor="#022C22" />
+      </linearGradient>
+    </defs>
+
+    {/* Fondo base circular 3D */}
+    <circle cx="50" cy="50" r="47" fill="url(#cmd-bg)" stroke="#6EE7B7" strokeWidth="2.5" />
+    <ellipse cx="50" cy="91" rx="28" ry="4" fill="#047857" fillOpacity="0.22" />
+
+    {/* Antena mini */}
+    <rect x="47" y="10" width="6" height="10" rx="3" fill="#94A3B8" />
+    <circle cx="50" cy="8" r="5" fill="#FACC15" stroke="#CA8A04" strokeWidth="1" />
+
+    {/* Chasis monitor retro-moderno 3D */}
+    <rect x="20" y="18" width="60" height="50" rx="16" fill="url(#cmd-body)" stroke="#047857" strokeWidth="2.2" />
+    <path d="M26 22 L74 22" stroke="#FFFFFF" strokeWidth="2" strokeLinecap="round" strokeOpacity="0.6" />
+
+    {/* Pantalla CRT 3D */}
+    <rect x="27" y="26" width="46" height="34" rx="10" fill="url(#cmd-screen)" stroke="#047857" strokeWidth="1.5" />
+
+    {/* Ojos de terminal felices */}
+    <path d="M36 39 C36 36, 44 36, 44 39" stroke="#34D399" strokeWidth="2.8" strokeLinecap="round" fill="none" />
+    <path d="M56 39 C56 36, 64 36, 64 39" stroke="#34D399" strokeWidth="2.8" strokeLinecap="round" fill="none" />
+
+    {/* Sonrisa digital */}
+    <path d="M46 48 Q50 52 54 48" stroke="#34D399" strokeWidth="2.2" strokeLinecap="round" fill="none" />
+
+    {/* Base y soporte */}
+    <rect x="42" y="68" width="16" height="10" fill="#065F46" />
+    <rect x="32" y="76" width="36" height="8" rx="4" fill="#047857" stroke="#065F46" strokeWidth="1.2" />
+    <rect x="34" y="84" width="32" height="10" rx="4" fill="#10B981" />
   </svg>
 );
 
@@ -166,7 +334,7 @@ export const DevAvatar: React.FC<{ avatarId: string; size?: number; className?: 
 }) => {
   switch (avatarId) {
     case 'console_dev':
-      return <ConsoleDevAvatar size={size} className={className} />;
+      return <ConsoleMascotAvatar size={size} className={className} />;
     case 'robot_byte':
       return <ByteBotAvatar size={size} className={className} />;
     case 'ada_hacker':

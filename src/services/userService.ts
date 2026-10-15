@@ -115,9 +115,6 @@ export const userService = {
     const rawLocal = storageService.getItem<any>('user_profile', { ...DEFAULT_PROFILE, uid });
     const local = sanitizeUserProfile(rawLocal, uid);
 
-    // Actualizar recarga pasiva de baterías si ha pasado tiempo
-    const updatedWithBatteries = this.calculatePassiveBatteryRecharge(local);
-
     if (!isLocalMockMode && db) {
       try {
         const userDocRef = doc(db, 'users', uid);
@@ -132,15 +129,15 @@ export const userService = {
           return remoteData;
         } else if (snapshot) {
           // Crear perfil inicial en Firestore
-          await setDoc(userDocRef, updatedWithBatteries);
+          await setDoc(userDocRef, local);
         }
       } catch (err) {
         console.warn('[userService] Usando perfil en caché por falta de conexión:', err);
       }
     }
 
-    storageService.setItem('user_profile', updatedWithBatteries);
-    return updatedWithBatteries;
+    storageService.setItem('user_profile', local);
+    return local;
   },
 
   // Guardar cambios de perfil
@@ -157,25 +154,13 @@ export const userService = {
     }
   },
 
-  // Descontar una batería por error
+  // Operaciones de batería eliminadas (aprendizaje libre e ilimitado)
   async consumeBattery(profile: UserProfile): Promise<UserProfile> {
-    const updated: UserProfile = {
-      ...profile,
-      batteries: Math.max(0, profile.batteries - 1),
-      lastBatteryRechargeAt: profile.batteries === profile.maxBatteries ? Date.now() : profile.lastBatteryRechargeAt
-    };
-    await this.updateProfile(updated);
-    return updated;
+    return profile;
   },
 
-  // Recarga instantánea en el Gimnasio de Práctica (+1 batería por repaso completado)
   async addPracticeBattery(profile: UserProfile): Promise<UserProfile> {
-    const updated: UserProfile = {
-      ...profile,
-      batteries: Math.min(profile.maxBatteries, profile.batteries + 1)
-    };
-    await this.updateProfile(updated);
-    return updated;
+    return profile;
   },
 
   // Sumar XP y Bytes por aciertos
@@ -279,7 +264,6 @@ export const userService = {
     const newOpened = [...profile.openedChests, chestId];
     const newBytes = (profile.bytes || 0) + (rewards.bytes || 0);
     const newXp = (profile.totalXp || 0) + (rewards.xp || 0);
-    const newBatteries = Math.min(profile.maxBatteries || 5, (profile.batteries || 0) + (rewards.batteries || 0));
 
     const newPowerups = {
       teacherHint: (profile.powerups.teacherHint || 0) + (rewards.powerups?.teacherHint || 0),
@@ -294,7 +278,6 @@ export const userService = {
       bytes: newBytes,
       totalXp: newXp,
       weeklyXp: (profile.weeklyXp || 0) + (rewards.xp || 0),
-      batteries: newBatteries,
       powerups: newPowerups
     };
 
