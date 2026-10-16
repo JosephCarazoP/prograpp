@@ -12,11 +12,11 @@ export const SQL_UNIT_01_THEORY: Record<string, TheoryLesson> = {
     estimatedMinutes: 5,
     analogy: 'Una base de datos relacional es como el archivo central de un banco con cajas de seguridad interconectadas: a diferencia de un montón de papeles desordenados en un cajón (archivos de texto), aquí cada expediente tiene un casillero numerado, reglas de acceso blindadas y guardias que garantizan que el dinero jamás desaparezca ni se duplique por error.',
     video: {
-      title: 'Bases de Datos Relacionales y SQL Explicados desde Cero',
-      channel: 'freeCodeCamp.org / Alex The Analyst',
-      duration: '12:40',
-      url: 'https://www.youtube.com/watch?v=HXV3zeRR3h4',
-      summary: 'Descubre qué es un RDBMS, la diferencia entre guardar datos en Excel vs PostgreSQL/MySQL y por qué SQL es el lenguaje más demandado en datos.'
+      title: 'Curso COMPLETO de SQL y BASES DE DATOS Desde Cero para PRINCIPIANTES',
+      channel: 'MoureDev by Brais Moure',
+      duration: '2:15:00',
+      url: 'https://www.youtube.com/watch?v=OuJerKzV5T0',
+      summary: 'Aprende qué es un motor relacional, diseño de tablas, claves primarias y conceptos fundamentales de SQL explicados en español.'
     },
     sections: [
       {
@@ -54,11 +54,11 @@ SELECT CURRENT_TIMESTAMP;`,
     estimatedMinutes: 5,
     analogy: 'Una tabla es como una hoja de cálculo perfectamente diseñada: las columnas verticales son las preguntas fijas del formulario ("Nombre", "Email", "Edad") y las filas horizontales son las respuestas de cada persona individual que completó el formulario.',
     video: {
-      title: 'Estructura de una Tabla en SQL: Filas vs Columnas',
-      channel: 'Programming with Mosh',
-      duration: '8:25',
-      url: 'https://www.youtube.com/watch?v=7S_tz1z_5bA',
-      summary: 'Aprende los conceptos fundamentales de tablas, registros (tuplas), atributos (campos) y cómo mapear objetos de la vida real a esquemas SQL.'
+      title: 'Aprende SQL - Curso desde cero con MySQL, PostgreSQL y Bases Relacionales',
+      channel: 'freeCodeCamp Español',
+      duration: '3:45:00',
+      url: 'https://www.youtube.com/watch?v=6JBsoPOwPew',
+      summary: 'Curso exhaustivo en español para comprender bases de datos relacionales, tipos de datos, restricciones y buenas prácticas.'
     },
     sections: [
       {
@@ -101,11 +101,11 @@ SELECT id, nombre, email FROM usuarios;`,
     estimatedMinutes: 5,
     analogy: 'Los tipos de datos son como los moldes de una fábrica de juguetes: si una ranura tiene forma de moneda circular (INTEGER), no puedes meter un lápiz cuadrado (TEXT) a la fuerza; el sistema lo rechaza antes de romper el molde.',
     video: {
-      title: 'Tipos de Datos en SQL: INTEGER, VARCHAR, DECIMAL y Fechas',
-      channel: 'Deukion / SQL desde Cero',
-      duration: '10:15',
-      url: 'https://www.youtube.com/watch?v=HXV3zeRR3h4',
-      summary: 'Descubre los tipos de datos principales en SQL, por qué VARCHAR(100) ahorra espacio y cuándo usar DECIMAL para evitar errores de redondeo en dinero.'
+      title: 'Curso COMPLETO de SQL y BASES DE DATOS Desde Cero para PRINCIPIANTES',
+      channel: 'MoureDev by Brais Moure',
+      duration: '2:15:00',
+      url: 'https://www.youtube.com/watch?v=OuJerKzV5T0',
+      summary: 'Aprende qué es un motor relacional, diseño de tablas, claves primarias y conceptos fundamentales de SQL explicados en español.'
     },
     sections: [
       {
@@ -143,11 +143,11 @@ Tabla 'empleados' creada con tipos estrictos.`,
     estimatedMinutes: 5,
     analogy: 'La Clave Primaria es como el número de pasaporte o tu documento de identidad nacional: pueden existir diez personas en tu ciudad con el mismo nombre y apellido exactos, pero tu número de identificación es único en el planeta y te identifica sin confusión.',
     video: {
-      title: 'Primary Keys en SQL: Claves Primarias y AUTOINCREMENT',
-      channel: 'Alex The Analyst / SQL Series',
-      duration: '9:00',
-      url: 'https://www.youtube.com/watch?v=HXV3zeRR3h4',
-      summary: 'Comprende qué es una PRIMARY KEY, cómo el motor crea un índice B-Tree automático para búsquedas instantáneas y cómo funciona AUTOINCREMENT.'
+      title: 'Aprende SQL - Curso desde cero con MySQL, PostgreSQL y Bases Relacionales',
+      channel: 'freeCodeCamp Español',
+      duration: '3:45:00',
+      url: 'https://www.youtube.com/watch?v=6JBsoPOwPew',
+      summary: 'Curso exhaustivo en español para comprender bases de datos relacionales, tipos de datos, restricciones y buenas prácticas.'
     },
     sections: [
       {
@@ -193,11 +193,11 @@ SELECT * FROM clientes;`,
     estimatedMinutes: 5,
     analogy: '`SELECT * FROM` es como pedirle al mesero del restaurante: "Tráigame la carta completa con todos los platillos, descripciones y precios". Te entrega toda la información disponible sin filtrar.',
     video: {
-      title: 'SELECT * FROM en SQL: Tu primera consulta a una base de datos',
-      channel: 'Programming with Mosh',
-      duration: '7:40',
-      url: 'https://www.youtube.com/watch?v=7S_tz1z_5bA',
-      summary: 'Aprende a ejecutar tu primer SELECT, qué significa el asterisco comodín y cómo interpretar la cuadrícula de resultados devuelta por el motor.'
+      title: 'Aprende SQL - Curso desde cero con MySQL, PostgreSQL y Bases Relacionales',
+      channel: 'freeCodeCamp Español',
+      duration: '3:45:00',
+      url: 'https://www.youtube.com/watch?v=6JBsoPOwPew',
+      summary: 'Curso exhaustivo en español para comprender bases de datos relacionales, tipos de datos, restricciones y buenas prácticas.'
     },
     sections: [
       {
@@ -237,11 +237,11 @@ SELECT * FROM destinos;`,
     estimatedMinutes: 5,
     analogy: 'Si vas al médico solo a revisar tu presión arterial, el doctor no te hace radiografías completas, resonancias y análisis genéticos; te toma únicamente la presión. Proyectar una sola columna ahorra tiempo y recursos a todos.',
     video: {
-      title: 'Proyección de Columnas Específicas en SQL vs SELECT *',
-      channel: 'freeCodeCamp.org',
-      duration: '8:50',
-      url: 'https://www.youtube.com/watch?v=HXV3zeRR3h4',
-      summary: 'Descubre el concepto formal de proyección en el álgebra relacional y por qué pedir columnas específicas acelera las APIs hasta 10 veces.'
+      title: 'Curso COMPLETO de SQL y BASES DE DATOS Desde Cero para PRINCIPIANTES',
+      channel: 'MoureDev by Brais Moure',
+      duration: '2:15:00',
+      url: 'https://www.youtube.com/watch?v=OuJerKzV5T0',
+      summary: 'Aprende qué es un motor relacional, diseño de tablas, claves primarias y conceptos fundamentales de SQL explicados en español.'
     },
     sections: [
       {
@@ -281,11 +281,11 @@ SELECT nombre FROM productos;`,
     estimatedMinutes: 5,
     analogy: 'Es como armar un paquete personalizado en un restaurante de autoservicio: señalas con el dedo exactamente los tres platillos que quieres en tu charola y el mesero los coloca en el orden en que tú los pediste.',
     video: {
-      title: 'Selección de múltiples columnas en SQL y sintaxis de comas',
-      channel: 'Deukion / SQL desde Cero',
-      duration: '7:15',
-      url: 'https://www.youtube.com/watch?v=HXV3zeRR3h4',
-      summary: 'Aprende a solicitar múltiples atributos ordenados por comas y cómo el motor respeta el orden de proyección solicitado.'
+      title: 'Aprende SQL - Curso desde cero con MySQL, PostgreSQL y Bases Relacionales',
+      channel: 'freeCodeCamp Español',
+      duration: '3:45:00',
+      url: 'https://www.youtube.com/watch?v=6JBsoPOwPew',
+      summary: 'Curso exhaustivo en español para comprender bases de datos relacionales, tipos de datos, restricciones y buenas prácticas.'
     },
     sections: [
       {
@@ -327,11 +327,11 @@ FROM productos;`,
     estimatedMinutes: 5,
     analogy: 'Un alias es como un apodo o una etiqueta adhesiva nueva sobre un frasco viejo: el frasco en el almacén sigue teniendo su etiqueta de fábrica, pero en tu mesa lo rotulas como "Azúcar" para que toda tu familia sepa qué es.',
     video: {
-      title: 'Uso de la palabra clave AS y Alias en SQL',
-      channel: 'Alex The Analyst',
-      duration: '6:50',
-      url: 'https://www.youtube.com/watch?v=HXV3zeRR3h4',
-      summary: 'Aprende a renombrar columnas calculadas y atributos con AS para entregar JSONs impecables a tus aplicaciones frontend.'
+      title: 'Aprende SQL - Curso desde cero con MySQL, PostgreSQL y Bases Relacionales',
+      channel: 'freeCodeCamp Español',
+      duration: '3:45:00',
+      url: 'https://www.youtube.com/watch?v=6JBsoPOwPew',
+      summary: 'Curso exhaustivo en español para comprender bases de datos relacionales, tipos de datos, restricciones y buenas prácticas.'
     },
     sections: [
       {
@@ -372,11 +372,11 @@ FROM productos;`,
     estimatedMinutes: 5,
     analogy: 'Si le pides a una clase escolar de 30 niños que levanten la mano y digan en qué país nacieron, escucharás "Costa Rica" 25 veces. Con `DISTINCT`, es como pedir: "Que levante la mano un solo representante por cada país distinto".',
     video: {
-      title: 'SELECT DISTINCT en SQL: Eliminando duplicados como un profesional',
-      channel: 'Programming with Mosh',
-      duration: '8:10',
-      url: 'https://www.youtube.com/watch?v=7S_tz1z_5bA',
-      summary: 'Descubre cómo funciona DISTINCT en memoria, cuándo aplicarlo sobre una o varias columnas y su impacto en el rendimiento.'
+      title: 'Aprende SQL - Curso desde cero con MySQL, PostgreSQL y Bases Relacionales',
+      channel: 'freeCodeCamp Español',
+      duration: '3:45:00',
+      url: 'https://www.youtube.com/watch?v=6JBsoPOwPew',
+      summary: 'Curso exhaustivo en español para comprender bases de datos relacionales, tipos de datos, restricciones y buenas prácticas.'
     },
     sections: [
       {
@@ -420,11 +420,11 @@ SELECT DISTINCT categoria, marca FROM productos;`,
     estimatedMinutes: 5,
     analogy: 'La cláusula `WHERE` es como el guardia de seguridad en la puerta de un club VIP: examina a cada persona que llega en la fila y solo permite el paso a quienes cumplen con el código de vestimenta o tienen reservación confirmada.',
     video: {
-      title: 'La Cláusula WHERE en SQL: Filtrado de Datos Explicado',
-      channel: 'Alex The Analyst',
-      duration: '11:05',
-      url: 'https://www.youtube.com/watch?v=HXV3zeRR3h4',
-      summary: 'Aprende la cláusula más importante de SQL: orden de ejecución (FROM -> WHERE -> SELECT), condiciones booleanas y filtrado numérico y textual.'
+      title: 'Aprende SQL - Curso desde cero con MySQL, PostgreSQL y Bases Relacionales',
+      channel: 'freeCodeCamp Español',
+      duration: '3:45:00',
+      url: 'https://www.youtube.com/watch?v=6JBsoPOwPew',
+      summary: 'Curso exhaustivo en español para comprender bases de datos relacionales, tipos de datos, restricciones y buenas prácticas.'
     },
     sections: [
       {
@@ -466,11 +466,11 @@ WHERE precio > 100.0;`,
     estimatedMinutes: 5,
     analogy: 'El operador `=` en SQL es como buscar un libro en una biblioteca por su código ISBN exacto: no buscas un libro "parecido", buscas el que coincida letra por letra y número por número.',
     video: {
-      title: 'El operador de igualdad en SQL y comillas simples',
-      channel: 'Deukion / SQL desde Cero',
-      duration: '6:40',
-      url: 'https://www.youtube.com/watch?v=HXV3zeRR3h4',
-      summary: 'Descubre por qué en SQL se usa un solo igual (=) y no doble igual (==), y cómo comparar textos y números sin errores.'
+      title: 'Aprende SQL - Curso desde cero con MySQL, PostgreSQL y Bases Relacionales',
+      channel: 'freeCodeCamp Español',
+      duration: '3:45:00',
+      url: 'https://www.youtube.com/watch?v=6JBsoPOwPew',
+      summary: 'Curso exhaustivo en español para comprender bases de datos relacionales, tipos de datos, restricciones y buenas prácticas.'
     },
     sections: [
       {
@@ -508,11 +508,11 @@ SELECT nombre, email FROM clientes WHERE pais = 'Costa Rica';`,
     estimatedMinutes: 5,
     analogy: 'Es como pedir un helado con la instrucción: "Quiero cualquier sabor excepto chocolate (!= \'chocolate\')". Te pueden servir fresa, vainilla o pistacho, pero el chocolate queda rotundamente fuera de la copa.',
     video: {
-      title: 'Operadores != y <> en SQL: Diferencias y Estándar ANSI',
-      channel: 'Alex The Analyst',
-      duration: '7:15',
-      url: 'https://www.youtube.com/watch?v=HXV3zeRR3h4',
-      summary: 'Conoce los dos operadores de desigualdad de SQL, por qué ambos son válidos y la gran trampa de los valores NULL al usar desigualdad.'
+      title: 'Aprende SQL - Curso desde cero con MySQL, PostgreSQL y Bases Relacionales',
+      channel: 'freeCodeCamp Español',
+      duration: '3:45:00',
+      url: 'https://www.youtube.com/watch?v=6JBsoPOwPew',
+      summary: 'Curso exhaustivo en español para comprender bases de datos relacionales, tipos de datos, restricciones y buenas prácticas.'
     },
     sections: [
       {
@@ -555,11 +555,11 @@ WHERE categoria != 'Obsoletos';`,
     estimatedMinutes: 5,
     analogy: 'Es como fijar el precio máximo en una aplicación de reservas de hotel: "Muéstrame habitaciones con precio menor a $100 (< 100)". Una habitación de $100.00 exactos no se mostrará porque el límite es estricto.',
     video: {
-      title: 'Filtrado con operadores > y < en SQL',
-      channel: 'freeCodeCamp.org',
-      duration: '8:30',
-      url: 'https://www.youtube.com/watch?v=HXV3zeRR3h4',
-      summary: 'Aprende a comparar números y fechas cronológicas con mayor que (>) y menor que (<).'
+      title: 'Aprende SQL - Curso desde cero con MySQL, PostgreSQL y Bases Relacionales',
+      channel: 'freeCodeCamp Español',
+      duration: '3:45:00',
+      url: 'https://www.youtube.com/watch?v=6JBsoPOwPew',
+      summary: 'Curso exhaustivo en español para comprender bases de datos relacionales, tipos de datos, restricciones y buenas prácticas.'
     },
     sections: [
       {
@@ -602,11 +602,11 @@ WHERE edad < 18;`,
     estimatedMinutes: 5,
     analogy: 'Es como la promoción de una aerolínea: "Equipaje permitido de hasta 23 kg (peso <= 23)". Si tu maleta pesa exactamente 23.0 kg, puedes subirla al avión sin pagar sobrecargo.',
     video: {
-      title: 'Operadores inclusivos >= y <= en SQL',
-      channel: 'Programming with Mosh',
-      duration: '7:05',
-      url: 'https://www.youtube.com/watch?v=7S_tz1z_5bA',
-      summary: 'Comprende la diferencia entre operadores estrictos e inclusivos y cómo modelar reglas legales de negocio en SQL.'
+      title: 'Aprende SQL - Curso desde cero con MySQL, PostgreSQL y Bases Relacionales',
+      channel: 'freeCodeCamp Español',
+      duration: '3:45:00',
+      url: 'https://www.youtube.com/watch?v=6JBsoPOwPew',
+      summary: 'Curso exhaustivo en español para comprender bases de datos relacionales, tipos de datos, restricciones y buenas prácticas.'
     },
     sections: [
       {
@@ -649,11 +649,11 @@ WHERE precio <= 100.0;`,
     estimatedMinutes: 5,
     analogy: 'El operador `AND` es como los filtros de búsqueda de un sitio de venta de departamentos: marcas "2 habitaciones" Y "con estacionamiento" Y "precio menor a $150,000". Si a un departamento le falta estacionamiento, no aparece en tu búsqueda.',
     video: {
-      title: 'Cláusula WHERE con múltiples condiciones usando AND',
-      channel: 'Alex The Analyst',
-      duration: '9:30',
-      url: 'https://www.youtube.com/watch?v=HXV3zeRR3h4',
-      summary: 'Aprende a encadenar múltiples condiciones AND para filtrar datos con máxima precisión en bases de datos relacionales.'
+      title: 'Aprende SQL - Curso desde cero con MySQL, PostgreSQL y Bases Relacionales',
+      channel: 'freeCodeCamp Español',
+      duration: '3:45:00',
+      url: 'https://www.youtube.com/watch?v=6JBsoPOwPew',
+      summary: 'Curso exhaustivo en español para comprender bases de datos relacionales, tipos de datos, restricciones y buenas prácticas.'
     },
     sections: [
       {
@@ -694,11 +694,11 @@ WHERE pais = 'México' AND edad >= 18 AND activo = true;`,
     estimatedMinutes: 5,
     analogy: 'Imagina una orden judicial que dice: "Detengan a los sospechosos que sean cómplices O líderes Y lleven armas". Sin comas o paréntesis, no sabes si debes detener a todos los cómplices desarmados o solo a los armados. Los paréntesis en SQL eliminan esa ambigüedad mortal.',
     video: {
-      title: 'Peligros al mezclar AND y OR en SQL: La importancia de los paréntesis',
-      channel: 'Deukion / SQL desde Cero',
-      duration: '10:00',
-      url: 'https://www.youtube.com/watch?v=HXV3zeRR3h4',
-      summary: 'Descubre por qué AND tiene mayor precedencia que OR en SQL y cómo un error en el WHERE puede filtrar datos de clientes a usuarios no autorizados.'
+      title: 'Aprende SQL - Curso desde cero con MySQL, PostgreSQL y Bases Relacionales',
+      channel: 'freeCodeCamp Español',
+      duration: '3:45:00',
+      url: 'https://www.youtube.com/watch?v=6JBsoPOwPew',
+      summary: 'Curso exhaustivo en español para comprender bases de datos relacionales, tipos de datos, restricciones y buenas prácticas.'
     },
     sections: [
       {
@@ -741,11 +741,11 @@ WHERE (rol = 'admin' OR rol = 'editor') AND activo = true;`,
     estimatedMinutes: 5,
     analogy: '`BETWEEN` es como fijar el dial de un termostato de calefacción: "Mantén la temperatura entre 18 y 22 grados (BETWEEN 18 AND 22)". Tanto 18 como 22 son temperaturas válidas que forman parte del rango permitido.',
     video: {
-      title: 'El operador BETWEEN en SQL: Filtrado de Números y Fechas',
-      channel: 'Programming with Mosh',
-      duration: '7:50',
-      url: 'https://www.youtube.com/watch?v=7S_tz1z_5bA',
-      summary: 'Aprende a usar BETWEEN ... AND ... para simplificar condiciones complejas de rangos y cómo negar el intervalo con NOT BETWEEN.'
+      title: 'Curso de SQL desde CERO (Completo)',
+      channel: 'Soy Dalto',
+      duration: '3:20:00',
+      url: 'https://www.youtube.com/watch?v=DFg1V-rO6Pg',
+      summary: 'Aprende filtrado con WHERE, operadores lógicos AND / OR, rangos con BETWEEN, patrones LIKE y tratamiento de NULL.'
     },
     sections: [
       {
@@ -792,11 +792,11 @@ WHERE precio NOT BETWEEN 10.0 AND 50.0;`,
     estimatedMinutes: 5,
     analogy: '`IN` es como la lista de países miembros de la Unión Europea: en lugar de preguntar "¿Es de Francia? ¿O es de España? ¿O es de Italia? ¿O es de Alemania?", preguntas de un solo golpe: "¿Tu país está en esta lista oficial?".',
     video: {
-      title: 'El operador IN y NOT IN en SQL explicado con ejemplos',
-      channel: 'Alex The Analyst',
-      duration: '8:15',
-      url: 'https://www.youtube.com/watch?v=HXV3zeRR3h4',
-      summary: 'Descubre por qué IN es más rápido que múltiples OR gracias a las tablas hash internas y cómo usar NOT IN para exclusiones masivas.'
+      title: 'Aprende SQL - Curso desde cero con MySQL, PostgreSQL y Bases Relacionales',
+      channel: 'freeCodeCamp Español',
+      duration: '3:45:00',
+      url: 'https://www.youtube.com/watch?v=6JBsoPOwPew',
+      summary: 'Curso exhaustivo en español para comprender bases de datos relacionales, tipos de datos, restricciones y buenas prácticas.'
     },
     sections: [
       {
@@ -839,11 +839,11 @@ WHERE estado NOT IN ('cancelado', 'reembolsado');`,
     estimatedMinutes: 5,
     analogy: 'El operador `LIKE` es como la barra de búsqueda de tu teléfono con autocompletado: escribes "Car" y te muestra tanto a "Carlos" como a "Carmen" o "Carolina", porque coincide con el patrón inicial.',
     video: {
-      title: 'Búsqueda con LIKE y comodines % y _ en SQL',
-      channel: 'freeCodeCamp.org',
-      duration: '9:45',
-      url: 'https://www.youtube.com/watch?v=HXV3zeRR3h4',
-      summary: 'Aprende a buscar por prefijo (LIKE \'Car%\'), por sufijo (LIKE \'%@gmail.com\') y en cualquier posición (LIKE \'%pro%\').'
+      title: 'Aprende SQL - Curso desde cero con MySQL, PostgreSQL y Bases Relacionales',
+      channel: 'freeCodeCamp Español',
+      duration: '3:45:00',
+      url: 'https://www.youtube.com/watch?v=6JBsoPOwPew',
+      summary: 'Curso exhaustivo en español para comprender bases de datos relacionales, tipos de datos, restricciones y buenas prácticas.'
     },
     sections: [
       {
@@ -898,11 +898,11 @@ WHERE nombre LIKE '%Pro%';`,
     estimatedMinutes: 6,
     analogy: '`NULL` es como dos cajas negras cerradas cuyo contenido nadie conoce. Si alguien te pregunta: "¿Lo que hay dentro de la caja A es idéntico a lo que hay dentro de la caja B?", la única respuesta honesta es: "No lo sé (Desconocido / UNKNOWN)". Dos incógnitas nunca pueden considerarse iguales.',
     video: {
-      title: 'El gran error con NULL en SQL: Por qué = NULL nunca funciona',
-      channel: 'Alex The Analyst / SQL Masterclass',
-      duration: '11:20',
-      url: 'https://www.youtube.com/watch?v=HXV3zeRR3h4',
-      summary: 'Explicación definitiva de la lógica trivalente (TRUE, FALSE, UNKNOWN), por qué NULL = NULL es falso y cómo usar correctamente IS NULL.'
+      title: 'Aprende SQL - Curso desde cero con MySQL, PostgreSQL y Bases Relacionales',
+      channel: 'freeCodeCamp Español',
+      duration: '3:45:00',
+      url: 'https://www.youtube.com/watch?v=6JBsoPOwPew',
+      summary: 'Curso exhaustivo en español para comprender bases de datos relacionales, tipos de datos, restricciones y buenas prácticas.'
     },
     sections: [
       {

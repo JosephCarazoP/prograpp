@@ -31,11 +31,11 @@ export const EXTRA_KOTLIN_QUESTIONS: Record<number, Exercise[]> = {
         'var paso = 1',
         'while (paso <= 3) {',
         '    println("Paso en ejecución")',
-        '    // Falta paso++ para avanzar',
+        '    paso--',
         '}'
       ],
       bugLineIndex: 3,
-      explanation: 'Un algoritmo debe ser finito. Sin incrementar la variable "paso", el ciclo nunca termina.',
+      explanation: 'Un algoritmo debe ser finito. Al decrementar con paso--, la variable se aleja de la condición de salida (paso <= 3), provocando un ciclo infinito.',
       xpReward: 15
     },
     {
@@ -78,19 +78,19 @@ export const EXTRA_KOTLIN_QUESTIONS: Record<number, Exercise[]> = {
     {
       id: 'kt-u01-l01-e17',
       type: 'trace_step',
-      prompt: 'Traza el valor de la variable "contador" tras cada instrucción:',
+      prompt: 'Sigue el código paso a paso y calcula qué valor tendrá la variable "contador" después de ejecutar cada línea:',
       code: 'var contador = 0\ncontador = contador + 2\ncontador = contador * 3',
       iterations: [
         { iteration: 1, expectedVariables: { contador: '2' } },
         { iteration: 2, expectedVariables: { contador: '6' } }
       ],
-      explanation: 'Primero 0 + 2 = 2. Luego 2 * 3 = 6.',
+      explanation: 'Primero contador vale 0. En el Paso 1 se le suma 2 (0 + 2 = 2). En el Paso 2 se multiplica por 3 (2 * 3 = 6).',
       xpReward: 20
     },
     {
       id: 'kt-u01-l01-e18',
       type: 'predict_output',
-      prompt: '¿Qué valor imprime la salida del siguiente algoritmo de acumulador?',
+      prompt: '¿Qué número mostrará en pantalla la función println al terminar de ejecutar estas operaciones?',
       code: 'var total = 10\ntotal += 5\ntotal -= 3\nprintln(total)',
       options: ['12', '15', '10', '8'],
       correctOptionIndex: 0,
@@ -100,7 +100,7 @@ export const EXTRA_KOTLIN_QUESTIONS: Record<number, Exercise[]> = {
     {
       id: 'kt-u01-l01-e19',
       type: 'code_cloze',
-      prompt: 'Completa la propiedad de "precisión" de un algoritmo:',
+      prompt: 'Completa la frase para definir la propiedad de precisión de un algoritmo:',
       codeWithBlank: 'Cada instrucción de un algoritmo debe ser ___ (no dar lugar a interpretaciones ambiguas):',
       options: ['precisa', 'larga', 'compleja', 'secreta'],
       correctOption: 'precisa',
@@ -110,7 +110,7 @@ export const EXTRA_KOTLIN_QUESTIONS: Record<number, Exercise[]> = {
     {
       id: 'kt-u01-l01-e20',
       type: 'code_builder',
-      prompt: 'Construye la instrucción para imprimir un mensaje de finalización:',
+      prompt: 'Construye la instrucción para mostrar en pantalla el mensaje "Fin del algoritmo":',
       tokens: ['println', '(', '"Fin del algoritmo"', ')', ';', 'stop'],
       solution: ['println', '(', '"Fin del algoritmo"', ')'],
       explanation: 'El último paso comunica la finalización exitosa de la secuencia lógica.',
@@ -131,7 +131,7 @@ export const EXTRA_KOTLIN_QUESTIONS: Record<number, Exercise[]> = {
     {
       id: 'kt-u01-l02-e12',
       type: 'code_builder',
-      prompt: 'Arma la instrucción para imprimir un valor booleano en la consola:',
+      prompt: 'Arma la instrucción para imprimir el valor booleano verdadero (true) en la pantalla:',
       tokens: ['println', '(', 'true', ')', '"true"', ';'],
       solution: ['println', '(', 'true', ')'],
       hint: 'Los booleanos true y false no llevan comillas.',
@@ -253,7 +253,7 @@ export function getFullLevelQuestionBank(level: number, baseExercises: Exercise[
       generated.push({
         id: `kt-u01-l${level < 10 ? '0' + level : level}-gen${num}`,
         type: 'predict_output',
-        prompt: `[Reto Nivel ${level} #${num}] Evalúa el comportamiento del siguiente bloque de código:`,
+        prompt: `[Reto Nivel ${level} #${num}] ¿Qué resultado mostrará en pantalla la última línea de este código?:`,
         code: `val x = ${level * 2}\nval res = x + ${i}\nprintln("Valor: $res")`,
         options: [
           `Valor: ${level * 2 + i}`,
@@ -269,10 +269,10 @@ export function getFullLevelQuestionBank(level: number, baseExercises: Exercise[
       generated.push({
         id: `kt-u01-l${level < 10 ? '0' + level : level}-gen${num}`,
         type: 'spot_the_bug',
-        prompt: `[Reto Nivel ${level} #${num}] Identifica la línea con error de sintaxis o tipo incompatible:`,
+        prompt: `[Reto Nivel ${level} #${num}] Toca la línea donde se intenta asignar un valor con un tipo de dato incompatible:`,
         codeSnippet: [
           `val id = ${level}`,
-          `val estado: String = 100 // ¡Tipo incompatible!`,
+          `val estado: String = 100`,
           `println(id)`
         ],
         bugLineIndex: 1,
@@ -283,7 +283,7 @@ export function getFullLevelQuestionBank(level: number, baseExercises: Exercise[
       generated.push({
         id: `kt-u01-l${level < 10 ? '0' + level : level}-gen${num}`,
         type: 'code_builder',
-        prompt: `[Reto Nivel ${level} #${num}] Construye la instrucción correcta para la operación solicitada:`,
+        prompt: `[Reto Nivel ${level} #${num}] Construye la instrucción para declarar la variable de solo lectura "val verificado = true":`,
         tokens: ['val', 'verificado', '=', 'true', 'var', 'check'],
         solution: ['val', 'verificado', '=', 'true'],
         hint: 'Declara la variable inmutable con val asignando el booleano true.',
@@ -294,8 +294,8 @@ export function getFullLevelQuestionBank(level: number, baseExercises: Exercise[
       generated.push({
         id: `kt-u01-l${level < 10 ? '0' + level : level}-gen${num}`,
         type: 'code_cloze',
-        prompt: `[Reto Nivel ${level} #${num}] Completa la palabra clave correspondiente:`,
-        codeWithBlank: `___ resultado = ${level * 10} // Variable de solo lectura`,
+        prompt: `[Reto Nivel ${level} #${num}] Completa la palabra clave para declarar una variable de solo lectura:`,
+        codeWithBlank: `___ resultado = ${level * 10}`,
         options: ['val', 'var', 'fun', 'const'],
         correctOption: 'val',
         explanation: 'En Kotlin, val es la palabra reservada para declarar identificadores inmutables de solo lectura.',

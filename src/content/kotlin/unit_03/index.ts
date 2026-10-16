@@ -41,11 +41,11 @@ const KOTLIN_U03_BANKS: Record<number, { title: string; desc: string; exercises:
       {
         id: 'kt-u03-l01-e04',
         type: 'spot_the_bug',
-        prompt: 'Toca la línea que genera un error de asignación sobre constante:',
+        prompt: 'Toca la línea con el error al intentar modificar una variable declarada con val (de solo lectura):',
         codeSnippet: [
           'val saldo = 100',
           'println(saldo)',
-          'saldo += 50 // Error de reasignación'
+          'saldo += 50'
         ],
         bugLineIndex: 2,
         explanation: 'Los operadores compuestos de asignación como += exigen que la variable sea mutable (var).',
@@ -54,7 +54,7 @@ const KOTLIN_U03_BANKS: Record<number, { title: string; desc: string; exercises:
       {
         id: 'kt-u03-l01-e05',
         type: 'code_cloze',
-        prompt: 'Completa la condición lógica para exigir que ambas variables sean verdaderas:',
+        prompt: 'Completa el operador lógico AND (&&) para exigir que ambas condiciones sean verdaderas:',
         codeWithBlank: 'val valido = permisoOk ___ claveOk',
         options: ['&&', '||', '==', '!'],
         correctOption: '&&',
@@ -97,7 +97,7 @@ const KOTLIN_U03_BANKS: Record<number, { title: string; desc: string; exercises:
       {
         id: 'kt-u03-l01-e09',
         type: 'code_cloze',
-        prompt: 'Completa el operador para verificar igualdad de contenido estructural:',
+        prompt: 'Completa el operador para comprobar si dos valores son exactamente iguales (==):',
         codeWithBlank: 'val mismoNombre = nombre1 ___ nombre2',
         options: ['==', '===', '!=', '='],
         correctOption: '==',
@@ -107,7 +107,7 @@ const KOTLIN_U03_BANKS: Record<number, { title: string; desc: string; exercises:
       {
         id: 'kt-u03-l01-e10',
         type: 'parsons_puzzle',
-        prompt: 'Ordena la secuencia lógica de cálculo y comprobación de rango:',
+        prompt: 'Ordena las líneas de código de arriba a abajo en la secuencia lógica correcta:',
         lines: [
           'val total = precio * cantidad',
           'val aplicaDescuento = total >= 100',
@@ -159,11 +159,11 @@ const KOTLIN_U03_BANKS: Record<number, { title: string; desc: string; exercises:
       {
         id: 'kt-u03-l02-e04',
         type: 'spot_the_bug',
-        prompt: 'Toca la línea que genera un error de asignación sobre constante:',
+        prompt: 'Toca la línea con el error al intentar modificar una variable declarada con val (de solo lectura):',
         codeSnippet: [
           'val saldo = 100',
           'println(saldo)',
-          'saldo += 50 // Error de reasignación'
+          'saldo += 50'
         ],
         bugLineIndex: 2,
         explanation: 'Los operadores compuestos de asignación como += exigen que la variable sea mutable (var).',
@@ -172,7 +172,7 @@ const KOTLIN_U03_BANKS: Record<number, { title: string; desc: string; exercises:
       {
         id: 'kt-u03-l02-e05',
         type: 'code_cloze',
-        prompt: 'Completa la condición lógica para exigir que ambas variables sean verdaderas:',
+        prompt: 'Completa el operador lógico AND (&&) para exigir que ambas condiciones sean verdaderas:',
         codeWithBlank: 'val valido = permisoOk ___ claveOk',
         options: ['&&', '||', '==', '!'],
         correctOption: '&&',
@@ -215,7 +215,7 @@ const KOTLIN_U03_BANKS: Record<number, { title: string; desc: string; exercises:
       {
         id: 'kt-u03-l02-e09',
         type: 'code_cloze',
-        prompt: 'Completa el operador para verificar igualdad de contenido estructural:',
+        prompt: 'Completa el operador para comprobar si dos valores son exactamente iguales (==):',
         codeWithBlank: 'val mismoNombre = nombre1 ___ nombre2',
         options: ['==', '===', '!=', '='],
         correctOption: '==',
@@ -225,7 +225,7 @@ const KOTLIN_U03_BANKS: Record<number, { title: string; desc: string; exercises:
       {
         id: 'kt-u03-l02-e10',
         type: 'parsons_puzzle',
-        prompt: 'Ordena la secuencia lógica de cálculo y comprobación de rango:',
+        prompt: 'Ordena las líneas de código de arriba a abajo en la secuencia lógica correcta:',
         lines: [
           'val total = precio * cantidad',
           'val aplicaDescuento = total >= 100',
@@ -277,11 +277,11 @@ const KOTLIN_U03_BANKS: Record<number, { title: string; desc: string; exercises:
       {
         id: 'kt-u03-l03-e04',
         type: 'spot_the_bug',
-        prompt: 'Toca la línea que genera un error de asignación sobre constante:',
+        prompt: 'Toca la línea con el error al intentar modificar una variable declarada con val (de solo lectura):',
         codeSnippet: [
           'val saldo = 100',
           'println(saldo)',
-          'saldo += 50 // Error de reasignación'
+          'saldo += 50'
         ],
         bugLineIndex: 2,
         explanation: 'Los operadores compuestos de asignación como += exigen que la variable sea mutable (var).',
@@ -290,7 +290,7 @@ const KOTLIN_U03_BANKS: Record<number, { title: string; desc: string; exercises:
       {
         id: 'kt-u03-l03-e05',
         type: 'code_cloze',
-        prompt: 'Completa la condición lógica para exigir que ambas variables sean verdaderas:',
+        prompt: 'Completa el operador lógico AND (&&) para exigir que ambas condiciones sean verdaderas:',
         codeWithBlank: 'val valido = permisoOk ___ claveOk',
         options: ['&&', '||', '==', '!'],
         correctOption: '&&',
@@ -333,7 +333,7 @@ const KOTLIN_U03_BANKS: Record<number, { title: string; desc: string; exercises:
       {
         id: 'kt-u03-l03-e09',
         type: 'code_cloze',
-        prompt: 'Completa el operador para verificar igualdad de contenido estructural:',
+        prompt: 'Completa el operador para comprobar si dos valores son exactamente iguales (==):',
         codeWithBlank: 'val mismoNombre = nombre1 ___ nombre2',
         options: ['==', '===', '!=', '='],
         correctOption: '==',
@@ -343,7 +343,7 @@ const KOTLIN_U03_BANKS: Record<number, { title: string; desc: string; exercises:
       {
         id: 'kt-u03-l03-e10',
         type: 'parsons_puzzle',
-        prompt: 'Ordena la secuencia lógica de cálculo y comprobación de rango:',
+        prompt: 'Ordena las líneas de código de arriba a abajo en la secuencia lógica correcta:',
         lines: [
           'val total = precio * cantidad',
           'val aplicaDescuento = total >= 100',
@@ -395,11 +395,11 @@ const KOTLIN_U03_BANKS: Record<number, { title: string; desc: string; exercises:
       {
         id: 'kt-u03-l04-e04',
         type: 'spot_the_bug',
-        prompt: 'Toca la línea que genera un error de asignación sobre constante:',
+        prompt: 'Toca la línea con el error al intentar modificar una variable declarada con val (de solo lectura):',
         codeSnippet: [
           'val saldo = 100',
           'println(saldo)',
-          'saldo += 50 // Error de reasignación'
+          'saldo += 50'
         ],
         bugLineIndex: 2,
         explanation: 'Los operadores compuestos de asignación como += exigen que la variable sea mutable (var).',
@@ -408,7 +408,7 @@ const KOTLIN_U03_BANKS: Record<number, { title: string; desc: string; exercises:
       {
         id: 'kt-u03-l04-e05',
         type: 'code_cloze',
-        prompt: 'Completa la condición lógica para exigir que ambas variables sean verdaderas:',
+        prompt: 'Completa el operador lógico AND (&&) para exigir que ambas condiciones sean verdaderas:',
         codeWithBlank: 'val valido = permisoOk ___ claveOk',
         options: ['&&', '||', '==', '!'],
         correctOption: '&&',
@@ -451,7 +451,7 @@ const KOTLIN_U03_BANKS: Record<number, { title: string; desc: string; exercises:
       {
         id: 'kt-u03-l04-e09',
         type: 'code_cloze',
-        prompt: 'Completa el operador para verificar igualdad de contenido estructural:',
+        prompt: 'Completa el operador para comprobar si dos valores son exactamente iguales (==):',
         codeWithBlank: 'val mismoNombre = nombre1 ___ nombre2',
         options: ['==', '===', '!=', '='],
         correctOption: '==',
@@ -461,7 +461,7 @@ const KOTLIN_U03_BANKS: Record<number, { title: string; desc: string; exercises:
       {
         id: 'kt-u03-l04-e10',
         type: 'parsons_puzzle',
-        prompt: 'Ordena la secuencia lógica de cálculo y comprobación de rango:',
+        prompt: 'Ordena las líneas de código de arriba a abajo en la secuencia lógica correcta:',
         lines: [
           'val total = precio * cantidad',
           'val aplicaDescuento = total >= 100',
@@ -513,11 +513,11 @@ const KOTLIN_U03_BANKS: Record<number, { title: string; desc: string; exercises:
       {
         id: 'kt-u03-l05-e04',
         type: 'spot_the_bug',
-        prompt: 'Toca la línea que genera un error de asignación sobre constante:',
+        prompt: 'Toca la línea con el error al intentar modificar una variable declarada con val (de solo lectura):',
         codeSnippet: [
           'val saldo = 100',
           'println(saldo)',
-          'saldo += 50 // Error de reasignación'
+          'saldo += 50'
         ],
         bugLineIndex: 2,
         explanation: 'Los operadores compuestos de asignación como += exigen que la variable sea mutable (var).',
@@ -526,7 +526,7 @@ const KOTLIN_U03_BANKS: Record<number, { title: string; desc: string; exercises:
       {
         id: 'kt-u03-l05-e05',
         type: 'code_cloze',
-        prompt: 'Completa la condición lógica para exigir que ambas variables sean verdaderas:',
+        prompt: 'Completa el operador lógico AND (&&) para exigir que ambas condiciones sean verdaderas:',
         codeWithBlank: 'val valido = permisoOk ___ claveOk',
         options: ['&&', '||', '==', '!'],
         correctOption: '&&',
@@ -569,7 +569,7 @@ const KOTLIN_U03_BANKS: Record<number, { title: string; desc: string; exercises:
       {
         id: 'kt-u03-l05-e09',
         type: 'code_cloze',
-        prompt: 'Completa el operador para verificar igualdad de contenido estructural:',
+        prompt: 'Completa el operador para comprobar si dos valores son exactamente iguales (==):',
         codeWithBlank: 'val mismoNombre = nombre1 ___ nombre2',
         options: ['==', '===', '!=', '='],
         correctOption: '==',
@@ -579,7 +579,7 @@ const KOTLIN_U03_BANKS: Record<number, { title: string; desc: string; exercises:
       {
         id: 'kt-u03-l05-e10',
         type: 'parsons_puzzle',
-        prompt: 'Ordena la secuencia lógica de cálculo y comprobación de rango:',
+        prompt: 'Ordena las líneas de código de arriba a abajo en la secuencia lógica correcta:',
         lines: [
           'val total = precio * cantidad',
           'val aplicaDescuento = total >= 100',
@@ -631,11 +631,11 @@ const KOTLIN_U03_BANKS: Record<number, { title: string; desc: string; exercises:
       {
         id: 'kt-u03-l06-e04',
         type: 'spot_the_bug',
-        prompt: 'Toca la línea que genera un error de asignación sobre constante:',
+        prompt: 'Toca la línea con el error al intentar modificar una variable declarada con val (de solo lectura):',
         codeSnippet: [
           'val saldo = 100',
           'println(saldo)',
-          'saldo += 50 // Error de reasignación'
+          'saldo += 50'
         ],
         bugLineIndex: 2,
         explanation: 'Los operadores compuestos de asignación como += exigen que la variable sea mutable (var).',
@@ -644,7 +644,7 @@ const KOTLIN_U03_BANKS: Record<number, { title: string; desc: string; exercises:
       {
         id: 'kt-u03-l06-e05',
         type: 'code_cloze',
-        prompt: 'Completa la condición lógica para exigir que ambas variables sean verdaderas:',
+        prompt: 'Completa el operador lógico AND (&&) para exigir que ambas condiciones sean verdaderas:',
         codeWithBlank: 'val valido = permisoOk ___ claveOk',
         options: ['&&', '||', '==', '!'],
         correctOption: '&&',
@@ -687,7 +687,7 @@ const KOTLIN_U03_BANKS: Record<number, { title: string; desc: string; exercises:
       {
         id: 'kt-u03-l06-e09',
         type: 'code_cloze',
-        prompt: 'Completa el operador para verificar igualdad de contenido estructural:',
+        prompt: 'Completa el operador para comprobar si dos valores son exactamente iguales (==):',
         codeWithBlank: 'val mismoNombre = nombre1 ___ nombre2',
         options: ['==', '===', '!=', '='],
         correctOption: '==',
@@ -697,7 +697,7 @@ const KOTLIN_U03_BANKS: Record<number, { title: string; desc: string; exercises:
       {
         id: 'kt-u03-l06-e10',
         type: 'parsons_puzzle',
-        prompt: 'Ordena la secuencia lógica de cálculo y comprobación de rango:',
+        prompt: 'Ordena las líneas de código de arriba a abajo en la secuencia lógica correcta:',
         lines: [
           'val total = precio * cantidad',
           'val aplicaDescuento = total >= 100',
@@ -749,11 +749,11 @@ const KOTLIN_U03_BANKS: Record<number, { title: string; desc: string; exercises:
       {
         id: 'kt-u03-l07-e04',
         type: 'spot_the_bug',
-        prompt: 'Toca la línea que genera un error de asignación sobre constante:',
+        prompt: 'Toca la línea con el error al intentar modificar una variable declarada con val (de solo lectura):',
         codeSnippet: [
           'val saldo = 100',
           'println(saldo)',
-          'saldo += 50 // Error de reasignación'
+          'saldo += 50'
         ],
         bugLineIndex: 2,
         explanation: 'Los operadores compuestos de asignación como += exigen que la variable sea mutable (var).',
@@ -762,7 +762,7 @@ const KOTLIN_U03_BANKS: Record<number, { title: string; desc: string; exercises:
       {
         id: 'kt-u03-l07-e05',
         type: 'code_cloze',
-        prompt: 'Completa la condición lógica para exigir que ambas variables sean verdaderas:',
+        prompt: 'Completa el operador lógico AND (&&) para exigir que ambas condiciones sean verdaderas:',
         codeWithBlank: 'val valido = permisoOk ___ claveOk',
         options: ['&&', '||', '==', '!'],
         correctOption: '&&',
@@ -805,7 +805,7 @@ const KOTLIN_U03_BANKS: Record<number, { title: string; desc: string; exercises:
       {
         id: 'kt-u03-l07-e09',
         type: 'code_cloze',
-        prompt: 'Completa el operador para verificar igualdad de contenido estructural:',
+        prompt: 'Completa el operador para comprobar si dos valores son exactamente iguales (==):',
         codeWithBlank: 'val mismoNombre = nombre1 ___ nombre2',
         options: ['==', '===', '!=', '='],
         correctOption: '==',
@@ -815,7 +815,7 @@ const KOTLIN_U03_BANKS: Record<number, { title: string; desc: string; exercises:
       {
         id: 'kt-u03-l07-e10',
         type: 'parsons_puzzle',
-        prompt: 'Ordena la secuencia lógica de cálculo y comprobación de rango:',
+        prompt: 'Ordena las líneas de código de arriba a abajo en la secuencia lógica correcta:',
         lines: [
           'val total = precio * cantidad',
           'val aplicaDescuento = total >= 100',
@@ -867,11 +867,11 @@ const KOTLIN_U03_BANKS: Record<number, { title: string; desc: string; exercises:
       {
         id: 'kt-u03-l08-e04',
         type: 'spot_the_bug',
-        prompt: 'Toca la línea que genera un error de asignación sobre constante:',
+        prompt: 'Toca la línea con el error al intentar modificar una variable declarada con val (de solo lectura):',
         codeSnippet: [
           'val saldo = 100',
           'println(saldo)',
-          'saldo += 50 // Error de reasignación'
+          'saldo += 50'
         ],
         bugLineIndex: 2,
         explanation: 'Los operadores compuestos de asignación como += exigen que la variable sea mutable (var).',
@@ -880,7 +880,7 @@ const KOTLIN_U03_BANKS: Record<number, { title: string; desc: string; exercises:
       {
         id: 'kt-u03-l08-e05',
         type: 'code_cloze',
-        prompt: 'Completa la condición lógica para exigir que ambas variables sean verdaderas:',
+        prompt: 'Completa el operador lógico AND (&&) para exigir que ambas condiciones sean verdaderas:',
         codeWithBlank: 'val valido = permisoOk ___ claveOk',
         options: ['&&', '||', '==', '!'],
         correctOption: '&&',
@@ -923,7 +923,7 @@ const KOTLIN_U03_BANKS: Record<number, { title: string; desc: string; exercises:
       {
         id: 'kt-u03-l08-e09',
         type: 'code_cloze',
-        prompt: 'Completa el operador para verificar igualdad de contenido estructural:',
+        prompt: 'Completa el operador para comprobar si dos valores son exactamente iguales (==):',
         codeWithBlank: 'val mismoNombre = nombre1 ___ nombre2',
         options: ['==', '===', '!=', '='],
         correctOption: '==',
@@ -933,7 +933,7 @@ const KOTLIN_U03_BANKS: Record<number, { title: string; desc: string; exercises:
       {
         id: 'kt-u03-l08-e10',
         type: 'parsons_puzzle',
-        prompt: 'Ordena la secuencia lógica de cálculo y comprobación de rango:',
+        prompt: 'Ordena las líneas de código de arriba a abajo en la secuencia lógica correcta:',
         lines: [
           'val total = precio * cantidad',
           'val aplicaDescuento = total >= 100',
@@ -985,11 +985,11 @@ const KOTLIN_U03_BANKS: Record<number, { title: string; desc: string; exercises:
       {
         id: 'kt-u03-l09-e04',
         type: 'spot_the_bug',
-        prompt: 'Toca la línea que genera un error de asignación sobre constante:',
+        prompt: 'Toca la línea con el error al intentar modificar una variable declarada con val (de solo lectura):',
         codeSnippet: [
           'val saldo = 100',
           'println(saldo)',
-          'saldo += 50 // Error de reasignación'
+          'saldo += 50'
         ],
         bugLineIndex: 2,
         explanation: 'Los operadores compuestos de asignación como += exigen que la variable sea mutable (var).',
@@ -998,7 +998,7 @@ const KOTLIN_U03_BANKS: Record<number, { title: string; desc: string; exercises:
       {
         id: 'kt-u03-l09-e05',
         type: 'code_cloze',
-        prompt: 'Completa la condición lógica para exigir que ambas variables sean verdaderas:',
+        prompt: 'Completa el operador lógico AND (&&) para exigir que ambas condiciones sean verdaderas:',
         codeWithBlank: 'val valido = permisoOk ___ claveOk',
         options: ['&&', '||', '==', '!'],
         correctOption: '&&',
@@ -1041,7 +1041,7 @@ const KOTLIN_U03_BANKS: Record<number, { title: string; desc: string; exercises:
       {
         id: 'kt-u03-l09-e09',
         type: 'code_cloze',
-        prompt: 'Completa el operador para verificar igualdad de contenido estructural:',
+        prompt: 'Completa el operador para comprobar si dos valores son exactamente iguales (==):',
         codeWithBlank: 'val mismoNombre = nombre1 ___ nombre2',
         options: ['==', '===', '!=', '='],
         correctOption: '==',
@@ -1051,7 +1051,7 @@ const KOTLIN_U03_BANKS: Record<number, { title: string; desc: string; exercises:
       {
         id: 'kt-u03-l09-e10',
         type: 'parsons_puzzle',
-        prompt: 'Ordena la secuencia lógica de cálculo y comprobación de rango:',
+        prompt: 'Ordena las líneas de código de arriba a abajo en la secuencia lógica correcta:',
         lines: [
           'val total = precio * cantidad',
           'val aplicaDescuento = total >= 100',
@@ -1103,11 +1103,11 @@ const KOTLIN_U03_BANKS: Record<number, { title: string; desc: string; exercises:
       {
         id: 'kt-u03-l10-e04',
         type: 'spot_the_bug',
-        prompt: 'Toca la línea que genera un error de asignación sobre constante:',
+        prompt: 'Toca la línea con el error al intentar modificar una variable declarada con val (de solo lectura):',
         codeSnippet: [
           'val saldo = 100',
           'println(saldo)',
-          'saldo += 50 // Error de reasignación'
+          'saldo += 50'
         ],
         bugLineIndex: 2,
         explanation: 'Los operadores compuestos de asignación como += exigen que la variable sea mutable (var).',
@@ -1116,7 +1116,7 @@ const KOTLIN_U03_BANKS: Record<number, { title: string; desc: string; exercises:
       {
         id: 'kt-u03-l10-e05',
         type: 'code_cloze',
-        prompt: 'Completa la condición lógica para exigir que ambas variables sean verdaderas:',
+        prompt: 'Completa el operador lógico AND (&&) para exigir que ambas condiciones sean verdaderas:',
         codeWithBlank: 'val valido = permisoOk ___ claveOk',
         options: ['&&', '||', '==', '!'],
         correctOption: '&&',
@@ -1159,7 +1159,7 @@ const KOTLIN_U03_BANKS: Record<number, { title: string; desc: string; exercises:
       {
         id: 'kt-u03-l10-e09',
         type: 'code_cloze',
-        prompt: 'Completa el operador para verificar igualdad de contenido estructural:',
+        prompt: 'Completa el operador para comprobar si dos valores son exactamente iguales (==):',
         codeWithBlank: 'val mismoNombre = nombre1 ___ nombre2',
         options: ['==', '===', '!=', '='],
         correctOption: '==',
@@ -1169,7 +1169,7 @@ const KOTLIN_U03_BANKS: Record<number, { title: string; desc: string; exercises:
       {
         id: 'kt-u03-l10-e10',
         type: 'parsons_puzzle',
-        prompt: 'Ordena la secuencia lógica de cálculo y comprobación de rango:',
+        prompt: 'Ordena las líneas de código de arriba a abajo en la secuencia lógica correcta:',
         lines: [
           'val total = precio * cantidad',
           'val aplicaDescuento = total >= 100',
@@ -1221,11 +1221,11 @@ const KOTLIN_U03_BANKS: Record<number, { title: string; desc: string; exercises:
       {
         id: 'kt-u03-l11-e04',
         type: 'spot_the_bug',
-        prompt: 'Toca la línea que genera un error de asignación sobre constante:',
+        prompt: 'Toca la línea con el error al intentar modificar una variable declarada con val (de solo lectura):',
         codeSnippet: [
           'val saldo = 100',
           'println(saldo)',
-          'saldo += 50 // Error de reasignación'
+          'saldo += 50'
         ],
         bugLineIndex: 2,
         explanation: 'Los operadores compuestos de asignación como += exigen que la variable sea mutable (var).',
@@ -1234,7 +1234,7 @@ const KOTLIN_U03_BANKS: Record<number, { title: string; desc: string; exercises:
       {
         id: 'kt-u03-l11-e05',
         type: 'code_cloze',
-        prompt: 'Completa la condición lógica para exigir que ambas variables sean verdaderas:',
+        prompt: 'Completa el operador lógico AND (&&) para exigir que ambas condiciones sean verdaderas:',
         codeWithBlank: 'val valido = permisoOk ___ claveOk',
         options: ['&&', '||', '==', '!'],
         correctOption: '&&',
@@ -1277,7 +1277,7 @@ const KOTLIN_U03_BANKS: Record<number, { title: string; desc: string; exercises:
       {
         id: 'kt-u03-l11-e09',
         type: 'code_cloze',
-        prompt: 'Completa el operador para verificar igualdad de contenido estructural:',
+        prompt: 'Completa el operador para comprobar si dos valores son exactamente iguales (==):',
         codeWithBlank: 'val mismoNombre = nombre1 ___ nombre2',
         options: ['==', '===', '!=', '='],
         correctOption: '==',
@@ -1287,7 +1287,7 @@ const KOTLIN_U03_BANKS: Record<number, { title: string; desc: string; exercises:
       {
         id: 'kt-u03-l11-e10',
         type: 'parsons_puzzle',
-        prompt: 'Ordena la secuencia lógica de cálculo y comprobación de rango:',
+        prompt: 'Ordena las líneas de código de arriba a abajo en la secuencia lógica correcta:',
         lines: [
           'val total = precio * cantidad',
           'val aplicaDescuento = total >= 100',
@@ -1339,11 +1339,11 @@ const KOTLIN_U03_BANKS: Record<number, { title: string; desc: string; exercises:
       {
         id: 'kt-u03-l12-e04',
         type: 'spot_the_bug',
-        prompt: 'Toca la línea que genera un error de asignación sobre constante:',
+        prompt: 'Toca la línea con el error al intentar modificar una variable declarada con val (de solo lectura):',
         codeSnippet: [
           'val saldo = 100',
           'println(saldo)',
-          'saldo += 50 // Error de reasignación'
+          'saldo += 50'
         ],
         bugLineIndex: 2,
         explanation: 'Los operadores compuestos de asignación como += exigen que la variable sea mutable (var).',
@@ -1352,7 +1352,7 @@ const KOTLIN_U03_BANKS: Record<number, { title: string; desc: string; exercises:
       {
         id: 'kt-u03-l12-e05',
         type: 'code_cloze',
-        prompt: 'Completa la condición lógica para exigir que ambas variables sean verdaderas:',
+        prompt: 'Completa el operador lógico AND (&&) para exigir que ambas condiciones sean verdaderas:',
         codeWithBlank: 'val valido = permisoOk ___ claveOk',
         options: ['&&', '||', '==', '!'],
         correctOption: '&&',
@@ -1395,7 +1395,7 @@ const KOTLIN_U03_BANKS: Record<number, { title: string; desc: string; exercises:
       {
         id: 'kt-u03-l12-e09',
         type: 'code_cloze',
-        prompt: 'Completa el operador para verificar igualdad de contenido estructural:',
+        prompt: 'Completa el operador para comprobar si dos valores son exactamente iguales (==):',
         codeWithBlank: 'val mismoNombre = nombre1 ___ nombre2',
         options: ['==', '===', '!=', '='],
         correctOption: '==',
@@ -1405,7 +1405,7 @@ const KOTLIN_U03_BANKS: Record<number, { title: string; desc: string; exercises:
       {
         id: 'kt-u03-l12-e10',
         type: 'parsons_puzzle',
-        prompt: 'Ordena la secuencia lógica de cálculo y comprobación de rango:',
+        prompt: 'Ordena las líneas de código de arriba a abajo en la secuencia lógica correcta:',
         lines: [
           'val total = precio * cantidad',
           'val aplicaDescuento = total >= 100',
@@ -1457,11 +1457,11 @@ const KOTLIN_U03_BANKS: Record<number, { title: string; desc: string; exercises:
       {
         id: 'kt-u03-l13-e04',
         type: 'spot_the_bug',
-        prompt: 'Toca la línea que genera un error de asignación sobre constante:',
+        prompt: 'Toca la línea con el error al intentar modificar una variable declarada con val (de solo lectura):',
         codeSnippet: [
           'val saldo = 100',
           'println(saldo)',
-          'saldo += 50 // Error de reasignación'
+          'saldo += 50'
         ],
         bugLineIndex: 2,
         explanation: 'Los operadores compuestos de asignación como += exigen que la variable sea mutable (var).',
@@ -1470,7 +1470,7 @@ const KOTLIN_U03_BANKS: Record<number, { title: string; desc: string; exercises:
       {
         id: 'kt-u03-l13-e05',
         type: 'code_cloze',
-        prompt: 'Completa la condición lógica para exigir que ambas variables sean verdaderas:',
+        prompt: 'Completa el operador lógico AND (&&) para exigir que ambas condiciones sean verdaderas:',
         codeWithBlank: 'val valido = permisoOk ___ claveOk',
         options: ['&&', '||', '==', '!'],
         correctOption: '&&',
@@ -1513,7 +1513,7 @@ const KOTLIN_U03_BANKS: Record<number, { title: string; desc: string; exercises:
       {
         id: 'kt-u03-l13-e09',
         type: 'code_cloze',
-        prompt: 'Completa el operador para verificar igualdad de contenido estructural:',
+        prompt: 'Completa el operador para comprobar si dos valores son exactamente iguales (==):',
         codeWithBlank: 'val mismoNombre = nombre1 ___ nombre2',
         options: ['==', '===', '!=', '='],
         correctOption: '==',
@@ -1523,7 +1523,7 @@ const KOTLIN_U03_BANKS: Record<number, { title: string; desc: string; exercises:
       {
         id: 'kt-u03-l13-e10',
         type: 'parsons_puzzle',
-        prompt: 'Ordena la secuencia lógica de cálculo y comprobación de rango:',
+        prompt: 'Ordena las líneas de código de arriba a abajo en la secuencia lógica correcta:',
         lines: [
           'val total = precio * cantidad',
           'val aplicaDescuento = total >= 100',
@@ -1575,11 +1575,11 @@ const KOTLIN_U03_BANKS: Record<number, { title: string; desc: string; exercises:
       {
         id: 'kt-u03-l14-e04',
         type: 'spot_the_bug',
-        prompt: 'Toca la línea que genera un error de asignación sobre constante:',
+        prompt: 'Toca la línea con el error al intentar modificar una variable declarada con val (de solo lectura):',
         codeSnippet: [
           'val saldo = 100',
           'println(saldo)',
-          'saldo += 50 // Error de reasignación'
+          'saldo += 50'
         ],
         bugLineIndex: 2,
         explanation: 'Los operadores compuestos de asignación como += exigen que la variable sea mutable (var).',
@@ -1588,7 +1588,7 @@ const KOTLIN_U03_BANKS: Record<number, { title: string; desc: string; exercises:
       {
         id: 'kt-u03-l14-e05',
         type: 'code_cloze',
-        prompt: 'Completa la condición lógica para exigir que ambas variables sean verdaderas:',
+        prompt: 'Completa el operador lógico AND (&&) para exigir que ambas condiciones sean verdaderas:',
         codeWithBlank: 'val valido = permisoOk ___ claveOk',
         options: ['&&', '||', '==', '!'],
         correctOption: '&&',
@@ -1631,7 +1631,7 @@ const KOTLIN_U03_BANKS: Record<number, { title: string; desc: string; exercises:
       {
         id: 'kt-u03-l14-e09',
         type: 'code_cloze',
-        prompt: 'Completa el operador para verificar igualdad de contenido estructural:',
+        prompt: 'Completa el operador para comprobar si dos valores son exactamente iguales (==):',
         codeWithBlank: 'val mismoNombre = nombre1 ___ nombre2',
         options: ['==', '===', '!=', '='],
         correctOption: '==',
@@ -1641,7 +1641,7 @@ const KOTLIN_U03_BANKS: Record<number, { title: string; desc: string; exercises:
       {
         id: 'kt-u03-l14-e10',
         type: 'parsons_puzzle',
-        prompt: 'Ordena la secuencia lógica de cálculo y comprobación de rango:',
+        prompt: 'Ordena las líneas de código de arriba a abajo en la secuencia lógica correcta:',
         lines: [
           'val total = precio * cantidad',
           'val aplicaDescuento = total >= 100',
@@ -1693,11 +1693,11 @@ const KOTLIN_U03_BANKS: Record<number, { title: string; desc: string; exercises:
       {
         id: 'kt-u03-l15-e04',
         type: 'spot_the_bug',
-        prompt: 'Toca la línea que genera un error de asignación sobre constante:',
+        prompt: 'Toca la línea con el error al intentar modificar una variable declarada con val (de solo lectura):',
         codeSnippet: [
           'val saldo = 100',
           'println(saldo)',
-          'saldo += 50 // Error de reasignación'
+          'saldo += 50'
         ],
         bugLineIndex: 2,
         explanation: 'Los operadores compuestos de asignación como += exigen que la variable sea mutable (var).',
@@ -1706,7 +1706,7 @@ const KOTLIN_U03_BANKS: Record<number, { title: string; desc: string; exercises:
       {
         id: 'kt-u03-l15-e05',
         type: 'code_cloze',
-        prompt: 'Completa la condición lógica para exigir que ambas variables sean verdaderas:',
+        prompt: 'Completa el operador lógico AND (&&) para exigir que ambas condiciones sean verdaderas:',
         codeWithBlank: 'val valido = permisoOk ___ claveOk',
         options: ['&&', '||', '==', '!'],
         correctOption: '&&',
@@ -1749,7 +1749,7 @@ const KOTLIN_U03_BANKS: Record<number, { title: string; desc: string; exercises:
       {
         id: 'kt-u03-l15-e09',
         type: 'code_cloze',
-        prompt: 'Completa el operador para verificar igualdad de contenido estructural:',
+        prompt: 'Completa el operador para comprobar si dos valores son exactamente iguales (==):',
         codeWithBlank: 'val mismoNombre = nombre1 ___ nombre2',
         options: ['==', '===', '!=', '='],
         correctOption: '==',
@@ -1759,7 +1759,7 @@ const KOTLIN_U03_BANKS: Record<number, { title: string; desc: string; exercises:
       {
         id: 'kt-u03-l15-e10',
         type: 'parsons_puzzle',
-        prompt: 'Ordena la secuencia lógica de cálculo y comprobación de rango:',
+        prompt: 'Ordena las líneas de código de arriba a abajo en la secuencia lógica correcta:',
         lines: [
           'val total = precio * cantidad',
           'val aplicaDescuento = total >= 100',
@@ -1811,11 +1811,11 @@ const KOTLIN_U03_BANKS: Record<number, { title: string; desc: string; exercises:
       {
         id: 'kt-u03-l16-e04',
         type: 'spot_the_bug',
-        prompt: 'Toca la línea que genera un error de asignación sobre constante:',
+        prompt: 'Toca la línea con el error al intentar modificar una variable declarada con val (de solo lectura):',
         codeSnippet: [
           'val saldo = 100',
           'println(saldo)',
-          'saldo += 50 // Error de reasignación'
+          'saldo += 50'
         ],
         bugLineIndex: 2,
         explanation: 'Los operadores compuestos de asignación como += exigen que la variable sea mutable (var).',
@@ -1824,7 +1824,7 @@ const KOTLIN_U03_BANKS: Record<number, { title: string; desc: string; exercises:
       {
         id: 'kt-u03-l16-e05',
         type: 'code_cloze',
-        prompt: 'Completa la condición lógica para exigir que ambas variables sean verdaderas:',
+        prompt: 'Completa el operador lógico AND (&&) para exigir que ambas condiciones sean verdaderas:',
         codeWithBlank: 'val valido = permisoOk ___ claveOk',
         options: ['&&', '||', '==', '!'],
         correctOption: '&&',
@@ -1867,7 +1867,7 @@ const KOTLIN_U03_BANKS: Record<number, { title: string; desc: string; exercises:
       {
         id: 'kt-u03-l16-e09',
         type: 'code_cloze',
-        prompt: 'Completa el operador para verificar igualdad de contenido estructural:',
+        prompt: 'Completa el operador para comprobar si dos valores son exactamente iguales (==):',
         codeWithBlank: 'val mismoNombre = nombre1 ___ nombre2',
         options: ['==', '===', '!=', '='],
         correctOption: '==',
@@ -1877,7 +1877,7 @@ const KOTLIN_U03_BANKS: Record<number, { title: string; desc: string; exercises:
       {
         id: 'kt-u03-l16-e10',
         type: 'parsons_puzzle',
-        prompt: 'Ordena la secuencia lógica de cálculo y comprobación de rango:',
+        prompt: 'Ordena las líneas de código de arriba a abajo en la secuencia lógica correcta:',
         lines: [
           'val total = precio * cantidad',
           'val aplicaDescuento = total >= 100',
@@ -1929,11 +1929,11 @@ const KOTLIN_U03_BANKS: Record<number, { title: string; desc: string; exercises:
       {
         id: 'kt-u03-l17-e04',
         type: 'spot_the_bug',
-        prompt: 'Toca la línea que genera un error de asignación sobre constante:',
+        prompt: 'Toca la línea con el error al intentar modificar una variable declarada con val (de solo lectura):',
         codeSnippet: [
           'val saldo = 100',
           'println(saldo)',
-          'saldo += 50 // Error de reasignación'
+          'saldo += 50'
         ],
         bugLineIndex: 2,
         explanation: 'Los operadores compuestos de asignación como += exigen que la variable sea mutable (var).',
@@ -1942,7 +1942,7 @@ const KOTLIN_U03_BANKS: Record<number, { title: string; desc: string; exercises:
       {
         id: 'kt-u03-l17-e05',
         type: 'code_cloze',
-        prompt: 'Completa la condición lógica para exigir que ambas variables sean verdaderas:',
+        prompt: 'Completa el operador lógico AND (&&) para exigir que ambas condiciones sean verdaderas:',
         codeWithBlank: 'val valido = permisoOk ___ claveOk',
         options: ['&&', '||', '==', '!'],
         correctOption: '&&',
@@ -1985,7 +1985,7 @@ const KOTLIN_U03_BANKS: Record<number, { title: string; desc: string; exercises:
       {
         id: 'kt-u03-l17-e09',
         type: 'code_cloze',
-        prompt: 'Completa el operador para verificar igualdad de contenido estructural:',
+        prompt: 'Completa el operador para comprobar si dos valores son exactamente iguales (==):',
         codeWithBlank: 'val mismoNombre = nombre1 ___ nombre2',
         options: ['==', '===', '!=', '='],
         correctOption: '==',
@@ -1995,7 +1995,7 @@ const KOTLIN_U03_BANKS: Record<number, { title: string; desc: string; exercises:
       {
         id: 'kt-u03-l17-e10',
         type: 'parsons_puzzle',
-        prompt: 'Ordena la secuencia lógica de cálculo y comprobación de rango:',
+        prompt: 'Ordena las líneas de código de arriba a abajo en la secuencia lógica correcta:',
         lines: [
           'val total = precio * cantidad',
           'val aplicaDescuento = total >= 100',
@@ -2047,11 +2047,11 @@ const KOTLIN_U03_BANKS: Record<number, { title: string; desc: string; exercises:
       {
         id: 'kt-u03-l18-e04',
         type: 'spot_the_bug',
-        prompt: 'Toca la línea que genera un error de asignación sobre constante:',
+        prompt: 'Toca la línea con el error al intentar modificar una variable declarada con val (de solo lectura):',
         codeSnippet: [
           'val saldo = 100',
           'println(saldo)',
-          'saldo += 50 // Error de reasignación'
+          'saldo += 50'
         ],
         bugLineIndex: 2,
         explanation: 'Los operadores compuestos de asignación como += exigen que la variable sea mutable (var).',
@@ -2060,7 +2060,7 @@ const KOTLIN_U03_BANKS: Record<number, { title: string; desc: string; exercises:
       {
         id: 'kt-u03-l18-e05',
         type: 'code_cloze',
-        prompt: 'Completa la condición lógica para exigir que ambas variables sean verdaderas:',
+        prompt: 'Completa el operador lógico AND (&&) para exigir que ambas condiciones sean verdaderas:',
         codeWithBlank: 'val valido = permisoOk ___ claveOk',
         options: ['&&', '||', '==', '!'],
         correctOption: '&&',
@@ -2103,7 +2103,7 @@ const KOTLIN_U03_BANKS: Record<number, { title: string; desc: string; exercises:
       {
         id: 'kt-u03-l18-e09',
         type: 'code_cloze',
-        prompt: 'Completa el operador para verificar igualdad de contenido estructural:',
+        prompt: 'Completa el operador para comprobar si dos valores son exactamente iguales (==):',
         codeWithBlank: 'val mismoNombre = nombre1 ___ nombre2',
         options: ['==', '===', '!=', '='],
         correctOption: '==',
@@ -2113,7 +2113,7 @@ const KOTLIN_U03_BANKS: Record<number, { title: string; desc: string; exercises:
       {
         id: 'kt-u03-l18-e10',
         type: 'parsons_puzzle',
-        prompt: 'Ordena la secuencia lógica de cálculo y comprobación de rango:',
+        prompt: 'Ordena las líneas de código de arriba a abajo en la secuencia lógica correcta:',
         lines: [
           'val total = precio * cantidad',
           'val aplicaDescuento = total >= 100',
@@ -2165,11 +2165,11 @@ const KOTLIN_U03_BANKS: Record<number, { title: string; desc: string; exercises:
       {
         id: 'kt-u03-l19-e04',
         type: 'spot_the_bug',
-        prompt: 'Toca la línea que genera un error de asignación sobre constante:',
+        prompt: 'Toca la línea con el error al intentar modificar una variable declarada con val (de solo lectura):',
         codeSnippet: [
           'val saldo = 100',
           'println(saldo)',
-          'saldo += 50 // Error de reasignación'
+          'saldo += 50'
         ],
         bugLineIndex: 2,
         explanation: 'Los operadores compuestos de asignación como += exigen que la variable sea mutable (var).',
@@ -2178,7 +2178,7 @@ const KOTLIN_U03_BANKS: Record<number, { title: string; desc: string; exercises:
       {
         id: 'kt-u03-l19-e05',
         type: 'code_cloze',
-        prompt: 'Completa la condición lógica para exigir que ambas variables sean verdaderas:',
+        prompt: 'Completa el operador lógico AND (&&) para exigir que ambas condiciones sean verdaderas:',
         codeWithBlank: 'val valido = permisoOk ___ claveOk',
         options: ['&&', '||', '==', '!'],
         correctOption: '&&',
@@ -2221,7 +2221,7 @@ const KOTLIN_U03_BANKS: Record<number, { title: string; desc: string; exercises:
       {
         id: 'kt-u03-l19-e09',
         type: 'code_cloze',
-        prompt: 'Completa el operador para verificar igualdad de contenido estructural:',
+        prompt: 'Completa el operador para comprobar si dos valores son exactamente iguales (==):',
         codeWithBlank: 'val mismoNombre = nombre1 ___ nombre2',
         options: ['==', '===', '!=', '='],
         correctOption: '==',
@@ -2231,7 +2231,7 @@ const KOTLIN_U03_BANKS: Record<number, { title: string; desc: string; exercises:
       {
         id: 'kt-u03-l19-e10',
         type: 'parsons_puzzle',
-        prompt: 'Ordena la secuencia lógica de cálculo y comprobación de rango:',
+        prompt: 'Ordena las líneas de código de arriba a abajo en la secuencia lógica correcta:',
         lines: [
           'val total = precio * cantidad',
           'val aplicaDescuento = total >= 100',
@@ -2283,11 +2283,11 @@ const KOTLIN_U03_BANKS: Record<number, { title: string; desc: string; exercises:
       {
         id: 'kt-u03-l20-e04',
         type: 'spot_the_bug',
-        prompt: 'Toca la línea que genera un error de asignación sobre constante:',
+        prompt: 'Toca la línea con el error al intentar modificar una variable declarada con val (de solo lectura):',
         codeSnippet: [
           'val saldo = 100',
           'println(saldo)',
-          'saldo += 50 // Error de reasignación'
+          'saldo += 50'
         ],
         bugLineIndex: 2,
         explanation: 'Los operadores compuestos de asignación como += exigen que la variable sea mutable (var).',
@@ -2296,7 +2296,7 @@ const KOTLIN_U03_BANKS: Record<number, { title: string; desc: string; exercises:
       {
         id: 'kt-u03-l20-e05',
         type: 'code_cloze',
-        prompt: 'Completa la condición lógica para exigir que ambas variables sean verdaderas:',
+        prompt: 'Completa el operador lógico AND (&&) para exigir que ambas condiciones sean verdaderas:',
         codeWithBlank: 'val valido = permisoOk ___ claveOk',
         options: ['&&', '||', '==', '!'],
         correctOption: '&&',
@@ -2339,7 +2339,7 @@ const KOTLIN_U03_BANKS: Record<number, { title: string; desc: string; exercises:
       {
         id: 'kt-u03-l20-e09',
         type: 'code_cloze',
-        prompt: 'Completa el operador para verificar igualdad de contenido estructural:',
+        prompt: 'Completa el operador para comprobar si dos valores son exactamente iguales (==):',
         codeWithBlank: 'val mismoNombre = nombre1 ___ nombre2',
         options: ['==', '===', '!=', '='],
         correctOption: '==',
@@ -2349,7 +2349,7 @@ const KOTLIN_U03_BANKS: Record<number, { title: string; desc: string; exercises:
       {
         id: 'kt-u03-l20-e10',
         type: 'parsons_puzzle',
-        prompt: 'Ordena la secuencia lógica de cálculo y comprobación de rango:',
+        prompt: 'Ordena las líneas de código de arriba a abajo en la secuencia lógica correcta:',
         lines: [
           'val total = precio * cantidad',
           'val aplicaDescuento = total >= 100',

@@ -12,11 +12,11 @@ export const SQL_UNIT_02_THEORY: Record<string, TheoryLesson> = {
     estimatedMinutes: 5,
     analogy: 'El comando `SELECT` es como pedirle al bibliotecario de la ciudad que te traiga solo el título y el autor de los libros de historia, en lugar de cargar las 1,000 páginas de cada tomo hasta tu mesa.',
     video: {
-      title: 'SELECT y Proyección de Datos en SQL para Principiantes',
-      channel: 'Programming with Mosh',
-      duration: '8:30',
-      url: 'https://www.youtube.com/watch?v=7S_tz1z_5bA',
-      summary: 'Aprende la sintaxis fundamental de SELECT, cómo pedir columnas y cómo el motor SQL proyecta los resultados en tablas limpias.'
+      title: 'Aprende SQL ahora! curso completo gratis desde cero',
+      channel: 'HolaMundo',
+      duration: '42:15',
+      url: 'https://www.youtube.com/watch?v=uUdKAYl-F7g',
+      summary: 'Tutorial directo y didáctico para dominar la consulta de datos con SELECT, alias AS, proyecciones y primeros filtros.'
     },
     sections: [
       {
@@ -54,11 +54,11 @@ FROM usuarios;`,
     estimatedMinutes: 5,
     analogy: '`SELECT *` es como ordenar todas las opciones del menú completo de un restaurante cuando solo querías una taza de café: saturas tu mesa, pagas por cosas que no te vas a comer y retrasas el servicio para todos los demás.',
     video: {
-      title: 'Por qué NUNCA deberías usar SELECT * en Producción',
-      channel: 'Alex The Analyst / SQL Best Practices',
-      duration: '7:45',
-      url: 'https://www.youtube.com/watch?v=HXV3zeRR3h4',
-      summary: 'Descubre los problemas de rendimiento, el sobreconsumo de ancho de banda y las rupturas de contratos de API causadas por el uso de SELECT *.'
+      title: 'Aprende SQL ahora! curso completo gratis desde cero',
+      channel: 'HolaMundo',
+      duration: '42:15',
+      url: 'https://www.youtube.com/watch?v=uUdKAYl-F7g',
+      summary: 'Tutorial directo y didáctico para dominar la consulta de datos con SELECT, alias AS, proyecciones y primeros filtros.'
     },
     sections: [
       {
@@ -98,11 +98,11 @@ FROM clientes;`,
     estimatedMinutes: 5,
     analogy: '`FROM` es como la dirección postal en un mapa: antes de pedir qué paquetes quieres recibir (SELECT), debes especificar a qué bodega exacta del país debe ir el camión repartidor.',
     video: {
-      title: 'Orden lógico de ejecución en SQL: Por qué FROM va primero',
-      channel: 'Deukion / SQL desde Cero',
-      duration: '9:10',
-      url: 'https://www.youtube.com/watch?v=HXV3zeRR3h4',
-      summary: 'Aprende el ciclo de vida de una consulta: cómo el motor procesa FROM antes que SELECT y cómo referenciar tablas de otros esquemas.'
+      title: 'Aprende SQL - Curso desde cero con MySQL, PostgreSQL y Bases Relacionales',
+      channel: 'freeCodeCamp Español',
+      duration: '3:45:00',
+      url: 'https://www.youtube.com/watch?v=6JBsoPOwPew',
+      summary: 'Curso exhaustivo en español para comprender bases de datos relacionales, tipos de datos, restricciones y buenas prácticas.'
     },
     sections: [
       {
@@ -143,11 +143,11 @@ FROM inventario.articulos;`,
     estimatedMinutes: 5,
     analogy: 'Es como referirte a una persona por su nombre y apellido completo en una reunión concurrida: en vez de decir "Carlos", dices "Carlos Soto", para que nadie lo confunda con "Carlos Gómez".',
     video: {
-      title: 'Calificación de columnas tabla.columna en SQL',
-      channel: 'freeCodeCamp.org',
-      duration: '7:20',
-      url: 'https://www.youtube.com/watch?v=HXV3zeRR3h4',
-      summary: 'Descubre cómo calificar columnas explícitamente y cómo previene el famoso error "Column is ambiguous" al hacer cruces de tablas.'
+      title: 'Aprende SQL - Curso desde cero con MySQL, PostgreSQL y Bases Relacionales',
+      channel: 'freeCodeCamp Español',
+      duration: '3:45:00',
+      url: 'https://www.youtube.com/watch?v=6JBsoPOwPew',
+      summary: 'Curso exhaustivo en español para comprender bases de datos relacionales, tipos de datos, restricciones y buenas prácticas.'
     },
     sections: [
       {
@@ -188,11 +188,11 @@ FROM clientes, facturas;`,
     estimatedMinutes: 5,
     analogy: 'Un alias de columna es como la traducción oficial de un pasaporte: en el chip electrónico dice "DOB", pero en la hoja de lectura humana le ponen la etiqueta comprensible "Fecha de Nacimiento".',
     video: {
-      title: 'Uso de Alias de Columna con AS en SQL',
-      channel: 'Alex The Analyst',
-      duration: '8:10',
-      url: 'https://www.youtube.com/watch?v=HXV3zeRR3h4',
-      summary: 'Aprende a renombrar columnas, cómo usar comillas en alias con espacios y por qué es vital para alimentar APIs REST con nombres limpios.'
+      title: 'Aprende SQL - Curso desde cero con MySQL, PostgreSQL y Bases Relacionales',
+      channel: 'freeCodeCamp Español',
+      duration: '3:45:00',
+      url: 'https://www.youtube.com/watch?v=6JBsoPOwPew',
+      summary: 'Curso exhaustivo en español para comprender bases de datos relacionales, tipos de datos, restricciones y buenas prácticas.'
     },
     sections: [
       {
@@ -231,11 +231,11 @@ FROM clientes;`,
     estimatedMinutes: 5,
     analogy: 'Un alias de tabla es como usar las iniciales o el sobrenombre de una institución larga: en lugar de escribir "Organización de las Naciones Unidas" en cada línea de un informe, defines "ONU" al inicio y usas esa sigla corta en todo el documento.',
     video: {
-      title: 'Table Aliases en SQL: Abreviando nombres de tablas',
-      channel: 'Programming with Mosh',
-      duration: '7:55',
-      url: 'https://www.youtube.com/watch?v=7S_tz1z_5bA',
-      summary: 'Descubre cómo los alias de tabla (FROM usuarios AS u) hacen tus consultas mucho más compactas y cómo usarlos en calificaciones u.nombre.'
+      title: 'Aprende SQL - Curso desde cero con MySQL, PostgreSQL y Bases Relacionales',
+      channel: 'freeCodeCamp Español',
+      duration: '3:45:00',
+      url: 'https://www.youtube.com/watch?v=6JBsoPOwPew',
+      summary: 'Curso exhaustivo en español para comprender bases de datos relacionales, tipos de datos, restricciones y buenas prácticas.'
     },
     sections: [
       {
@@ -276,11 +276,11 @@ FROM productos p;`,
     estimatedMinutes: 5,
     analogy: 'Es como limpiar tu agenda de contactos telefónicos para eliminar las 5 entradas duplicadas que tienes para la misma persona y quedarte con un solo registro limpio.',
     video: {
-      title: 'SELECT DISTINCT en SQL: Cómo funciona internamente',
-      channel: 'Alex The Analyst',
-      duration: '8:40',
-      url: 'https://www.youtube.com/watch?v=HXV3zeRR3h4',
-      summary: 'Aprende cómo el optimizador de SQL agrupa duplicados en memoria y cuándo es conveniente usarlo para reportes.'
+      title: 'Aprende SQL ahora! curso completo gratis desde cero',
+      channel: 'HolaMundo',
+      duration: '42:15',
+      url: 'https://www.youtube.com/watch?v=uUdKAYl-F7g',
+      summary: 'Tutorial directo y didáctico para dominar la consulta de datos con SELECT, alias AS, proyecciones y primeros filtros.'
     },
     sections: [
       {
@@ -319,11 +319,11 @@ FROM empleados;`,
     estimatedMinutes: 5,
     analogy: 'Es como consultar las combinaciones únicas de marca y modelo en un lote de autos usados: puedes tener 5 autos Toyota Corolla y 3 autos Toyota Camry. Con DISTINCT marca, modelo, el resultado tendrá solo 2 filas: una para Toyota Corolla y otra para Toyota Camry.',
     video: {
-      title: 'SELECT DISTINCT con múltiples columnas en SQL',
-      channel: 'Deukion / SQL desde Cero',
-      duration: '7:35',
-      url: 'https://www.youtube.com/watch?v=HXV3zeRR3h4',
-      summary: 'Descubre cómo DISTINCT evalúa la combinación de todas las columnas proyectadas como una tupla única.'
+      title: 'Aprende SQL - Curso desde cero con MySQL, PostgreSQL y Bases Relacionales',
+      channel: 'freeCodeCamp Español',
+      duration: '3:45:00',
+      url: 'https://www.youtube.com/watch?v=6JBsoPOwPew',
+      summary: 'Curso exhaustivo en español para comprender bases de datos relacionales, tipos de datos, restricciones y buenas prácticas.'
     },
     sections: [
       {
@@ -362,11 +362,11 @@ FROM sucursales;`,
     estimatedMinutes: 5,
     analogy: 'Es como una calculadora que hace cuentas en el momento que te entregan el recibo de compra: la base de datos almacena el precio neto y las unidades, y en la pantalla te calcula de inmediato el subtotal multiplicado con impuestos.',
     video: {
-      title: 'Operaciones aritméticas y columnas calculadas en SQL',
-      channel: 'freeCodeCamp.org',
-      duration: '9:15',
-      url: 'https://www.youtube.com/watch?v=HXV3zeRR3h4',
-      summary: 'Aprende a sumar, restar, multiplicar y dividir directamente en el SELECT para generar métricas financieras al vuelo.'
+      title: 'Aprende SQL - Curso desde cero con MySQL, PostgreSQL y Bases Relacionales',
+      channel: 'freeCodeCamp Español',
+      duration: '3:45:00',
+      url: 'https://www.youtube.com/watch?v=6JBsoPOwPew',
+      summary: 'Curso exhaustivo en español para comprender bases de datos relacionales, tipos de datos, restricciones y buenas prácticas.'
     },
     sections: [
       {
@@ -408,11 +408,11 @@ FROM productos;`,
     estimatedMinutes: 6,
     analogy: 'Es como el primer informe oficial de ventas que le presentas al gerente de operaciones: no le das una sábana cruda de datos confusos, sino un reporte pulido, con encabezados claros y cifras calculadas listas para tomar decisiones.',
     video: {
-      title: 'Creación de Reportes Ejecutivos con SQL Básico',
-      channel: 'Alex The Analyst',
-      duration: '12:00',
-      url: 'https://www.youtube.com/watch?v=HXV3zeRR3h4',
-      summary: 'Proyecto práctico que integra alias de tablas y columnas, cálculos de margen de ganancia y formateo profesional.'
+      title: 'Aprende SQL ahora! curso completo gratis desde cero',
+      channel: 'HolaMundo',
+      duration: '42:15',
+      url: 'https://www.youtube.com/watch?v=uUdKAYl-F7g',
+      summary: 'Tutorial directo y didáctico para dominar la consulta de datos con SELECT, alias AS, proyecciones y primeros filtros.'
     },
     sections: [
       {
@@ -455,11 +455,11 @@ FROM inventario_productos AS p;`,
     estimatedMinutes: 5,
     analogy: 'Concatenar en SQL es como unir el nombre y los dos apellidos de una persona para imprimir su gafete corporativo en un solo renglón continuo.',
     video: {
-      title: 'Concatenar texto en SQL: Operador || vs función CONCAT()',
-      channel: 'Programming with Mosh',
-      duration: '8:20',
-      url: 'https://www.youtube.com/watch?v=7S_tz1z_5bA',
-      summary: 'Aprende las diferencias de sintaxis entre motores: el operador estándar ANSI || en PostgreSQL/SQLite vs la función CONCAT() en MySQL.'
+      title: 'Aprende SQL ahora! curso completo gratis desde cero',
+      channel: 'HolaMundo',
+      duration: '42:15',
+      url: 'https://www.youtube.com/watch?v=uUdKAYl-F7g',
+      summary: 'Tutorial directo y didáctico para dominar la consulta de datos con SELECT, alias AS, proyecciones y primeros filtros.'
     },
     sections: [
       {
@@ -500,11 +500,11 @@ FROM clientes;`,
     estimatedMinutes: 5,
     analogy: 'Son como las funciones automáticas de una imprenta: recibir los textos en cualquier formato y pasar los títulos a mayúsculas solemnes, los correos a minúsculas limpias y medir la cantidad de letras para calcular el costo de la placa.',
     video: {
-      title: 'Funciones de Cadena en SQL: UPPER, LOWER, LENGTH',
-      channel: 'Deukion / SQL desde Cero',
-      duration: '8:45',
-      url: 'https://www.youtube.com/watch?v=HXV3zeRR3h4',
-      summary: 'Descubre cómo normalizar datos desordenados con funciones de texto y cómo medir la longitud de cadenas.'
+      title: 'Aprende SQL - Curso desde cero con MySQL, PostgreSQL y Bases Relacionales',
+      channel: 'freeCodeCamp Español',
+      duration: '3:45:00',
+      url: 'https://www.youtube.com/watch?v=6JBsoPOwPew',
+      summary: 'Curso exhaustivo en español para comprender bases de datos relacionales, tipos de datos, restricciones y buenas prácticas.'
     },
     sections: [
       {
@@ -544,11 +544,11 @@ FROM usuarios;`,
     estimatedMinutes: 5,
     analogy: '`COALESCE` es como un protocolo de comunicación de emergencia: "Intenta llamar a mi celular; si no contesto (NULL), llama a mi teléfono fijo; si tampoco contesto (NULL), llama al teléfono de mi oficina; y si nada funciona, deja el mensaje en recepción".',
     video: {
-      title: 'La Función COALESCE en SQL: Reemplazo Seguro de Nulos',
-      channel: 'Alex The Analyst',
-      duration: '9:50',
-      url: 'https://www.youtube.com/watch?v=HXV3zeRR3h4',
-      summary: 'Aprende la función más importante para el manejo de valores nulos en SQL y cómo evitar que cálculos matemáticos arrojen NULL.'
+      title: 'Aprende SQL - Curso desde cero con MySQL, PostgreSQL y Bases Relacionales',
+      channel: 'freeCodeCamp Español',
+      duration: '3:45:00',
+      url: 'https://www.youtube.com/watch?v=6JBsoPOwPew',
+      summary: 'Curso exhaustivo en español para comprender bases de datos relacionales, tipos de datos, restricciones y buenas prácticas.'
     },
     sections: [
       {
@@ -593,11 +593,11 @@ FROM proveedores;`,
     estimatedMinutes: 5,
     analogy: '`IFNULL` o `NVL` son como los enchufes eléctricos propietarios de un país específico: funcionan de maravilla si vives allí, pero si viajas a otro país necesitas un adaptador universal (COALESCE).',
     video: {
-      title: 'COALESCE vs IFNULL vs NVL en SQL: ¿Cuál usar?',
-      channel: 'freeCodeCamp.org',
-      duration: '7:40',
-      url: 'https://www.youtube.com/watch?v=HXV3zeRR3h4',
-      summary: 'Comparativa de funciones de nulos entre PostgreSQL, MySQL, Oracle y SQL Server, y por qué aprender el estándar te hace un ingeniero más versátil.'
+      title: 'Aprende SQL - Curso desde cero con MySQL, PostgreSQL y Bases Relacionales',
+      channel: 'freeCodeCamp Español',
+      duration: '3:45:00',
+      url: 'https://www.youtube.com/watch?v=6JBsoPOwPew',
+      summary: 'Curso exhaustivo en español para comprender bases de datos relacionales, tipos de datos, restricciones y buenas prácticas.'
     },
     sections: [
       {
@@ -638,11 +638,11 @@ FROM usuarios;`,
     estimatedMinutes: 5,
     analogy: 'Es como estampar un sello oficial de "APROBADO 2026" en cada una de las páginas de un legajo de documentos: cada página tiene datos distintos, pero todas llevan el mismo sello constante idéntico.',
     video: {
-      title: 'Valores literales y constantes en consultas SQL',
-      channel: 'Programming with Mosh',
-      duration: '6:30',
-      url: 'https://www.youtube.com/watch?v=7S_tz1z_5bA',
-      summary: 'Descubre cómo inyectar columnas fijas en reportes y cómo usar constantes para probar consultas rápidas sin tablas (SELECT 1).'
+      title: 'Aprende SQL - Curso desde cero con MySQL, PostgreSQL y Bases Relacionales',
+      channel: 'freeCodeCamp Español',
+      duration: '3:45:00',
+      url: 'https://www.youtube.com/watch?v=6JBsoPOwPew',
+      summary: 'Curso exhaustivo en español para comprender bases de datos relacionales, tipos de datos, restricciones y buenas prácticas.'
     },
     sections: [
       {
@@ -687,11 +687,11 @@ SELECT 'El servidor SQL está operando al 100%' AS estado_servicio;`,
     estimatedMinutes: 5,
     analogy: '`LIMIT` es como la bandeja de entrada de tu correo electrónico: no te descarga los 50,000 correos que has recibido en tu vida de golpe en una sola pantalla gigante; te muestra únicamente los primeros 10 o 20 más recientes para que la app cargue al instante.',
     video: {
-      title: 'LIMIT en SQL: Cómo restringir filas en MySQL, Postgres y SQL Server',
-      channel: 'Alex The Analyst',
-      duration: '8:50',
-      url: 'https://www.youtube.com/watch?v=HXV3zeRR3h4',
-      summary: 'Aprende la sintaxis de LIMIT en PostgreSQL/MySQL/SQLite, SELECT TOP en SQL Server y FETCH FIRST en ANSI SQL.'
+      title: 'Aprende SQL - Curso desde cero con MySQL, PostgreSQL y Bases Relacionales',
+      channel: 'freeCodeCamp Español',
+      duration: '3:45:00',
+      url: 'https://www.youtube.com/watch?v=6JBsoPOwPew',
+      summary: 'Curso exhaustivo en español para comprender bases de datos relacionales, tipos de datos, restricciones y buenas prácticas.'
     },
     sections: [
       {
@@ -733,11 +733,11 @@ LIMIT 3;
     estimatedMinutes: 5,
     analogy: 'Es como pasar las páginas de un libro: cada página tiene exactamente 10 párrafos (LIMIT 10). Para leer la página 1 no te saltas nada (OFFSET 0); para leer la página 2 te saltas los primeros 10 párrafos (OFFSET 10); para la página 3 te saltas 20 (OFFSET 20).',
     video: {
-      title: 'Paginación con LIMIT y OFFSET en SQL: Guía Completa',
-      channel: 'freeCodeCamp.org',
-      duration: '10:20',
-      url: 'https://www.youtube.com/watch?v=HXV3zeRR3h4',
-      summary: 'Descubre la fórmula matemática para calcular el OFFSET según el número de página y cómo paginar datos en APIs REST.'
+      title: 'Aprende SQL - Curso desde cero con MySQL, PostgreSQL y Bases Relacionales',
+      channel: 'freeCodeCamp Español',
+      duration: '3:45:00',
+      url: 'https://www.youtube.com/watch?v=6JBsoPOwPew',
+      summary: 'Curso exhaustivo en español para comprender bases de datos relacionales, tipos de datos, restricciones y buenas prácticas.'
     },
     sections: [
       {
@@ -781,11 +781,11 @@ LIMIT 2 OFFSET 2;`,
     estimatedMinutes: 5,
     analogy: 'Es como pedirle a una mudanza que traslade una caja fuerte cerrada de 500 kg solo para sacar un lápiz que estaba adentro: mueves una tonelada de peso innecesario cuando podías llevar el lápiz en la bolsa de tu camisa.',
     video: {
-      title: 'Optimización de Consultas SQL: El costo oculto de SELECT *',
-      channel: 'Alex The Analyst / Advanced SQL',
-      duration: '9:30',
-      url: 'https://www.youtube.com/watch?v=HXV3zeRR3h4',
-      summary: 'Análisis con EXPLAIN ANALYZE que demuestra la diferencia de tiempo de ejecución entre proyectar columnas indexadas vs SELECT *.'
+      title: 'Aprende SQL - Curso desde cero con MySQL, PostgreSQL y Bases Relacionales',
+      channel: 'freeCodeCamp Español',
+      duration: '3:45:00',
+      url: 'https://www.youtube.com/watch?v=6JBsoPOwPew',
+      summary: 'Curso exhaustivo en español para comprender bases de datos relacionales, tipos de datos, restricciones y buenas prácticas.'
     },
     sections: [
       {
@@ -825,11 +825,11 @@ WHERE usuario_id = 942;`,
     estimatedMinutes: 5,
     analogy: 'Los comentarios en SQL son como las notas al pie de página en un balance contable: le explican al auditor por qué se aplicó cierta tasa de amortización sin alterar los números del balance.',
     video: {
-      title: 'Comentarios y Buenas Prácticas de Documentación en SQL',
-      channel: 'Deukion / SQL desde Cero',
-      duration: '6:15',
-      url: 'https://www.youtube.com/watch?v=HXV3zeRR3h4',
-      summary: 'Aprende a usar comentarios de una sola línea (--) y multilínea (/* */) para explicar lógica compleja de reportería.'
+      title: 'Aprende SQL - Curso desde cero con MySQL, PostgreSQL y Bases Relacionales',
+      channel: 'freeCodeCamp Español',
+      duration: '3:45:00',
+      url: 'https://www.youtube.com/watch?v=6JBsoPOwPew',
+      summary: 'Curso exhaustivo en español para comprender bases de datos relacionales, tipos de datos, restricciones y buenas prácticas.'
     },
     sections: [
       {
@@ -872,11 +872,11 @@ FROM productos; -- Fin de consulta`,
     estimatedMinutes: 6,
     analogy: 'Este desafío final es como construir la vitrina digital de una tienda de comercio electrónico de clase mundial: une la calificación de tablas, cálculos de impuestos, formateo de nombres y paginación rápida en una sola consulta maestra.',
     video: {
-      title: 'Proyecto SQL: Catálogo Oficial de Productos Paginado',
-      channel: 'freeCodeCamp.org / SQL Masterclass',
-      duration: '14:30',
-      url: 'https://www.youtube.com/watch?v=HXV3zeRR3h4',
-      summary: 'Construcción paso a paso de una consulta maestra que integra todas las técnicas de proyección aprendidas en la Unidad 2.'
+      title: 'Aprende SQL - Curso desde cero con MySQL, PostgreSQL y Bases Relacionales',
+      channel: 'freeCodeCamp Español',
+      duration: '3:45:00',
+      url: 'https://www.youtube.com/watch?v=6JBsoPOwPew',
+      summary: 'Curso exhaustivo en español para comprender bases de datos relacionales, tipos de datos, restricciones y buenas prácticas.'
     },
     sections: [
       {

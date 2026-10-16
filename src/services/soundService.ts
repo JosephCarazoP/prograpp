@@ -167,6 +167,91 @@ class SoundService {
       osc.stop(noteTime + 0.12);
     });
   }
+
+  // Efecto de racha encendida (Sonido cálido y triunfal de fuego encendiéndose)
+  public playStreak() {
+    if (this.isMuted) return;
+    this.initCtx();
+    if (!this.ctx) return;
+
+    const chord = [392.00, 493.88, 587.33, 783.99, 987.77]; // G4, B4, D5, G5, B5
+    let t = this.ctx.currentTime;
+    chord.forEach((freq, idx) => {
+      if (!this.ctx) return;
+      const osc = this.ctx.createOscillator();
+      const gain = this.ctx.createGain();
+      const noteTime = t + idx * 0.08;
+
+      osc.type = 'triangle';
+      osc.frequency.setValueAtTime(freq, noteTime);
+      osc.frequency.exponentialRampToValueAtTime(freq * 1.02, noteTime + 0.3);
+
+      gain.gain.setValueAtTime(0.2, noteTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, noteTime + 0.35);
+
+      osc.connect(gain);
+      gain.connect(this.ctx.destination);
+
+      osc.start(noteTime);
+      osc.stop(noteTime + 0.35);
+    });
+  }
+
+  // Grito / júbilo de salto triunfal ("¡Yujuuu!")
+  public playYujuu() {
+    if (this.isMuted) return;
+    this.initCtx();
+    if (!this.ctx) return;
+
+    const now = this.ctx.currentTime;
+    const osc = this.ctx.createOscillator();
+    const gain = this.ctx.createGain();
+
+    osc.type = 'sine';
+    // Glissando musical alegre ascendente que imita el tono "Yu-juuu!"
+    osc.frequency.setValueAtTime(460, now);
+    osc.frequency.exponentialRampToValueAtTime(740, now + 0.12);
+    osc.frequency.exponentialRampToValueAtTime(1180, now + 0.32);
+
+    gain.gain.setValueAtTime(0.01, now);
+    gain.gain.linearRampToValueAtTime(0.22, now + 0.08);
+    gain.gain.linearRampToValueAtTime(0.18, now + 0.22);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.45);
+
+    osc.connect(gain);
+    gain.connect(this.ctx.destination);
+
+    osc.start(now);
+    osc.stop(now + 0.45);
+  }
+
+  // Efecto suave y soñoliento para Racha 0
+  public playDormant() {
+    if (this.isMuted) return;
+    this.initCtx();
+    if (!this.ctx) return;
+
+    const notes = [261.63, 329.63, 392.00]; // C4, E4, G4 suaves
+    let t = this.ctx.currentTime;
+    notes.forEach((freq, idx) => {
+      if (!this.ctx) return;
+      const osc = this.ctx.createOscillator();
+      const gain = this.ctx.createGain();
+      const noteTime = t + idx * 0.12;
+
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(freq, noteTime);
+
+      gain.gain.setValueAtTime(0.08, noteTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, noteTime + 0.35);
+
+      osc.connect(gain);
+      gain.connect(this.ctx.destination);
+
+      osc.start(noteTime);
+      osc.stop(noteTime + 0.35);
+    });
+  }
 }
 
 export const soundService = new SoundService();

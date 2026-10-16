@@ -14,6 +14,7 @@ interface PowerUpsBarProps {
   isSecondChanceActive?: boolean;
   disabled?: boolean;
   compact?: boolean;
+  showSecondChance?: boolean;
 }
 
 export const PowerUpsBar: React.FC<PowerUpsBarProps> = ({
@@ -21,7 +22,8 @@ export const PowerUpsBar: React.FC<PowerUpsBarProps> = ({
   onUsePowerUp,
   isSecondChanceActive = false,
   disabled = false,
-  compact = false
+  compact = false,
+  showSecondChance = false
 }) => {
   const safePowerups = powerups || {
     teacherHint: 0,
@@ -61,17 +63,21 @@ export const PowerUpsBar: React.FC<PowerUpsBarProps> = ({
       tokenShadow: '#B45309',
       description: 'Descarta 2 opciones erróneas'
     },
-    {
-      key: 'secondChance',
-      name: 'Escudo',
-      icon: <ShieldCheck size={16} color="#FFFFFF" strokeWidth={2.4} />,
-      count: safePowerups.secondChance,
-      tokenBg: '#15803D',
-      tokenBorder: '#4ADE80',
-      tokenShadow: '#166534',
-      description: 'Protege contra 1 fallo',
-      active: isSecondChanceActive
-    },
+    ...(showSecondChance
+      ? [
+          {
+            key: 'secondChance' as const,
+            name: 'Escudo',
+            icon: <ShieldCheck size={16} color="#FFFFFF" strokeWidth={2.4} />,
+            count: safePowerups.secondChance,
+            tokenBg: '#15803D',
+            tokenBorder: '#4ADE80',
+            tokenShadow: '#166534',
+            description: 'Protege contra el daño de un ataque de Jefe',
+            active: isSecondChanceActive
+          }
+        ]
+      : []),
     {
       key: 'codePeek',
       name: 'Pista Código',

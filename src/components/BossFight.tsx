@@ -720,6 +720,7 @@ export const BossFightArena: React.FC<BossFightProps> = ({
                 isSecondChanceActive={isSecondChanceActive}
                 disabled={turnState !== 'player_turn'}
                 compact={true}
+                showSecondChance={true}
               />
 
               {/* Mensaje de Pista si se activó */}

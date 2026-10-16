@@ -276,37 +276,78 @@ export const TheoryViewer: React.FC<TheoryViewerProps> = ({
             {theory.video.summary}
           </p>
 
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '12px' }}>
-            <span style={{ fontSize: '0.86rem', fontWeight: 800, color: '#64748B' }}>
-              Canal: <strong style={{ color: '#0F172A' }}>{theory.video.channel}</strong>
-            </span>
-            <a
-              href={theory.video.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '8px',
-                background: '#DC2626',
-                color: '#FFFFFF',
-                border: '2px solid #B91C1C',
-                boxShadow: '0 3px 0 #7F1D1D',
-                padding: '9px 18px',
-                borderRadius: '14px',
-                fontSize: '0.88rem',
-                fontWeight: 900,
-                textDecoration: 'none',
-                cursor: 'pointer',
-                transition: 'all 0.15s ease'
-              }}
-              title="Abrir video en nueva pestaña"
-            >
-              <Play size={16} fill="#FFFFFF" />
-              <span>Ver Video en YouTube</span>
-              <ExternalLink size={14} />
-            </a>
-          </div>
+          {/* Reproductor Embebido si está activo */}
+          {(() => {
+            const ytMatch = theory.video.url.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))([\w-]{11})/);
+            const videoId = ytMatch ? ytMatch[1] : null;
+
+            return (
+              <>
+                {videoId && (
+                  <div
+                    style={{
+                      position: 'relative',
+                      width: '100%',
+                      paddingTop: '56.25%', // 16:9 Aspect Ratio
+                      borderRadius: '16px',
+                      overflow: 'hidden',
+                      marginBottom: '16px',
+                      border: '2px solid #E2E8F0',
+                      boxShadow: '0 4px 12px rgba(0,0,0,0.08)',
+                      background: '#0F172A'
+                    }}
+                  >
+                    <iframe
+                      src={`https://www.youtube-nocookie.com/embed/${videoId}?rel=0&modestbranding=1`}
+                      title={theory.video.title}
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                      allowFullScreen
+                      style={{
+                        position: 'absolute',
+                        top: 0,
+                        left: 0,
+                        width: '100%',
+                        height: '100%',
+                        border: 'none'
+                      }}
+                    />
+                  </div>
+                )}
+
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '12px' }}>
+                  <span style={{ fontSize: '0.86rem', fontWeight: 800, color: '#64748B' }}>
+                    Canal: <strong style={{ color: '#0F172A' }}>{theory.video.channel}</strong>
+                  </span>
+                  <a
+                    href={theory.video.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '8px',
+                      background: '#DC2626',
+                      color: '#FFFFFF',
+                      border: '2px solid #B91C1C',
+                      boxShadow: '0 3px 0 #7F1D1D',
+                      padding: '9px 18px',
+                      borderRadius: '14px',
+                      fontSize: '0.88rem',
+                      fontWeight: 900,
+                      textDecoration: 'none',
+                      cursor: 'pointer',
+                      transition: 'all 0.15s ease'
+                    }}
+                    title="Abrir video en YouTube"
+                  >
+                    <Play size={16} fill="#FFFFFF" />
+                    <span>Abrir en YouTube</span>
+                    <ExternalLink size={14} />
+                  </a>
+                </div>
+              </>
+            );
+          })()}
         </div>
       )}
 

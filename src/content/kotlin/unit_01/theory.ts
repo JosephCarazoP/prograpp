@@ -12,11 +12,11 @@ export const KOTLIN_UNIT_01_THEORY: Record<string, TheoryLesson> = {
     estimatedMinutes: 5,
     analogy: 'Imagina una receta de cocina en un restaurante: los ingredientes frescos son la Entrada (Input), las técnicas de corte, cocción y mezclado del chef son el Proceso, y el platillo servido y listo en la mesa del comensal es la Salida (Output). Si falta un paso o el orden se altera, el platillo se arruina.',
     video: {
-      title: '¿Qué es un Algoritmo y cómo piensa una computadora?',
-      channel: 'EDteam / Computer Science Basics',
-      duration: '8:45',
-      url: 'https://www.youtube.com/watch?v=U3CGMyJZ9R8',
-      summary: 'Descubre qué es un algoritmo en la vida real, cómo se descomponen problemas complejos y por qué el modelo Input-Process-Output rige desde un microondas hasta la inteligencia artificial.'
+      title: 'Curso de KOTLIN Desde Cero: Primeros Pasos en una hora',
+      channel: 'MoureDev by Brais Moure',
+      duration: '58:20',
+      url: 'https://www.youtube.com/watch?v=T3ugOYTRF7c',
+      summary: 'Aprende los fundamentos del lenguaje Kotlin paso a paso: estructura general, main(), compilación y buenas prácticas desde cero en español.'
     },
     sections: [
       {
@@ -59,11 +59,11 @@ Total a pagar: $102.0`,
     estimatedMinutes: 5,
     analogy: '`println()` es como enviar un mensaje de texto y presionar la tecla "Enter". El mensaje aparece en la pantalla y el cursor salta automáticamente al renglón de abajo, listo para el siguiente texto sin amontonarse.',
     video: {
-      title: 'Tu primer programa en Kotlin: println() y la terminal',
-      channel: 'Kotlin by JetBrains Official',
-      duration: '6:15',
-      url: 'https://www.youtube.com/watch?v=F9UC9DY-vIU',
-      summary: 'Aprende a ejecutar tu primera línea de código en Kotlin, comprendiendo cómo la función println() interactúa con la salida estándar del sistema operativo.'
+      title: 'Curso de KOTLIN Desde Cero: Primeros Pasos en una hora',
+      channel: 'MoureDev by Brais Moure',
+      duration: '58:20',
+      url: 'https://www.youtube.com/watch?v=T3ugOYTRF7c',
+      summary: 'Aprende los fundamentos del lenguaje Kotlin paso a paso: estructura general, main(), compilación y buenas prácticas desde cero en español.'
     },
     sections: [
       {
@@ -104,11 +104,11 @@ true`,
     estimatedMinutes: 5,
     analogy: '`print()` es como una máquina de escribir clásica que escribe una letra tras otra sin mover la palanca de retorno. `println()` escribe y de inmediato jala la palanca hacia abajo para empezar en una línea limpia.',
     video: {
-      title: 'Diferencias entre print y println en Kotlin con caracteres de escape',
-      channel: 'Programación Fácil / Kotlin Essentials',
-      duration: '7:20',
-      url: 'https://www.youtube.com/watch?v=fXvU7u7d3-c',
-      summary: 'Ejemplos detallados de cuándo usar print() para construir salidas continuas en la misma línea y cómo usar \\n y \\t para formatear tablas en consola.'
+      title: 'Curso de KOTLIN Desde Cero: Primeros Pasos en una hora',
+      channel: 'MoureDev by Brais Moure',
+      duration: '58:20',
+      url: 'https://www.youtube.com/watch?v=T3ugOYTRF7c',
+      summary: 'Aprende los fundamentos del lenguaje Kotlin paso a paso: estructura general, main(), compilación y buenas prácticas desde cero en español.'
     },
     sections: [
       {
@@ -155,11 +155,11 @@ Ella dijo: "Kotlin es increíble"`,
     estimatedMinutes: 5,
     analogy: 'La función `main()` es como la puerta principal de un edificio corporativo. No importa qué tan grande sea el rascacielos o cuántas habitaciones tenga, todos los visitantes deben entrar obligatoriamente por la puerta principal.',
     video: {
-      title: 'Estructura de un proyecto Kotlin y la función main',
-      channel: 'JetBrains Academy',
-      duration: '9:10',
-      url: 'https://www.youtube.com/watch?v=F9UC9DY-vIU',
-      summary: 'Descubre cómo la JVM ubica el punto de entrada main(), qué significa la palabra reservada fun y cómo se ejecutan las instrucciones de arriba hacia abajo.'
+      title: 'Curso de KOTLIN Desde Cero: Primeros Pasos en una hora',
+      channel: 'MoureDev by Brais Moure',
+      duration: '58:20',
+      url: 'https://www.youtube.com/watch?v=T3ugOYTRF7c',
+      summary: 'Aprende los fundamentos del lenguaje Kotlin paso a paso: estructura general, main(), compilación y buenas prácticas desde cero en español.'
     },
     sections: [
       {
@@ -200,11 +200,11 @@ Paso 3: ¡Listo para operar!
     estimatedMinutes: 5,
     analogy: 'Un diagrama de flujo es como el mapa de un GPS en una bifurcación de autopista: si el peaje está abierto (Verdadero), sigues por el carril rápido; si está cerrado (Falso), tomas la salida alterna. Nunca puedes tomar ambos caminos simultáneamente.',
     video: {
-      title: 'Diagramas de Flujo desde cero: Simbología y Ejemplos Prácticos',
-      channel: 'Píldoras Informáticas / Lógica de Programación',
-      duration: '11:30',
-      url: 'https://www.youtube.com/watch?v=Kucgg5f_tTU',
-      summary: 'Aprende los símbolos universales de diagramación (óvalos, rectángulos, rombos de decisión y paralelogramos) y cómo traducirlos a código real.'
+      title: 'Curso de KOTLIN Desde Cero: Primeros Pasos en una hora',
+      channel: 'MoureDev by Brais Moure',
+      duration: '58:20',
+      url: 'https://www.youtube.com/watch?v=T3ugOYTRF7c',
+      summary: 'Aprende los fundamentos del lenguaje Kotlin paso a paso: estructura general, main(), compilación y buenas prácticas desde cero en español.'
     },
     sections: [
       {
@@ -250,11 +250,11 @@ Boleto estándar: $10.0`,
     estimatedMinutes: 5,
     analogy: 'Una variable es como una caja organizadora en una bodega con una etiqueta visible pegada al frente. En lugar de buscar por coordenadas oscuras de la bodega, buscas la caja llamada "nombreCliente" y tomas lo que tiene guardado adentro.',
     video: {
-      title: 'Variables y Memoria en Kotlin para Principiantes',
-      channel: 'Google Developers / Android Basics in Kotlin',
-      duration: '8:05',
-      url: 'https://www.youtube.com/watch?v=5flXfy_O_8E',
-      summary: 'Descubre qué ocurre físicamente en la memoria RAM cuando declaras una variable, cómo el compilador asocia nombres a datos y cómo reutilizarlos.'
+      title: 'Curso de KOTLIN Desde Cero: Primeros Pasos en una hora',
+      channel: 'MoureDev by Brais Moure',
+      duration: '58:20',
+      url: 'https://www.youtube.com/watch?v=T3ugOYTRF7c',
+      summary: 'Aprende los fundamentos del lenguaje Kotlin paso a paso: estructura general, main(), compilación y buenas prácticas desde cero en español.'
     },
     sections: [
       {
@@ -296,11 +296,11 @@ Puntos de salud: 100.0`,
     estimatedMinutes: 5,
     analogy: 'Una variable declarada con `val` es como grabar tu nombre con cincel en una losa de mármol o un certificado de nacimiento plastificado: una vez escrito, queda sellado para siempre y nadie puede alterarlo por error.',
     video: {
-      title: 'val vs var en Kotlin: ¿Por qué preferir la inmutabilidad?',
-      channel: 'Philipp Lackner / Android & Kotlin Master',
-      duration: '10:15',
-      url: 'https://www.youtube.com/watch?v=r0X6Xp8jH5E',
-      summary: 'Análisis profundo de la inmutabilidad en Kotlin: por qué JetBrains diseñó el lenguaje para favorecer val por defecto y cómo evita bugs en aplicaciones concurrentes.'
+      title: 'Curso de KOTLIN Desde Cero: Primeros Pasos en una hora',
+      channel: 'MoureDev by Brais Moure',
+      duration: '58:20',
+      url: 'https://www.youtube.com/watch?v=T3ugOYTRF7c',
+      summary: 'Aprende los fundamentos del lenguaje Kotlin paso a paso: estructura general, main(), compilación y buenas prácticas desde cero en español.'
     },
     sections: [
       {
@@ -340,11 +340,11 @@ Aceleración de gravedad: 9.807 m/s²`,
     estimatedMinutes: 5,
     analogy: 'Una variable declarada con `var` es como una pizarra blanca con marcador borrable: puedes escribir un número, luego borrarlo con una esponja y anotar uno nuevo tantas veces como necesites.',
     video: {
-      title: 'Uso correcto de var en Kotlin: Estados y Contadores',
-      channel: 'Kotlin by JetBrains Official',
-      duration: '7:40',
-      url: 'https://www.youtube.com/watch?v=F9UC9DY-vIU',
-      summary: 'Ejemplos prácticos de mutabilidad: cómo actualizar contadores en bucles, gestionar vidas en videojuegos y cuándo el uso de var está justificado.'
+      title: 'Curso de KOTLIN Desde Cero: Primeros Pasos en una hora',
+      channel: 'MoureDev by Brais Moure',
+      duration: '58:20',
+      url: 'https://www.youtube.com/watch?v=T3ugOYTRF7c',
+      summary: 'Aprende los fundamentos del lenguaje Kotlin paso a paso: estructura general, main(), compilación y buenas prácticas desde cero en español.'
     },
     sections: [
       {
@@ -388,11 +388,11 @@ Aceleración de gravedad: 9.807 m/s²`,
     estimatedMinutes: 5,
     analogy: 'Las reglas de nombrado son como las placas de un automóvil: la ley prohíbe usar ciertos símbolos extraños o empezar con números para que cualquier oficial o radar pueda leerlas sin confusión.',
     video: {
-      title: 'Convenciones de código y nombrado en Kotlin (Official Coding Style)',
-      channel: 'JetBrains Developers',
-      duration: '8:55',
-      url: 'https://www.youtube.com/watch?v=F9UC9DY-vIU',
-      summary: 'Guía oficial de estilo de JetBrains: aprende por qué usamos camelCase en variables, PascalCase en clases y UPPER_CASE en constantes globales.'
+      title: 'KOTLIN: Curso ANDROID desde CERO - VARIABLES - Lección',
+      channel: 'MoureDev by Brais Moure',
+      duration: '14:35',
+      url: 'https://www.youtube.com/watch?v=hug4TNmhw78',
+      summary: 'Aprende en español la diferencia entre val (inmutable) y var (mutable) en Kotlin, gestión de memoria e inferencia de tipos.'
     },
     sections: [
       {
@@ -437,11 +437,11 @@ Aceleración de gravedad: 9.807 m/s²`,
     estimatedMinutes: 5,
     analogy: 'Un `Int` es como un contenedor metálico con capacidad para contar hasta 2 mil millones de objetos exactos. No admite fracciones ni pedazos sueltos: solo unidades completas.',
     video: {
-      title: 'Tipos Numéricos en Kotlin: De Byte a Int y Long',
-      channel: 'freeCodeCamp.org',
-      duration: '12:20',
-      url: 'https://www.youtube.com/watch?v=EExSSotojVI',
-      summary: 'Comprende el almacenamiento de enteros en binario de 32 bits, los límites de desbordamiento (overflow) y cómo usar separadores de dígitos para mayor legibilidad.'
+      title: 'KOTLIN: Curso ANDROID desde CERO - TIPOS DE DATOS - Lección 2',
+      channel: 'MoureDev by Brais Moure',
+      duration: '16:10',
+      url: 'https://www.youtube.com/watch?v=uWwVyww30SI',
+      summary: 'Domina los tipos numéricos (Int, Double, Float), texto (String, Char) y Booleanos en Kotlin con ejemplos prácticos y concisos.'
     },
     sections: [
       {
@@ -485,11 +485,11 @@ Población: 1850000 personas`,
     estimatedMinutes: 5,
     analogy: 'Un `Float` es como una regla escolar con marcas milimétricas que cabe en cualquier bolsillo. Un `Double` es como un microscopio de laboratorio con calibración micrométrica: ofrece el doble de precisión para mediciones científicas.',
     video: {
-      title: 'Punto Flotante en Kotlin: Double vs Float explicados',
-      channel: 'Kotlin by JetBrains Official',
-      duration: '9:40',
-      url: 'https://www.youtube.com/watch?v=F9UC9DY-vIU',
-      summary: 'Descubre cómo las computadoras almacenan decimales en binario, por qué Double es el tipo preferido en Kotlin y cuándo es obligatorio usar el sufijo f.'
+      title: 'Curso de KOTLIN Desde Cero: Primeros Pasos en una hora',
+      channel: 'MoureDev by Brais Moure',
+      duration: '58:20',
+      url: 'https://www.youtube.com/watch?v=T3ugOYTRF7c',
+      summary: 'Aprende los fundamentos del lenguaje Kotlin paso a paso: estructura general, main(), compilación y buenas prácticas desde cero en español.'
     },
     sections: [
       {
@@ -533,11 +533,11 @@ Gravedad (Float): 9.807`,
     estimatedMinutes: 5,
     analogy: 'Un `String` es como un collar de cuentas con letras grabadas: cada cuenta es un carácter y están ensartadas en un orden inalterable. Puedes contar cuántas cuentas tiene o hacer una copia con letras doradas, pero no puedes arrancar una cuenta del collar original.',
     video: {
-      title: 'Manejo de Strings y Texto en Kotlin',
-      channel: 'Amigoscode / Kotlin Essentials',
-      duration: '11:15',
-      url: 'https://www.youtube.com/watch?v=fXvU7u7d3-c',
-      summary: 'Aprende a inspeccionar la longitud de cadenas (.length), transformar a mayúsculas y minúsculas, y entender por qué los strings son inmutables en memoria.'
+      title: 'Curso de KOTLIN Desde Cero: Primeros Pasos en una hora',
+      channel: 'MoureDev by Brais Moure',
+      duration: '58:20',
+      url: 'https://www.youtube.com/watch?v=T3ugOYTRF7c',
+      summary: 'Aprende los fundamentos del lenguaje Kotlin paso a paso: estructura general, main(), compilación y buenas prácticas desde cero en español.'
     },
     sections: [
       {
@@ -581,11 +581,11 @@ En minúsculas: ¡aprender kotlin es genial! 🚀`,
     estimatedMinutes: 5,
     analogy: 'Las plantillas de texto son como una carta personalizada con espacios en blanco para llenar: "Estimado [Nombre], su saldo es [Monto]". En lugar de recortar pedazos de papel y pegarlos con goma (+), colocas la variable directamente donde pertenece ($).',
     video: {
-      title: 'String Templates en Kotlin: Olvídate de concatenar con +',
-      channel: 'Kotlin by JetBrains Official',
-      duration: '6:50',
-      url: 'https://www.youtube.com/watch?v=F9UC9DY-vIU',
-      summary: 'Compara la concatenación clásica con el poder de los String Templates en Kotlin y aprende las ventajas de legibilidad y rendimiento.'
+      title: 'Curso de KOTLIN Desde Cero: Primeros Pasos en una hora',
+      channel: 'MoureDev by Brais Moure',
+      duration: '58:20',
+      url: 'https://www.youtube.com/watch?v=T3ugOYTRF7c',
+      summary: 'Aprende los fundamentos del lenguaje Kotlin paso a paso: estructura general, main(), compilación y buenas prácticas desde cero en español.'
     },
     sections: [
       {
@@ -629,11 +629,11 @@ El costo de la entrada es de $85 dólares.`,
     estimatedMinutes: 5,
     analogy: 'El `${}` dentro de un String es como una mini-calculadora integrada en una hoja de texto: le das una fórmula adentro de las llaves y en la hoja queda impreso únicamente el resultado final calculado al instante.',
     video: {
-      title: 'Expresiones complejas con llaves ${} en Kotlin',
-      channel: 'Android Developers',
-      duration: '7:15',
-      url: 'https://www.youtube.com/watch?v=5flXfy_O_8E',
-      summary: 'Descubre cómo evaluar expresiones lógicas, sumas y propiedades de objetos dentro de ${} para mantener tu código conciso y libre de variables temporales innecesarias.'
+      title: 'KOTLIN: Curso ANDROID desde CERO - TIPOS DE DATOS - Lección 2',
+      channel: 'MoureDev by Brais Moure',
+      duration: '16:10',
+      url: 'https://www.youtube.com/watch?v=uWwVyww30SI',
+      summary: 'Domina los tipos numéricos (Int, Double, Float), texto (String, Char) y Booleanos en Kotlin con ejemplos prácticos y concisos.'
     },
     sections: [
       {
@@ -680,11 +680,11 @@ En mayúsculas automáticas: DEV_MASTER`,
     estimatedMinutes: 5,
     analogy: 'La precedencia de operadores es como la prioridad de paso en una rotonda vial: la multiplicación y la división tienen sirena de ambulancia y siempre pasan primero; la suma y la resta deben esperar a que ellas terminen.',
     video: {
-      title: 'Operadores Aritméticos y Precedencia en Kotlin',
-      channel: 'freeCodeCamp.org',
-      duration: '10:05',
-      url: 'https://www.youtube.com/watch?v=EExSSotojVI',
-      summary: 'Repaso exhaustivo de la jerarquía PEMDAS en Kotlin, por qué 2 + 3 * 4 no es 20 y cómo los paréntesis aseguran la intención del desarrollador.'
+      title: 'KOTLIN: Curso ANDROID desde CERO - VARIABLES - Lección',
+      channel: 'MoureDev by Brais Moure',
+      duration: '14:35',
+      url: 'https://www.youtube.com/watch?v=hug4TNmhw78',
+      summary: 'Aprende en español la diferencia entre val (inmutable) y var (mutable) en Kotlin, gestión de memoria e inferencia de tipos.'
     },
     sections: [
       {
@@ -730,11 +730,11 @@ De izquierda a derecha: 20`,
     estimatedMinutes: 5,
     analogy: 'Imagina que tienes 7 pizzas completas para repartir entre 2 salones escolares, pero la regla dice que solo puedes entregar cajas enteras cerradas. Le das 3 cajas a cada salón y sobra 1. Nadie recibe 3.5 porque las pizzas no se pueden cortar a la mitad.',
     video: {
-      title: 'El error más común de novatos: División entera en Kotlin',
-      channel: 'Programación Kotlin con Chema',
-      duration: '8:15',
-      url: 'https://www.youtube.com/watch?v=F9UC9DY-vIU',
-      summary: 'Aprende por qué la división entre dos enteros descarta por completo la parte decimal y cómo resolverlo con .toDouble() o literales decimales.'
+      title: 'Curso de KOTLIN Desde Cero: Primeros Pasos en una hora',
+      channel: 'MoureDev by Brais Moure',
+      duration: '58:20',
+      url: 'https://www.youtube.com/watch?v=T3ugOYTRF7c',
+      summary: 'Aprende los fundamentos del lenguaje Kotlin paso a paso: estructura general, main(), compilación y buenas prácticas desde cero en español.'
     },
     sections: [
       {
@@ -782,11 +782,11 @@ Promedio con decimal: 3.5`,
     estimatedMinutes: 5,
     analogy: 'El operador `%` es como las agujas de un reloj de 12 horas: si avanzas 14 horas desde las 12, no marcas las "14", sino las 2, porque 14 dividido entre 12 deja un residuo de 2. Módulo te dice exactamente qué sobró en la división.',
     video: {
-      title: 'El operador Módulo % explicado de forma simple',
-      channel: 'EDteam / Algoritmos Fundamentales',
-      duration: '7:40',
-      url: 'https://www.youtube.com/watch?v=U3CGMyJZ9R8',
-      summary: 'Descubre los 3 usos maestros del operador módulo: detección de números pares/impares, verificación de múltiplos y control de turnos rotativos en juegos.'
+      title: 'KOTLIN: Curso ANDROID desde CERO - TIPOS DE DATOS - Lección 2',
+      channel: 'MoureDev by Brais Moure',
+      duration: '16:10',
+      url: 'https://www.youtube.com/watch?v=uWwVyww30SI',
+      summary: 'Domina los tipos numéricos (Int, Double, Float), texto (String, Char) y Booleanos en Kotlin con ejemplos prácticos y concisos.'
     },
     sections: [
       {
@@ -834,11 +834,11 @@ En la ronda #7 le toca al jugador índice: 1`,
     estimatedMinutes: 5,
     analogy: 'El operador `==` es como el portero de un evento con la lista de invitados: mira el nombre en tu documento de identidad y lo compara letra por letra con la lista. Si coinciden exactamente, te deja pasar (true); si hay una sola diferencia, te detiene (false).',
     video: {
-      title: 'Operadores de Comparación en Kotlin: == vs != vs ===',
-      channel: 'Kotlin by JetBrains Official',
-      duration: '8:30',
-      url: 'https://www.youtube.com/watch?v=F9UC9DY-vIU',
-      summary: 'Aprende la diferencia entre igualdad estructural (==) e igualdad referencial (===) y cómo Kotlin protege la comparación de cadenas de texto.'
+      title: 'Curso de KOTLIN Desde Cero: Primeros Pasos en una hora',
+      channel: 'MoureDev by Brais Moure',
+      duration: '58:20',
+      url: 'https://www.youtube.com/watch?v=T3ugOYTRF7c',
+      summary: 'Aprende los fundamentos del lenguaje Kotlin paso a paso: estructura general, main(), compilación y buenas prácticas desde cero en español.'
     },
     sections: [
       {
@@ -886,11 +886,11 @@ En la ronda #7 le toca al jugador índice: 1`,
     estimatedMinutes: 5,
     analogy: 'Los comentarios son como las notas adhesivas que un arquitecto pega en los planos de una obra: explican a los obreros por qué se eligió cierta viga o material, pero no forman parte del concreto ni añaden peso a la estructura.',
     video: {
-      title: 'Buenas prácticas para comentar código en Kotlin',
-      channel: 'JetBrains Developers',
-      duration: '7:50',
-      url: 'https://www.youtube.com/watch?v=F9UC9DY-vIU',
-      summary: 'Aprende la diferencia entre comentar lo que hace el código (mala práctica) y documentar el PORQUÉ de las decisiones de negocio (buena práctica).'
+      title: 'KOTLIN: Curso ANDROID desde CERO - VARIABLES - Lección',
+      channel: 'MoureDev by Brais Moure',
+      duration: '14:35',
+      url: 'https://www.youtube.com/watch?v=hug4TNmhw78',
+      summary: 'Aprende en español la diferencia entre val (inmutable) y var (mutable) en Kotlin, gestión de memoria e inferencia de tipos.'
     },
     sections: [
       {
@@ -934,11 +934,11 @@ En la ronda #7 le toca al jugador índice: 1`,
     estimatedMinutes: 6,
     analogy: 'Este proyecto es como el examen práctico de conducir: ya aprendiste qué hace el volante, el acelerador, los frenos y los espejos; ahora subirás al auto y conducirás en una avenida real coordinando todos los pedales a la vez.',
     video: {
-      title: 'Creación de un Simulador de Cajero Automático en Kotlin',
-      channel: 'freeCodeCamp.org / Kotlin Masterclass',
-      duration: '14:20',
-      url: 'https://www.youtube.com/watch?v=EExSSotojVI',
-      summary: 'Proyecto paso a paso que une variables val/var, operadores aritméticos, validaciones lógicas con if/else y salida profesional con String Templates.'
+      title: 'Curso de KOTLIN Desde Cero: Primeros Pasos en una hora',
+      channel: 'MoureDev by Brais Moure',
+      duration: '58:20',
+      url: 'https://www.youtube.com/watch?v=T3ugOYTRF7c',
+      summary: 'Aprende los fundamentos del lenguaje Kotlin paso a paso: estructura general, main(), compilación y buenas prácticas desde cero en español.'
     },
     sections: [
       {

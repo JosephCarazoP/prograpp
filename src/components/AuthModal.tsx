@@ -17,7 +17,7 @@ import {
   Sparkles
 } from 'lucide-react';
 import { authService } from '../services/authService';
-import { userService } from '../services/userService';
+import { userService, DEFAULT_PROFILE } from '../services/userService';
 import { UserProfile } from '../types/user';
 import { soundService } from '../services/soundService';
 import { DevAvatar } from './Avatars';
@@ -151,25 +151,43 @@ export const AuthModal: React.FC<AuthModalProps> = ({
         // 1. Crear usuario en autenticación con persistencia seleccionada
         uid = await authService.signUpWithEmail(cleanEmail, password, fullStudentName, isSharedDevice);
 
-        // 2. Inicializar perfil de usuario con todos los campos académicos y el avatar elegido
-        const profile = await userService.getProfile(uid);
-        profile.displayName = fullStudentName;
-        profile.firstName = cleanFirstName;
-        profile.firstLastName = cleanFirstLast;
-        profile.secondLastName = cleanSecondLast;
-        profile.idNumber = cleanId;
-        profile.email = cleanEmail;
-        profile.avatarId = selectedAvatar;
+        // 2. Inicializar perfil de usuario con todos los datos académicos directos
+        const newProfile: UserProfile = {
+          ...DEFAULT_PROFILE,
+          uid,
+          displayName: fullStudentName,
+          firstName: cleanFirstName,
+          firstLastName: cleanFirstLast,
+          secondLastName: cleanSecondLast,
+          idNumber: cleanId,
+          email: cleanEmail,
+          avatarId: selectedAvatar,
+          studentCode: 'E' + (Math.floor(Math.random() * 89) + 10),
+          createdAt: Date.now()
+        };
 
-        await userService.updateProfile(profile);
+        await userService.updateProfile(newProfile);
 
         soundService.playWin();
-        onAuthSuccess(profile);
+        onAuthSuccess(newProfile);
         onClose();
       } else {
         // Inicio de sesión
         uid = await authService.signInWithEmail(cleanEmail, password, isSharedDevice);
-        const profile = await userService.getProfile(uid);
+        let profile = await userService.getProfile(uid);
+
+        // Sincronizar nombre si estuviera vacío o con texto genérico
+        if (!profile.displayName || profile.displayName === 'Dev Aprendiz' || profile.displayName === 'Estudiante') {
+          const authUser = authService.getCurrentUser();
+          if (authUser?.displayName) {
+            profile.displayName = authUser.displayName;
+          } else if (profile.firstName) {
+            profile.displayName = `${profile.firstName} ${profile.firstLastName || ''} ${profile.secondLastName || ''}`.trim();
+          } else if (cleanEmail) {
+            profile.displayName = cleanEmail.split('@')[0];
+          }
+          await userService.updateProfile(profile);
+        }
 
         soundService.playWin();
         onAuthSuccess(profile);

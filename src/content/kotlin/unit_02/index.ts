@@ -21,7 +21,7 @@ const KOTLIN_U02_BANKS: Record<number, { title: string; desc: string; exercises:
       {
         id: 'kt-u02-l01-e02',
         type: 'code_builder',
-        prompt: 'Construye la declaración de variable inmutable para este nivel:',
+        prompt: 'Construye la instrucción para declarar una variable de solo lectura (val) llamada "dato" con valor 10:',
         tokens: ['val', 'dato', '=', '10', 'var', 'let'],
         solution: ['val', 'dato', '=', '10'],
         hint: 'Usa val para declarar el identificador inmutable.',
@@ -41,11 +41,11 @@ const KOTLIN_U02_BANKS: Record<number, { title: string; desc: string; exercises:
       {
         id: 'kt-u02-l01-e04',
         type: 'spot_the_bug',
-        prompt: 'Toca la línea que produce un error de compilación:',
+        prompt: 'Toca la línea con el error al intentar cambiar el valor de una variable "val" (de solo lectura):',
         codeSnippet: [
           'val clave = 1234',
           'println(clave)',
-          'clave = 5678 // Reasignación inválida'
+          'clave = 5678'
         ],
         bugLineIndex: 2,
         explanation: 'Una variable val no puede reasignarse tras su inicialización.',
@@ -54,7 +54,7 @@ const KOTLIN_U02_BANKS: Record<number, { title: string; desc: string; exercises:
       {
         id: 'kt-u02-l01-e05',
         type: 'code_cloze',
-        prompt: 'Completa la palabra clave correspondiente:',
+        prompt: 'Completa la palabra clave para declarar una variable de solo lectura "nivel = 1":',
         codeWithBlank: '___ nivel = 1',
         options: ['val', 'fun', 'class', 'set'],
         correctOption: 'val',
@@ -74,7 +74,7 @@ const KOTLIN_U02_BANKS: Record<number, { title: string; desc: string; exercises:
       {
         id: 'kt-u02-l01-e07',
         type: 'code_builder',
-        prompt: 'Declara la variable mutable vidas inicializada en 3:',
+        prompt: 'Construye la instrucción para declarar una variable que pueda cambiar de valor (var) llamada "vidas = 3":',
         tokens: ['var', 'vidas', '=', '3', 'val', 'const'],
         solution: ['var', 'vidas', '=', '3'],
         hint: 'Usa var para que el contador de vidas pueda variar.',
@@ -97,7 +97,7 @@ const KOTLIN_U02_BANKS: Record<number, { title: string; desc: string; exercises:
       {
         id: 'kt-u02-l01-e09',
         type: 'code_cloze',
-        prompt: 'Para cadenas de texto utilizamos el tipo:',
+        prompt: '¿Qué tipo de dato se utiliza en Kotlin para guardar texto entre comillas?:',
         codeWithBlank: 'val mensaje: ___ = "Hola"',
         options: ['String', 'Int', 'Char', 'Boolean'],
         correctOption: 'String',
@@ -107,7 +107,7 @@ const KOTLIN_U02_BANKS: Record<number, { title: string; desc: string; exercises:
       {
         id: 'kt-u02-l01-e10',
         type: 'parsons_puzzle',
-        prompt: 'Ordena la secuencia lógica de declaración y uso:',
+        prompt: 'Ordena las líneas de código de arriba a abajo en el orden correcto de ejecución:',
         lines: [
           'val nombre = "Dev"',
           'val saludo = "Bienvenido, $nombre"',
@@ -139,7 +139,7 @@ const KOTLIN_U02_BANKS: Record<number, { title: string; desc: string; exercises:
       {
         id: 'kt-u02-l02-e02',
         type: 'code_builder',
-        prompt: 'Construye la declaración de variable inmutable para este nivel:',
+        prompt: 'Construye la instrucción para declarar una variable de solo lectura (val) llamada "dato" con valor 10:',
         tokens: ['val', 'dato', '=', '10', 'var', 'let'],
         solution: ['val', 'dato', '=', '10'],
         hint: 'Usa val para declarar el identificador inmutable.',
@@ -159,11 +159,11 @@ const KOTLIN_U02_BANKS: Record<number, { title: string; desc: string; exercises:
       {
         id: 'kt-u02-l02-e04',
         type: 'spot_the_bug',
-        prompt: 'Toca la línea que produce un error de compilación:',
+        prompt: 'Toca la línea con el error al intentar cambiar el valor de una variable "val" (de solo lectura):',
         codeSnippet: [
           'val clave = 1234',
           'println(clave)',
-          'clave = 5678 // Reasignación inválida'
+          'clave = 5678'
         ],
         bugLineIndex: 2,
         explanation: 'Una variable val no puede reasignarse tras su inicialización.',
@@ -172,7 +172,7 @@ const KOTLIN_U02_BANKS: Record<number, { title: string; desc: string; exercises:
       {
         id: 'kt-u02-l02-e05',
         type: 'code_cloze',
-        prompt: 'Completa la palabra clave correspondiente:',
+        prompt: 'Completa la palabra clave para declarar una variable de solo lectura "nivel = 1":',
         codeWithBlank: '___ nivel = 1',
         options: ['val', 'fun', 'class', 'set'],
         correctOption: 'val',
@@ -192,7 +192,7 @@ const KOTLIN_U02_BANKS: Record<number, { title: string; desc: string; exercises:
       {
         id: 'kt-u02-l02-e07',
         type: 'code_builder',
-        prompt: 'Declara la variable mutable vidas inicializada en 3:',
+        prompt: 'Construye la instrucción para declarar una variable que pueda cambiar de valor (var) llamada "vidas = 3":',
         tokens: ['var', 'vidas', '=', '3', 'val', 'const'],
         solution: ['var', 'vidas', '=', '3'],
         hint: 'Usa var para que el contador de vidas pueda variar.',
@@ -215,7 +215,7 @@ const KOTLIN_U02_BANKS: Record<number, { title: string; desc: string; exercises:
       {
         id: 'kt-u02-l02-e09',
         type: 'code_cloze',
-        prompt: 'Para cadenas de texto utilizamos el tipo:',
+        prompt: '¿Qué tipo de dato se utiliza en Kotlin para guardar texto entre comillas?:',
         codeWithBlank: 'val mensaje: ___ = "Hola"',
         options: ['String', 'Int', 'Char', 'Boolean'],
         correctOption: 'String',
@@ -225,7 +225,7 @@ const KOTLIN_U02_BANKS: Record<number, { title: string; desc: string; exercises:
       {
         id: 'kt-u02-l02-e10',
         type: 'parsons_puzzle',
-        prompt: 'Ordena la secuencia lógica de declaración y uso:',
+        prompt: 'Ordena las líneas de código de arriba a abajo en el orden correcto de ejecución:',
         lines: [
           'val nombre = "Dev"',
           'val saludo = "Bienvenido, $nombre"',
@@ -257,7 +257,7 @@ const KOTLIN_U02_BANKS: Record<number, { title: string; desc: string; exercises:
       {
         id: 'kt-u02-l03-e02',
         type: 'code_builder',
-        prompt: 'Construye la declaración de variable inmutable para este nivel:',
+        prompt: 'Construye la instrucción para declarar una variable de solo lectura (val) llamada "dato" con valor 10:',
         tokens: ['val', 'dato', '=', '10', 'var', 'let'],
         solution: ['val', 'dato', '=', '10'],
         hint: 'Usa val para declarar el identificador inmutable.',
@@ -277,11 +277,11 @@ const KOTLIN_U02_BANKS: Record<number, { title: string; desc: string; exercises:
       {
         id: 'kt-u02-l03-e04',
         type: 'spot_the_bug',
-        prompt: 'Toca la línea que produce un error de compilación:',
+        prompt: 'Toca la línea con el error al intentar cambiar el valor de una variable "val" (de solo lectura):',
         codeSnippet: [
           'val clave = 1234',
           'println(clave)',
-          'clave = 5678 // Reasignación inválida'
+          'clave = 5678'
         ],
         bugLineIndex: 2,
         explanation: 'Una variable val no puede reasignarse tras su inicialización.',
@@ -290,7 +290,7 @@ const KOTLIN_U02_BANKS: Record<number, { title: string; desc: string; exercises:
       {
         id: 'kt-u02-l03-e05',
         type: 'code_cloze',
-        prompt: 'Completa la palabra clave correspondiente:',
+        prompt: 'Completa la palabra clave para declarar una variable de solo lectura "nivel = 1":',
         codeWithBlank: '___ nivel = 1',
         options: ['val', 'fun', 'class', 'set'],
         correctOption: 'val',
@@ -310,7 +310,7 @@ const KOTLIN_U02_BANKS: Record<number, { title: string; desc: string; exercises:
       {
         id: 'kt-u02-l03-e07',
         type: 'code_builder',
-        prompt: 'Declara la variable mutable vidas inicializada en 3:',
+        prompt: 'Construye la instrucción para declarar una variable que pueda cambiar de valor (var) llamada "vidas = 3":',
         tokens: ['var', 'vidas', '=', '3', 'val', 'const'],
         solution: ['var', 'vidas', '=', '3'],
         hint: 'Usa var para que el contador de vidas pueda variar.',
@@ -333,7 +333,7 @@ const KOTLIN_U02_BANKS: Record<number, { title: string; desc: string; exercises:
       {
         id: 'kt-u02-l03-e09',
         type: 'code_cloze',
-        prompt: 'Para cadenas de texto utilizamos el tipo:',
+        prompt: '¿Qué tipo de dato se utiliza en Kotlin para guardar texto entre comillas?:',
         codeWithBlank: 'val mensaje: ___ = "Hola"',
         options: ['String', 'Int', 'Char', 'Boolean'],
         correctOption: 'String',
@@ -343,7 +343,7 @@ const KOTLIN_U02_BANKS: Record<number, { title: string; desc: string; exercises:
       {
         id: 'kt-u02-l03-e10',
         type: 'parsons_puzzle',
-        prompt: 'Ordena la secuencia lógica de declaración y uso:',
+        prompt: 'Ordena las líneas de código de arriba a abajo en el orden correcto de ejecución:',
         lines: [
           'val nombre = "Dev"',
           'val saludo = "Bienvenido, $nombre"',
@@ -375,7 +375,7 @@ const KOTLIN_U02_BANKS: Record<number, { title: string; desc: string; exercises:
       {
         id: 'kt-u02-l04-e02',
         type: 'code_builder',
-        prompt: 'Construye la declaración de variable inmutable para este nivel:',
+        prompt: 'Construye la instrucción para declarar una variable de solo lectura (val) llamada "dato" con valor 10:',
         tokens: ['val', 'dato', '=', '10', 'var', 'let'],
         solution: ['val', 'dato', '=', '10'],
         hint: 'Usa val para declarar el identificador inmutable.',
@@ -395,11 +395,11 @@ const KOTLIN_U02_BANKS: Record<number, { title: string; desc: string; exercises:
       {
         id: 'kt-u02-l04-e04',
         type: 'spot_the_bug',
-        prompt: 'Toca la línea que produce un error de compilación:',
+        prompt: 'Toca la línea con el error al intentar cambiar el valor de una variable "val" (de solo lectura):',
         codeSnippet: [
           'val clave = 1234',
           'println(clave)',
-          'clave = 5678 // Reasignación inválida'
+          'clave = 5678'
         ],
         bugLineIndex: 2,
         explanation: 'Una variable val no puede reasignarse tras su inicialización.',
@@ -408,7 +408,7 @@ const KOTLIN_U02_BANKS: Record<number, { title: string; desc: string; exercises:
       {
         id: 'kt-u02-l04-e05',
         type: 'code_cloze',
-        prompt: 'Completa la palabra clave correspondiente:',
+        prompt: 'Completa la palabra clave para declarar una variable de solo lectura "nivel = 1":',
         codeWithBlank: '___ nivel = 1',
         options: ['val', 'fun', 'class', 'set'],
         correctOption: 'val',
@@ -428,7 +428,7 @@ const KOTLIN_U02_BANKS: Record<number, { title: string; desc: string; exercises:
       {
         id: 'kt-u02-l04-e07',
         type: 'code_builder',
-        prompt: 'Declara la variable mutable vidas inicializada en 3:',
+        prompt: 'Construye la instrucción para declarar una variable que pueda cambiar de valor (var) llamada "vidas = 3":',
         tokens: ['var', 'vidas', '=', '3', 'val', 'const'],
         solution: ['var', 'vidas', '=', '3'],
         hint: 'Usa var para que el contador de vidas pueda variar.',
@@ -451,7 +451,7 @@ const KOTLIN_U02_BANKS: Record<number, { title: string; desc: string; exercises:
       {
         id: 'kt-u02-l04-e09',
         type: 'code_cloze',
-        prompt: 'Para cadenas de texto utilizamos el tipo:',
+        prompt: '¿Qué tipo de dato se utiliza en Kotlin para guardar texto entre comillas?:',
         codeWithBlank: 'val mensaje: ___ = "Hola"',
         options: ['String', 'Int', 'Char', 'Boolean'],
         correctOption: 'String',
@@ -461,7 +461,7 @@ const KOTLIN_U02_BANKS: Record<number, { title: string; desc: string; exercises:
       {
         id: 'kt-u02-l04-e10',
         type: 'parsons_puzzle',
-        prompt: 'Ordena la secuencia lógica de declaración y uso:',
+        prompt: 'Ordena las líneas de código de arriba a abajo en el orden correcto de ejecución:',
         lines: [
           'val nombre = "Dev"',
           'val saludo = "Bienvenido, $nombre"',
@@ -493,7 +493,7 @@ const KOTLIN_U02_BANKS: Record<number, { title: string; desc: string; exercises:
       {
         id: 'kt-u02-l05-e02',
         type: 'code_builder',
-        prompt: 'Construye la declaración de variable inmutable para este nivel:',
+        prompt: 'Construye la instrucción para declarar una variable de solo lectura (val) llamada "dato" con valor 10:',
         tokens: ['val', 'dato', '=', '10', 'var', 'let'],
         solution: ['val', 'dato', '=', '10'],
         hint: 'Usa val para declarar el identificador inmutable.',
@@ -513,11 +513,11 @@ const KOTLIN_U02_BANKS: Record<number, { title: string; desc: string; exercises:
       {
         id: 'kt-u02-l05-e04',
         type: 'spot_the_bug',
-        prompt: 'Toca la línea que produce un error de compilación:',
+        prompt: 'Toca la línea con el error al intentar cambiar el valor de una variable "val" (de solo lectura):',
         codeSnippet: [
           'val clave = 1234',
           'println(clave)',
-          'clave = 5678 // Reasignación inválida'
+          'clave = 5678'
         ],
         bugLineIndex: 2,
         explanation: 'Una variable val no puede reasignarse tras su inicialización.',
@@ -526,7 +526,7 @@ const KOTLIN_U02_BANKS: Record<number, { title: string; desc: string; exercises:
       {
         id: 'kt-u02-l05-e05',
         type: 'code_cloze',
-        prompt: 'Completa la palabra clave correspondiente:',
+        prompt: 'Completa la palabra clave para declarar una variable de solo lectura "nivel = 1":',
         codeWithBlank: '___ nivel = 1',
         options: ['val', 'fun', 'class', 'set'],
         correctOption: 'val',
@@ -546,7 +546,7 @@ const KOTLIN_U02_BANKS: Record<number, { title: string; desc: string; exercises:
       {
         id: 'kt-u02-l05-e07',
         type: 'code_builder',
-        prompt: 'Declara la variable mutable vidas inicializada en 3:',
+        prompt: 'Construye la instrucción para declarar una variable que pueda cambiar de valor (var) llamada "vidas = 3":',
         tokens: ['var', 'vidas', '=', '3', 'val', 'const'],
         solution: ['var', 'vidas', '=', '3'],
         hint: 'Usa var para que el contador de vidas pueda variar.',
@@ -569,7 +569,7 @@ const KOTLIN_U02_BANKS: Record<number, { title: string; desc: string; exercises:
       {
         id: 'kt-u02-l05-e09',
         type: 'code_cloze',
-        prompt: 'Para cadenas de texto utilizamos el tipo:',
+        prompt: '¿Qué tipo de dato se utiliza en Kotlin para guardar texto entre comillas?:',
         codeWithBlank: 'val mensaje: ___ = "Hola"',
         options: ['String', 'Int', 'Char', 'Boolean'],
         correctOption: 'String',
@@ -579,7 +579,7 @@ const KOTLIN_U02_BANKS: Record<number, { title: string; desc: string; exercises:
       {
         id: 'kt-u02-l05-e10',
         type: 'parsons_puzzle',
-        prompt: 'Ordena la secuencia lógica de declaración y uso:',
+        prompt: 'Ordena las líneas de código de arriba a abajo en el orden correcto de ejecución:',
         lines: [
           'val nombre = "Dev"',
           'val saludo = "Bienvenido, $nombre"',
@@ -611,7 +611,7 @@ const KOTLIN_U02_BANKS: Record<number, { title: string; desc: string; exercises:
       {
         id: 'kt-u02-l06-e02',
         type: 'code_builder',
-        prompt: 'Construye la declaración de variable inmutable para este nivel:',
+        prompt: 'Construye la instrucción para declarar una variable de solo lectura (val) llamada "dato" con valor 10:',
         tokens: ['val', 'dato', '=', '10', 'var', 'let'],
         solution: ['val', 'dato', '=', '10'],
         hint: 'Usa val para declarar el identificador inmutable.',
@@ -631,11 +631,11 @@ const KOTLIN_U02_BANKS: Record<number, { title: string; desc: string; exercises:
       {
         id: 'kt-u02-l06-e04',
         type: 'spot_the_bug',
-        prompt: 'Toca la línea que produce un error de compilación:',
+        prompt: 'Toca la línea con el error al intentar cambiar el valor de una variable "val" (de solo lectura):',
         codeSnippet: [
           'val clave = 1234',
           'println(clave)',
-          'clave = 5678 // Reasignación inválida'
+          'clave = 5678'
         ],
         bugLineIndex: 2,
         explanation: 'Una variable val no puede reasignarse tras su inicialización.',
@@ -644,7 +644,7 @@ const KOTLIN_U02_BANKS: Record<number, { title: string; desc: string; exercises:
       {
         id: 'kt-u02-l06-e05',
         type: 'code_cloze',
-        prompt: 'Completa la palabra clave correspondiente:',
+        prompt: 'Completa la palabra clave para declarar una variable de solo lectura "nivel = 1":',
         codeWithBlank: '___ nivel = 1',
         options: ['val', 'fun', 'class', 'set'],
         correctOption: 'val',
@@ -664,7 +664,7 @@ const KOTLIN_U02_BANKS: Record<number, { title: string; desc: string; exercises:
       {
         id: 'kt-u02-l06-e07',
         type: 'code_builder',
-        prompt: 'Declara la variable mutable vidas inicializada en 3:',
+        prompt: 'Construye la instrucción para declarar una variable que pueda cambiar de valor (var) llamada "vidas = 3":',
         tokens: ['var', 'vidas', '=', '3', 'val', 'const'],
         solution: ['var', 'vidas', '=', '3'],
         hint: 'Usa var para que el contador de vidas pueda variar.',
@@ -687,7 +687,7 @@ const KOTLIN_U02_BANKS: Record<number, { title: string; desc: string; exercises:
       {
         id: 'kt-u02-l06-e09',
         type: 'code_cloze',
-        prompt: 'Para cadenas de texto utilizamos el tipo:',
+        prompt: '¿Qué tipo de dato se utiliza en Kotlin para guardar texto entre comillas?:',
         codeWithBlank: 'val mensaje: ___ = "Hola"',
         options: ['String', 'Int', 'Char', 'Boolean'],
         correctOption: 'String',
@@ -697,7 +697,7 @@ const KOTLIN_U02_BANKS: Record<number, { title: string; desc: string; exercises:
       {
         id: 'kt-u02-l06-e10',
         type: 'parsons_puzzle',
-        prompt: 'Ordena la secuencia lógica de declaración y uso:',
+        prompt: 'Ordena las líneas de código de arriba a abajo en el orden correcto de ejecución:',
         lines: [
           'val nombre = "Dev"',
           'val saludo = "Bienvenido, $nombre"',
@@ -729,7 +729,7 @@ const KOTLIN_U02_BANKS: Record<number, { title: string; desc: string; exercises:
       {
         id: 'kt-u02-l07-e02',
         type: 'code_builder',
-        prompt: 'Construye la declaración de variable inmutable para este nivel:',
+        prompt: 'Construye la instrucción para declarar una variable de solo lectura (val) llamada "dato" con valor 10:',
         tokens: ['val', 'dato', '=', '10', 'var', 'let'],
         solution: ['val', 'dato', '=', '10'],
         hint: 'Usa val para declarar el identificador inmutable.',
@@ -749,11 +749,11 @@ const KOTLIN_U02_BANKS: Record<number, { title: string; desc: string; exercises:
       {
         id: 'kt-u02-l07-e04',
         type: 'spot_the_bug',
-        prompt: 'Toca la línea que produce un error de compilación:',
+        prompt: 'Toca la línea con el error al intentar cambiar el valor de una variable "val" (de solo lectura):',
         codeSnippet: [
           'val clave = 1234',
           'println(clave)',
-          'clave = 5678 // Reasignación inválida'
+          'clave = 5678'
         ],
         bugLineIndex: 2,
         explanation: 'Una variable val no puede reasignarse tras su inicialización.',
@@ -762,7 +762,7 @@ const KOTLIN_U02_BANKS: Record<number, { title: string; desc: string; exercises:
       {
         id: 'kt-u02-l07-e05',
         type: 'code_cloze',
-        prompt: 'Completa la palabra clave correspondiente:',
+        prompt: 'Completa la palabra clave para declarar una variable de solo lectura "nivel = 1":',
         codeWithBlank: '___ nivel = 1',
         options: ['val', 'fun', 'class', 'set'],
         correctOption: 'val',
@@ -782,7 +782,7 @@ const KOTLIN_U02_BANKS: Record<number, { title: string; desc: string; exercises:
       {
         id: 'kt-u02-l07-e07',
         type: 'code_builder',
-        prompt: 'Declara la variable mutable vidas inicializada en 3:',
+        prompt: 'Construye la instrucción para declarar una variable que pueda cambiar de valor (var) llamada "vidas = 3":',
         tokens: ['var', 'vidas', '=', '3', 'val', 'const'],
         solution: ['var', 'vidas', '=', '3'],
         hint: 'Usa var para que el contador de vidas pueda variar.',
@@ -805,7 +805,7 @@ const KOTLIN_U02_BANKS: Record<number, { title: string; desc: string; exercises:
       {
         id: 'kt-u02-l07-e09',
         type: 'code_cloze',
-        prompt: 'Para cadenas de texto utilizamos el tipo:',
+        prompt: '¿Qué tipo de dato se utiliza en Kotlin para guardar texto entre comillas?:',
         codeWithBlank: 'val mensaje: ___ = "Hola"',
         options: ['String', 'Int', 'Char', 'Boolean'],
         correctOption: 'String',
@@ -815,7 +815,7 @@ const KOTLIN_U02_BANKS: Record<number, { title: string; desc: string; exercises:
       {
         id: 'kt-u02-l07-e10',
         type: 'parsons_puzzle',
-        prompt: 'Ordena la secuencia lógica de declaración y uso:',
+        prompt: 'Ordena las líneas de código de arriba a abajo en el orden correcto de ejecución:',
         lines: [
           'val nombre = "Dev"',
           'val saludo = "Bienvenido, $nombre"',
@@ -847,7 +847,7 @@ const KOTLIN_U02_BANKS: Record<number, { title: string; desc: string; exercises:
       {
         id: 'kt-u02-l08-e02',
         type: 'code_builder',
-        prompt: 'Construye la declaración de variable inmutable para este nivel:',
+        prompt: 'Construye la instrucción para declarar una variable de solo lectura (val) llamada "dato" con valor 10:',
         tokens: ['val', 'dato', '=', '10', 'var', 'let'],
         solution: ['val', 'dato', '=', '10'],
         hint: 'Usa val para declarar el identificador inmutable.',
@@ -867,11 +867,11 @@ const KOTLIN_U02_BANKS: Record<number, { title: string; desc: string; exercises:
       {
         id: 'kt-u02-l08-e04',
         type: 'spot_the_bug',
-        prompt: 'Toca la línea que produce un error de compilación:',
+        prompt: 'Toca la línea con el error al intentar cambiar el valor de una variable "val" (de solo lectura):',
         codeSnippet: [
           'val clave = 1234',
           'println(clave)',
-          'clave = 5678 // Reasignación inválida'
+          'clave = 5678'
         ],
         bugLineIndex: 2,
         explanation: 'Una variable val no puede reasignarse tras su inicialización.',
@@ -880,7 +880,7 @@ const KOTLIN_U02_BANKS: Record<number, { title: string; desc: string; exercises:
       {
         id: 'kt-u02-l08-e05',
         type: 'code_cloze',
-        prompt: 'Completa la palabra clave correspondiente:',
+        prompt: 'Completa la palabra clave para declarar una variable de solo lectura "nivel = 1":',
         codeWithBlank: '___ nivel = 1',
         options: ['val', 'fun', 'class', 'set'],
         correctOption: 'val',
@@ -900,7 +900,7 @@ const KOTLIN_U02_BANKS: Record<number, { title: string; desc: string; exercises:
       {
         id: 'kt-u02-l08-e07',
         type: 'code_builder',
-        prompt: 'Declara la variable mutable vidas inicializada en 3:',
+        prompt: 'Construye la instrucción para declarar una variable que pueda cambiar de valor (var) llamada "vidas = 3":',
         tokens: ['var', 'vidas', '=', '3', 'val', 'const'],
         solution: ['var', 'vidas', '=', '3'],
         hint: 'Usa var para que el contador de vidas pueda variar.',
@@ -923,7 +923,7 @@ const KOTLIN_U02_BANKS: Record<number, { title: string; desc: string; exercises:
       {
         id: 'kt-u02-l08-e09',
         type: 'code_cloze',
-        prompt: 'Para cadenas de texto utilizamos el tipo:',
+        prompt: '¿Qué tipo de dato se utiliza en Kotlin para guardar texto entre comillas?:',
         codeWithBlank: 'val mensaje: ___ = "Hola"',
         options: ['String', 'Int', 'Char', 'Boolean'],
         correctOption: 'String',
@@ -933,7 +933,7 @@ const KOTLIN_U02_BANKS: Record<number, { title: string; desc: string; exercises:
       {
         id: 'kt-u02-l08-e10',
         type: 'parsons_puzzle',
-        prompt: 'Ordena la secuencia lógica de declaración y uso:',
+        prompt: 'Ordena las líneas de código de arriba a abajo en el orden correcto de ejecución:',
         lines: [
           'val nombre = "Dev"',
           'val saludo = "Bienvenido, $nombre"',
@@ -965,7 +965,7 @@ const KOTLIN_U02_BANKS: Record<number, { title: string; desc: string; exercises:
       {
         id: 'kt-u02-l09-e02',
         type: 'code_builder',
-        prompt: 'Construye la declaración de variable inmutable para este nivel:',
+        prompt: 'Construye la instrucción para declarar una variable de solo lectura (val) llamada "dato" con valor 10:',
         tokens: ['val', 'dato', '=', '10', 'var', 'let'],
         solution: ['val', 'dato', '=', '10'],
         hint: 'Usa val para declarar el identificador inmutable.',
@@ -985,11 +985,11 @@ const KOTLIN_U02_BANKS: Record<number, { title: string; desc: string; exercises:
       {
         id: 'kt-u02-l09-e04',
         type: 'spot_the_bug',
-        prompt: 'Toca la línea que produce un error de compilación:',
+        prompt: 'Toca la línea con el error al intentar cambiar el valor de una variable "val" (de solo lectura):',
         codeSnippet: [
           'val clave = 1234',
           'println(clave)',
-          'clave = 5678 // Reasignación inválida'
+          'clave = 5678'
         ],
         bugLineIndex: 2,
         explanation: 'Una variable val no puede reasignarse tras su inicialización.',
@@ -998,7 +998,7 @@ const KOTLIN_U02_BANKS: Record<number, { title: string; desc: string; exercises:
       {
         id: 'kt-u02-l09-e05',
         type: 'code_cloze',
-        prompt: 'Completa la palabra clave correspondiente:',
+        prompt: 'Completa la palabra clave para declarar una variable de solo lectura "nivel = 1":',
         codeWithBlank: '___ nivel = 1',
         options: ['val', 'fun', 'class', 'set'],
         correctOption: 'val',
@@ -1018,7 +1018,7 @@ const KOTLIN_U02_BANKS: Record<number, { title: string; desc: string; exercises:
       {
         id: 'kt-u02-l09-e07',
         type: 'code_builder',
-        prompt: 'Declara la variable mutable vidas inicializada en 3:',
+        prompt: 'Construye la instrucción para declarar una variable que pueda cambiar de valor (var) llamada "vidas = 3":',
         tokens: ['var', 'vidas', '=', '3', 'val', 'const'],
         solution: ['var', 'vidas', '=', '3'],
         hint: 'Usa var para que el contador de vidas pueda variar.',
@@ -1041,7 +1041,7 @@ const KOTLIN_U02_BANKS: Record<number, { title: string; desc: string; exercises:
       {
         id: 'kt-u02-l09-e09',
         type: 'code_cloze',
-        prompt: 'Para cadenas de texto utilizamos el tipo:',
+        prompt: '¿Qué tipo de dato se utiliza en Kotlin para guardar texto entre comillas?:',
         codeWithBlank: 'val mensaje: ___ = "Hola"',
         options: ['String', 'Int', 'Char', 'Boolean'],
         correctOption: 'String',
@@ -1051,7 +1051,7 @@ const KOTLIN_U02_BANKS: Record<number, { title: string; desc: string; exercises:
       {
         id: 'kt-u02-l09-e10',
         type: 'parsons_puzzle',
-        prompt: 'Ordena la secuencia lógica de declaración y uso:',
+        prompt: 'Ordena las líneas de código de arriba a abajo en el orden correcto de ejecución:',
         lines: [
           'val nombre = "Dev"',
           'val saludo = "Bienvenido, $nombre"',
@@ -1083,7 +1083,7 @@ const KOTLIN_U02_BANKS: Record<number, { title: string; desc: string; exercises:
       {
         id: 'kt-u02-l10-e02',
         type: 'code_builder',
-        prompt: 'Construye la declaración de variable inmutable para este nivel:',
+        prompt: 'Construye la instrucción para declarar una variable de solo lectura (val) llamada "dato" con valor 10:',
         tokens: ['val', 'dato', '=', '10', 'var', 'let'],
         solution: ['val', 'dato', '=', '10'],
         hint: 'Usa val para declarar el identificador inmutable.',
@@ -1103,11 +1103,11 @@ const KOTLIN_U02_BANKS: Record<number, { title: string; desc: string; exercises:
       {
         id: 'kt-u02-l10-e04',
         type: 'spot_the_bug',
-        prompt: 'Toca la línea que produce un error de compilación:',
+        prompt: 'Toca la línea con el error al intentar cambiar el valor de una variable "val" (de solo lectura):',
         codeSnippet: [
           'val clave = 1234',
           'println(clave)',
-          'clave = 5678 // Reasignación inválida'
+          'clave = 5678'
         ],
         bugLineIndex: 2,
         explanation: 'Una variable val no puede reasignarse tras su inicialización.',
@@ -1116,7 +1116,7 @@ const KOTLIN_U02_BANKS: Record<number, { title: string; desc: string; exercises:
       {
         id: 'kt-u02-l10-e05',
         type: 'code_cloze',
-        prompt: 'Completa la palabra clave correspondiente:',
+        prompt: 'Completa la palabra clave para declarar una variable de solo lectura "nivel = 1":',
         codeWithBlank: '___ nivel = 1',
         options: ['val', 'fun', 'class', 'set'],
         correctOption: 'val',
@@ -1136,7 +1136,7 @@ const KOTLIN_U02_BANKS: Record<number, { title: string; desc: string; exercises:
       {
         id: 'kt-u02-l10-e07',
         type: 'code_builder',
-        prompt: 'Declara la variable mutable vidas inicializada en 3:',
+        prompt: 'Construye la instrucción para declarar una variable que pueda cambiar de valor (var) llamada "vidas = 3":',
         tokens: ['var', 'vidas', '=', '3', 'val', 'const'],
         solution: ['var', 'vidas', '=', '3'],
         hint: 'Usa var para que el contador de vidas pueda variar.',
@@ -1159,7 +1159,7 @@ const KOTLIN_U02_BANKS: Record<number, { title: string; desc: string; exercises:
       {
         id: 'kt-u02-l10-e09',
         type: 'code_cloze',
-        prompt: 'Para cadenas de texto utilizamos el tipo:',
+        prompt: '¿Qué tipo de dato se utiliza en Kotlin para guardar texto entre comillas?:',
         codeWithBlank: 'val mensaje: ___ = "Hola"',
         options: ['String', 'Int', 'Char', 'Boolean'],
         correctOption: 'String',
@@ -1169,7 +1169,7 @@ const KOTLIN_U02_BANKS: Record<number, { title: string; desc: string; exercises:
       {
         id: 'kt-u02-l10-e10',
         type: 'parsons_puzzle',
-        prompt: 'Ordena la secuencia lógica de declaración y uso:',
+        prompt: 'Ordena las líneas de código de arriba a abajo en el orden correcto de ejecución:',
         lines: [
           'val nombre = "Dev"',
           'val saludo = "Bienvenido, $nombre"',
@@ -1201,7 +1201,7 @@ const KOTLIN_U02_BANKS: Record<number, { title: string; desc: string; exercises:
       {
         id: 'kt-u02-l11-e02',
         type: 'code_builder',
-        prompt: 'Construye la declaración de variable inmutable para este nivel:',
+        prompt: 'Construye la instrucción para declarar una variable de solo lectura (val) llamada "dato" con valor 10:',
         tokens: ['val', 'dato', '=', '10', 'var', 'let'],
         solution: ['val', 'dato', '=', '10'],
         hint: 'Usa val para declarar el identificador inmutable.',
@@ -1221,11 +1221,11 @@ const KOTLIN_U02_BANKS: Record<number, { title: string; desc: string; exercises:
       {
         id: 'kt-u02-l11-e04',
         type: 'spot_the_bug',
-        prompt: 'Toca la línea que produce un error de compilación:',
+        prompt: 'Toca la línea con el error al intentar cambiar el valor de una variable "val" (de solo lectura):',
         codeSnippet: [
           'val clave = 1234',
           'println(clave)',
-          'clave = 5678 // Reasignación inválida'
+          'clave = 5678'
         ],
         bugLineIndex: 2,
         explanation: 'Una variable val no puede reasignarse tras su inicialización.',
@@ -1234,7 +1234,7 @@ const KOTLIN_U02_BANKS: Record<number, { title: string; desc: string; exercises:
       {
         id: 'kt-u02-l11-e05',
         type: 'code_cloze',
-        prompt: 'Completa la palabra clave correspondiente:',
+        prompt: 'Completa la palabra clave para declarar una variable de solo lectura "nivel = 1":',
         codeWithBlank: '___ nivel = 1',
         options: ['val', 'fun', 'class', 'set'],
         correctOption: 'val',
@@ -1254,7 +1254,7 @@ const KOTLIN_U02_BANKS: Record<number, { title: string; desc: string; exercises:
       {
         id: 'kt-u02-l11-e07',
         type: 'code_builder',
-        prompt: 'Declara la variable mutable vidas inicializada en 3:',
+        prompt: 'Construye la instrucción para declarar una variable que pueda cambiar de valor (var) llamada "vidas = 3":',
         tokens: ['var', 'vidas', '=', '3', 'val', 'const'],
         solution: ['var', 'vidas', '=', '3'],
         hint: 'Usa var para que el contador de vidas pueda variar.',
@@ -1277,7 +1277,7 @@ const KOTLIN_U02_BANKS: Record<number, { title: string; desc: string; exercises:
       {
         id: 'kt-u02-l11-e09',
         type: 'code_cloze',
-        prompt: 'Para cadenas de texto utilizamos el tipo:',
+        prompt: '¿Qué tipo de dato se utiliza en Kotlin para guardar texto entre comillas?:',
         codeWithBlank: 'val mensaje: ___ = "Hola"',
         options: ['String', 'Int', 'Char', 'Boolean'],
         correctOption: 'String',
@@ -1287,7 +1287,7 @@ const KOTLIN_U02_BANKS: Record<number, { title: string; desc: string; exercises:
       {
         id: 'kt-u02-l11-e10',
         type: 'parsons_puzzle',
-        prompt: 'Ordena la secuencia lógica de declaración y uso:',
+        prompt: 'Ordena las líneas de código de arriba a abajo en el orden correcto de ejecución:',
         lines: [
           'val nombre = "Dev"',
           'val saludo = "Bienvenido, $nombre"',
@@ -1319,7 +1319,7 @@ const KOTLIN_U02_BANKS: Record<number, { title: string; desc: string; exercises:
       {
         id: 'kt-u02-l12-e02',
         type: 'code_builder',
-        prompt: 'Construye la declaración de variable inmutable para este nivel:',
+        prompt: 'Construye la instrucción para declarar una variable de solo lectura (val) llamada "dato" con valor 10:',
         tokens: ['val', 'dato', '=', '10', 'var', 'let'],
         solution: ['val', 'dato', '=', '10'],
         hint: 'Usa val para declarar el identificador inmutable.',
@@ -1339,11 +1339,11 @@ const KOTLIN_U02_BANKS: Record<number, { title: string; desc: string; exercises:
       {
         id: 'kt-u02-l12-e04',
         type: 'spot_the_bug',
-        prompt: 'Toca la línea que produce un error de compilación:',
+        prompt: 'Toca la línea con el error al intentar cambiar el valor de una variable "val" (de solo lectura):',
         codeSnippet: [
           'val clave = 1234',
           'println(clave)',
-          'clave = 5678 // Reasignación inválida'
+          'clave = 5678'
         ],
         bugLineIndex: 2,
         explanation: 'Una variable val no puede reasignarse tras su inicialización.',
@@ -1352,7 +1352,7 @@ const KOTLIN_U02_BANKS: Record<number, { title: string; desc: string; exercises:
       {
         id: 'kt-u02-l12-e05',
         type: 'code_cloze',
-        prompt: 'Completa la palabra clave correspondiente:',
+        prompt: 'Completa la palabra clave para declarar una variable de solo lectura "nivel = 1":',
         codeWithBlank: '___ nivel = 1',
         options: ['val', 'fun', 'class', 'set'],
         correctOption: 'val',
@@ -1372,7 +1372,7 @@ const KOTLIN_U02_BANKS: Record<number, { title: string; desc: string; exercises:
       {
         id: 'kt-u02-l12-e07',
         type: 'code_builder',
-        prompt: 'Declara la variable mutable vidas inicializada en 3:',
+        prompt: 'Construye la instrucción para declarar una variable que pueda cambiar de valor (var) llamada "vidas = 3":',
         tokens: ['var', 'vidas', '=', '3', 'val', 'const'],
         solution: ['var', 'vidas', '=', '3'],
         hint: 'Usa var para que el contador de vidas pueda variar.',
@@ -1395,7 +1395,7 @@ const KOTLIN_U02_BANKS: Record<number, { title: string; desc: string; exercises:
       {
         id: 'kt-u02-l12-e09',
         type: 'code_cloze',
-        prompt: 'Para cadenas de texto utilizamos el tipo:',
+        prompt: '¿Qué tipo de dato se utiliza en Kotlin para guardar texto entre comillas?:',
         codeWithBlank: 'val mensaje: ___ = "Hola"',
         options: ['String', 'Int', 'Char', 'Boolean'],
         correctOption: 'String',
@@ -1405,7 +1405,7 @@ const KOTLIN_U02_BANKS: Record<number, { title: string; desc: string; exercises:
       {
         id: 'kt-u02-l12-e10',
         type: 'parsons_puzzle',
-        prompt: 'Ordena la secuencia lógica de declaración y uso:',
+        prompt: 'Ordena las líneas de código de arriba a abajo en el orden correcto de ejecución:',
         lines: [
           'val nombre = "Dev"',
           'val saludo = "Bienvenido, $nombre"',
@@ -1437,7 +1437,7 @@ const KOTLIN_U02_BANKS: Record<number, { title: string; desc: string; exercises:
       {
         id: 'kt-u02-l13-e02',
         type: 'code_builder',
-        prompt: 'Construye la declaración de variable inmutable para este nivel:',
+        prompt: 'Construye la instrucción para declarar una variable de solo lectura (val) llamada "dato" con valor 10:',
         tokens: ['val', 'dato', '=', '10', 'var', 'let'],
         solution: ['val', 'dato', '=', '10'],
         hint: 'Usa val para declarar el identificador inmutable.',
@@ -1457,11 +1457,11 @@ const KOTLIN_U02_BANKS: Record<number, { title: string; desc: string; exercises:
       {
         id: 'kt-u02-l13-e04',
         type: 'spot_the_bug',
-        prompt: 'Toca la línea que produce un error de compilación:',
+        prompt: 'Toca la línea con el error al intentar cambiar el valor de una variable "val" (de solo lectura):',
         codeSnippet: [
           'val clave = 1234',
           'println(clave)',
-          'clave = 5678 // Reasignación inválida'
+          'clave = 5678'
         ],
         bugLineIndex: 2,
         explanation: 'Una variable val no puede reasignarse tras su inicialización.',
@@ -1470,7 +1470,7 @@ const KOTLIN_U02_BANKS: Record<number, { title: string; desc: string; exercises:
       {
         id: 'kt-u02-l13-e05',
         type: 'code_cloze',
-        prompt: 'Completa la palabra clave correspondiente:',
+        prompt: 'Completa la palabra clave para declarar una variable de solo lectura "nivel = 1":',
         codeWithBlank: '___ nivel = 1',
         options: ['val', 'fun', 'class', 'set'],
         correctOption: 'val',
@@ -1490,7 +1490,7 @@ const KOTLIN_U02_BANKS: Record<number, { title: string; desc: string; exercises:
       {
         id: 'kt-u02-l13-e07',
         type: 'code_builder',
-        prompt: 'Declara la variable mutable vidas inicializada en 3:',
+        prompt: 'Construye la instrucción para declarar una variable que pueda cambiar de valor (var) llamada "vidas = 3":',
         tokens: ['var', 'vidas', '=', '3', 'val', 'const'],
         solution: ['var', 'vidas', '=', '3'],
         hint: 'Usa var para que el contador de vidas pueda variar.',
@@ -1513,7 +1513,7 @@ const KOTLIN_U02_BANKS: Record<number, { title: string; desc: string; exercises:
       {
         id: 'kt-u02-l13-e09',
         type: 'code_cloze',
-        prompt: 'Para cadenas de texto utilizamos el tipo:',
+        prompt: '¿Qué tipo de dato se utiliza en Kotlin para guardar texto entre comillas?:',
         codeWithBlank: 'val mensaje: ___ = "Hola"',
         options: ['String', 'Int', 'Char', 'Boolean'],
         correctOption: 'String',
@@ -1523,7 +1523,7 @@ const KOTLIN_U02_BANKS: Record<number, { title: string; desc: string; exercises:
       {
         id: 'kt-u02-l13-e10',
         type: 'parsons_puzzle',
-        prompt: 'Ordena la secuencia lógica de declaración y uso:',
+        prompt: 'Ordena las líneas de código de arriba a abajo en el orden correcto de ejecución:',
         lines: [
           'val nombre = "Dev"',
           'val saludo = "Bienvenido, $nombre"',
@@ -1555,7 +1555,7 @@ const KOTLIN_U02_BANKS: Record<number, { title: string; desc: string; exercises:
       {
         id: 'kt-u02-l14-e02',
         type: 'code_builder',
-        prompt: 'Construye la declaración de variable inmutable para este nivel:',
+        prompt: 'Construye la instrucción para declarar una variable de solo lectura (val) llamada "dato" con valor 10:',
         tokens: ['val', 'dato', '=', '10', 'var', 'let'],
         solution: ['val', 'dato', '=', '10'],
         hint: 'Usa val para declarar el identificador inmutable.',
@@ -1575,11 +1575,11 @@ const KOTLIN_U02_BANKS: Record<number, { title: string; desc: string; exercises:
       {
         id: 'kt-u02-l14-e04',
         type: 'spot_the_bug',
-        prompt: 'Toca la línea que produce un error de compilación:',
+        prompt: 'Toca la línea con el error al intentar cambiar el valor de una variable "val" (de solo lectura):',
         codeSnippet: [
           'val clave = 1234',
           'println(clave)',
-          'clave = 5678 // Reasignación inválida'
+          'clave = 5678'
         ],
         bugLineIndex: 2,
         explanation: 'Una variable val no puede reasignarse tras su inicialización.',
@@ -1588,7 +1588,7 @@ const KOTLIN_U02_BANKS: Record<number, { title: string; desc: string; exercises:
       {
         id: 'kt-u02-l14-e05',
         type: 'code_cloze',
-        prompt: 'Completa la palabra clave correspondiente:',
+        prompt: 'Completa la palabra clave para declarar una variable de solo lectura "nivel = 1":',
         codeWithBlank: '___ nivel = 1',
         options: ['val', 'fun', 'class', 'set'],
         correctOption: 'val',
@@ -1608,7 +1608,7 @@ const KOTLIN_U02_BANKS: Record<number, { title: string; desc: string; exercises:
       {
         id: 'kt-u02-l14-e07',
         type: 'code_builder',
-        prompt: 'Declara la variable mutable vidas inicializada en 3:',
+        prompt: 'Construye la instrucción para declarar una variable que pueda cambiar de valor (var) llamada "vidas = 3":',
         tokens: ['var', 'vidas', '=', '3', 'val', 'const'],
         solution: ['var', 'vidas', '=', '3'],
         hint: 'Usa var para que el contador de vidas pueda variar.',
@@ -1631,7 +1631,7 @@ const KOTLIN_U02_BANKS: Record<number, { title: string; desc: string; exercises:
       {
         id: 'kt-u02-l14-e09',
         type: 'code_cloze',
-        prompt: 'Para cadenas de texto utilizamos el tipo:',
+        prompt: '¿Qué tipo de dato se utiliza en Kotlin para guardar texto entre comillas?:',
         codeWithBlank: 'val mensaje: ___ = "Hola"',
         options: ['String', 'Int', 'Char', 'Boolean'],
         correctOption: 'String',
@@ -1641,7 +1641,7 @@ const KOTLIN_U02_BANKS: Record<number, { title: string; desc: string; exercises:
       {
         id: 'kt-u02-l14-e10',
         type: 'parsons_puzzle',
-        prompt: 'Ordena la secuencia lógica de declaración y uso:',
+        prompt: 'Ordena las líneas de código de arriba a abajo en el orden correcto de ejecución:',
         lines: [
           'val nombre = "Dev"',
           'val saludo = "Bienvenido, $nombre"',
@@ -1673,7 +1673,7 @@ const KOTLIN_U02_BANKS: Record<number, { title: string; desc: string; exercises:
       {
         id: 'kt-u02-l15-e02',
         type: 'code_builder',
-        prompt: 'Construye la declaración de variable inmutable para este nivel:',
+        prompt: 'Construye la instrucción para declarar una variable de solo lectura (val) llamada "dato" con valor 10:',
         tokens: ['val', 'dato', '=', '10', 'var', 'let'],
         solution: ['val', 'dato', '=', '10'],
         hint: 'Usa val para declarar el identificador inmutable.',
@@ -1693,11 +1693,11 @@ const KOTLIN_U02_BANKS: Record<number, { title: string; desc: string; exercises:
       {
         id: 'kt-u02-l15-e04',
         type: 'spot_the_bug',
-        prompt: 'Toca la línea que produce un error de compilación:',
+        prompt: 'Toca la línea con el error al intentar cambiar el valor de una variable "val" (de solo lectura):',
         codeSnippet: [
           'val clave = 1234',
           'println(clave)',
-          'clave = 5678 // Reasignación inválida'
+          'clave = 5678'
         ],
         bugLineIndex: 2,
         explanation: 'Una variable val no puede reasignarse tras su inicialización.',
@@ -1706,7 +1706,7 @@ const KOTLIN_U02_BANKS: Record<number, { title: string; desc: string; exercises:
       {
         id: 'kt-u02-l15-e05',
         type: 'code_cloze',
-        prompt: 'Completa la palabra clave correspondiente:',
+        prompt: 'Completa la palabra clave para declarar una variable de solo lectura "nivel = 1":',
         codeWithBlank: '___ nivel = 1',
         options: ['val', 'fun', 'class', 'set'],
         correctOption: 'val',
@@ -1726,7 +1726,7 @@ const KOTLIN_U02_BANKS: Record<number, { title: string; desc: string; exercises:
       {
         id: 'kt-u02-l15-e07',
         type: 'code_builder',
-        prompt: 'Declara la variable mutable vidas inicializada en 3:',
+        prompt: 'Construye la instrucción para declarar una variable que pueda cambiar de valor (var) llamada "vidas = 3":',
         tokens: ['var', 'vidas', '=', '3', 'val', 'const'],
         solution: ['var', 'vidas', '=', '3'],
         hint: 'Usa var para que el contador de vidas pueda variar.',
@@ -1749,7 +1749,7 @@ const KOTLIN_U02_BANKS: Record<number, { title: string; desc: string; exercises:
       {
         id: 'kt-u02-l15-e09',
         type: 'code_cloze',
-        prompt: 'Para cadenas de texto utilizamos el tipo:',
+        prompt: '¿Qué tipo de dato se utiliza en Kotlin para guardar texto entre comillas?:',
         codeWithBlank: 'val mensaje: ___ = "Hola"',
         options: ['String', 'Int', 'Char', 'Boolean'],
         correctOption: 'String',
@@ -1759,7 +1759,7 @@ const KOTLIN_U02_BANKS: Record<number, { title: string; desc: string; exercises:
       {
         id: 'kt-u02-l15-e10',
         type: 'parsons_puzzle',
-        prompt: 'Ordena la secuencia lógica de declaración y uso:',
+        prompt: 'Ordena las líneas de código de arriba a abajo en el orden correcto de ejecución:',
         lines: [
           'val nombre = "Dev"',
           'val saludo = "Bienvenido, $nombre"',
@@ -1791,7 +1791,7 @@ const KOTLIN_U02_BANKS: Record<number, { title: string; desc: string; exercises:
       {
         id: 'kt-u02-l16-e02',
         type: 'code_builder',
-        prompt: 'Construye la declaración de variable inmutable para este nivel:',
+        prompt: 'Construye la instrucción para declarar una variable de solo lectura (val) llamada "dato" con valor 10:',
         tokens: ['val', 'dato', '=', '10', 'var', 'let'],
         solution: ['val', 'dato', '=', '10'],
         hint: 'Usa val para declarar el identificador inmutable.',
@@ -1811,11 +1811,11 @@ const KOTLIN_U02_BANKS: Record<number, { title: string; desc: string; exercises:
       {
         id: 'kt-u02-l16-e04',
         type: 'spot_the_bug',
-        prompt: 'Toca la línea que produce un error de compilación:',
+        prompt: 'Toca la línea con el error al intentar cambiar el valor de una variable "val" (de solo lectura):',
         codeSnippet: [
           'val clave = 1234',
           'println(clave)',
-          'clave = 5678 // Reasignación inválida'
+          'clave = 5678'
         ],
         bugLineIndex: 2,
         explanation: 'Una variable val no puede reasignarse tras su inicialización.',
@@ -1824,7 +1824,7 @@ const KOTLIN_U02_BANKS: Record<number, { title: string; desc: string; exercises:
       {
         id: 'kt-u02-l16-e05',
         type: 'code_cloze',
-        prompt: 'Completa la palabra clave correspondiente:',
+        prompt: 'Completa la palabra clave para declarar una variable de solo lectura "nivel = 1":',
         codeWithBlank: '___ nivel = 1',
         options: ['val', 'fun', 'class', 'set'],
         correctOption: 'val',
@@ -1844,7 +1844,7 @@ const KOTLIN_U02_BANKS: Record<number, { title: string; desc: string; exercises:
       {
         id: 'kt-u02-l16-e07',
         type: 'code_builder',
-        prompt: 'Declara la variable mutable vidas inicializada en 3:',
+        prompt: 'Construye la instrucción para declarar una variable que pueda cambiar de valor (var) llamada "vidas = 3":',
         tokens: ['var', 'vidas', '=', '3', 'val', 'const'],
         solution: ['var', 'vidas', '=', '3'],
         hint: 'Usa var para que el contador de vidas pueda variar.',
@@ -1867,7 +1867,7 @@ const KOTLIN_U02_BANKS: Record<number, { title: string; desc: string; exercises:
       {
         id: 'kt-u02-l16-e09',
         type: 'code_cloze',
-        prompt: 'Para cadenas de texto utilizamos el tipo:',
+        prompt: '¿Qué tipo de dato se utiliza en Kotlin para guardar texto entre comillas?:',
         codeWithBlank: 'val mensaje: ___ = "Hola"',
         options: ['String', 'Int', 'Char', 'Boolean'],
         correctOption: 'String',
@@ -1877,7 +1877,7 @@ const KOTLIN_U02_BANKS: Record<number, { title: string; desc: string; exercises:
       {
         id: 'kt-u02-l16-e10',
         type: 'parsons_puzzle',
-        prompt: 'Ordena la secuencia lógica de declaración y uso:',
+        prompt: 'Ordena las líneas de código de arriba a abajo en el orden correcto de ejecución:',
         lines: [
           'val nombre = "Dev"',
           'val saludo = "Bienvenido, $nombre"',
@@ -1909,7 +1909,7 @@ const KOTLIN_U02_BANKS: Record<number, { title: string; desc: string; exercises:
       {
         id: 'kt-u02-l17-e02',
         type: 'code_builder',
-        prompt: 'Construye la declaración de variable inmutable para este nivel:',
+        prompt: 'Construye la instrucción para declarar una variable de solo lectura (val) llamada "dato" con valor 10:',
         tokens: ['val', 'dato', '=', '10', 'var', 'let'],
         solution: ['val', 'dato', '=', '10'],
         hint: 'Usa val para declarar el identificador inmutable.',
@@ -1929,11 +1929,11 @@ const KOTLIN_U02_BANKS: Record<number, { title: string; desc: string; exercises:
       {
         id: 'kt-u02-l17-e04',
         type: 'spot_the_bug',
-        prompt: 'Toca la línea que produce un error de compilación:',
+        prompt: 'Toca la línea con el error al intentar cambiar el valor de una variable "val" (de solo lectura):',
         codeSnippet: [
           'val clave = 1234',
           'println(clave)',
-          'clave = 5678 // Reasignación inválida'
+          'clave = 5678'
         ],
         bugLineIndex: 2,
         explanation: 'Una variable val no puede reasignarse tras su inicialización.',
@@ -1942,7 +1942,7 @@ const KOTLIN_U02_BANKS: Record<number, { title: string; desc: string; exercises:
       {
         id: 'kt-u02-l17-e05',
         type: 'code_cloze',
-        prompt: 'Completa la palabra clave correspondiente:',
+        prompt: 'Completa la palabra clave para declarar una variable de solo lectura "nivel = 1":',
         codeWithBlank: '___ nivel = 1',
         options: ['val', 'fun', 'class', 'set'],
         correctOption: 'val',
@@ -1962,7 +1962,7 @@ const KOTLIN_U02_BANKS: Record<number, { title: string; desc: string; exercises:
       {
         id: 'kt-u02-l17-e07',
         type: 'code_builder',
-        prompt: 'Declara la variable mutable vidas inicializada en 3:',
+        prompt: 'Construye la instrucción para declarar una variable que pueda cambiar de valor (var) llamada "vidas = 3":',
         tokens: ['var', 'vidas', '=', '3', 'val', 'const'],
         solution: ['var', 'vidas', '=', '3'],
         hint: 'Usa var para que el contador de vidas pueda variar.',
@@ -1985,7 +1985,7 @@ const KOTLIN_U02_BANKS: Record<number, { title: string; desc: string; exercises:
       {
         id: 'kt-u02-l17-e09',
         type: 'code_cloze',
-        prompt: 'Para cadenas de texto utilizamos el tipo:',
+        prompt: '¿Qué tipo de dato se utiliza en Kotlin para guardar texto entre comillas?:',
         codeWithBlank: 'val mensaje: ___ = "Hola"',
         options: ['String', 'Int', 'Char', 'Boolean'],
         correctOption: 'String',
@@ -1995,7 +1995,7 @@ const KOTLIN_U02_BANKS: Record<number, { title: string; desc: string; exercises:
       {
         id: 'kt-u02-l17-e10',
         type: 'parsons_puzzle',
-        prompt: 'Ordena la secuencia lógica de declaración y uso:',
+        prompt: 'Ordena las líneas de código de arriba a abajo en el orden correcto de ejecución:',
         lines: [
           'val nombre = "Dev"',
           'val saludo = "Bienvenido, $nombre"',
@@ -2027,7 +2027,7 @@ const KOTLIN_U02_BANKS: Record<number, { title: string; desc: string; exercises:
       {
         id: 'kt-u02-l18-e02',
         type: 'code_builder',
-        prompt: 'Construye la declaración de variable inmutable para este nivel:',
+        prompt: 'Construye la instrucción para declarar una variable de solo lectura (val) llamada "dato" con valor 10:',
         tokens: ['val', 'dato', '=', '10', 'var', 'let'],
         solution: ['val', 'dato', '=', '10'],
         hint: 'Usa val para declarar el identificador inmutable.',
@@ -2047,11 +2047,11 @@ const KOTLIN_U02_BANKS: Record<number, { title: string; desc: string; exercises:
       {
         id: 'kt-u02-l18-e04',
         type: 'spot_the_bug',
-        prompt: 'Toca la línea que produce un error de compilación:',
+        prompt: 'Toca la línea con el error al intentar cambiar el valor de una variable "val" (de solo lectura):',
         codeSnippet: [
           'val clave = 1234',
           'println(clave)',
-          'clave = 5678 // Reasignación inválida'
+          'clave = 5678'
         ],
         bugLineIndex: 2,
         explanation: 'Una variable val no puede reasignarse tras su inicialización.',
@@ -2060,7 +2060,7 @@ const KOTLIN_U02_BANKS: Record<number, { title: string; desc: string; exercises:
       {
         id: 'kt-u02-l18-e05',
         type: 'code_cloze',
-        prompt: 'Completa la palabra clave correspondiente:',
+        prompt: 'Completa la palabra clave para declarar una variable de solo lectura "nivel = 1":',
         codeWithBlank: '___ nivel = 1',
         options: ['val', 'fun', 'class', 'set'],
         correctOption: 'val',
@@ -2080,7 +2080,7 @@ const KOTLIN_U02_BANKS: Record<number, { title: string; desc: string; exercises:
       {
         id: 'kt-u02-l18-e07',
         type: 'code_builder',
-        prompt: 'Declara la variable mutable vidas inicializada en 3:',
+        prompt: 'Construye la instrucción para declarar una variable que pueda cambiar de valor (var) llamada "vidas = 3":',
         tokens: ['var', 'vidas', '=', '3', 'val', 'const'],
         solution: ['var', 'vidas', '=', '3'],
         hint: 'Usa var para que el contador de vidas pueda variar.',
@@ -2103,7 +2103,7 @@ const KOTLIN_U02_BANKS: Record<number, { title: string; desc: string; exercises:
       {
         id: 'kt-u02-l18-e09',
         type: 'code_cloze',
-        prompt: 'Para cadenas de texto utilizamos el tipo:',
+        prompt: '¿Qué tipo de dato se utiliza en Kotlin para guardar texto entre comillas?:',
         codeWithBlank: 'val mensaje: ___ = "Hola"',
         options: ['String', 'Int', 'Char', 'Boolean'],
         correctOption: 'String',
@@ -2113,7 +2113,7 @@ const KOTLIN_U02_BANKS: Record<number, { title: string; desc: string; exercises:
       {
         id: 'kt-u02-l18-e10',
         type: 'parsons_puzzle',
-        prompt: 'Ordena la secuencia lógica de declaración y uso:',
+        prompt: 'Ordena las líneas de código de arriba a abajo en el orden correcto de ejecución:',
         lines: [
           'val nombre = "Dev"',
           'val saludo = "Bienvenido, $nombre"',
@@ -2145,7 +2145,7 @@ const KOTLIN_U02_BANKS: Record<number, { title: string; desc: string; exercises:
       {
         id: 'kt-u02-l19-e02',
         type: 'code_builder',
-        prompt: 'Construye la declaración de variable inmutable para este nivel:',
+        prompt: 'Construye la instrucción para declarar una variable de solo lectura (val) llamada "dato" con valor 10:',
         tokens: ['val', 'dato', '=', '10', 'var', 'let'],
         solution: ['val', 'dato', '=', '10'],
         hint: 'Usa val para declarar el identificador inmutable.',
@@ -2165,11 +2165,11 @@ const KOTLIN_U02_BANKS: Record<number, { title: string; desc: string; exercises:
       {
         id: 'kt-u02-l19-e04',
         type: 'spot_the_bug',
-        prompt: 'Toca la línea que produce un error de compilación:',
+        prompt: 'Toca la línea con el error al intentar cambiar el valor de una variable "val" (de solo lectura):',
         codeSnippet: [
           'val clave = 1234',
           'println(clave)',
-          'clave = 5678 // Reasignación inválida'
+          'clave = 5678'
         ],
         bugLineIndex: 2,
         explanation: 'Una variable val no puede reasignarse tras su inicialización.',
@@ -2178,7 +2178,7 @@ const KOTLIN_U02_BANKS: Record<number, { title: string; desc: string; exercises:
       {
         id: 'kt-u02-l19-e05',
         type: 'code_cloze',
-        prompt: 'Completa la palabra clave correspondiente:',
+        prompt: 'Completa la palabra clave para declarar una variable de solo lectura "nivel = 1":',
         codeWithBlank: '___ nivel = 1',
         options: ['val', 'fun', 'class', 'set'],
         correctOption: 'val',
@@ -2198,7 +2198,7 @@ const KOTLIN_U02_BANKS: Record<number, { title: string; desc: string; exercises:
       {
         id: 'kt-u02-l19-e07',
         type: 'code_builder',
-        prompt: 'Declara la variable mutable vidas inicializada en 3:',
+        prompt: 'Construye la instrucción para declarar una variable que pueda cambiar de valor (var) llamada "vidas = 3":',
         tokens: ['var', 'vidas', '=', '3', 'val', 'const'],
         solution: ['var', 'vidas', '=', '3'],
         hint: 'Usa var para que el contador de vidas pueda variar.',
@@ -2221,7 +2221,7 @@ const KOTLIN_U02_BANKS: Record<number, { title: string; desc: string; exercises:
       {
         id: 'kt-u02-l19-e09',
         type: 'code_cloze',
-        prompt: 'Para cadenas de texto utilizamos el tipo:',
+        prompt: '¿Qué tipo de dato se utiliza en Kotlin para guardar texto entre comillas?:',
         codeWithBlank: 'val mensaje: ___ = "Hola"',
         options: ['String', 'Int', 'Char', 'Boolean'],
         correctOption: 'String',
@@ -2231,7 +2231,7 @@ const KOTLIN_U02_BANKS: Record<number, { title: string; desc: string; exercises:
       {
         id: 'kt-u02-l19-e10',
         type: 'parsons_puzzle',
-        prompt: 'Ordena la secuencia lógica de declaración y uso:',
+        prompt: 'Ordena las líneas de código de arriba a abajo en el orden correcto de ejecución:',
         lines: [
           'val nombre = "Dev"',
           'val saludo = "Bienvenido, $nombre"',
@@ -2263,7 +2263,7 @@ const KOTLIN_U02_BANKS: Record<number, { title: string; desc: string; exercises:
       {
         id: 'kt-u02-l20-e02',
         type: 'code_builder',
-        prompt: 'Construye la declaración de variable inmutable para este nivel:',
+        prompt: 'Construye la instrucción para declarar una variable de solo lectura (val) llamada "dato" con valor 10:',
         tokens: ['val', 'dato', '=', '10', 'var', 'let'],
         solution: ['val', 'dato', '=', '10'],
         hint: 'Usa val para declarar el identificador inmutable.',
@@ -2283,11 +2283,11 @@ const KOTLIN_U02_BANKS: Record<number, { title: string; desc: string; exercises:
       {
         id: 'kt-u02-l20-e04',
         type: 'spot_the_bug',
-        prompt: 'Toca la línea que produce un error de compilación:',
+        prompt: 'Toca la línea con el error al intentar cambiar el valor de una variable "val" (de solo lectura):',
         codeSnippet: [
           'val clave = 1234',
           'println(clave)',
-          'clave = 5678 // Reasignación inválida'
+          'clave = 5678'
         ],
         bugLineIndex: 2,
         explanation: 'Una variable val no puede reasignarse tras su inicialización.',
@@ -2296,7 +2296,7 @@ const KOTLIN_U02_BANKS: Record<number, { title: string; desc: string; exercises:
       {
         id: 'kt-u02-l20-e05',
         type: 'code_cloze',
-        prompt: 'Completa la palabra clave correspondiente:',
+        prompt: 'Completa la palabra clave para declarar una variable de solo lectura "nivel = 1":',
         codeWithBlank: '___ nivel = 1',
         options: ['val', 'fun', 'class', 'set'],
         correctOption: 'val',
@@ -2316,7 +2316,7 @@ const KOTLIN_U02_BANKS: Record<number, { title: string; desc: string; exercises:
       {
         id: 'kt-u02-l20-e07',
         type: 'code_builder',
-        prompt: 'Declara la variable mutable vidas inicializada en 3:',
+        prompt: 'Construye la instrucción para declarar una variable que pueda cambiar de valor (var) llamada "vidas = 3":',
         tokens: ['var', 'vidas', '=', '3', 'val', 'const'],
         solution: ['var', 'vidas', '=', '3'],
         hint: 'Usa var para que el contador de vidas pueda variar.',
@@ -2339,7 +2339,7 @@ const KOTLIN_U02_BANKS: Record<number, { title: string; desc: string; exercises:
       {
         id: 'kt-u02-l20-e09',
         type: 'code_cloze',
-        prompt: 'Para cadenas de texto utilizamos el tipo:',
+        prompt: '¿Qué tipo de dato se utiliza en Kotlin para guardar texto entre comillas?:',
         codeWithBlank: 'val mensaje: ___ = "Hola"',
         options: ['String', 'Int', 'Char', 'Boolean'],
         correctOption: 'String',
@@ -2349,7 +2349,7 @@ const KOTLIN_U02_BANKS: Record<number, { title: string; desc: string; exercises:
       {
         id: 'kt-u02-l20-e10',
         type: 'parsons_puzzle',
-        prompt: 'Ordena la secuencia lógica de declaración y uso:',
+        prompt: 'Ordena las líneas de código de arriba a abajo en el orden correcto de ejecución:',
         lines: [
           'val nombre = "Dev"',
           'val saludo = "Bienvenido, $nombre"',

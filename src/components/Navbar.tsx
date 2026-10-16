@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import {
   Flame,
-  Zap,
   Code2,
   Database,
   Target,
@@ -9,7 +8,8 @@ import {
   VolumeX,
   ChevronDown,
   ShieldCheck,
-  LogOut
+  LogOut,
+  Shirt
 } from 'lucide-react';
 import { UserProfile } from '../types/user';
 import { soundService } from '../services/soundService';
@@ -22,7 +22,9 @@ interface NavbarProps {
   onOpenQuests: () => void;
   onOpenPractice?: () => void;
   onOpenProfile: () => void;
+  onOpenStreak?: () => void;
   onOpenAcademic?: () => void;
+  onOpenLocker?: () => void;
   onSignOut?: () => void;
 }
 
@@ -32,7 +34,9 @@ export const Navbar: React.FC<NavbarProps> = ({
   onPathToggle,
   onOpenQuests,
   onOpenProfile,
+  onOpenStreak,
   onOpenAcademic,
+  onOpenLocker,
   onSignOut
 }) => {
   const [isMuted, setIsMuted] = useState(soundService.getMuted());
@@ -76,24 +80,20 @@ export const Navbar: React.FC<NavbarProps> = ({
       <div className="nav-right">
         {/* Racha Diaria */}
         <button
-          className="stat-pill streak"
-          onClick={() => soundService.playToken()}
-          title={`Racha activa de ${user?.streak?.count ?? 1} días`}
+          className={`stat-pill streak ${(user?.streak?.count ?? 0) === 0 ? 'streak-zero' : ''}`}
+          onClick={() => {
+            soundService.playToken();
+            onOpenStreak?.();
+          }}
+          title={(user?.streak?.count ?? 0) === 0 ? 'Día 0 de racha. ¡Toca para ver cómo activarla!' : `Racha activa de ${user?.streak?.count} días`}
           type="button"
         >
-          <Flame size={18} color="#FF9500" fill="#FF9500" />
-          <span className="stat-number">{user?.streak?.count ?? 1}</span>
-        </button>
-
-        {/* Moneda / Bytes */}
-        <button
-          className="stat-pill bytes"
-          onClick={() => soundService.playToken()}
-          title={`${user?.bytes ?? 0} Bytes acumulados`}
-          type="button"
-        >
-          <Zap size={17} color="#06B6D4" fill="#06B6D4" />
-          <span className="stat-number">{user?.bytes ?? 0}</span>
+          <Flame
+            size={18}
+            color={(user?.streak?.count ?? 0) === 0 ? '#94A3B8' : '#FF9500'}
+            fill={(user?.streak?.count ?? 0) === 0 ? '#94A3B8' : '#FF9500'}
+          />
+          <span className="stat-number">{user?.streak?.count ?? 0}</span>
         </button>
 
         {/* Botón 3D de Misiones Diarias */}
@@ -109,6 +109,23 @@ export const Navbar: React.FC<NavbarProps> = ({
         >
           <Target size={18} color="#F59E0B" strokeWidth={2.5} />
         </button>
+
+        {/* Botón 3D del Vestidor de Byte (Skins) */}
+        {onOpenLocker && (
+          <button
+            className="nav-icon-btn"
+            onClick={() => {
+              soundService.playToken();
+              onOpenLocker();
+            }}
+            title="Vestidor 3D de Byte (Skins y Trajes)"
+            type="button"
+            aria-label="Abrir Vestidor de Byte"
+            style={{ color: '#0EA5E9' }}
+          >
+            <Shirt size={18} strokeWidth={2.4} />
+          </button>
+        )}
 
         {/* Botón Silencio / Audio */}
         <button
@@ -137,24 +154,17 @@ export const Navbar: React.FC<NavbarProps> = ({
         {/* Botón Exclusivo de Seguimiento Académico para josephcarazo56@gmail.com */}
         {isAdmin && onOpenAcademic && (
           <button
-            className="btn-3d btn-orange"
+            className="btn-3d btn-orange nav-admin-btn"
             onClick={() => {
               soundService.playToken();
               onOpenAcademic();
             }}
             title="Seguimiento Académico (Exclusivo Docente)"
+            aria-label="Seguimiento Académico"
             type="button"
-            style={{
-              padding: '6px 12px',
-              fontSize: '0.78rem',
-              display: 'flex',
-              alignItems: 'center',
-              gap: 6,
-              marginLeft: 4
-            }}
           >
             <ShieldCheck size={16} color="#FFFFFF" strokeWidth={2.5} />
-            <span>Seguimiento</span>
+            <span className="nav-admin-label">Seguimiento</span>
           </button>
         )}
 

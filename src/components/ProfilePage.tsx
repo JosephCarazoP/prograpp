@@ -22,9 +22,12 @@ import {
   VolumeX,
   RotateCcw,
   BookOpen,
-  Award
+  Award,
+  Shirt
 } from 'lucide-react';
 import { UserProfile, LearningPath as PathType } from '../types/user';
+import { LessonProgress } from '../types/progress';
+import { UNITS_KOTLIN, UNITS_SQL } from '../content';
 import { userService } from '../services/userService';
 import { authService } from '../services/authService';
 import { soundService } from '../services/soundService';
@@ -34,23 +37,29 @@ import { AVATARS, THEMES } from '../constants/avatars';
 
 interface ProfilePageProps {
   user: UserProfile;
+  progress?: Record<string, LessonProgress>;
+  hasPendingDiagnostic?: boolean;
   onBack: () => void;
   onUpdate: (updated: UserProfile) => void;
   onOpenAuth: () => void;
   onOpenAcademic?: () => void;
   onOpenDiagnostic?: () => void;
   onOpenFinalTest?: () => void;
+  onOpenLocker?: () => void;
   onSignOut?: () => void;
 }
 
 export const ProfilePage: React.FC<ProfilePageProps> = ({
   user,
+  progress = {},
+  hasPendingDiagnostic = false,
   onBack,
   onUpdate,
   onOpenAuth,
   onOpenAcademic,
   onOpenDiagnostic,
   onOpenFinalTest,
+  onOpenLocker,
   onSignOut
 }) => {
   const [displayName, setDisplayName] = useState(user.displayName);
@@ -62,13 +71,22 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({
   const [copied, setCopied] = useState(false);
   const [showResetConfirm, setShowResetConfirm] = useState(false);
   const [saveSuccess, setSaveSuccess] = useState(false);
+  const [evaluationAlert, setEvaluationAlert] = useState<string | null>(null);
 
   const totalXp = user.totalXp || 0;
   const currentLevel = Math.floor(totalXp / 100) + 1;
   const xpInCurrentLevel = totalXp - (currentLevel - 1) * 100;
   const chestsCount = user.openedChests?.length || 0;
   const bossesCount = user.defeatedBosses?.length || 0;
-  const streakCount = user.streak?.count || 1;
+  const streakCount = user.streak?.count || 0;
+
+  // Cálculo de completado de todo el curso (100% de lecciones requeridas para la Prueba Final)
+  const currentUnits = selectedPath === 'sql' ? UNITS_SQL : UNITS_KOTLIN;
+  const totalLessons = currentUnits.reduce((acc, u) => acc + u.lessons.length, 0);
+  const completedLessons = currentUnits.reduce((acc, u) => {
+    return acc + u.lessons.filter(l => (progress[l.id]?.starsEarned || 0) > 0).length;
+  }, 0);
+  const isCourseCompleted = totalLessons > 0 && completedLessons >= totalLessons;
 
   const getRankTitle = (lvl: number) => {
     if (lvl >= 15) return 'Arquitecto Cósmico';
@@ -312,6 +330,27 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({
                 />
               </div>
             </div>
+
+            {/* Botón 3D de Acceso al Vestidor de Byte */}
+            {onOpenLocker && (
+              <button
+                type="button"
+                className="btn-3d btn-cyan"
+                onClick={() => {
+                  soundService.playToken();
+                  onOpenLocker();
+                }}
+                style={{
+                  marginTop: 14,
+                  maxWidth: 320,
+                  width: '100%',
+                  padding: '12px 18px',
+                  fontSize: '0.88rem'
+                }}
+              >
+                <Shirt size={18} strokeWidth={2.4} /> ABRIR VESTIDOR 3D (SKINS)
+              </button>
+            )}
           </section>
 
           {/* ─── CUADRÍCULA DE ESTADÍSTICAS 2X2 ESTILO DUOLINGO ─── */}
@@ -826,29 +865,85 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({
           <div style={{ display: 'flex', gap: 10, marginTop: 14 }}>
             {onOpenDiagnostic && (
               <button
-                className="btn-3d btn-blue"
-                style={{ flex: 1, padding: 12, fontSize: '0.84rem' }}
+                className={`btn-3d ${hasPendingDiagnostic ? 'btn-blue' : 'btn-outline'}`}
+                style={{
+                  flex: 1,
+                  padding: 12,
+                  fontSize: '0.84rem',
+                  opacity: hasPendingDiagnostic ? 1 : 0.65,
+                  cursor: hasPendingDiagnostic ? 'pointer' : 'not-allowed'
+                }}
                 onClick={() => {
+                  if (!hasPendingDiagnostic) {
+                    soundService.playError();
+                    setEvaluationAlert('🔒 La Evaluación Diagnóstica solo está disponible cuando el docente Joseph Carazo la habilita para tu cuenta desde el Panel de Seguimiento.');
+                    return;
+                  }
                   soundService.playToken();
                   onOpenDiagnostic();
                 }}
+                type="button"
               >
-                <Award size={16} /> Evaluación Diagnóstica
+                {hasPendingDiagnostic ? <Award size={16} /> : <Lock size={16} />}
+                <span>{hasPendingDiagnostic ? 'Evaluación Diagnóstica' : 'Diagnóstico (No asignado)'}</span>
               </button>
             )}
             {onOpenFinalTest && (
               <button
-                className="btn-3d btn-purple"
-                style={{ flex: 1, padding: 12, fontSize: '0.84rem' }}
+                className={`btn-3d ${isCourseCompleted ? 'btn-purple' : 'btn-outline'}`}
+                style={{
+                  flex: 1,
+                  padding: 12,
+                  fontSize: '0.84rem',
+                  opacity: isCourseCompleted ? 1 : 0.65,
+                  cursor: isCourseCompleted ? 'pointer' : 'not-allowed'
+                }}
                 onClick={() => {
+                  if (!isCourseCompleted) {
+                    soundService.playError();
+                    setEvaluationAlert(`🔒 La Prueba Final requiere completar el 100% del curso (${completedLessons}/${totalLessons} lecciones completadas). ¡Sigue avanzando en tu camino!`);
+                    return;
+                  }
                   soundService.playToken();
                   onOpenFinalTest();
                 }}
+                type="button"
               >
-                <Trophy size={16} /> Prueba Final
+                {isCourseCompleted ? <Trophy size={16} /> : <Lock size={16} />}
+                <span>{isCourseCompleted ? 'Prueba Final' : `Prueba Final (${completedLessons}/${totalLessons})`}</span>
               </button>
             )}
           </div>
+
+          {/* Alerta explicativa de estado de evaluaciones */}
+          {evaluationAlert && (
+            <div
+              style={{
+                marginTop: 10,
+                background: '#FEF2F2',
+                border: '2px solid #FCA5A5',
+                borderRadius: 14,
+                padding: '10px 14px',
+                fontSize: '0.82rem',
+                fontWeight: 700,
+                color: '#991B1B',
+                lineHeight: 1.35,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                gap: 8
+              }}
+            >
+              <span>{evaluationAlert}</span>
+              <button
+                onClick={() => setEvaluationAlert(null)}
+                style={{ background: 'transparent', border: 'none', cursor: 'pointer', color: '#991B1B', fontWeight: 900 }}
+                type="button"
+              >
+                ✕
+              </button>
+            </div>
+          )}
 
           {/* ─── ACCIONES DE CUENTA DUOLINGO 3D ─── */}
           <div style={{ display: 'flex', gap: 10, marginTop: 14 }}>
@@ -857,11 +952,13 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({
               style={{ flex: 1, padding: 13, fontSize: '0.85rem' }}
               onClick={() => {
                 soundService.playToken();
-                onBack();
-                onOpenAuth();
+                setActiveTab('settings');
+                window.scrollTo({ top: 300, behavior: 'smooth' });
               }}
+              type="button"
             >
-              Gestionar Cuenta
+              <Settings size={16} strokeWidth={2.4} />
+              Ajustes de Cuenta
             </button>
 
             <button

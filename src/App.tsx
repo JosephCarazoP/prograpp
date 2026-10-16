@@ -6,8 +6,7 @@ import {
   XCircle,
   RotateCcw,
   Gamepad2,
-  GraduationCap,
-  ShieldCheck
+  GraduationCap
 } from 'lucide-react';
 
 import { UserProfile, LearningPath as PathType, UserPowerUps } from './types/user';
@@ -44,6 +43,8 @@ import { AnimatedDoodleBackground } from './components/AnimatedDoodleBackground'
 import { AcademicDashboard } from './components/AcademicDashboard';
 import { EvaluationPage } from './components/EvaluationPage';
 import { ActivityOpinionModal } from './components/ActivityOpinionModal';
+import { StreakCelebrationModal } from './components/StreakCelebrationModal';
+import { ByteLockerModal } from './components/ByteLockerModal';
 import { academicService } from './services/academicService';
 import { timeTrackingService } from './services/timeTrackingService';
 import {
@@ -62,6 +63,49 @@ function shuffleArray<T>(items: T[]): T[] {
   }
   return arr;
 }
+
+// Función para aleatorizar opciones y componentes internos de un reto (Anti-trampas: nunca respuestas en el mismo orden)
+function randomizeExercise(exercise: Exercise): Exercise {
+  const cloned = JSON.parse(JSON.stringify(exercise)) as Exercise;
+
+  if (cloned.type === 'predict_output') {
+    const originalCorrectText = cloned.options[cloned.correctOptionIndex];
+    cloned.options = shuffleArray([...cloned.options]);
+    const newIndex = cloned.options.indexOf(originalCorrectText);
+    cloned.correctOptionIndex = newIndex >= 0 ? newIndex : 0;
+  } else if (cloned.type === 'code_cloze') {
+    cloned.options = shuffleArray([...cloned.options]);
+  } else if (cloned.type === 'code_builder') {
+    cloned.tokens = shuffleArray([...cloned.tokens]);
+  } else if (cloned.type === 'matching_pairs') {
+    cloned.pairs = shuffleArray([...cloned.pairs]);
+  }
+
+  return cloned;
+}
+
+// Instrucción pedagógica 100% Duolingo 3D explicada por el avatar Dev en la burbuja de diálogo
+function getExerciseInstruction(exercise: Exercise): string {
+  switch (exercise.type) {
+    case 'trace_step':
+      return 'Observa cada operación del código y anota en la tabla el valor que toma la variable en cada paso.';
+    case 'spot_the_bug':
+      return 'Examina la sintaxis del programa y pulsa directamente sobre el renglón defectuoso.';
+    case 'predict_output':
+      return 'Analiza la lógica del código y selecciona el resultado exacto que se mostrará en pantalla.';
+    case 'code_builder':
+      return 'Toca las fichas inferiores en el orden correcto para ensamblar la instrucción de código.';
+    case 'matching_pairs':
+      return 'Toca un concepto de la columna izquierda y luego pulsa su pareja correspondiente en la derecha.';
+    case 'code_cloze':
+      return 'Selecciona la opción correcta para rellenar el espacio vacío en el código.';
+    case 'parsons_puzzle':
+      return 'Usa las flechas de cada bloque para colocar las líneas en su orden lógico de arriba hacia abajo.';
+    default:
+      return 'Selecciona la opción correcta para continuar.';
+  }
+}
+
 
 export default function App() {
   // Inicialización instantánea offline-first para eliminar pantallas congeladas
@@ -136,6 +180,13 @@ export default function App() {
     rewards?: ProgressionChestRewards;
   } | null>(null);
 
+  // Modal 3D de Celebración de Racha (estilo Duolingo con Avatar)
+  const [isStreakModalOpen, setIsStreakModalOpen] = useState(false);
+  const [isJustFinishedStreak, setIsJustFinishedStreak] = useState(false);
+
+  // Modal 3D del Vestidor de Byte (Locker)
+  const [isLockerOpen, setIsLockerOpen] = useState(false);
+
   // Combate de Jefe activo a pantalla completa
   const [activeBossData, setActiveBossData] = useState<{
     bossId: string;
@@ -166,13 +217,11 @@ export default function App() {
   const [lessonQueue, setLessonQueue] = useState<Exercise[]>([]);
   const [currentQueueIndex, setCurrentQueueIndex] = useState(0);
   const [initialExercisesCount, setInitialExercisesCount] = useState(0);
-  const [masteredExerciseIds, setMasteredExerciseIds] = useState<Set<string>>(new Set());
   const [lessonMistakes, setLessonMistakes] = useState(0);
 
   // Estados de comodines en lección
   const [teacherHintText, setTeacherHintText] = useState<string | null>(null);
   const [eliminatedOptionIndices, setEliminatedOptionIndices] = useState<number[]>([]);
-  const [isSecondChanceActive, setIsSecondChanceActive] = useState(false);
   const [isCodePeekActive, setIsCodePeekActive] = useState(false);
 
   // Estados interactivos por tipo de ejercicio
@@ -224,6 +273,28 @@ export default function App() {
     }
   };
 
+  // Comprobación y avance de racha por ingreso en día consecutivo (Día 2, 3...)
+  const checkAndAdvanceDailyStreak = async (profile: UserProfile): Promise<UserProfile> => {
+    if (!profile.uid || profile.uid === 'guest_user_1') return profile;
+    const today = new Date().toISOString().split('T')[0];
+    const yesterday = new Date(Date.now() - 86400000).toISOString().split('T')[0];
+    const streak = { ...profile.streak };
+
+    // Si el usuario tuvo racha activa ayer y hoy es un día nuevo en el que aún no ha registrado actividad:
+    if ((streak.count || 0) > 0 && streak.lastActivityDate === yesterday) {
+      streak.count = (streak.count || 0) + 1;
+      streak.lastActivityDate = today;
+      const updated: UserProfile = { ...profile, streak };
+      await userService.updateProfile(updated);
+
+      // Abrir la celebración animada en pantalla completa con racha 2 y el nuevo día cumplido
+      setIsJustFinishedStreak(true);
+      setIsStreakModalOpen(true);
+      return updated;
+    }
+    return profile;
+  };
+
   // Sincronización obligatoria de sesión: No permite aprendizaje como invitado
   useEffect(() => {
     async function loadData() {
@@ -234,16 +305,12 @@ export default function App() {
           const u = await userService.getProfile(uid);
           const p = await progressService.getAllProgress(uid);
           const sanitizedUser = u ? sanitizeUserProfile(u, uid) : DEFAULT_PROFILE;
-          setUser(sanitizedUser);
+          const updatedUser = await checkAndAdvanceDailyStreak(sanitizedUser);
+          setUser(updatedUser);
           if (p) setProgress(p);
 
-          // Si es la primera vez que ingresa (o no ha completado el diagnóstico inicial de Kotlin y SQL), lanzarlo obligatoriamente
-          if (!sanitizedUser.hasCompletedInitialDiagnostic && sanitizedUser.email !== ADMIN_AUTHORIZED_EMAIL) {
-            setActiveEvaluationInstrument(INITIAL_COMPREHENSIVE_DIAGNOSTIC_INSTRUMENT);
-          } else {
-            // Verificar si el docente Joseph Carazo le ha enviado una nueva evaluación diagnóstica
-            checkPendingAssignedDiagnostic(sanitizedUser);
-          }
+          // La evaluación diagnóstica solo se habilita si el profesor la ha asignado expresamente
+          checkPendingAssignedDiagnostic(updatedUser);
         } else {
           // Si no hay usuario autenticado, bloquear acceso y abrir modal de registro/login
           setIsAuthenticated(false);
@@ -312,20 +379,19 @@ export default function App() {
       setActiveLesson(lesson);
 
       const fullBank = lesson.exercises;
-      const shuffledPool = shuffleArray(fullBank);
+      // Aleatorizar el orden de las preguntas y sus opciones internas (Anti-trampas: nunca respuestas en el mismo orden)
+      const shuffledPool = shuffleArray(fullBank).map(randomizeExercise);
       const selectedTen = shuffledPool.slice(0, 10);
 
       setLessonQueue(selectedTen);
       setCurrentQueueIndex(0);
       setInitialExercisesCount(selectedTen.length);
-      setMasteredExerciseIds(new Set());
       setLessonMistakes(0);
       resetExerciseState();
       setFeedbackState('idle');
 
       setTeacherHintText(null);
       setEliminatedOptionIndices([]);
-      setIsSecondChanceActive(false);
       setIsCodePeekActive(false);
 
       setView('lesson');
@@ -467,30 +533,14 @@ export default function App() {
       soundService.playCorrect();
       setFeedbackState('success');
       setFeedbackExplanation(currentExercise.explanation);
-      setMasteredExerciseIds(prev => new Set(prev).add(currentExercise.id));
     } else {
-      // Si el comodín de Segunda Oportunidad está activo, absorbe el error
-      if (isSecondChanceActive) {
-        soundService.playWin();
-        setIsSecondChanceActive(false);
-        setGameAlert({
-          isOpen: true,
-          type: 'shield',
-          title: '¡Escudo de Segunda Oportunidad!',
-          message: 'Tu escudo protector absorbió el fallo. Analiza bien el código y vuelve a intentarlo sin penalización.',
-          primaryButtonText: 'Reintentar Reto',
-          onPrimaryClick: () => setGameAlert(null)
-        });
-        return;
-      }
-
       soundService.playError();
       setFeedbackState('error');
       setFeedbackExplanation(currentExercise.explanation);
       setLessonMistakes(prev => prev + 1);
 
-      // Re-encolar el reto fallado al final de la cola para responderlo bien obligatoriamente
-      setLessonQueue(prev => [...prev, currentExercise]);
+      // Re-encolar el reto fallado al final de la cola re-aleatorizando sus opciones para que deba responderse bien obligatoriamente
+      setLessonQueue(prev => [...prev, randomizeExercise(currentExercise)]);
     }
   };
 
@@ -553,8 +603,6 @@ export default function App() {
           onPrimaryClick: () => setGameAlert(null)
         });
       }
-    } else if (key === 'secondChance') {
-      setIsSecondChanceActive(true);
     } else if (key === 'codePeek') {
       setIsCodePeekActive(true);
     }
@@ -606,6 +654,10 @@ export default function App() {
       setView('path');
       setActiveLesson(null);
       setLessonQueue([]);
+
+      // Abrir celebración fluida 3D de racha estilo Duolingo con el avatar
+      setIsJustFinishedStreak(true);
+      setIsStreakModalOpen(true);
 
       // Abrir breve encuesta de opinión pedagógica tras entregar la práctica
       setOpinionActivityId(finishedLessonId);
@@ -797,9 +849,18 @@ export default function App() {
             soundService.playToken();
             setView('profile');
           }}
+          onOpenStreak={() => {
+            soundService.playToken();
+            setIsJustFinishedStreak(false);
+            setIsStreakModalOpen(true);
+          }}
           onOpenAcademic={() => {
             soundService.playToken();
             setView('academic');
+          }}
+          onOpenLocker={() => {
+            soundService.playToken();
+            setIsLockerOpen(true);
           }}
           onSignOut={async () => {
             soundService.playToken();
@@ -1016,7 +1077,31 @@ export default function App() {
               <div
                 style={{
                   height: '100%',
-                  width: `${Math.min(100, Math.round((masteredExerciseIds.size / Math.max(1, initialExercisesCount)) * 100))}%`,
+                  width: `${
+                    isReviewPhase
+                      ? Math.min(
+                          100,
+                          Math.max(
+                            8,
+                            Math.round(
+                              ((currentQueueIndex - initialExercisesCount + (feedbackState !== 'idle' ? 1 : 0)) /
+                                Math.max(1, lessonQueue.length - initialExercisesCount)) *
+                                100
+                            )
+                          )
+                        )
+                      : Math.min(
+                          100,
+                          Math.max(
+                            8,
+                            Math.round(
+                              ((currentQueueIndex + (feedbackState !== 'idle' ? 1 : 0)) /
+                                Math.max(1, initialExercisesCount)) *
+                                100
+                            )
+                          )
+                        )
+                  }%`,
                   background: isReviewPhase ? '#F59E0B' : '#22C55E',
                   borderRadius: '9999px',
                   boxShadow: isReviewPhase ? '0 2px 0 #D97706' : '0 2px 0 #15803D',
@@ -1038,25 +1123,27 @@ export default function App() {
                 />
               </div>
             </div>
-            {/* Contador de ejercicios */}
+            {/* Contador de ejercicios dinámico y fase de reposición */}
             <div
               style={{
                 display: 'inline-flex',
                 alignItems: 'center',
                 gap: '4px',
-                background: '#F1F5F9',
-                border: '1.5px solid #CBD5E1',
-                padding: '6px 10px',
+                background: isReviewPhase ? '#FEF3C7' : '#F1F5F9',
+                border: isReviewPhase ? '1.5px solid #F59E0B' : '1.5px solid #CBD5E1',
+                padding: '6px 12px',
                 borderRadius: '14px',
-                fontSize: '0.84rem',
+                fontSize: '0.82rem',
                 fontWeight: 900,
-                color: isReviewPhase ? '#D97706' : '#0F172A',
-                minWidth: '50px',
+                color: isReviewPhase ? '#B45309' : '#0F172A',
+                minWidth: isReviewPhase ? '90px' : '52px',
                 justifyContent: 'center',
                 flexShrink: 0
               }}
             >
-              {masteredExerciseIds.size}/{initialExercisesCount}
+              {isReviewPhase
+                ? `Repaso ${currentQueueIndex - initialExercisesCount + 1}/${lessonQueue.length - initialExercisesCount}`
+                : `${Math.min(currentQueueIndex + 1, initialExercisesCount)}/${initialExercisesCount}`}
             </div>
           </div>
 
@@ -1064,7 +1151,6 @@ export default function App() {
           <PowerUpsBar
             powerups={user.powerups}
             onUsePowerUp={handleUsePowerUpInLesson}
-            isSecondChanceActive={isSecondChanceActive}
             disabled={feedbackState !== 'idle'}
             compact={true}
           />
@@ -1091,29 +1177,6 @@ export default function App() {
             </div>
           )}
 
-          {/* Banner de Escudo Activo */}
-          {isSecondChanceActive && (
-            <div
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '8px',
-                background: '#F0FDF4',
-                border: '2px solid #4ADE80',
-                boxShadow: '0 3px 0 #16A34A',
-                borderRadius: '14px',
-                padding: '6px 14px',
-                marginBottom: '10px',
-                width: 'fit-content'
-              }}
-            >
-              <ShieldCheck size={18} color="#15803D" />
-              <span style={{ fontSize: '0.82rem', fontWeight: 800, color: '#166534' }}>
-                Escudo de Segunda Oportunidad Activo (absorberá el próximo fallo)
-              </span>
-            </div>
-          )}
-
           {/* Banner Duolingo de Fase de Repaso de Errores */}
           {isReviewPhase && (
             <div className="review-banner">
@@ -1135,15 +1198,18 @@ export default function App() {
             </div>
           )}
 
-          {/* Diálogo Duolingo con Mascota Dev y Burbuja de Pregunta */}
+          {/* Diálogo Duolingo 3D con Mascota Dev y Burbuja de Pregunta */}
           <div className="duo-speech-container">
-            <div style={{ flexShrink: 0, marginTop: '2px' }}>
-              <ConsoleDevAvatar size={50} mood={isReviewPhase ? 'thinking' : 'happy'} />
+            <div className="duo-mascot-wrapper">
+              <ConsoleDevAvatar size={62} mood={isReviewPhase ? 'thinking' : 'happy'} />
             </div>
             <div className="duo-speech-bubble">
-              <h3 style={{ fontSize: '1.18rem', fontWeight: 900, margin: 0, color: '#0F172A', lineHeight: 1.4 }}>
+              <h2 className="duo-speech-title">
                 {currentExercise.prompt}
-              </h3>
+              </h2>
+              <p className="duo-speech-instruction">
+                {getExerciseInstruction(currentExercise)}
+              </p>
             </div>
           </div>
 
@@ -1528,30 +1594,37 @@ export default function App() {
           if (isAuthenticated) setIsAuthOpen(false);
         }}
         onAuthSuccess={async (authProfile) => {
-          setUser(authProfile);
           setIsAuthenticated(true);
           setIsAuthOpen(false);
+          const updatedUser = await checkAndAdvanceDailyStreak(authProfile);
+          setUser(updatedUser);
           const p = await progressService.getAllProgress(authProfile.uid);
           if (p) setProgress(p);
 
-          // Si es la primera vez que ingresa y no tiene diagnóstico previo, lanzarlo
-          if (!authProfile.hasCompletedInitialDiagnostic && authProfile.email !== ADMIN_AUTHORIZED_EMAIL) {
-            setActiveEvaluationInstrument(INITIAL_COMPREHENSIVE_DIAGNOSTIC_INSTRUMENT);
-          } else {
-            // Verificar si el profesor le ha asignado una evaluación
-            checkPendingAssignedDiagnostic(authProfile);
-          }
+          // La evaluación diagnóstica solo se habilita si el profesor la asignó expresamente
+          checkPendingAssignedDiagnostic(updatedUser);
         }}
       />
 
       {view === 'profile' && (
         <ProfilePage
           user={user}
+          progress={progress}
+          hasPendingDiagnostic={Boolean(activePendingAssignment)}
           onBack={() => setView('path')}
           onUpdate={(updated) => setUser(updated)}
           onOpenAuth={() => { setView('path'); setIsAuthOpen(true); }}
           onOpenAcademic={() => setView('academic')}
-          onOpenDiagnostic={() => setActiveEvaluationInstrument(getInstrument(currentPath, 'diagnostic'))}
+          onOpenLocker={() => setIsLockerOpen(true)}
+          onOpenDiagnostic={() => {
+            if (activePendingAssignment) {
+              const inst = getDiagnosticInstrumentById(activePendingAssignment.instrumentId);
+              if (inst) setActiveEvaluationInstrument(inst);
+              else setActiveEvaluationInstrument(getInstrument(currentPath, 'diagnostic'));
+            } else {
+              setActiveEvaluationInstrument(getInstrument(currentPath, 'diagnostic'));
+            }
+          }}
           onOpenFinalTest={() => setActiveEvaluationInstrument(getInstrument(currentPath, 'final'))}
           onSignOut={async () => {
             soundService.playToken();
@@ -1613,6 +1686,23 @@ export default function App() {
           setIsChestOpen(false);
           setActiveChestData(null);
         }}
+      />
+
+      {/* MODAL 3D DE RACHA ESTILO DUOLINGO CON AVATAR */}
+      <StreakCelebrationModal
+        isOpen={isStreakModalOpen}
+        onClose={() => setIsStreakModalOpen(false)}
+        user={user}
+        isJustCompleted={isJustFinishedStreak}
+      />
+
+      {/* VESTIDOR 3D DE BYTE (ESTILO FORTNITE LOCKER / DUOLINGO 3D) */}
+      <ByteLockerModal
+        isOpen={isLockerOpen}
+        user={user}
+        totalStars={Object.values(progress).reduce((acc, curr) => acc + (curr?.starsEarned || 0), 0)}
+        onClose={() => setIsLockerOpen(false)}
+        onUpdateUser={(updated) => setUser(updated)}
       />
 
       {/* Alertas Nativas del Juego (Reemplazo total de window.alert) */}

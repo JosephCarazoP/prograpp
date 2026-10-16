@@ -44,26 +44,7 @@ export const ParsonsPuzzleComponent: React.FC<ParsonsProps> = ({
   };
 
   return (
-    <div>
-      <div
-        style={{
-          display: 'inline-flex',
-          alignItems: 'center',
-          gap: '6px',
-          background: '#F1F5F9',
-          border: '1.5px solid #CBD5E1',
-          padding: '4px 12px',
-          borderRadius: '10px',
-          color: '#0F172A',
-          fontSize: '0.82rem',
-          fontWeight: 800,
-          marginBottom: '14px'
-        }}
-      >
-        <span>🧩 Ordena las líneas de código de arriba a abajo</span>
-      </div>
-
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
         {currentOrder.map((lineIdx, position) => (
           <div
             key={lineIdx}
@@ -162,6 +143,5 @@ export const ParsonsPuzzleComponent: React.FC<ParsonsProps> = ({
           </div>
         ))}
       </div>
-    </div>
   );
 };

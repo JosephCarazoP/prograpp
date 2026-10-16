@@ -10,7 +10,7 @@ const KOTLIN_TOPIC_BANKS: Record<number, { title: string; desc: string; exercise
       {
         id: 'kt-u01-l01-e01',
         type: 'matching_pairs',
-        prompt: 'Empareja los componentes del modelo computacional IPO con su función:',
+        prompt: 'Empareja cada etapa del modelo Entrada-Proceso-Salida (IPO) con lo que hace:',
         pairs: [
           { left: 'Entrada (Input)', right: 'Datos que recibe el sistema desde teclado o sensores' },
           { left: 'Proceso', right: 'Instrucciones lógicas paso a paso para transformar datos' },
@@ -45,7 +45,7 @@ const KOTLIN_TOPIC_BANKS: Record<number, { title: string; desc: string; exercise
         type: 'spot_the_bug',
         prompt: 'Toca la línea que intenta usar un dato antes de haberlo calculado:',
         codeSnippet: [
-          'println(resultado) // ¿Existe ya resultado?',
+          'println(resultado)',
           'val base = 10',
           'val resultado = base * 2'
         ],
@@ -138,7 +138,7 @@ const KOTLIN_TOPIC_BANKS: Record<number, { title: string; desc: string; exercise
         prompt: 'Toca la línea que produce un error de sintaxis por faltarle comillas:',
         codeSnippet: [
           'val mensaje = "Hola"',
-          'println(Programador) // Faltan las comillas',
+          'println(Programador)',
           'println("Fin")'
         ],
         bugLineIndex: 1,
@@ -203,7 +203,7 @@ const KOTLIN_TOPIC_BANKS: Record<number, { title: string; desc: string; exercise
         prompt: 'Toca la línea que tiene paréntesis sin cerrar:',
         codeSnippet: [
           'println("Paso 1")',
-          'println("Paso 2" // Falta el paréntesis de cierre',
+          'println("Paso 2"',
           'println("Paso 3")'
         ],
         bugLineIndex: 1,
@@ -296,7 +296,7 @@ const KOTLIN_TOPIC_BANKS: Record<number, { title: string; desc: string; exercise
         prompt: 'Toca la línea que contiene un error ortográfico en el nombre de la función:',
         codeSnippet: [
           'print("Conectando")',
-          'printl(" a la red...") // Error de tipeo',
+          'printl(" a la red...")',
           'println(" [OK]")'
         ],
         bugLineIndex: 1,
@@ -378,7 +378,7 @@ const KOTLIN_TOPIC_BANKS: Record<number, { title: string; desc: string; exercise
         type: 'spot_the_bug',
         prompt: 'Toca la línea con error en la declaración de la función:',
         codeSnippet: [
-          'function main() { // Palabra clave incorrecta en Kotlin',
+          'function main() {',
           '    println("Hola")',
           '}'
         ],
@@ -436,7 +436,7 @@ const KOTLIN_TOPIC_BANKS: Record<number, { title: string; desc: string; exercise
         codeSnippet: [
           'fun main() {',
           '    println("Bienvenido")',
-          ') // Paréntesis inválido en lugar de llave'
+          ')'
         ],
         bugLineIndex: 2,
         explanation: 'El bloque abierto con { debe cerrarse con una llave }, no con un paréntesis.',
@@ -508,7 +508,7 @@ const KOTLIN_TOPIC_BANKS: Record<number, { title: string; desc: string; exercise
         codeSnippet: [
           'El rectángulo representa un cálculo (ej: total = precio * cantidad)',
           'El rombo evalúa una condición lógica',
-          'El rombo se usa para imprimir texto en la impresora // ¡Error! Es para decisiones'
+          'El rombo se usa para imprimir texto en la impresora'
         ],
         bugLineIndex: 2,
         explanation: 'El rombo es exclusivamente para decisiones lógicas con bifurcación (Sí/No).',
@@ -634,7 +634,7 @@ const KOTLIN_TOPIC_BANKS: Record<number, { title: string; desc: string; exercise
         prompt: 'Toca la línea con un nombre de identificador no permitido en Kotlin:',
         codeSnippet: [
           'val puntuacion = 50',
-          'val 1erLugar = "Oro" // ¡Los nombres no pueden comenzar con dígitos!',
+          'val 1erLugar = "Oro"',
           'val totalVentas = 1000'
         ],
         bugLineIndex: 1,
@@ -681,7 +681,7 @@ const KOTLIN_TOPIC_BANKS: Record<number, { title: string; desc: string; exercise
       {
         id: 'kt-u01-l06-e08',
         type: 'code_cloze',
-        prompt: '¿Qué palabra reservada se usa para constantes inmutables en Kotlin?',
+        prompt: '¿Qué palabra reservada se usa en Kotlin para declarar variables de solo lectura (inmutables)?',
         codeWithBlank: '___ nombre = "Alex"',
         options: ['val', 'let', 'set', 'def'],
         correctOption: 'val',
@@ -735,7 +735,7 @@ const KOTLIN_TOPIC_BANKS: Record<number, { title: string; desc: string; exercise
       {
         id: 'kt-u01-l07-e02',
         type: 'code_builder',
-        prompt: 'Declara la constante inmutable del número PI:',
+        prompt: 'Construye la instrucción para declarar una constante de solo lectura con el número PI:',
         tokens: ['val', 'pi', '=', '3.1416', 'var', 'const'],
         solution: ['val', 'pi', '=', '3.1416'],
         explanation: 'val garantiza que el valor de pi no pueda ser corrompido accidentalmente.',
@@ -758,7 +758,7 @@ const KOTLIN_TOPIC_BANKS: Record<number, { title: string; desc: string; exercise
         codeSnippet: [
           'val codigoSeguridad = 9944',
           'println("Código: " + codigoSeguridad)',
-          'codigoSeguridad = 1122 // ¡Error! val no se puede reasignar'
+          'codigoSeguridad = 1122'
         ],
         bugLineIndex: 2,
         explanation: 'La línea 3 intenta reasignar codigoSeguridad que fue declarada con val.',
@@ -795,7 +795,7 @@ const KOTLIN_TOPIC_BANKS: Record<number, { title: string; desc: string; exercise
       {
         id: 'kt-u01-l07-e07',
         type: 'code_builder',
-        prompt: 'Declara la constante inmutable de gravedad terrestre:',
+        prompt: 'Construye la instrucción para declarar una constante de solo lectura con la gravedad terrestre:',
         tokens: ['val', 'gravedad', '=', '9.8', ';', 'var'],
         solution: ['val', 'gravedad', '=', '9.8'],
         explanation: 'Los valores de la física son ideales para ser constantes inmutables val.',
@@ -872,11 +872,11 @@ const KOTLIN_TOPIC_BANKS: Record<number, { title: string; desc: string; exercise
       {
         id: 'kt-u01-l08-e04',
         type: 'spot_the_bug',
-        prompt: 'Toca la línea donde se intenta cambiar el TIPO de dato de una variable var:',
+        prompt: 'Toca la línea con el error al intentar cambiar el tipo de dato de una variable numérica a texto:',
         codeSnippet: [
-          'var edad = 20 // edad es de tipo Int',
-          'edad = 21 // Válido: sigue siendo Int',
-          'edad = "veintidós" // ¡Error! Kotlin no permite cambiar el tipo'
+          'var edad = 20',
+          'edad = 21',
+          'edad = "veintidós"'
         ],
         bugLineIndex: 2,
         explanation: 'En Kotlin, var permite cambiar el valor, pero NUNCA el tipo de dato con el que nació (edad es Int, no String).',
@@ -960,7 +960,7 @@ const KOTLIN_TOPIC_BANKS: Record<number, { title: string; desc: string; exercise
         codeSnippet: [
           'val idUsuario = 101',
           'println("ID actual: " + idUsuario)',
-          'idUsuario = 102 // ¡Intento ilegal de reasignar un val!'
+          'idUsuario = 102'
         ],
         bugLineIndex: 2,
         explanation: 'idUsuario fue declarado con val; reasignarlo es un error de compilación fatal.',
@@ -1031,11 +1031,11 @@ const KOTLIN_TOPIC_BANKS: Record<number, { title: string; desc: string; exercise
       {
         id: 'kt-u01-l09-e07',
         type: 'spot_the_bug',
-        prompt: 'Toca la línea donde se intentó reasignar el precio con descuento que era inmutable:',
+        prompt: 'Toca la línea con el error al intentar modificar una variable declarada con val (de solo lectura):',
         codeSnippet: [
           'val precioOriginal = 100',
           'val descuento = 20',
-          'descuento = 30 // ¡Error! descuento es val'
+          'descuento = 30'
         ],
         bugLineIndex: 2,
         explanation: 'descuento es inmutable y no se le puede asignar un nuevo valor.',
@@ -1118,7 +1118,7 @@ const KOTLIN_TOPIC_BANKS: Record<number, { title: string; desc: string; exercise
         prompt: 'Toca la línea con un error de asignación de decimal a un tipo entero Int:',
         codeSnippet: [
           'val items: Int = 10',
-          'val precio: Int = 19.99 // ¡19.99 no es un Int, es un Double!',
+          'val precio: Int = 19.99',
           'val stock: Int = 0'
         ],
         bugLineIndex: 1,
@@ -1196,7 +1196,7 @@ const KOTLIN_TOPIC_BANKS: Record<number, { title: string; desc: string; exercise
       {
         id: 'kt-u01-l11-e01',
         type: 'predict_output',
-        prompt: '¿Qué tipo deduce Kotlin automáticamente para el número literal "3.14"?',
+        prompt: '¿Qué tipo de dato numérico asigna Kotlin automáticamente al valor con decimales "3.14"?',
         code: 'val pi = 3.14\n// ¿De qué tipo es pi?',
         options: ['Int', 'Float', 'Double', 'String'],
         correctOptionIndex: 2,
@@ -1231,7 +1231,7 @@ const KOTLIN_TOPIC_BANKS: Record<number, { title: string; desc: string; exercise
         prompt: 'Toca la línea con el error al usar coma en lugar de punto para el decimal:',
         codeSnippet: [
           'val alturaValida = 1.75',
-          'val pesoInvalido = 72,5 // ¡En programación se usa punto . y no coma ,!',
+          'val pesoInvalido = 72,5',
           'val distancia = 100.0'
         ],
         bugLineIndex: 1,
@@ -1348,8 +1348,8 @@ const KOTLIN_TOPIC_BANKS: Record<number, { title: string; desc: string; exercise
         type: 'spot_the_bug',
         prompt: 'Toca la línea con el error al usar comillas simples para una cadena de varias letras:',
         codeSnippet: [
-          'val inicial: Char = \'K\' // Válido para Char',
-          'val palabra = \'Hola\' // ¡Error! Un String requiere comillas dobles ""',
+          'val inicial: Char = \'K\'',
+          'val palabra = \'Hola\'',
           'val saludo = "Hola"'
         ],
         bugLineIndex: 1,
@@ -1388,7 +1388,7 @@ const KOTLIN_TOPIC_BANKS: Record<number, { title: string; desc: string; exercise
       {
         id: 'kt-u01-l12-e08',
         type: 'predict_output',
-        prompt: '¿Son los objetos String mutables o inmutables en Kotlin?',
+        prompt: '¿Se pueden modificar directamente los caracteres de un String existente o es un tipo de solo lectura (inmutable)?',
         code: 'val s = "abc"\n// ¿Puede modificarse una letra de \'s\' directamente?',
         options: [
           'Son inmutables: cualquier método crea un nuevo String sin alterar el original',
@@ -1464,7 +1464,7 @@ const KOTLIN_TOPIC_BANKS: Record<number, { title: string; desc: string; exercise
         prompt: 'Toca la línea con el error donde se usó el símbolo incorrecto para template:',
         codeSnippet: [
           'val usuario = "Ana"',
-          'println("Bienvenido, #usuario") // ¡El símbolo debe ser $ no #!',
+          'println("Bienvenido, #usuario")',
           'println("Fin")'
         ],
         bugLineIndex: 1,
@@ -1577,7 +1577,7 @@ const KOTLIN_TOPIC_BANKS: Record<number, { title: string; desc: string; exercise
         prompt: 'Toca la línea con el error donde se usaron paréntesis en lugar de llaves para la expresión:',
         codeSnippet: [
           'val n = 4',
-          'println("El doble es $(n * 2)") // ¡Debe ser ${...} con llaves!',
+          'println("El doble es $(n * 2)")',
           'println("Fin")'
         ],
         bugLineIndex: 1,
@@ -1699,7 +1699,7 @@ const KOTLIN_TOPIC_BANKS: Record<number, { title: string; desc: string; exercise
         codeSnippet: [
           'val saldo = 50',
           'val costo = 80',
-          'val restante = saldo - costo // 50 - 80 da -30 (saldo insuficiente)'
+          'val restante = saldo - costo'
         ],
         bugLineIndex: 2,
         explanation: 'Si no se valida antes, restar un monto mayor que el saldo produce un valor negativo en cuenta.',
@@ -1757,7 +1757,7 @@ const KOTLIN_TOPIC_BANKS: Record<number, { title: string; desc: string; exercise
       {
         id: 'kt-u01-l15-e10',
         type: 'parsons_puzzle',
-        prompt: 'Ordena la trazabilidad del cálculo de un precio con recargo:',
+        prompt: 'Ordena las líneas de código paso a paso para calcular el precio final con recargo:',
         lines: [
           'val base = 100',
           'val recargo = base * 0.10',
@@ -1812,7 +1812,7 @@ const KOTLIN_TOPIC_BANKS: Record<number, { title: string; desc: string; exercise
         codeSnippet: [
           'val total = 100',
           'val divisor = 0',
-          'val cociente = total / divisor // ¡ArithmeticException: / by zero!'
+          'val cociente = total / divisor'
         ],
         bugLineIndex: 2,
         explanation: 'Dividir un entero entre cero en la JVM lanza un fallo crítico ArithmeticException.',
@@ -1925,7 +1925,7 @@ const KOTLIN_TOPIC_BANKS: Record<number, { title: string; desc: string; exercise
         codeSnippet: [
           'val n = 20',
           'val d = 0',
-          'val r = n % d // ¡ArithmeticException: / by zero en módulo!'
+          'val r = n % d'
         ],
         bugLineIndex: 2,
         explanation: 'El operador módulo internamente realiza una división; el divisor no puede ser cero.',
@@ -2037,7 +2037,7 @@ const KOTLIN_TOPIC_BANKS: Record<number, { title: string; desc: string; exercise
         prompt: 'Toca la línea donde se confunde asignación (=) con comparación (==):',
         codeSnippet: [
           'val puntos = 100',
-          'if (puntos = 100) { // ¡En comparaciones se usa == y no =!',
+          'if (puntos = 100) {',
           '    println("¡Ganaste!")',
           '}'
         ],
@@ -2151,10 +2151,10 @@ const KOTLIN_TOPIC_BANKS: Record<number, { title: string; desc: string; exercise
         prompt: 'Toca la línea con el comentario multilínea sin cerrar que causa un error de compilación:',
         codeSnippet: [
           '/* Inicio del bloque explicativo',
-          'val x = 100 // ¡El comentario nunca se cerró con */!',
+          'val x = 100',
           'println(x)'
         ],
-        bugLineIndex: 1,
+        bugLineIndex: 0,
         explanation: 'Un bloque abierto con /* debe cerrarse obligatoriamente con */. De lo contrario, todo el código subsiguiente queda anulado.',
         xpReward: 15
       },
@@ -2271,11 +2271,11 @@ const KOTLIN_TOPIC_BANKS: Record<number, { title: string; desc: string; exercise
       {
         id: 'kt-u01-l20-e04',
         type: 'spot_the_bug',
-        prompt: 'Toca la línea con el error donde se declaró el saldo como val inmutable impidiendo el retiro:',
+        prompt: 'Toca la línea con el error donde se declaró el saldo con val (de solo lectura), impidiendo actualizarlo:',
         codeSnippet: [
-          'val saldo = 1000 // ¡Debe ser var para poder actualizarse!',
+          'val saldo = 1000',
           'val retiro = 200',
-          'saldo = saldo - retiro // ¡Error de compilación: val no puede reasignarse!'
+          'saldo = saldo - retiro'
         ],
         bugLineIndex: 0,
         explanation: 'Si el saldo se declara con val, es imposible restarle el monto retirado.',

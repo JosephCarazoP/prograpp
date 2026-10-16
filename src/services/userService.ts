@@ -12,7 +12,7 @@ export const DEFAULT_POWERUPS = {
 
 export const DEFAULT_PROFILE: UserProfile = {
   uid: 'guest_user_1',
-  displayName: 'Dev Aprendiz',
+  displayName: 'Estudiante',
   avatarId: 'robot_byte',
   currentPath: 'kotlin',
   currentThemeId: 'theme_default',
@@ -22,9 +22,9 @@ export const DEFAULT_PROFILE: UserProfile = {
   maxBatteries: 5,
   lastBatteryRechargeAt: Date.now(),
   streak: {
-    count: 3,
-    lastActivityDate: new Date().toISOString().split('T')[0],
-    freezeEquipped: true
+    count: 0,
+    lastActivityDate: '',
+    freezeEquipped: false
   },
   currentLeague: 'bronze' as LeagueTier,
   weeklyXp: 120,
@@ -32,6 +32,8 @@ export const DEFAULT_PROFILE: UserProfile = {
   powerups: { ...DEFAULT_POWERUPS },
   openedChests: [],
   defeatedBosses: [],
+  unlockedSkins: ['byte_classic'],
+  equippedSkin: 'byte_classic',
   createdAt: Date.now()
 };
 
@@ -41,19 +43,39 @@ export function sanitizeUserProfile(raw: any, fallbackUid = 'guest_user_1'): Use
   }
 
   let streakObj = {
-    count: 3,
-    lastActivityDate: new Date().toISOString().split('T')[0],
-    freezeEquipped: true
+    count: 0,
+    lastActivityDate: '',
+    freezeEquipped: false
   };
 
   if (typeof raw.streak === 'number') {
     streakObj.count = raw.streak;
   } else if (raw.streak && typeof raw.streak === 'object') {
     streakObj = {
-      count: typeof raw.streak.count === 'number' ? raw.streak.count : 3,
-      lastActivityDate: typeof raw.streak.lastActivityDate === 'string' ? raw.streak.lastActivityDate : new Date().toISOString().split('T')[0],
+      count: typeof raw.streak.count === 'number' ? raw.streak.count : 0,
+      lastActivityDate: typeof raw.streak.lastActivityDate === 'string' ? raw.streak.lastActivityDate : '',
       freezeEquipped: Boolean(raw.streak.freezeEquipped)
     };
+  }
+
+  // Comprobar si se rompió la racha (si pasaron más de 1 día de inactividad)
+  if (streakObj.lastActivityDate && streakObj.count > 0) {
+    const today = new Date().toISOString().split('T')[0];
+    const yesterday = new Date(Date.now() - 86400000).toISOString().split('T')[0];
+    if (streakObj.lastActivityDate !== today && streakObj.lastActivityDate !== yesterday) {
+      if (streakObj.freezeEquipped) {
+        const twoDaysAgo = new Date(Date.now() - 2 * 86400000).toISOString().split('T')[0];
+        if (streakObj.lastActivityDate === twoDaysAgo) {
+          // Salva 1 día de congelación
+          streakObj.freezeEquipped = false;
+        } else {
+          streakObj.count = 0;
+        }
+      } else {
+        // Racha reiniciada a 0 por faltar un día
+        streakObj.count = 0;
+      }
+    }
   }
 
   const validPath = raw.currentPath === 'sql' ? 'sql' : 'kotlin';
@@ -75,9 +97,27 @@ export function sanitizeUserProfile(raw: any, fallbackUid = 'guest_user_1'): Use
     fallbackStudentCode = `E${numericPart < 10 ? '0' : ''}${numericPart}`;
   }
 
+  // Resolver nombre de usuario real garantizando que no se reemplace con Dev Aprendiz
+  const cleanFirstName = typeof raw.firstName === 'string' ? raw.firstName.trim() : '';
+  const cleanFirstLast = typeof raw.firstLastName === 'string' ? raw.firstLastName.trim() : '';
+  const cleanSecondLast = typeof raw.secondLastName === 'string' ? raw.secondLastName.trim() : '';
+  const fullName = [cleanFirstName, cleanFirstLast, cleanSecondLast].filter(Boolean).join(' ').trim();
+
+  let resolvedDisplayName = raw.displayName;
+  if (fullName) {
+    resolvedDisplayName = fullName;
+  } else if (!resolvedDisplayName || resolvedDisplayName === 'Dev Aprendiz') {
+    if (raw.email) {
+      const emailPrefix = raw.email.split('@')[0];
+      resolvedDisplayName = emailPrefix.charAt(0).toUpperCase() + emailPrefix.slice(1);
+    } else {
+      resolvedDisplayName = 'Estudiante';
+    }
+  }
+
   return {
     uid: raw.uid || fallbackUid,
-    displayName: raw.displayName || DEFAULT_PROFILE.displayName,
+    displayName: resolvedDisplayName,
     avatarId: raw.avatarId || DEFAULT_PROFILE.avatarId,
     currentPath: validPath,
     currentThemeId: raw.currentThemeId || DEFAULT_PROFILE.currentThemeId,
@@ -93,11 +133,15 @@ export function sanitizeUserProfile(raw: any, fallbackUid = 'guest_user_1'): Use
     powerups,
     openedChests,
     defeatedBosses,
+    unlockedSkins: Array.isArray(raw.unlockedSkins) && raw.unlockedSkins.length > 0
+      ? Array.from(new Set(['byte_classic', ...raw.unlockedSkins]))
+      : ['byte_classic'],
+    equippedSkin: typeof raw.equippedSkin === 'string' ? raw.equippedSkin : 'byte_classic',
     createdAt: typeof raw.createdAt === 'number' ? raw.createdAt : Date.now(),
     email: raw.email || '',
-    firstName: typeof raw.firstName === 'string' ? raw.firstName : '',
-    firstLastName: typeof raw.firstLastName === 'string' ? raw.firstLastName : '',
-    secondLastName: typeof raw.secondLastName === 'string' ? raw.secondLastName : '',
+    firstName: cleanFirstName,
+    firstLastName: cleanFirstLast,
+    secondLastName: cleanSecondLast,
     idNumber: typeof raw.idNumber === 'string' ? raw.idNumber : '',
     studentCode: raw.studentCode || fallbackStudentCode,
     group: raw.group || 'Grupo A',
@@ -112,8 +156,12 @@ export function sanitizeUserProfile(raw: any, fallbackUid = 'guest_user_1'): Use
 export const userService = {
   // Obtener perfil (Primero local para velocidad instantánea, luego Firestore)
   async getProfile(uid: string = 'guest_user_1'): Promise<UserProfile> {
-    const rawLocal = storageService.getItem<any>('user_profile', { ...DEFAULT_PROFILE, uid });
-    const local = sanitizeUserProfile(rawLocal, uid);
+    const rawLocal = storageService.getItem<any>('user_profile', null);
+    // Solo reutilizar el perfil en caché local si coincide con el UID solicitado
+    const isValidLocal = rawLocal && rawLocal.uid === uid;
+    const local = isValidLocal
+      ? sanitizeUserProfile(rawLocal, uid)
+      : sanitizeUserProfile({ uid }, uid);
 
     if (!isLocalMockMode && db) {
       try {
@@ -168,17 +216,20 @@ export const userService = {
     const today = new Date().toISOString().split('T')[0];
     const streak = { ...profile.streak };
 
-    // Lógica de racha
-    if (streak.lastActivityDate !== today) {
+    // Lógica de racha estricta: Se contabiliza si hoy no se ha activado o si la racha actual está en 0
+    if (streak.lastActivityDate !== today || !streak.count || streak.count <= 0) {
       const yesterday = new Date(Date.now() - 86400000).toISOString().split('T')[0];
+      const twoDaysAgo = new Date(Date.now() - 2 * 86400000).toISOString().split('T')[0];
+
       if (streak.lastActivityDate === yesterday) {
-        streak.count += 1;
-      } else if (streak.freezeEquipped) {
-        // Consumir el protector de racha
+        streak.count = (streak.count || 0) + 1;
+      } else if (streak.freezeEquipped && streak.lastActivityDate === twoDaysAgo) {
+        // Consumir protector por el día perdido de ayer
         streak.freezeEquipped = false;
-        streak.count += 1;
+        streak.count = (streak.count || 0) + 1;
       } else {
-        streak.count = 1;
+        // Primer día completado o reinicio de racha
+        streak.count = Math.max(1, (streak.count || 0) + 1);
       }
       streak.lastActivityDate = today;
     }

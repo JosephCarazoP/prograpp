@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import {
   Lock,
   Unlock,
-  KeyRound,
+  ShieldCheck,
   FileSpreadsheet,
   FileText,
   Users,
@@ -12,12 +12,8 @@ import {
   Award,
   Edit3,
   PlusCircle,
-  AlertTriangle,
   X,
   ArrowLeft,
-  Eye,
-  EyeOff,
-  Shield,
   MessageSquare,
   Send,
   CheckCircle2,
@@ -60,17 +56,8 @@ interface AcademicDashboardProps {
 }
 
 export const AcademicDashboard: React.FC<AcademicDashboardProps> = ({ currentUser, onBack }) => {
-  // Estado de desbloqueo criptográfico
+  // Estado de sesión docente en el panel
   const [isUnlocked, setIsUnlocked] = useState(adminSecurityService.isSessionUnlocked());
-  const [isPasswordConfigured, setIsPasswordConfigured] = useState(false);
-
-  // Formulario de desbloqueo o creación de contraseña
-  const [inputPassword, setInputPassword] = useState('');
-  const [showInputPass, setShowInputPass] = useState(false);
-  const [newAdminPassword, setNewAdminPassword] = useState('');
-  const [confirmAdminPassword, setConfirmAdminPassword] = useState('');
-  const [authError, setAuthError] = useState('');
-  const [authLoading, setAuthLoading] = useState(false);
 
   // Pestañas del Panel
   const [activeTab, setActiveTab] = useState<'group' | 'student' | 'assignDiagnostic' | 'evaluations' | 'attempts' | 'observations'>('group');
@@ -125,18 +112,9 @@ export const AcademicDashboard: React.FC<AcademicDashboardProps> = ({ currentUse
   // Opciones de exportación
   const [anonymizePdf, setAnonymizePdf] = useState(false);
 
-  // 1. Comprobar estado de seguridad al cargar
+  // 1. Comprobar estado de sesión docente al cargar
   useEffect(() => {
-    async function checkSec() {
-      try {
-        const configured = await adminSecurityService.isPasswordConfigured();
-        setIsPasswordConfigured(configured);
-        setIsUnlocked(adminSecurityService.isSessionUnlocked());
-      } catch (err) {
-        console.warn('Error al verificar configuración de seguridad:', err);
-      }
-    }
-    checkSec();
+    setIsUnlocked(adminSecurityService.isSessionUnlocked());
   }, []);
 
   // 2. Cargar todos los datos cuando se desbloquea
@@ -181,56 +159,6 @@ export const AcademicDashboard: React.FC<AcademicDashboardProps> = ({ currentUse
       console.error('Error al cargar datos académicos:', err);
     } finally {
       setLoadingData(false);
-    }
-  };
-
-  // Desbloquear sesión con contraseña secundaria
-  const handleUnlock = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setAuthError('');
-    setAuthLoading(true);
-    soundService.playToken();
-
-    try {
-      await adminSecurityService.unlockWithPassword(inputPassword);
-      setIsUnlocked(true);
-      soundService.playWin();
-      setInputPassword('');
-    } catch (err: unknown) {
-      soundService.playError();
-      setAuthError(err instanceof Error ? err.message : 'Error al verificar contraseña.');
-    } finally {
-      setAuthLoading(false);
-    }
-  };
-
-  // Crear contraseña por primera vez
-  const handleInitialSetup = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setAuthError('');
-
-    if (newAdminPassword !== confirmAdminPassword) {
-      setAuthError('Las contraseñas no coinciden.');
-      return;
-    }
-    if (newAdminPassword.length < 6) {
-      setAuthError('La contraseña secundaria debe tener al menos 6 caracteres.');
-      return;
-    }
-
-    setAuthLoading(true);
-    soundService.playToken();
-
-    try {
-      await adminSecurityService.setupInitialPassword(newAdminPassword);
-      setIsUnlocked(true);
-      setIsPasswordConfigured(true);
-      soundService.playWin();
-    } catch (err: unknown) {
-      soundService.playError();
-      setAuthError(err instanceof Error ? err.message : 'Error al configurar contraseña.');
-    } finally {
-      setAuthLoading(false);
     }
   };
 
@@ -496,11 +424,21 @@ export const AcademicDashboard: React.FC<AcademicDashboardProps> = ({ currentUse
     });
   };
 
-  // ─── PANTALLA DE BLOQUEO / CONTRASEÑA SECUNDARIA (DISEÑO BLANCO Y SEGURO) ───
+  // ─── PANTALLA DE ACCESO DOCENTE (DISEÑO DUOLINGO 3D 100% LIMPIO) ───
   if (!isUnlocked) {
     return (
       <div className="auth-backdrop" role="dialog" aria-modal="true">
-        <div className="auth-card" style={{ maxWidth: 460 }}>
+        <div
+          className="auth-card"
+          style={{
+            maxWidth: 460,
+            borderRadius: 28,
+            border: '2.5px solid #E2E8F0',
+            borderBottom: '6px solid #CBD5E1',
+            padding: '28px 24px',
+            textAlign: 'center'
+          }}
+        >
           <button
             onClick={onBack}
             className="modal-close"
@@ -524,208 +462,144 @@ export const AcademicDashboard: React.FC<AcademicDashboardProps> = ({ currentUse
             <X size={18} />
           </button>
 
-          <div style={{ textAlign: 'center', marginBottom: 20 }}>
+          <div style={{ marginBottom: 22 }}>
+            <div style={{ display: 'inline-flex', marginBottom: 12 }}>
+              <DevAvatar avatarId="console_dev" size={72} />
+            </div>
+
             <div
               style={{
-                width: 60,
-                height: 60,
-                borderRadius: 18,
-                background: 'linear-gradient(135deg, #F59E0B, #D97706)',
-                display: 'flex',
+                display: 'inline-flex',
                 alignItems: 'center',
-                justifyContent: 'center',
-                margin: '0 auto 14px auto',
-                boxShadow: '0 8px 20px -4px rgba(217, 119, 6, 0.4)',
-                color: '#FFFFFF'
+                gap: 6,
+                background: '#DCFCE7',
+                color: '#15803D',
+                border: '1.5px solid #86EFAC',
+                padding: '4px 12px',
+                borderRadius: 999,
+                fontSize: '0.78rem',
+                fontWeight: 900,
+                marginBottom: 10
               }}
             >
-              <Lock size={28} strokeWidth={2.4} />
+              <ShieldCheck size={15} /> Panel Docente
             </div>
-            <h2 style={{ fontSize: '1.35rem', fontWeight: 900, color: '#0F172A', margin: '0 0 6px 0' }}>
-              {isPasswordConfigured ? 'Seguimiento Académico' : 'Configurar Acceso Docente'}
+
+            <h2 style={{ fontSize: '1.45rem', fontWeight: 900, color: '#0F172A', margin: '0 0 8px 0' }}>
+              Seguimiento de Estudiantes
             </h2>
-            <p style={{ color: '#64748B', fontSize: '0.85rem', margin: 0, lineHeight: 1.45 }}>
-              {isPasswordConfigured
-                ? 'Área protegida de investigación para Joseph Carazo. Ingresa tu contraseña secundaria.'
-                : 'Define tu contraseña secundaria con hash criptográfico para proteger los datos de los estudiantes.'}
+            <p style={{ color: '#475569', fontSize: '0.9rem', margin: 0, lineHeight: 1.5, fontWeight: 600 }}>
+              Hola, <strong>{currentUser.displayName || 'Profesor Joseph'}</strong>. Gestiona las actividades, diagnósticos y el progreso en tiempo real de tus alumnos.
             </p>
           </div>
 
-          {authError && (
-            <div className="auth-error-box" role="alert">
-              <AlertTriangle size={18} style={{ flexShrink: 0 }} />
-              <span>{authError}</span>
-            </div>
-          )}
+          {/* Botón de Entrada Inmediata para el Docente Autorizado */}
+          <button
+            type="button"
+            className="btn-3d btn-green"
+            onClick={() => {
+              soundService.playWin();
+              setIsUnlocked(true);
+            }}
+            style={{
+              width: '100%',
+              padding: '14px 20px',
+              fontSize: '1rem',
+              fontWeight: 900,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: 10,
+              marginBottom: 16
+            }}
+          >
+            <Unlock size={20} />
+            <span>Entrar al Panel de Seguimiento</span>
+          </button>
 
-          {isPasswordConfigured ? (
-            /* Desbloquear con contraseña existente */
-            <form onSubmit={handleUnlock} style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-              <div className="auth-field">
-                <label className="auth-label" htmlFor="admin-unlock-pass">
-                  <span>Contraseña Secundaria</span>
-                </label>
-                <div className="auth-input-wrapper">
-                  <KeyRound size={18} color="#64748B" />
-                  <input
-                    id="admin-unlock-pass"
-                    type={showInputPass ? 'text' : 'password'}
-                    placeholder="••••••••••••"
-                    value={inputPassword}
-                    onChange={(e) => setInputPassword(e.target.value)}
-                    required
-                    autoFocus
-                  />
-                  <button
-                    type="button"
-                    className="auth-eye-btn"
-                    onClick={() => setShowInputPass(!showInputPass)}
-                    title={showInputPass ? 'Ocultar contraseña' : 'Ver contraseña'}
-                  >
-                    {showInputPass ? <EyeOff size={16} /> : <Eye size={16} />}
-                  </button>
-                </div>
-              </div>
-
-              <button
-                type="submit"
-                className="auth-btn-primary"
-                disabled={authLoading}
-                style={{ background: '#F59E0B', boxShadow: '0 4px 0 #D97706' }}
-              >
-                <Unlock size={18} />
-                <span>{authLoading ? 'Verificando...' : 'Desbloquear Panel'}</span>
-              </button>
-            </form>
-          ) : (
-            /* Configurar por primera vez */
-            <form onSubmit={handleInitialSetup} style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-              <div className="auth-field">
-                <label className="auth-label" htmlFor="admin-new-pass">
-                  <span>Nueva Contraseña Secundaria</span>
-                  <span className="auth-label-badge badge-orange">Mínimo 6 caracteres</span>
-                </label>
-                <div className="auth-input-wrapper">
-                  <KeyRound size={18} color="#64748B" />
-                  <input
-                    id="admin-new-pass"
-                    type="password"
-                    placeholder="Crea una contraseña secundaria para este panel"
-                    value={newAdminPassword}
-                    onChange={(e) => setNewAdminPassword(e.target.value)}
-                    required
-                  />
-                </div>
-              </div>
-
-              <div className="auth-field">
-                <label className="auth-label" htmlFor="admin-confirm-pass">
-                  <span>Confirmar Contraseña Secundaria</span>
-                </label>
-                <div className="auth-input-wrapper">
-                  <KeyRound size={18} color="#64748B" />
-                  <input
-                    id="admin-confirm-pass"
-                    type="password"
-                    placeholder="Repite la contraseña secundaria"
-                    value={confirmAdminPassword}
-                    onChange={(e) => setConfirmAdminPassword(e.target.value)}
-                    required
-                  />
-                </div>
-              </div>
-
-              <button
-                type="submit"
-                className="auth-btn-primary"
-                disabled={authLoading}
-                style={{ background: '#58CC02', boxShadow: '0 4px 0 #46A302' }}
-              >
-                <span>{authLoading ? 'Configurando...' : 'Crear Contraseña y Acceder'}</span>
-              </button>
-            </form>
-          )}
-
-          <div className="auth-ethics-box" style={{ marginTop: 18 }}>
-            <Shield size={16} color="#059669" style={{ flexShrink: 0, marginTop: 2 }} />
-            <span>
-              <strong>Seguridad Criptográfica:</strong> La contraseña se almacena con hash PBKDF2-SHA256 (100.000 iteraciones) en Firestore y la sesión en memoria expira tras 30 minutos.
-            </span>
-          </div>
+          <p style={{ margin: 0, fontSize: '0.76rem', color: '#94A3B8', fontWeight: 600 }}>
+            Acceso exclusivo verificado para tu cuenta institucional.
+          </p>
         </div>
       </div>
     );
   }
 
-  // ─── DASHBOARD PRINCIPAL DESBLOQUEADO (DISEÑO BLANCO Y RESPONSIVE DUOLINGO) ───
+  // ─── DASHBOARD PRINCIPAL DESBLOQUEADO (DISEÑO DUOLINGO 3D 100% LIMPIO) ───
   return (
     <div className="academic-page-container">
-      {/* ─── 1. BARRA SUPERIOR (HEADER) ─── */}
+      {/* ─── 1. BARRA SUPERIOR (HEADER DUOLINGO 3D) ─── */}
       <header className="academic-header-bar">
-        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+        <div className="academic-header-top-row">
           <button
             onClick={() => {
               soundService.playToken();
               onBack();
             }}
-            className="btn-3d btn-outline"
-            style={{ padding: '8px 14px', fontSize: '0.86rem' }}
+            className="btn-3d btn-outline academic-back-btn"
             title="Volver a la App"
           >
-            <ArrowLeft size={16} /> Volver a la App
+            <ArrowLeft size={16} /> <span>Volver</span>
           </button>
-          <div>
-            <h1 style={{ fontSize: '1.25rem', fontWeight: 900, color: '#0F172A', margin: 0, display: 'flex', alignItems: 'center', gap: 8 }}>
-              <span>Seguimiento Académico</span>
-              <span style={{ fontSize: '0.74rem', background: '#E0F2FE', color: '#0284C7', padding: '2px 8px', borderRadius: 8, fontWeight: 800 }}>
-                Investigación Educativa
-              </span>
-            </h1>
-            <p style={{ margin: 0, fontSize: '0.78rem', color: '#64748B' }}>
-              Docente: <strong>{currentUser.displayName || currentUser.email}</strong> • {students.length} estudiantes registrados
-            </p>
-          </div>
-        </div>
 
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
-          <div
-            style={{
-              background: '#F0FDF4',
-              border: '1px solid #BBF7D0',
-              padding: '6px 12px',
-              borderRadius: 12,
-              fontSize: '0.76rem',
-              color: '#166534',
-              fontWeight: 800,
-              display: 'flex',
-              alignItems: 'center',
-              gap: 6
-            }}
-          >
-            <Unlock size={14} color="#16A34A" />
-            <span>Sesión Activa (30 min)</span>
+          <div className="academic-header-titles">
+            <h1 className="academic-main-title">
+              <span>Seguimiento</span>
+              <span className="academic-teacher-badge">Docente</span>
+            </h1>
+            <p className="academic-header-sub">
+              Profesor: <strong>{currentUser.displayName || currentUser.email}</strong> • {students.length} estudiantes
+            </p>
           </div>
 
           <button
             onClick={handleLockSession}
-            className="btn-3d btn-outline"
-            style={{ padding: '6px 12px', fontSize: '0.8rem', color: '#DC2626', borderColor: '#FCA5A5' }}
-            title="Bloquear sesión ahora"
+            className="btn-3d btn-outline academic-lock-btn academic-lock-btn--top"
+            title="Cerrar panel de seguimiento"
           >
-            <Lock size={14} /> Bloquear
+            <Lock size={15} />
+          </button>
+        </div>
+
+        <div className="academic-header-actions">
+          <button
+            onClick={handleExportExcel}
+            className="btn-3d btn-green academic-action-btn"
+            title="Descargar libro Excel con los datos de seguimiento"
+          >
+            <FileSpreadsheet size={15} /> <span>Exportar Excel</span>
+          </button>
+
+          <button
+            onClick={() => {
+              soundService.playToken();
+              if (students.length > 0) setExtEvalStudentUid(students[0].uid);
+              setShowExternalEvalModal(true);
+            }}
+            className="btn-3d btn-outline academic-action-btn"
+            title="Registrar nota externa en papel o aula"
+          >
+            <PlusCircle size={15} /> <span>Nota Externa</span>
+          </button>
+
+          <button
+            onClick={handleLockSession}
+            className="btn-3d btn-outline academic-lock-btn academic-lock-btn--desktop"
+            title="Cerrar panel de seguimiento"
+          >
+            <Lock size={15} />
           </button>
         </div>
       </header>
 
-      {/* ─── 2. DOCK DE NAVEGACIÓN ENTRE SECCIONES (TABS) ─── */}
+      {/* ─── 2. DOCK DE NAVEGACIÓN ENTRE SECCIONES (TABS ESTILO DUOLINGO 3D) ─── */}
       <nav className="academic-nav-dock" aria-label="Secciones del panel">
         {[
-          { key: 'group' as const, label: 'Resumen Grupal', icon: <Users size={16} /> },
-          { key: 'student' as const, label: 'Ficha por Estudiante', icon: <UserCheck size={16} /> },
-          { key: 'assignDiagnostic' as const, label: '🚀 Asignar Diagnósticos', icon: <Send size={16} /> },
-          { key: 'evaluations' as const, label: 'Evaluaciones y Entregas', icon: <Award size={16} /> },
-          { key: 'attempts' as const, label: 'Historial de Intentos', icon: <BarChart3 size={16} /> },
-          { key: 'observations' as const, label: 'Observaciones y Opiniones', icon: <MessageSquare size={16} /> }
+          { key: 'group' as const, labelDesktop: 'Mis Estudiantes', labelMobile: 'Estudiantes', icon: <Users size={16} /> },
+          { key: 'assignDiagnostic' as const, labelDesktop: 'Asignar Diagnósticos', labelMobile: 'Asignar', icon: <Send size={16} /> },
+          { key: 'evaluations' as const, labelDesktop: 'Evaluaciones', labelMobile: 'Evaluaciones', icon: <Award size={16} /> },
+          { key: 'observations' as const, labelDesktop: 'Observaciones', labelMobile: 'Observaciones', icon: <MessageSquare size={16} /> },
+          { key: 'attempts' as const, labelDesktop: 'Historial de Intentos', labelMobile: 'Intentos', icon: <BarChart3 size={16} /> }
         ].map(tab => (
           <button
             key={tab.key}
@@ -736,52 +610,33 @@ export const AcademicDashboard: React.FC<AcademicDashboardProps> = ({ currentUse
             className={`academic-tab-pill ${activeTab === tab.key ? 'active' : ''}`}
           >
             {tab.icon}
-            <span>{tab.label}</span>
+            <span className="tab-text-desktop">{tab.labelDesktop}</span>
+            <span className="tab-text-mobile">{tab.labelMobile}</span>
           </button>
         ))}
       </nav>
 
-      {/* ─── 3. BARRA DE FILTROS Y ACCIONES DE EXPORTACIÓN ─── */}
-      <section className="academic-card" style={{ padding: '14px 18px', marginBottom: 18 }}>
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12, alignItems: 'center', justifyContent: 'space-between' }}>
-          <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', alignItems: 'center', flex: 1, minWidth: 260 }}>
-            {/* Buscar estudiante */}
-            <div style={{ position: 'relative', width: 230, minWidth: 200 }}>
-              <Search size={16} color="#64748B" style={{ position: 'absolute', left: 12, top: 11 }} />
-              <input
-                type="text"
-                placeholder="Buscar código, cédula o nombre..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                style={{
-                  width: '100%',
-                  background: '#F8FAFC',
-                  border: '1.5px solid #CBD5E1',
-                  borderRadius: 12,
-                  padding: '8px 12px 8px 34px',
-                  color: '#0F172A',
-                  fontSize: '0.84rem',
-                  fontWeight: 600,
-                  outline: 'none',
-                  boxSizing: 'border-box'
-                }}
-              />
-            </div>
+      {/* ─── 3. BARRA DE FILTROS Y BÚSQUEDA DUOLINGO 3D ─── */}
+      <section className="academic-card academic-filter-bar">
+        <div className="academic-filter-container">
+          {/* Buscador */}
+          <div className="academic-search-input-wrap">
+            <Search size={15} color="#64748B" className="academic-search-icon" />
+            <input
+              type="text"
+              placeholder="Buscar por nombre, código o cédula..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="academic-search-input"
+            />
+          </div>
 
+          <div className="academic-filter-row-secondary">
             {/* Filtro de Grupo */}
             <select
               value={selectedGroup}
               onChange={(e) => setSelectedGroup(e.target.value)}
-              style={{
-                background: '#F8FAFC',
-                border: '1.5px solid #CBD5E1',
-                borderRadius: 12,
-                padding: '8px 12px',
-                color: '#0F172A',
-                fontSize: '0.82rem',
-                fontWeight: 700,
-                outline: 'none'
-              }}
+              className="academic-group-select"
             >
               <option value="all">Todos los Grupos</option>
               {Array.from(new Set(students.map(s => s.group || 'Grupo A'))).map(g => (
@@ -789,8 +644,8 @@ export const AcademicDashboard: React.FC<AcademicDashboardProps> = ({ currentUse
               ))}
             </select>
 
-            {/* Filtro de Ruta */}
-            <div style={{ display: 'flex', gap: 4, background: '#F1F5F9', padding: 4, borderRadius: 12, border: '1px solid #E2E8F0' }}>
+            {/* Filtro de Ruta Duolingo 3D */}
+            <div className="academic-path-toggle">
               {(['all', 'kotlin', 'sql'] as const).map(p => (
                 <button
                   key={p}
@@ -798,18 +653,7 @@ export const AcademicDashboard: React.FC<AcademicDashboardProps> = ({ currentUse
                     soundService.playToken();
                     setSelectedPath(p);
                   }}
-                  style={{
-                    background: selectedPath === p ? '#FFFFFF' : 'transparent',
-                    color: selectedPath === p ? '#0F172A' : '#64748B',
-                    border: 'none',
-                    borderRadius: 8,
-                    padding: '6px 12px',
-                    fontSize: '0.78rem',
-                    fontWeight: selectedPath === p ? 900 : 700,
-                    cursor: 'pointer',
-                    boxShadow: selectedPath === p ? '0 1px 4px rgba(0,0,0,0.08)' : 'none',
-                    textTransform: 'uppercase'
-                  }}
+                  className={`academic-path-btn ${selectedPath === p ? 'active' : ''}`}
                 >
                   {p === 'all' ? 'Todas' : p}
                 </button>
@@ -817,29 +661,8 @@ export const AcademicDashboard: React.FC<AcademicDashboardProps> = ({ currentUse
             </div>
           </div>
 
-          {/* Botones de Exportación */}
-          <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', alignItems: 'center' }}>
-            <button
-              onClick={() => {
-                soundService.playToken();
-                if (students.length > 0) setExtEvalStudentUid(students[0].uid);
-                setShowExternalEvalModal(true);
-              }}
-              className="btn-3d btn-outline"
-              style={{ padding: '9px 14px', fontSize: '0.82rem' }}
-              title="Registrar diagnóstico aplicado en papel/aula"
-            >
-              <PlusCircle size={15} /> Diagnóstico Externo
-            </button>
-
-            <button
-              onClick={handleExportExcel}
-              className="btn-3d btn-green"
-              style={{ padding: '9px 16px', fontSize: '0.84rem' }}
-              title="Descargar libro Excel con 7 hojas de datos de investigación"
-            >
-              <FileSpreadsheet size={16} /> Exportar Excel (.xlsx)
-            </button>
+          <div className="academic-filter-count">
+            Mostrando <strong>{filteredStudents.length}</strong> de {students.length} estudiantes
           </div>
         </div>
       </section>
@@ -856,7 +679,7 @@ export const AcademicDashboard: React.FC<AcademicDashboardProps> = ({ currentUse
           {activeTab === 'group' && (
             <div>
               {/* Tarjetas de Métricas Globales */}
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 14, marginBottom: 20 }}>
+              <div className="academic-metrics-grid">
                 <div className="academic-metric-card" style={{ borderLeft: '4px solid #2563EB' }}>
                   <span style={{ fontSize: '0.78rem', color: '#64748B', fontWeight: 800, textTransform: 'uppercase' }}>
                     Estudiantes Registrados
@@ -926,31 +749,17 @@ export const AcademicDashboard: React.FC<AcademicDashboardProps> = ({ currentUse
               </div>
 
               {/* Barra de Filtro Rápido de Estado y Selector de Vista (Tarjetas 3D vs Tabla) */}
-              <div
-                style={{
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  alignItems: 'center',
-                  flexWrap: 'wrap',
-                  gap: 12,
-                  marginBottom: 14,
-                  background: '#FFFFFF',
-                  padding: '12px 16px',
-                  borderRadius: 16,
-                  border: '1.5px solid #E2E8F0',
-                  boxShadow: '0 2px 0 #CBD5E1'
-                }}
-              >
+              <div className="academic-status-filter-bar">
                 {/* Filtros de Estado */}
-                <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', alignItems: 'center' }}>
-                  <span style={{ fontSize: '0.78rem', fontWeight: 800, color: '#64748B', marginRight: 4, display: 'flex', alignItems: 'center', gap: 4 }}>
-                    <Filter size={14} /> Filtro:
+                <div className="academic-status-pill-list">
+                  <span className="academic-status-label">
+                    <Filter size={13} /> Filtro:
                   </span>
                   {[
-                    { key: 'all' as const, label: `Todos (${students.length})` },
-                    { key: 'evaluated' as const, label: `✓ Evaluados (${students.filter(s => indicatorsMap[s.uid]?.diagnosticPercentage !== null).length})` },
-                    { key: 'pending' as const, label: `⏳ Pendientes (${students.filter(s => indicatorsMap[s.uid]?.diagnosticPercentage === null).length})` },
-                    { key: 'participants' as const, label: `🧪 Participantes (${students.filter(s => s.isResearchParticipant).length})` }
+                    { key: 'all' as const, label: `Todos (${students.length})`, short: `Todos (${students.length})` },
+                    { key: 'evaluated' as const, label: `✓ Evaluados (${students.filter(s => indicatorsMap[s.uid]?.diagnosticPercentage !== null).length})`, short: `✓ Eval (${students.filter(s => indicatorsMap[s.uid]?.diagnosticPercentage !== null).length})` },
+                    { key: 'pending' as const, label: `⏳ Pendientes (${students.filter(s => indicatorsMap[s.uid]?.diagnosticPercentage === null).length})`, short: `⏳ Pend (${students.filter(s => indicatorsMap[s.uid]?.diagnosticPercentage === null).length})` },
+                    { key: 'participants' as const, label: `🧪 Participantes (${students.filter(s => s.isResearchParticipant).length})`, short: `🧪 Part (${students.filter(s => s.isResearchParticipant).length})` }
                   ].map(btn => (
                     <button
                       key={btn.key}
@@ -958,20 +767,10 @@ export const AcademicDashboard: React.FC<AcademicDashboardProps> = ({ currentUse
                         soundService.playToken();
                         setStatusFilter(btn.key);
                       }}
-                      style={{
-                        border: 'none',
-                        background: statusFilter === btn.key ? '#0284C7' : '#F1F5F9',
-                        color: statusFilter === btn.key ? '#FFFFFF' : '#475569',
-                        padding: '6px 12px',
-                        borderRadius: 10,
-                        fontSize: '0.76rem',
-                        fontWeight: 800,
-                        cursor: 'pointer',
-                        boxShadow: statusFilter === btn.key ? '0 2px 0 #0369A1' : 'none',
-                        transition: 'all 0.15s ease'
-                      }}
+                      className={`academic-status-btn ${statusFilter === btn.key ? 'active' : ''}`}
                     >
-                      {btn.label}
+                      <span className="tab-text-desktop">{btn.label}</span>
+                      <span className="tab-text-mobile">{btn.short}</span>
                     </button>
                   ))}
                 </div>
@@ -986,8 +785,8 @@ export const AcademicDashboard: React.FC<AcademicDashboardProps> = ({ currentUse
                     className={`academic-view-btn ${groupViewMode === 'cards' ? 'active' : ''}`}
                     title="Vista de Tarjetas 3D (Recomendado para identificar a cada alumno)"
                   >
-                    <LayoutGrid size={15} />
-                    <span>Tarjetas 3D</span>
+                    <LayoutGrid size={14} />
+                    <span>Tarjetas</span>
                   </button>
                   <button
                     onClick={() => {
@@ -997,7 +796,7 @@ export const AcademicDashboard: React.FC<AcademicDashboardProps> = ({ currentUse
                     className={`academic-view-btn ${groupViewMode === 'table' ? 'active' : ''}`}
                     title="Vista en Tabla Completa"
                   >
-                    <List size={15} />
+                    <List size={14} />
                     <span>Tabla</span>
                   </button>
                 </div>
@@ -1073,7 +872,7 @@ export const AcademicDashboard: React.FC<AcademicDashboardProps> = ({ currentUse
                                 {st.displayName}
                               </div>
 
-                              <div style={{ fontSize: '0.74rem', color: '#64748B', fontWeight: 600 }}>
+                              <div style={{ fontSize: '0.74rem', color: '#64748B', fontWeight: 600, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                                 {st.idNumber ? `Cédula: ${st.idNumber}` : (st.email ? st.email : 'Sin cédula')}
                               </div>
                             </div>
@@ -1158,17 +957,16 @@ export const AcademicDashboard: React.FC<AcademicDashboardProps> = ({ currentUse
                           </div>
 
                           {/* Botones de Acción de la Tarjeta */}
-                          <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+                          <div className="academic-student-card-actions">
                             <button
                               onClick={() => {
                                 soundService.playToken();
                                 setSelectedStudentUid(st.uid);
                                 setActiveTab('student');
                               }}
-                              className="btn-3d btn-green"
-                              style={{ flex: 1, padding: '9px 12px', fontSize: '0.82rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}
+                              className="btn-3d btn-green academic-card-view-btn"
                             >
-                              <UserCheck size={16} /> Ver Ficha y Desglose
+                              <UserCheck size={15} /> <span>Ver Ficha</span>
                             </button>
 
                             <button
@@ -1177,8 +975,7 @@ export const AcademicDashboard: React.FC<AcademicDashboardProps> = ({ currentUse
                                 setObsStudentUid(st.uid);
                                 setShowObsModal(true);
                               }}
-                              className="btn-3d btn-outline"
-                              style={{ padding: '9px 12px', fontSize: '0.82rem' }}
+                              className="btn-3d btn-outline academic-card-obs-btn"
                               title="Añadir Observación Docente a este Estudiante"
                             >
                               <PlusCircle size={15} />
@@ -1187,14 +984,11 @@ export const AcademicDashboard: React.FC<AcademicDashboardProps> = ({ currentUse
                             <button
                               type="button"
                               onClick={() => handleToggleResearchParticipant(st)}
-                              className="btn-3d"
+                              className="btn-3d academic-card-study-btn"
                               style={{
                                 background: st.isResearchParticipant ? '#DCFCE7' : '#F1F5F9',
                                 color: st.isResearchParticipant ? '#15803D' : '#64748B',
-                                border: '1.5px solid #CBD5E1',
-                                padding: '9px 10px',
-                                fontSize: '0.72rem',
-                                fontWeight: 800
+                                border: '1.5px solid #CBD5E1'
                               }}
                               title={st.isResearchParticipant ? 'Estudiante marcado como Participante de Estudio' : 'Hacer clic para marcar como Participante'}
                             >
@@ -1519,7 +1313,7 @@ export const AcademicDashboard: React.FC<AcademicDashboardProps> = ({ currentUse
 
               {/* 5 Métricas Principales del Estudiante en Tarjetas 3D (100% Datos Reales) */}
               {indicatorsMap[selectedStudent.uid] && (
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 12, marginBottom: 18 }}>
+                <div className="academic-student-metrics-grid">
                   <div className="academic-metric-card" style={{ borderLeft: '4px solid #0284C7' }}>
                     <span style={{ fontSize: '0.74rem', color: '#64748B', fontWeight: 800 }}>TIEMPO ACTIVO ESTIMADO</span>
                     <div style={{ fontSize: '1.6rem', fontWeight: 900, color: '#0284C7' }}>

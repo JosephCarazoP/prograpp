@@ -12,11 +12,11 @@ export const SQL_UNIT_03_THEORY: Record<string, TheoryLesson> = {
     estimatedMinutes: 5,
     analogy: `La cláusula WHERE es como el guardia de seguridad en la entrada de un club VIP: examina a cada persona que llega por la fila (tabla) y solo permite el paso al salón si su nombre está en la lista de invitados (TRUE). Si no lo está (FALSE), queda descartada de inmediato.`,
     video: {
-      title: 'SQL WHERE Clause: Cómo Filtrar Datos Paso a Paso',
-      channel: 'freeCodeCamp Español / Mosh',
-      duration: '8:45',
-      url: 'https://www.youtube.com/watch?v=7S_tz1z_5bA',
-      summary: 'Comprende el ciclo de ejecución de SQL y cómo la cláusula WHERE descarta filas antes de que lleguen al SELECT final.'
+      title: 'Curso de SQL desde CERO (Completo)',
+      channel: 'Soy Dalto',
+      duration: '3:20:00',
+      url: 'https://www.youtube.com/watch?v=DFg1V-rO6Pg',
+      summary: 'Aprende filtrado con WHERE, operadores lógicos AND / OR, rangos con BETWEEN, patrones LIKE y tratamiento de NULL.'
     },
     sections: [
       {
@@ -62,11 +62,11 @@ WHERE activo = true;`,
     estimatedMinutes: 5,
     analogy: `Los operadores numéricos son como los medidores de estatura en una montaña rusa de parque de diversiones: "Estatura >= 1.40 m" para pasar a la atracción extrema, o "Edad < 12 años" para el menú infantil del restaurante.`,
     video: {
-      title: 'Operadores Relacionales y Comparaciones Numéricas en SQL',
-      channel: 'Programming with Mosh',
-      duration: '7:15',
-      url: 'https://www.youtube.com/watch?v=HXV3zeRR3h4',
-      summary: 'Aprende a usar operadores de comparación estándar ANSI como <>, !=, >= y <= para segmentar registros cuantitativos.'
+      title: 'Curso de SQL desde CERO (Completo)',
+      channel: 'Soy Dalto',
+      duration: '3:20:00',
+      url: 'https://www.youtube.com/watch?v=DFg1V-rO6Pg',
+      summary: 'Aprende filtrado con WHERE, operadores lógicos AND / OR, rangos con BETWEEN, patrones LIKE y tratamiento de NULL.'
     },
     sections: [
       {
@@ -122,11 +122,11 @@ WHERE departamento <> 'Ventas';`,
     estimatedMinutes: 5,
     analogy: `Buscar un texto en SQL puede ser como buscar en un archivador estricto: para un archivista meticuloso "GARCÍA" y "garcía" son dos carpetas completamente distintas, mientras que para otro más relajado ambas carpetas significan exactamente lo mismo.`,
     video: {
-      title: 'SQL Collation y Comparación de Texto: Mayúsculas vs Minúsculas',
-      channel: 'Alex The Analyst',
-      duration: '9:20',
-      url: 'https://www.youtube.com/watch?v=zbMHLJ0J56w',
-      summary: 'Descubre las diferencias entre motores como PostgreSQL (Case-Sensitive) y MySQL (Case-Insensitive) y cómo escribir consultas portátiles.'
+      title: 'Aprende SQL - Curso desde cero con MySQL, PostgreSQL y Bases Relacionales',
+      channel: 'freeCodeCamp Español',
+      duration: '3:45:00',
+      url: 'https://www.youtube.com/watch?v=6JBsoPOwPew',
+      summary: 'Curso exhaustivo en español para comprender bases de datos relacionales, tipos de datos, restricciones y buenas prácticas.'
     },
     sections: [
       {
@@ -174,11 +174,11 @@ WHERE LOWER(email) = LOWER('Contacto@Empresa.com');`,
     estimatedMinutes: 5,
     analogy: `El operador AND es como una bóveda bancaria de doble llave: requiere la llave del gerente Y la llave del auditor al mismo tiempo. Si cualquiera de las dos falta, la pesada puerta blindada no se moverá ni un milímetro.`,
     video: {
-      title: 'SQL Logical Operators: AND & Short-Circuit Evaluation',
-      channel: 'Socratica',
-      duration: '8:10',
-      url: 'https://www.youtube.com/watch?v=4bW7Xn7_2vE',
-      summary: 'Aprende cómo el operador AND combina condiciones booleanas y cómo los motores SQL optimizan su evaluación.'
+      title: 'Aprende SQL - Curso desde cero con MySQL, PostgreSQL y Bases Relacionales',
+      channel: 'freeCodeCamp Español',
+      duration: '3:45:00',
+      url: 'https://www.youtube.com/watch?v=6JBsoPOwPew',
+      summary: 'Curso exhaustivo en español para comprender bases de datos relacionales, tipos de datos, restricciones y buenas prácticas.'
     },
     sections: [
       {
@@ -228,11 +228,11 @@ WHERE categoria = 'Computación'
     estimatedMinutes: 5,
     analogy: `El operador OR es como la taquilla de boletos con tarifa preferencial en el transporte público: tienes descuento si eres estudiante O si eres adulto mayor. Basta con cumplir cualquiera de los dos requisitos para recibir el boleto.`,
     video: {
-      title: 'SQL OR Operator and Logical Disjunctions Explained',
-      channel: 'freeCodeCamp',
-      duration: '7:40',
-      url: 'https://www.youtube.com/watch?v=9Pzj7Aj25lw',
-      summary: 'Domina el operador OR para ampliar búsquedas y aprende cómo impacta el uso de índices en consultas masivas.'
+      title: 'Curso COMPLETO de SQL y BASES DE DATOS Desde Cero para PRINCIPIANTES',
+      channel: 'MoureDev by Brais Moure',
+      duration: '2:15:00',
+      url: 'https://www.youtube.com/watch?v=OuJerKzV5T0',
+      summary: 'Aprende qué es un motor relacional, diseño de tablas, claves primarias y conceptos fundamentales de SQL explicados en español.'
     },
     sections: [
       {
@@ -279,11 +279,11 @@ WHERE estado = 'CANCELADO'
     estimatedMinutes: 6,
     analogy: `La precedencia de operadores lógicos es exactamente como la regla PEMDAS en matemáticas: en 2 + 3 * 4, la multiplicación se hace primero (dando 14, no 20). En SQL, AND es la multiplicación y OR es la suma. Si no pones paréntesis, el motor resolverá los AND primero y cambiará por completo el sentido de tu consulta.`,
     video: {
-      title: 'SQL Operator Precedence: El Error Más Común con AND y OR',
-      channel: 'Caleb Curry',
-      duration: '8:55',
-      url: 'https://www.youtube.com/watch?v=7S_tz1z_5bA',
-      summary: 'Analiza casos reales de filtrado donde olvidar paréntesis expone registros privados de usuarios o altera reportes financieros.'
+      title: 'Aprende SQL - Curso desde cero con MySQL, PostgreSQL y Bases Relacionales',
+      channel: 'freeCodeCamp Español',
+      duration: '3:45:00',
+      url: 'https://www.youtube.com/watch?v=6JBsoPOwPew',
+      summary: 'Curso exhaustivo en español para comprender bases de datos relacionales, tipos de datos, restricciones y buenas prácticas.'
     },
     sections: [
       {
@@ -336,11 +336,11 @@ WHERE activo = true
     estimatedMinutes: 5,
     analogy: `El operador NOT es como un cartel de "Cualquier vehículo EXCEPTO camiones pesados". No necesitas listar autos, motocicletas, bicicletas y patinetas individualmente; solo indicas lo que está terminantemente prohibido cruzar.`,
     video: {
-      title: 'SQL NOT Operator: Negaciones Lógicas y Buenas Prácticas',
-      channel: 'Web Dev Simplified',
-      duration: '6:50',
-      url: 'https://www.youtube.com/watch?v=0h2b3c4d5e6',
-      summary: 'Aprende a negar expresiones complejas y comprende cómo NOT interactúa con los valores NULL en SQL.'
+      title: 'Curso de SQL desde CERO (Completo)',
+      channel: 'Soy Dalto',
+      duration: '3:20:00',
+      url: 'https://www.youtube.com/watch?v=DFg1V-rO6Pg',
+      summary: 'Aprende filtrado con WHERE, operadores lógicos AND / OR, rangos con BETWEEN, patrones LIKE y tratamiento de NULL.'
     },
     sections: [
       {
@@ -386,11 +386,11 @@ WHERE NOT (estado_cuenta = 'SUSPENDIDO');
     estimatedMinutes: 5,
     analogy: `El operador BETWEEN es como el rango de horario de entrega de un servicio postal: "El mensajero pasará entre las 9:00 AM y las 2:00 PM". Si el mensajero toca a las 9:00 AM exactas o a las 2:00 PM exactas, está dentro de la ventana acordada.`,
     video: {
-      title: 'SQL BETWEEN Operator: Cómo Filtrar Rangos sin Errores',
-      channel: 'Programming with Mosh',
-      duration: '7:30',
-      url: 'https://www.youtube.com/watch?v=7S_tz1z_5bA',
-      summary: 'Descubre cómo simplificar comparaciones numéricas y de fechas usando la sintaxis limpia de BETWEEN.'
+      title: 'Aprende SQL - Curso desde cero con MySQL, PostgreSQL y Bases Relacionales',
+      channel: 'freeCodeCamp Español',
+      duration: '3:45:00',
+      url: 'https://www.youtube.com/watch?v=6JBsoPOwPew',
+      summary: 'Curso exhaustivo en español para comprender bases de datos relacionales, tipos de datos, restricciones y buenas prácticas.'
     },
     sections: [
       {
@@ -440,11 +440,11 @@ WHERE fecha_ingreso BETWEEN '2023-01-01' AND '2023-12-31';`,
     estimatedMinutes: 5,
     analogy: `NOT BETWEEN es como el sistema de alarma de temperatura de un refrigerador de vacunas biológicas: si la temperatura está entre 2°C y 8°C todo está en calma; la alarma solo se dispara si la temperatura se sale de esa zona segura (menor a 2°C o mayor a 8°C).`,
     video: {
-      title: 'SQL NOT BETWEEN: Exclusión de Datos y Detección de Anomalías',
-      channel: 'Alex The Analyst',
-      duration: '6:40',
-      url: 'https://www.youtube.com/watch?v=HXV3zeRR3h4',
-      summary: 'Aprende a usar NOT BETWEEN para auditar valores atípicos y segmentar extremos en conjuntos de datos empresariales.'
+      title: 'Curso de SQL desde CERO (Completo)',
+      channel: 'Soy Dalto',
+      duration: '3:20:00',
+      url: 'https://www.youtube.com/watch?v=DFg1V-rO6Pg',
+      summary: 'Aprende filtrado con WHERE, operadores lógicos AND / OR, rangos con BETWEEN, patrones LIKE y tratamiento de NULL.'
     },
     sections: [
       {
@@ -488,11 +488,11 @@ WHERE precio NOT BETWEEN 10.00 AND 500.00;`,
     estimatedMinutes: 6,
     analogy: `Eres el detective principal de ciberseguridad en una fintech internacional: un atacante ha intentado desviar fondos usando terminales sospechosas en horarios de madrugada, y tu misión es redactar la consulta exacta que aísle solo las transferencias fraudulentas.`,
     video: {
-      title: 'SQL Forensics: Cómo Escribir Consultas de Auditoría y Seguridad',
-      channel: 'Hussein Nasser / Luke Barousse',
-      duration: '11:15',
-      url: 'https://www.youtube.com/watch?v=zbMHLJ0J56w',
-      summary: 'Aprende a combinar múltiples cláusulas WHERE con operadores relacionales, booleanos y rangos para detectar anomalías.'
+      title: 'Aprende SQL - Curso desde cero con MySQL, PostgreSQL y Bases Relacionales',
+      channel: 'freeCodeCamp Español',
+      duration: '3:45:00',
+      url: 'https://www.youtube.com/watch?v=6JBsoPOwPew',
+      summary: 'Curso exhaustivo en español para comprender bases de datos relacionales, tipos de datos, restricciones y buenas prácticas.'
     },
     sections: [
       {
@@ -539,11 +539,11 @@ WHERE (estado = 'PROCESADA' OR estado = 'EN_REVISION')
     estimatedMinutes: 5,
     analogy: `El operador IN es como la lista de verificación del cartero en un edificio residencial: "¿Este paquete es para los departamentos 101, 204 o 305?". En lugar de hacer tres preguntas separadas, verifica la lista completa de una sola ojeada.`,
     video: {
-      title: 'SQL IN Operator Explained with Clear Practical Examples',
-      channel: 'Socratica',
-      duration: '6:30',
-      url: 'https://www.youtube.com/watch?v=4bW7Xn7_2vE',
-      summary: 'Descubre cómo simplificar múltiples sentencias OR en una sola lista elegante y cómo el optimizador acelera su ejecución.'
+      title: 'CURSO COMPLETO de SQL y BASES DE DATOS Desde Cero (8 horas)',
+      channel: 'TodoCode',
+      duration: '8:10:00',
+      url: 'https://www.youtube.com/watch?v=8N4M994IDt8',
+      summary: 'Curso paso a paso con teoría y práctica de modelado de datos, consultas complejas, DISTINCT, funciones escalares y filtros.'
     },
     sections: [
       {
@@ -593,11 +593,11 @@ WHERE estado IN ('EN_CAMINO', 'ENTREGADO');`,
     estimatedMinutes: 6,
     analogy: `Imagina que un profesor dice: "Todos los alumnos excepto los de la lista negra pueden salir al recreo". Pero en la lista negra hay un nombre borroso con tinta corrida que nadie puede leer (NULL). El profesor, ante la duda de si tú podrías ser esa persona borrosa, no deja salir a absolutamente NADIE al recreo.`,
     video: {
-      title: 'The Dangerous Trap of NOT IN with NULLs in SQL',
-      channel: 'Hussein Nasser',
-      duration: '10:05',
-      url: 'https://www.youtube.com/watch?v=9Pzj7Aj25lw',
-      summary: 'Comprende el peligro más clásico en entrevistas técnicas de SQL: por qué NOT IN devuelve 0 filas cuando existe un NULL.'
+      title: 'Aprende SQL - Curso desde cero con MySQL, PostgreSQL y Bases Relacionales',
+      channel: 'freeCodeCamp Español',
+      duration: '3:45:00',
+      url: 'https://www.youtube.com/watch?v=6JBsoPOwPew',
+      summary: 'Curso exhaustivo en español para comprender bases de datos relacionales, tipos de datos, restricciones y buenas prácticas.'
     },
     sections: [
       {
@@ -651,11 +651,11 @@ WHERE depto NOT IN ('Ventas', 'RRHH')
     estimatedMinutes: 6,
     analogy: `Imagina dos cajas selladas de cartón en un almacén y no tienes idea de qué hay dentro de ninguna de las dos. Si alguien te pregunta: "¿El contenido de la caja A es idéntico al de la caja B?", tu única respuesta honesta no puede ser "Sí" ni "No", sino "No lo sé" (UNKNOWN).`,
     video: {
-      title: 'SQL NULL Explained: Lógica Trivaluada (Three-Valued Logic)',
-      channel: 'Computerphile / Caleb Curry',
-      duration: '9:40',
-      url: 'https://www.youtube.com/watch?v=7S_tz1z_5bA',
-      summary: 'Aprende por qué NULL representa lo desconocido y por qué los operadores relacionales estándar fallan silenciosamente con él.'
+      title: 'Curso de SQL desde CERO (Completo)',
+      channel: 'Soy Dalto',
+      duration: '3:20:00',
+      url: 'https://www.youtube.com/watch?v=DFg1V-rO6Pg',
+      summary: 'Aprende filtrado con WHERE, operadores lógicos AND / OR, rangos con BETWEEN, patrones LIKE y tratamiento de NULL.'
     },
     sections: [
       {
@@ -707,11 +707,11 @@ Dado que la cláusula WHERE solo conserva las filas que evalúan a TRUE, una con
     estimatedMinutes: 5,
     analogy: `Un inspector de trámites gubernamentales revisa una solicitud de pasaporte: no le importa qué dice la casilla del número de teléfono secundario, simplemente verifica si el recuadro fue dejado completamente en blanco (IS NULL) o si el ciudadano escribió algo en él (IS NOT NULL).`,
     video: {
-      title: 'SQL IS NULL and IS NOT NULL: Handling Missing Data',
-      channel: 'Programming with Mosh',
-      duration: '6:15',
-      url: 'https://www.youtube.com/watch?v=HXV3zeRR3h4',
-      summary: 'Domina los predicados oficiales de SQL para consultar valores nulos y evitar errores de lógica en tus reportes.'
+      title: 'Curso de SQL desde CERO (Completo)',
+      channel: 'Soy Dalto',
+      duration: '3:20:00',
+      url: 'https://www.youtube.com/watch?v=DFg1V-rO6Pg',
+      summary: 'Aprende filtrado con WHERE, operadores lógicos AND / OR, rangos con BETWEEN, patrones LIKE y tratamiento de NULL.'
     },
     sections: [
       {
@@ -767,11 +767,11 @@ WHERE fecha_entrega IS NOT NULL;`,
     estimatedMinutes: 5,
     analogy: `El comodín % es como la función de autocompletado en el buscador web: escribes "comp..." y el motor te sugiere "computadora", "comprar auto", "compartir pantalla" o "compilador". El % dice: "no me importa qué letras sigan después de aquí, acéptalas todas".`,
     video: {
-      title: 'SQL LIKE Operator and Wildcards (%) Explained',
-      channel: 'Alex The Analyst',
-      duration: '8:20',
-      url: 'https://www.youtube.com/watch?v=zbMHLJ0J56w',
-      summary: 'Aprende a buscar prefijos, sufijos y palabras clave intermedias en columnas de texto con el operador LIKE.'
+      title: 'Curso de SQL desde CERO (Completo)',
+      channel: 'Soy Dalto',
+      duration: '3:20:00',
+      url: 'https://www.youtube.com/watch?v=DFg1V-rO6Pg',
+      summary: 'Aprende filtrado con WHERE, operadores lógicos AND / OR, rangos con BETWEEN, patrones LIKE y tratamiento de NULL.'
     },
     sections: [
       {
@@ -824,11 +824,11 @@ WHERE nombre LIKE 'San%';`,
     estimatedMinutes: 5,
     analogy: `El comodín _ es como resolver una casilla vacía en un juego de crucigrama o ahorcado: tienes la palabra "C _ S A" de exactamente 4 letras. Puede ser "CASA", "COSA" o "CESA", pero jamás podrá ser "CAUSA" porque solo hay espacio para un único carácter en el medio.`,
     video: {
-      title: 'SQL Wildcard Underscore (_) vs Percent (%): Diferencias Clave',
-      channel: 'Socratica',
-      duration: '6:50',
-      url: 'https://www.youtube.com/watch?v=4bW7Xn7_2vE',
-      summary: 'Descubre cuándo usar el guion bajo para validar códigos de producto, matrículas y longitudes fijas de caracteres.'
+      title: 'Aprende SQL - Curso desde cero con MySQL, PostgreSQL y Bases Relacionales',
+      channel: 'freeCodeCamp Español',
+      duration: '3:45:00',
+      url: 'https://www.youtube.com/watch?v=6JBsoPOwPew',
+      summary: 'Curso exhaustivo en español para comprender bases de datos relacionales, tipos de datos, restricciones y buenas prácticas.'
     },
     sections: [
       {
@@ -877,11 +877,11 @@ WHERE palabra LIKE 'C__A';`,
     estimatedMinutes: 5,
     analogy: `El operador NOT LIKE es como el filtro antispam de tu buzón de correo electrónico: analiza el remitente y manda a la papelera cualquier mensaje que provenga de dominios no corporativos o que contenga la palabra "lotería".`,
     video: {
-      title: 'SQL NOT LIKE: Limpieza de Datos y Filtrado de Ruido',
-      channel: 'Alex The Analyst',
-      duration: '7:10',
-      url: 'https://www.youtube.com/watch?v=0h2b3c4d5e6',
-      summary: 'Aprende a depurar bases de datos descartando correos temporales, registros de prueba y datos no deseados con NOT LIKE.'
+      title: 'Aprende SQL - Curso desde cero con MySQL, PostgreSQL y Bases Relacionales',
+      channel: 'freeCodeCamp Español',
+      duration: '3:45:00',
+      url: 'https://www.youtube.com/watch?v=6JBsoPOwPew',
+      summary: 'Curso exhaustivo en español para comprender bases de datos relacionales, tipos de datos, restricciones y buenas prácticas.'
     },
     sections: [
       {
@@ -924,11 +924,11 @@ WHERE email NOT LIKE '%@test.com'
     estimatedMinutes: 6,
     analogy: `El filtrado de fechas es como el arqueo de caja de un supermercado: si quieres auditar las ventas del 15 de marzo, debes considerar desde el primer segundo (00:00:00) hasta el último instante antes de que empiece el 16 de marzo. Si solo comparas contra la fecha sin horas, perderás todas las ventas de la tarde y la noche.`,
     video: {
-      title: 'SQL Date and Time Filtering Masterclass',
-      channel: 'freeCodeCamp / Luke Barousse',
-      duration: '10:30',
-      url: 'https://www.youtube.com/watch?v=zbMHLJ0J56w',
-      summary: 'Descubre los tipos DATE, TIMESTAMP, el estándar ISO-8601 y por qué los intervalos semiabiertos evitan pérdidas de datos.'
+      title: 'Aprende SQL - Curso desde cero con MySQL, PostgreSQL y Bases Relacionales',
+      channel: 'freeCodeCamp Español',
+      duration: '3:45:00',
+      url: 'https://www.youtube.com/watch?v=6JBsoPOwPew',
+      summary: 'Curso exhaustivo en español para comprender bases de datos relacionales, tipos de datos, restricciones y buenas prácticas.'
     },
     sections: [
       {
@@ -976,11 +976,11 @@ WHERE fecha_hora >= '2024-03-01'
     estimatedMinutes: 6,
     analogy: `Imagina buscar una palabra en un diccionario de 1,000 páginas ordenado alfabéticamente (índice B-Tree). Si buscas palabras que empiecen por "Z", vas directo al final en 1 segundo (Index Seek). Pero si alguien te dice: "Encuentra todas las palabras donde la última letra al revés sea una vocal", el orden alfabético no te sirve de nada y tienes que leer las 1,000 páginas una por una (Table Scan lento).`,
     video: {
-      title: 'SARGable Queries: Haz tus Consultas SQL 100x Más Rápidas',
-      channel: 'Brent Ozar / Alex The Analyst',
-      duration: '9:50',
-      url: 'https://www.youtube.com/watch?v=HXV3zeRR3h4',
-      summary: 'Descubre qué es un argumento de búsqueda sargable y por qué envolver columnas en funciones destruye el rendimiento.'
+      title: 'Aprende SQL - Curso desde cero con MySQL, PostgreSQL y Bases Relacionales',
+      channel: 'freeCodeCamp Español',
+      duration: '3:45:00',
+      url: 'https://www.youtube.com/watch?v=6JBsoPOwPew',
+      summary: 'Curso exhaustivo en español para comprender bases de datos relacionales, tipos de datos, restricciones y buenas prácticas.'
     },
     sections: [
       {
@@ -1026,11 +1026,11 @@ Consulta 2 (Sargable):    Index Seek (Costo: 1.2 ms en 1M filas - ¡375x más r�
     estimatedMinutes: 7,
     analogy: `Estás construyendo el motor de filtros que usan millones de compradores en Amazon o Mercado Libre: cuando un usuario marca "Solo Prime", "Marcas: Sony o Apple", "Rango de precio: $50 a $300", "Calificación >= 4 estrellas" y excluye productos sin inventario, tu consulta SQL es la encargada de entregar el catálogo exacto en 50 milisegundos.`,
     video: {
-      title: 'Building Complex SQL Filter Queries for E-Commerce Apps',
-      channel: 'MoureDev / Programming with Mosh',
-      duration: '12:20',
-      url: 'https://www.youtube.com/watch?v=7S_tz1z_5bA',
-      summary: 'Aprende a integrar todos los conceptos de filtrado en una consulta multicriterio lista para producción.'
+      title: 'Aprende SQL - Curso desde cero con MySQL, PostgreSQL y Bases Relacionales',
+      channel: 'freeCodeCamp Español',
+      duration: '3:45:00',
+      url: 'https://www.youtube.com/watch?v=6JBsoPOwPew',
+      summary: 'Curso exhaustivo en español para comprender bases de datos relacionales, tipos de datos, restricciones y buenas prácticas.'
     },
     sections: [
       {

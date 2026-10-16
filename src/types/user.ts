@@ -33,6 +33,8 @@ export interface UserProfile {
   powerups: UserPowerUps; // Comodines para retos y combates
   openedChests: string[]; // IDs de cofres abiertos permanentemente
   defeatedBosses: string[]; // IDs de jefes vencidos permanentemente
+  unlockedSkins?: string[]; // IDs de skins desbloqueadas en el Vestidor
+  equippedSkin?: string; // Skin de Byte equipada actualmente
   createdAt: number;
   email?: string;
   firstName?: string; // Nombre(s) del estudiante

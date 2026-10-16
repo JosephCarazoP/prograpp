@@ -12,11 +12,11 @@ export const KOTLIN_UNIT_03_THEORY: Record<string, TheoryLesson> = {
     estimatedMinutes: 5,
     analogy: 'El operador `+` es como una cinta adhesiva mágica: si le pegas dos monedas, suma sus valores monetarios en una sola cuenta; pero si le pegas una etiqueta de papel con texto a una moneda, pega el texto al número y crea un letrero.',
     video: {
-      title: 'Operadores en Kotlin: Sobrecarga del operador + y Concatenación',
-      channel: 'Kotlin by JetBrains Official',
-      duration: '7:40',
-      url: 'https://www.youtube.com/watch?v=F9UC9DY-vIU',
-      summary: 'Aprende cómo el compilador decide si + ejecutará una suma matemática en el procesador o una concatenación de cadenas de texto en memoria.'
+      title: 'Curso de KOTLIN Desde Cero: Primeros Pasos en una hora',
+      channel: 'MoureDev by Brais Moure',
+      duration: '58:20',
+      url: 'https://www.youtube.com/watch?v=T3ugOYTRF7c',
+      summary: 'Aprende los fundamentos del lenguaje Kotlin paso a paso: estructura general, main(), compilación y buenas prácticas desde cero en español.'
     },
     sections: [
       {
@@ -60,11 +60,11 @@ Puntaje: 100`,
     estimatedMinutes: 5,
     analogy: 'Son las cuatro operaciones de la calculadora básica que usas en el supermercado: restar cupones, multiplicar cantidades de productos idénticos y dividir la cuenta entre comensales.',
     video: {
-      title: 'Aritmética básica en Kotlin y tipos de retorno',
-      channel: 'freeCodeCamp.org',
-      duration: '9:15',
-      url: 'https://www.youtube.com/watch?v=EExSSotojVI',
-      summary: 'Descubre cómo la JVM promueve tipos numéricos en operaciones mixtas (Int con Double) y el orden de evaluación en CPU.'
+      title: 'KOTLIN: Curso ANDROID desde CERO - FUNCIONES - Lección 9',
+      channel: 'MoureDev by Brais Moure',
+      duration: '22:40',
+      url: 'https://www.youtube.com/watch?v=FmRdWLab5nY',
+      summary: 'Crea funciones modulares con parámetros, tipos de retorno y reutilización de lógica algorítmica en Kotlin.'
     },
     sections: [
       {
@@ -111,11 +111,11 @@ Cuota por persona: $200.0`,
     estimatedMinutes: 5,
     analogy: 'Imagina que divides 9 manzanas entre 2 niños en una escuela donde está prohibido cortar fruta con cuchillos: cada niño recibe 4 manzanas enteras y sobra 1 manzana en la mesa. La división entera es 4, no 4.5.',
     video: {
-      title: 'División entera vs decimal en Kotlin: Solución a cálculos erróneos',
-      channel: 'Kotlin by JetBrains Official',
-      duration: '8:05',
-      url: 'https://www.youtube.com/watch?v=F9UC9DY-vIU',
-      summary: 'Explicación detallada de por qué 7 / 2 es 3 en Kotlin, cómo usar .toDouble() y las trampas al calcular promedios de exámenes.'
+      title: 'Curso de KOTLIN Desde Cero: Primeros Pasos en una hora',
+      channel: 'MoureDev by Brais Moure',
+      duration: '58:20',
+      url: 'https://www.youtube.com/watch?v=T3ugOYTRF7c',
+      summary: 'Aprende los fundamentos del lenguaje Kotlin paso a paso: estructura general, main(), compilación y buenas prácticas desde cero en español.'
     },
     sections: [
       {
@@ -165,11 +165,11 @@ Promedio con 3.0: 9.0`,
     estimatedMinutes: 5,
     analogy: 'El operador `%` es como comprar paquetes de 6 refrescos para una fiesta de 14 invitados: compras 2 paquetes de 6 (12 refrescos) y te sobran 2 personas por atender. El residuo es 2.',
     video: {
-      title: 'El operador módulo % en Kotlin: Casos de uso reales',
-      channel: 'EDteam',
-      duration: '7:55',
-      url: 'https://www.youtube.com/watch?v=U3CGMyJZ9R8',
-      summary: 'Descubre cómo usar módulo para extraer el último dígito de un número, detectar pares e impares y restringir valores dentro de límites circulares.'
+      title: 'Curso de KOTLIN Desde Cero: Primeros Pasos en una hora',
+      channel: 'MoureDev by Brais Moure',
+      duration: '58:20',
+      url: 'https://www.youtube.com/watch?v=T3ugOYTRF7c',
+      summary: 'Aprende los fundamentos del lenguaje Kotlin paso a paso: estructura general, main(), compilación y buenas prácticas desde cero en español.'
     },
     sections: [
       {
@@ -217,11 +217,11 @@ El último dígito del PIN es: 8`,
     estimatedMinutes: 5,
     analogy: 'La precedencia de operadores es como el protocolo de emergencia de un hospital: los pacientes en código rojo (paréntesis) van primero a quirófano sin hacer fila; luego van las urgencias medias (multiplicación y división); y las consultas rutinarias (sumas y restas) se atienden al final.',
     video: {
-      title: 'Jerarquía y Precedencia de Operadores en Kotlin',
-      channel: 'freeCodeCamp.org',
-      duration: '9:40',
-      url: 'https://www.youtube.com/watch?v=EExSSotojVI',
-      summary: 'Aprende el orden riguroso de operaciones complejas y cómo escribir fórmulas libres de ambigüedad en software profesional.'
+      title: 'Curso de KOTLIN Desde Cero: Primeros Pasos en una hora',
+      channel: 'MoureDev by Brais Moure',
+      duration: '58:20',
+      url: 'https://www.youtube.com/watch?v=T3ugOYTRF7c',
+      summary: 'Aprende los fundamentos del lenguaje Kotlin paso a paso: estructura general, main(), compilación y buenas prácticas desde cero en español.'
     },
     sections: [
       {
@@ -262,11 +262,11 @@ Resultado con paréntesis: 13`,
     estimatedMinutes: 5,
     analogy: 'En lugar de decir en una tienda: "Toma mi saldo actual, réstale diez dólares y anota el nuevo resultado en mi libreta", dices de forma directa y compacta: "Descuéntame diez dólares" (-= 10).',
     video: {
-      title: 'Operadores de asignación compuesta en Kotlin',
-      channel: 'Kotlin by JetBrains Official',
-      duration: '6:50',
-      url: 'https://www.youtube.com/watch?v=F9UC9DY-vIU',
-      summary: 'Descubre cómo +=, -=, *=, /= y %= hacen tu código más limpio, conciso y menos propenso a errores tipográficos.'
+      title: 'Curso de KOTLIN Desde Cero: Primeros Pasos en una hora',
+      channel: 'MoureDev by Brais Moure',
+      duration: '58:20',
+      url: 'https://www.youtube.com/watch?v=T3ugOYTRF7c',
+      summary: 'Aprende los fundamentos del lenguaje Kotlin paso a paso: estructura general, main(), compilación y buenas prácticas desde cero en español.'
     },
     sections: [
       {
@@ -309,11 +309,11 @@ Con rendimiento: $682.5`,
     estimatedMinutes: 5,
     analogy: 'El operador `++` es como el botón de un contador de mano de los guardias de seguridad en un concierto: cada vez que entra una persona, presionas el botón una vez y el marcador salta exactamente en +1.',
     video: {
-      title: 'Incremento y Decremento en Kotlin: ++ y -- explicados',
-      channel: 'Android Developers',
-      duration: '7:15',
-      url: 'https://www.youtube.com/watch?v=5flXfy_O_8E',
-      summary: 'Aprende a usar ++ y -- en bucles, contadores de clics y algoritmos de recorrido.'
+      title: 'Curso de KOTLIN Desde Cero: Primeros Pasos en una hora',
+      channel: 'MoureDev by Brais Moure',
+      duration: '58:20',
+      url: 'https://www.youtube.com/watch?v=T3ugOYTRF7c',
+      summary: 'Aprende los fundamentos del lenguaje Kotlin paso a paso: estructura general, main(), compilación y buenas prácticas desde cero en español.'
     },
     sections: [
       {
@@ -355,11 +355,11 @@ Vidas restantes: 2`,
     estimatedMinutes: 5,
     analogy: 'Imagina que pagas un boleto de autobús: en modalidad prefija (++x), pagas primero el boleto en la ventanilla y luego subes al bus con el nuevo número de asiento; en modalidad postfija (x++), te sientas en el asiento asignado original y al salir te cobran el incremento.',
     video: {
-      title: 'Prefijo vs Postfijo (++x vs x++) en Kotlin: Pregunta típica de entrevista',
-      channel: 'Philipp Lackner',
-      duration: '8:50',
-      url: 'https://www.youtube.com/watch?v=r0X6Xp8jH5E',
-      summary: 'Comprende qué valor se evalúa dentro de una expresión al usar prefijo o postfijo y por qué las guías de estilo aconsejan evitar su uso embebido.'
+      title: 'Curso de KOTLIN Desde Cero: Primeros Pasos en una hora',
+      channel: 'MoureDev by Brais Moure',
+      duration: '58:20',
+      url: 'https://www.youtube.com/watch?v=T3ugOYTRF7c',
+      summary: 'Aprende los fundamentos del lenguaje Kotlin paso a paso: estructura general, main(), compilación y buenas prácticas desde cero en español.'
     },
     sections: [
       {
@@ -400,11 +400,11 @@ Postfijo -> b: 6, asignado: 5`,
     estimatedMinutes: 5,
     analogy: 'Los operadores relacionales son como la regla con marca de altura en la entrada de una montaña rusa: "Para subir debes medir al menos 140 cm (altura >= 140)". Si cumples la condición entras (true); si no, te quedas fuera (false).',
     video: {
-      title: 'Operadores relacionales en Kotlin: >, <, >=, <=',
-      channel: 'Google Developers',
-      duration: '7:20',
-      url: 'https://www.youtube.com/watch?v=5flXfy_O_8E',
-      summary: 'Aprende a construir condiciones de validación para edades, límites de saldo, puntajes mínimos y filtros de datos.'
+      title: 'KOTLIN: Curso ANDROID desde CERO - VARIABLES - Lección',
+      channel: 'MoureDev by Brais Moure',
+      duration: '14:35',
+      url: 'https://www.youtube.com/watch?v=hug4TNmhw78',
+      summary: 'Aprende en español la diferencia entre val (inmutable) y var (mutable) en Kotlin, gestión de memoria e inferencia de tipos.'
     },
     sections: [
       {
@@ -449,11 +449,11 @@ Postfijo -> b: 6, asignado: 5`,
     estimatedMinutes: 6,
     analogy: 'Es como el examen de mitad de período: une todo lo aprendido sobre cálculos de tiendas, descuentos y comparaciones de límites en un solo ejercicio.',
     video: {
-      title: 'Resolución de problemas de lógica y operadores en Kotlin',
-      channel: 'freeCodeCamp.org',
-      duration: '11:45',
-      url: 'https://www.youtube.com/watch?v=EExSSotojVI',
-      summary: 'Ejercicios prácticos paso a paso que integran fórmulas con descuentos, validación de inventarios y cálculos de comisiones.'
+      title: 'KOTLIN: Curso ANDROID desde CERO - VARIABLES - Lección',
+      channel: 'MoureDev by Brais Moure',
+      duration: '14:35',
+      url: 'https://www.youtube.com/watch?v=hug4TNmhw78',
+      summary: 'Aprende en español la diferencia entre val (inmutable) y var (mutable) en Kotlin, gestión de memoria e inferencia de tipos.'
     },
     sections: [
       {
@@ -504,11 +504,11 @@ Total con IVA: $125.28
     estimatedMinutes: 5,
     analogy: 'La igualdad estructural `==` es como comparar dos copias impresas del mismo libro: no importa si fueron impresas en imprentas distintas; si contienen exactamente las mismas palabras, página por página, son iguales en contenido.',
     video: {
-      title: 'Igualdad estructural == vs equals() en Kotlin',
-      channel: 'Kotlin by JetBrains Official',
-      duration: '7:50',
-      url: 'https://www.youtube.com/watch?v=F9UC9DY-vIU',
-      summary: 'Descubre cómo Kotlin resuelve uno de los mayores dolores de cabeza de Java haciendo que == compare el contenido real de forma segura ante valores nulos.'
+      title: 'KOTLIN: Curso ANDROID desde CERO - TIPOS DE DATOS - Lección 2',
+      channel: 'MoureDev by Brais Moure',
+      duration: '16:10',
+      url: 'https://www.youtube.com/watch?v=uWwVyww30SI',
+      summary: 'Domina los tipos numéricos (Int, Double, Float), texto (String, Char) y Booleanos en Kotlin con ejemplos prácticos y concisos.'
     },
     sections: [
       {
@@ -555,11 +555,11 @@ Total con IVA: $125.28
     estimatedMinutes: 5,
     analogy: 'La igualdad referencial `===` es como verificar si dos llaves abren exactamente la misma casa física, o si son dos casas idénticas construidas en calles distintas con los mismos planos.',
     video: {
-      title: '== vs === en Kotlin: Igualdad Estructural vs Referencial',
-      channel: 'Philipp Lackner',
-      duration: '9:00',
-      url: 'https://www.youtube.com/watch?v=r0X6Xp8jH5E',
-      summary: 'Diferencias clave entre igualdad de contenido (==) e identidad de dirección de memoria (===) con ejemplos prácticos.'
+      title: 'Curso de KOTLIN Desde Cero: Primeros Pasos en una hora',
+      channel: 'MoureDev by Brais Moure',
+      duration: '58:20',
+      url: 'https://www.youtube.com/watch?v=T3ugOYTRF7c',
+      summary: 'Aprende los fundamentos del lenguaje Kotlin paso a paso: estructura general, main(), compilación y buenas prácticas desde cero en español.'
     },
     sections: [
       {
@@ -608,11 +608,11 @@ Misma referencia: true`,
     estimatedMinutes: 5,
     analogy: 'El operador `&&` es como la bóveda de seguridad de un banco que requiere dos llaves físicas simultáneas: la llave del gerente Y la llave del auditor. Si falta cualquiera de las dos, la bóveda no se abre.',
     video: {
-      title: 'Operador lógico AND (&&) y Tablas de Verdad en Kotlin',
-      channel: 'freeCodeCamp.org',
-      duration: '8:45',
-      url: 'https://www.youtube.com/watch?v=EExSSotojVI',
-      summary: 'Aprende la tabla de verdad de la conjunción lógica, cómo evaluar condiciones dobles y cómo proteger tu código con operadores booleanos.'
+      title: 'Curso de KOTLIN Desde Cero: Primeros Pasos en una hora',
+      channel: 'MoureDev by Brais Moure',
+      duration: '58:20',
+      url: 'https://www.youtube.com/watch?v=T3ugOYTRF7c',
+      summary: 'Aprende los fundamentos del lenguaje Kotlin paso a paso: estructura general, main(), compilación y buenas prácticas desde cero en español.'
     },
     sections: [
       {
@@ -654,11 +654,11 @@ Misma referencia: true`,
     estimatedMinutes: 5,
     analogy: 'El operador `||` es como pagar en una tienda que acepta efectivo O tarjeta de crédito: con cualquiera de las dos formas de pago que tengas puedes comprar; solo te rechazan si no tienes ni efectivo ni tarjeta.',
     video: {
-      title: 'Operador lógico OR (||) en Kotlin y Tablas de Verdad',
-      channel: 'Kotlin by JetBrains Official',
-      duration: '7:30',
-      url: 'https://www.youtube.com/watch?v=F9UC9DY-vIU',
-      summary: 'Descubre cómo funciona la disyunción lógica, cuándo usar || para condiciones flexibles y cómo optimizar el orden de evaluación.'
+      title: 'Curso de KOTLIN Desde Cero: Primeros Pasos en una hora',
+      channel: 'MoureDev by Brais Moure',
+      duration: '58:20',
+      url: 'https://www.youtube.com/watch?v=T3ugOYTRF7c',
+      summary: 'Aprende los fundamentos del lenguaje Kotlin paso a paso: estructura general, main(), compilación y buenas prácticas desde cero en español.'
     },
     sections: [
       {
@@ -701,11 +701,11 @@ Misma referencia: true`,
     estimatedMinutes: 5,
     analogy: 'Es como un árbitro en un partido con regla de "gol de oro": en cuanto entra el primer gol, el partido termina de inmediato; nadie sigue jugando los minutos restantes porque el resultado ya está sellado.',
     video: {
-      title: 'Short-circuit Evaluation en Kotlin: Salvavidas contra NullPointerException',
-      channel: 'Android Developers',
-      duration: '8:15',
-      url: 'https://www.youtube.com/watch?v=5flXfy_O_8E',
-      summary: 'Aprende a usar el cortocircuito para evitar caídas catastróficas al verificar nulos o divisiones entre cero en una sola línea.'
+      title: 'Curso de KOTLIN Desde Cero: Primeros Pasos en una hora',
+      channel: 'MoureDev by Brais Moure',
+      duration: '58:20',
+      url: 'https://www.youtube.com/watch?v=T3ugOYTRF7c',
+      summary: 'Aprende los fundamentos del lenguaje Kotlin paso a paso: estructura general, main(), compilación y buenas prácticas desde cero en español.'
     },
     sections: [
       {
@@ -750,11 +750,11 @@ Misma referencia: true`,
     estimatedMinutes: 5,
     analogy: 'El operador `!` es como un interruptor inversor o un espejo retrovisor: si la luz está verde, la cambia a roja; si una puerta dice "OCUPADO", al negarlo sabes que "NO ESTÁ OCUPADO" (está libre).',
     video: {
-      title: 'Negación lógica (!) y Leyes de De Morgan en Kotlin',
-      channel: 'Kotlin by JetBrains Official',
-      duration: '7:45',
-      url: 'https://www.youtube.com/watch?v=F9UC9DY-vIU',
-      summary: 'Aprende a simplificar condiciones negativas y evitar dobles negaciones confusas en tu código.'
+      title: 'Curso de KOTLIN Desde Cero: Primeros Pasos en una hora',
+      channel: 'MoureDev by Brais Moure',
+      duration: '58:20',
+      url: 'https://www.youtube.com/watch?v=T3ugOYTRF7c',
+      summary: 'Aprende los fundamentos del lenguaje Kotlin paso a paso: estructura general, main(), compilación y buenas prácticas desde cero en español.'
     },
     sections: [
       {
@@ -796,11 +796,11 @@ La lista no contiene datos para mostrar.`,
     estimatedMinutes: 5,
     analogy: 'Las operaciones a nivel de bit son como una fila de 8 interruptores miniatura donde cada uno enciende un foco independiente: puedes encender o apagar un foco específico sin tocar los demás usando una máscara de bits.',
     video: {
-      title: 'Operadores Bitwise en Kotlin: shl, shr, and, or',
-      channel: 'freeCodeCamp.org',
-      duration: '11:10',
-      url: 'https://www.youtube.com/watch?v=EExSSotojVI',
-      summary: 'Descubre cómo Kotlin reemplazó los operadores simbólicos de C/Java por funciones infijas elegantes y cómo usarlas en banderas de permisos.'
+      title: 'KOTLIN: Curso ANDROID desde CERO - TIPOS DE DATOS - Lección 2',
+      channel: 'MoureDev by Brais Moure',
+      duration: '16:10',
+      url: 'https://www.youtube.com/watch?v=uWwVyww30SI',
+      summary: 'Domina los tipos numéricos (Int, Double, Float), texto (String, Char) y Booleanos en Kotlin con ejemplos prácticos y concisos.'
     },
     sections: [
       {
@@ -848,11 +848,11 @@ Permisos combinados: 3
     estimatedMinutes: 5,
     analogy: 'Es como el algoritmo de aprobación de un crédito bancario: primero calcula tu ingreso mensual neto menos deudas (aritmética), luego compara si supera el mínimo (relacional), y finalmente verifica que tu historial esté limpio Y tengas aval (lógica booleana).',
     video: {
-      title: 'Estructuración de Expresiones Lógicas Complejas en Kotlin',
-      channel: 'JetBrains Developers',
-      duration: '8:30',
-      url: 'https://www.youtube.com/watch?v=F9UC9DY-vIU',
-      summary: 'Reglas de resolución en 3 niveles: aritmético -> relacional -> lógico, y cómo evitar que una condición se vuelva incomprensible.'
+      title: 'KOTLIN: Curso ANDROID desde CERO - FUNCIONES - Lección 9',
+      channel: 'MoureDev by Brais Moure',
+      duration: '22:40',
+      url: 'https://www.youtube.com/watch?v=FmRdWLab5nY',
+      summary: 'Crea funciones modulares con parámetros, tipos de retorno y reutilización de lógica algorítmica en Kotlin.'
     },
     sections: [
       {
@@ -895,11 +895,11 @@ Permisos combinados: 3
     estimatedMinutes: 5,
     analogy: 'Los paréntesis en código son como los signos de puntuación en un texto legal: colocarlos en el lugar correcto evita que una cláusula se interprete de forma contraria a lo que el autor pretendía.',
     video: {
-      title: 'Clean Code en Kotlin: Legibilidad en Expresiones Booleanas',
-      channel: 'Philipp Lackner',
-      duration: '8:15',
-      url: 'https://www.youtube.com/watch?v=r0X6Xp8jH5E',
-      summary: 'Consejos de código limpio: cuándo usar paréntesis defensivos, cómo evitar condiciones monstruosas y cómo formatear en múltiples líneas.'
+      title: 'KOTLIN: Curso ANDROID desde CERO - VARIABLES - Lección',
+      channel: 'MoureDev by Brais Moure',
+      duration: '14:35',
+      url: 'https://www.youtube.com/watch?v=hug4TNmhw78',
+      summary: 'Aprende en español la diferencia entre val (inmutable) y var (mutable) en Kotlin, gestión de memoria e inferencia de tipos.'
     },
     sections: [
       {
@@ -944,11 +944,11 @@ Acceso claro  : true`,
     estimatedMinutes: 6,
     analogy: 'Este proyecto final es como la torre de control de un aeropuerto internacional: recibe datos meteorológicos, estado de la pista y combustible de la aeronave, y con una serie de compuertas lógicas decide en milisegundos si autoriza el despegue de forma segura.',
     video: {
-      title: 'Construyendo un Motor de Reglas de Negocio en Kotlin',
-      channel: 'freeCodeCamp.org / Kotlin Masterclass',
-      duration: '13:50',
-      url: 'https://www.youtube.com/watch?v=EExSSotojVI',
-      summary: 'Proyecto final que une aritmética, comparadores de igualdad, lógica booleana && / ||, cortocircuito y buenas prácticas de ingeniería.'
+      title: 'Curso de KOTLIN Desde Cero: Primeros Pasos en una hora',
+      channel: 'MoureDev by Brais Moure',
+      duration: '58:20',
+      url: 'https://www.youtube.com/watch?v=T3ugOYTRF7c',
+      summary: 'Aprende los fundamentos del lenguaje Kotlin paso a paso: estructura general, main(), compilación y buenas prácticas desde cero en español.'
     },
     sections: [
       {

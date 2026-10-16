@@ -301,7 +301,7 @@ const SQL_TOPIC_BANKS: Record<number, { title: string; desc: string; exercises: 
         codeSnippet: [
           'id INTEGER PRIMARY KEY,',
           'precio DECIMAL(10, 2),',
-          'nombre_completo BOOLEAN -- ¡Un nombre no puede ser booleano!'
+          'nombre_completo BOOLEAN'
         ],
         bugLineIndex: 2,
         explanation: 'El nombre de una persona debe ser TEXT o VARCHAR, jamás BOOLEAN.',
@@ -428,7 +428,7 @@ const SQL_TOPIC_BANKS: Record<number, { title: string; desc: string; exercises: 
         codeSnippet: [
           'CREATE TABLE clientes (',
           '    id INTEGER PRIMARY KEY,',
-          '    dni VARCHAR(20) PRIMARY KEY -- ¡Una tabla solo puede tener una PRIMARY KEY!'
+          '    dni VARCHAR(20) PRIMARY KEY'
         ],
         bugLineIndex: 2,
         explanation: 'Una tabla solo puede tener UNA clave primaria. Si dni debe ser único, se usa la restricción UNIQUE.',
@@ -551,11 +551,10 @@ const SQL_TOPIC_BANKS: Record<number, { title: string; desc: string; exercises: 
         type: 'spot_the_bug',
         prompt: 'Toca la línea que altera el orden obligatorio de las cláusulas SQL:',
         codeSnippet: [
-          '-- Consulta con cláusulas invertidas',
           'FROM clientes',
           'SELECT *;'
         ],
-        bugLineIndex: 1,
+        bugLineIndex: 0,
         explanation: 'En la sintaxis de SQL la cláusula SELECT debe ir antes de FROM (SELECT * FROM tabla;).',
         xpReward: 15
       },
@@ -672,13 +671,12 @@ const SQL_TOPIC_BANKS: Record<number, { title: string; desc: string; exercises: 
       {
         id: 'sql-u01-l06-e04',
         type: 'spot_the_bug',
-        prompt: 'Toca la línea con un error de tipeo en el nombre de la columna:',
+        prompt: 'Para una tabla con columnas (id, correo, fecha), toca la línea con el error de tipeo:',
         codeSnippet: [
-          '-- Tabla con columnas: id, correo, fecha',
-          'SELECT correoo -- Columna inexistente en la tabla',
+          'SELECT correoo',
           'FROM suscriptores;'
         ],
-        bugLineIndex: 1,
+        bugLineIndex: 0,
         explanation: 'Si escribes mal el nombre de la columna ("correoo"), el motor responderá con error "column does not exist".',
         xpReward: 15
       },
@@ -747,7 +745,7 @@ const SQL_TOPIC_BANKS: Record<number, { title: string; desc: string; exercises: 
       {
         id: 'sql-u01-l06-e10',
         type: 'parsons_puzzle',
-        prompt: 'Ordena la consulta de proyección:',
+        prompt: 'Ordena las líneas de la consulta SQL para seleccionar columnas de la tabla usuarios:',
         lines: [
           'SELECT titulo',
           'FROM libros',
@@ -775,11 +773,11 @@ const SQL_TOPIC_BANKS: Record<number, { title: string; desc: string; exercises: 
       {
         id: 'sql-u01-l07-e02',
         type: 'spot_the_bug',
-        prompt: 'Toca la línea con el error clásico de la "coma sobrante" (trailing comma):',
+        prompt: 'Toca la línea con el error de sintaxis por tener una coma de más antes del FROM:',
         codeSnippet: [
           'SELECT',
           '    id,',
-          '    nombre, -- ¡Coma sobrante antes de FROM!',
+          '    nombre,',
           'FROM usuarios;'
         ],
         bugLineIndex: 2,
@@ -932,7 +930,7 @@ const SQL_TOPIC_BANKS: Record<number, { title: string; desc: string; exercises: 
         prompt: 'Toca la línea donde se intentó usar un alias con espacios sin comillas:',
         codeSnippet: [
           'SELECT',
-          '    precio AS Precio Final, -- ¡Los alias con espacios requieren comillas!',
+          '    precio AS Precio Final,',
           'FROM productos;'
         ],
         bugLineIndex: 1,
@@ -1055,7 +1053,7 @@ const SQL_TOPIC_BANKS: Record<number, { title: string; desc: string; exercises: 
         prompt: 'Toca la línea donde la posición de DISTINCT es incorrecta:',
         codeSnippet: [
           'SELECT',
-          '    pais DISTINCT -- ¡DISTINCT debe ir inmediatamente tras SELECT!',
+          '    pais DISTINCT',
           'FROM clientes;'
         ],
         bugLineIndex: 1,
@@ -1182,7 +1180,7 @@ const SQL_TOPIC_BANKS: Record<number, { title: string; desc: string; exercises: 
         type: 'spot_the_bug',
         prompt: 'Toca la línea donde la cláusula WHERE está mal posicionada:',
         codeSnippet: [
-          'WHERE activo = TRUE -- ¡WHERE no puede ir antes de FROM!',
+          'WHERE activo = TRUE',
           'SELECT *',
           'FROM cuentas;'
         ],
@@ -1255,7 +1253,7 @@ const SQL_TOPIC_BANKS: Record<number, { title: string; desc: string; exercises: 
       {
         id: 'sql-u01-l10-e10',
         type: 'parsons_puzzle',
-        prompt: 'Ordena la consulta completa con proyección y filtro:',
+        prompt: 'Ordena las cláusulas de la consulta SQL (SELECT, FROM, WHERE):',
         lines: [
           'SELECT nombre, email',
           'FROM suscriptores',
@@ -1298,10 +1296,10 @@ const SQL_TOPIC_BANKS: Record<number, { title: string; desc: string; exercises: 
       {
         id: 'sql-u01-l11-e03',
         type: 'spot_the_bug',
-        prompt: 'Toca la línea con el error de sintaxis al usar doble igual estilo JavaScript/Java:',
+        prompt: 'Toca la línea con el error al usar doble igual (==) en lugar del igual simple (=) de SQL:',
         codeSnippet: [
           'SELECT * FROM productos',
-          'WHERE categoria == \'Ropa\'; -- ¡En SQL estándar es = y no ==!'
+          'WHERE categoria == \'Ropa\';'
         ],
         bugLineIndex: 1,
         explanation: 'El estándar de SQL utiliza un solo signo igual (=) para comparación de igualdad.',
@@ -1310,7 +1308,7 @@ const SQL_TOPIC_BANKS: Record<number, { title: string; desc: string; exercises: 
       {
         id: 'sql-u01-l11-e04',
         type: 'code_cloze',
-        prompt: 'En el estándar SQL, ¿qué delimitador se usa para literales de texto?',
+        prompt: 'En SQL, ¿qué tipo de comillas se usan obligatoriamente para escribir texto?',
         codeWithBlank: 'WHERE ciudad = ___Madrid___',
         options: ["' '", '" "', '` `', '/ /'],
         correctOption: "' '",
@@ -1335,7 +1333,7 @@ const SQL_TOPIC_BANKS: Record<number, { title: string; desc: string; exercises: 
       {
         id: 'sql-u01-l11-e06',
         type: 'matching_pairs',
-        prompt: 'Empareja el tipo de dato con su formato literal en el WHERE:',
+        prompt: 'Empareja cada tipo de dato con la forma correcta de escribir su valor en una condición WHERE:',
         pairs: [
           { left: 'Texto (VARCHAR)', right: 'WHERE nombre = \'Carlos\'' },
           { left: 'Entero (INT)', right: 'WHERE edad = 25' },
@@ -1435,10 +1433,10 @@ const SQL_TOPIC_BANKS: Record<number, { title: string; desc: string; exercises: 
       {
         id: 'sql-u01-l12-e04',
         type: 'spot_the_bug',
-        prompt: 'Toca la línea donde se intentó usar un operador de JavaScript inválido en SQL:',
+        prompt: 'Toca la línea que usa el operador inválido !== (en SQL se usa <> o != para decir "diferente de"): ',
         codeSnippet: [
           'SELECT * FROM cuentas',
-          'WHERE tipo !== \'demo\'; -- ¡!== no existe en SQL estándar!'
+          'WHERE tipo !== \'demo\';'
         ],
         bugLineIndex: 1,
         explanation: '!== es un operador de identidad de JavaScript. En SQL se usa <> o !=.',
@@ -1588,7 +1586,7 @@ const SQL_TOPIC_BANKS: Record<number, { title: string; desc: string; exercises: 
         prompt: 'Toca la línea donde la condición no tiene sentido para buscar mayores de edad:',
         codeSnippet: [
           'SELECT nombre, edad FROM club_adultos',
-          'WHERE edad < 18; -- ¡Esto busca menores de edad, no adultos!'
+          'WHERE edad < 18;'
         ],
         bugLineIndex: 1,
         explanation: 'Para filtrar adultos se debe usar edad >= 18, no menor a 18.',
@@ -1654,7 +1652,7 @@ const SQL_TOPIC_BANKS: Record<number, { title: string; desc: string; exercises: 
         codeSnippet: [
           'SELECT nombre, edad',
           'FROM votantes',
-          'WHERE edad => 18; -- ¡En SQL es >= y nunca =>!'
+          'WHERE edad => 18;'
         ],
         bugLineIndex: 2,
         explanation: 'En SQL el símbolo mayor va primero: >=. Escribir => produce un error de sintaxis.',
@@ -1737,7 +1735,7 @@ const SQL_TOPIC_BANKS: Record<number, { title: string; desc: string; exercises: 
         prompt: 'Toca la línea con el operador menor o igual escrito al revés:',
         codeSnippet: [
           'SELECT codigo FROM envios',
-          'WHERE peso =< 5.0; -- ¡Debe ser <= y no =<!'
+          'WHERE peso =< 5.0;'
         ],
         bugLineIndex: 1,
         explanation: 'El operador correcto es <=. =< no es válido en el lenguaje SQL.',
@@ -1817,7 +1815,7 @@ const SQL_TOPIC_BANKS: Record<number, { title: string; desc: string; exercises: 
         prompt: 'Toca la línea donde se usó el operador && de otros lenguajes en lugar de AND:',
         codeSnippet: [
           'SELECT * FROM empleados',
-          'WHERE departamento = \'Ventas\' && salario > 2000; -- ¡En SQL estándar se usa AND!'
+          'WHERE departamento = \'Ventas\' && salario > 2000;'
         ],
         bugLineIndex: 1,
         explanation: 'En SQL estándar la conjunción se escribe literalmente con la palabra AND, no con &&.',
@@ -1942,10 +1940,10 @@ const SQL_TOPIC_BANKS: Record<number, { title: string; desc: string; exercises: 
       {
         id: 'sql-u01-l16-e04',
         type: 'spot_the_bug',
-        prompt: 'Toca la línea con el error de sintaxis que usa el operador de tuberías || de JavaScript para un OR:',
+        prompt: 'Toca la línea con el error donde se usó || en lugar de la palabra OR para combinar condiciones:',
         codeSnippet: [
           'SELECT * FROM vuelos',
-          'WHERE origen = \'BOG\' || origen = \'MDE\'; -- ¡En SQL estándar || es concatenación de texto, no OR!'
+          'WHERE origen = \'BOG\' || origen = \'MDE\';'
         ],
         bugLineIndex: 1,
         explanation: 'En el estándar SQL || es el operador para concatenar cadenas de texto; para la disyunción lógica se usa la palabra OR.',
@@ -2073,7 +2071,7 @@ const SQL_TOPIC_BANKS: Record<number, { title: string; desc: string; exercises: 
         prompt: 'Toca la línea con el error donde los límites están invertidos (el mayor antes que el menor):',
         codeSnippet: [
           'SELECT * FROM productos',
-          'WHERE precio BETWEEN 100 AND 20; -- ¡En BETWEEN el menor va primero!'
+          'WHERE precio BETWEEN 100 AND 20;'
         ],
         bugLineIndex: 1,
         explanation: 'BETWEEN x AND y requiere que x <= y. Si escribes BETWEEN 100 AND 20 no coincidirá ninguna fila.',
@@ -2200,7 +2198,7 @@ const SQL_TOPIC_BANKS: Record<number, { title: string; desc: string; exercises: 
         prompt: 'Toca la línea con el error de corchetes en lugar de paréntesis para la lista IN:',
         codeSnippet: [
           'SELECT * FROM pedidos',
-          'WHERE estado IN [\'enviado\', \'entregado\']; -- ¡En SQL las listas IN usan () no []!'
+          'WHERE estado IN [\'enviado\', \'entregado\'];'
         ],
         bugLineIndex: 1,
         explanation: 'En SQL las listas literales de la cláusula IN siempre se encierran entre paréntesis (), nunca corchetes.',
@@ -2340,7 +2338,7 @@ const SQL_TOPIC_BANKS: Record<number, { title: string; desc: string; exercises: 
         prompt: 'Toca la línea con el error donde se usó el asterisco * en lugar de % para LIKE:',
         codeSnippet: [
           'SELECT * FROM contactos',
-          'WHERE apellido LIKE \'*Gomez\'; -- ¡El comodín de SQL es % y no *!'
+          'WHERE apellido LIKE \'*Gomez\';'
         ],
         bugLineIndex: 1,
         explanation: 'En SQL el comodín de cadena es %, no el asterisco * (que solo es comodín en expresiones regulares o en SELECT *).',
@@ -2457,7 +2455,7 @@ const SQL_TOPIC_BANKS: Record<number, { title: string; desc: string; exercises: 
         prompt: 'Toca la línea con el error de orden estructural en la consulta combinada:',
         codeSnippet: [
           'SELECT id, nombre',
-          'WHERE edad >= 18 -- ¡WHERE no puede ir antes de FROM!',
+          'WHERE edad >= 18',
           'FROM clientes;'
         ],
         bugLineIndex: 1,

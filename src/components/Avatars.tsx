@@ -12,36 +12,74 @@ interface AvatarProps {
  * 1. Byte el Robot: Compañero androide 3D estilo juguete tangible Duolingo (0% Neón / 0% IA).
  * Casco redondeado celeste, antena 3D con orbe dorado, auriculares y ojos brillantes.
  */
-export const ByteBotAvatar: React.FC<AvatarProps> = ({ size = 48, className = '' }) => (
-  <svg width={size} height={size} viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
-    <defs>
-      <linearGradient id="byte-bg" x1="50" y1="2" x2="50" y2="98" gradientUnits="userSpaceOnUse">
-        <stop stopColor="#F0F9FF" />
-        <stop offset="100%" stopColor="#BAE6FD" />
-      </linearGradient>
-      <linearGradient id="byte-chassis" x1="24" y1="20" x2="76" y2="76" gradientUnits="userSpaceOnUse">
-        <stop stopColor="#38BDF8" />
-        <stop offset="50%" stopColor="#0EA5E9" />
-        <stop offset="100%" stopColor="#0284C7" />
-      </linearGradient>
-      <linearGradient id="byte-visor" x1="30" y1="32" x2="70" y2="58" gradientUnits="userSpaceOnUse">
-        <stop stopColor="#0F172A" />
-        <stop offset="100%" stopColor="#1E293B" />
-      </linearGradient>
-      <radialGradient id="byte-gold" cx="40%" cy="35%" r="65%">
-        <stop stopColor="#FFFBEB" />
-        <stop offset="40%" stopColor="#FBBF24" />
-        <stop offset="100%" stopColor="#D97706" />
-      </radialGradient>
-      <linearGradient id="byte-ear" x1="0" y1="0" x2="0" y2="1">
-        <stop stopColor="#0284C7" />
-        <stop offset="100%" stopColor="#0369A1" />
-      </linearGradient>
-    </defs>
+export const ByteBotAvatar: React.FC<AvatarProps & { skinId?: string }> = ({ size = 48, className = '', skinId = 'byte_classic' }) => {
+  // Paletas según la Skin equipada
+  const getSkinColors = () => {
+    switch (skinId) {
+      case 'byte_student':
+        return { c1: '#38BDF8', c2: '#0284C7', c3: '#0369A1', orb: '#F59E0B', border: '#7DD3FC', bg1: '#F0F9FF', bg2: '#BAE6FD' };
+      case 'byte_pixel':
+        return { c1: '#34D399', c2: '#059669', c3: '#047857', orb: '#FACC15', border: '#6EE7B7', bg1: '#ECFDF5', bg2: '#A7F3D0' };
+      case 'byte_cyberpunk':
+        return { c1: '#7C3AED', c2: '#6D28D9', c3: '#4C1D95', orb: '#10B981', border: '#C084FC', bg1: '#FAF5FF', bg2: '#E9D5FF' };
+      case 'byte_athlete':
+        return { c1: '#EF4444', c2: '#DC2626', c3: '#B91C1C', orb: '#F59E0B', border: '#FCA5A5', bg1: '#FEF2F2', bg2: '#FECACA' };
+      case 'byte_steampunk':
+        return { c1: '#D97706', c2: '#B45309', c3: '#78350F', orb: '#FBBF24', border: '#FDE68A', bg1: '#FFFBEB', bg2: '#FDE68A' };
+      case 'byte_ninja':
+        return { c1: '#475569', c2: '#1E293B', c3: '#0F172A', orb: '#38BDF8', border: '#64748B', bg1: '#F1F5F9', bg2: '#CBD5E1' };
+      case 'byte_senior':
+        return { c1: '#EA580C', c2: '#C2410C', c3: '#9A3412', orb: '#FACC15', border: '#FDBA74', bg1: '#FFF7ED', bg2: '#FED7AA' };
+      case 'byte_wizard':
+        return { c1: '#2563EB', c2: '#1D4ED8', c3: '#1E40AF', orb: '#FBBF24', border: '#93C5FD', bg1: '#EFF6FF', bg2: '#BFDBFE' };
+      case 'byte_samurai':
+        return { c1: '#DC2626', c2: '#B91C1C', c3: '#991B1B', orb: '#F59E0B', border: '#F87171', bg1: '#FEF2F2', bg2: '#FECACA' };
+      case 'byte_dragon':
+        return { c1: '#B91C1C', c2: '#991B1B', c3: '#450A0A', orb: '#F97316', border: '#F87171', bg1: '#450A0A', bg2: '#7F1D1D' };
+      case 'byte_astronaut':
+        return { c1: '#F8FAFC', c2: '#E2E8F0', c3: '#94A3B8', orb: '#38BDF8', border: '#CBD5E1', bg1: '#F8FAFC', bg2: '#E2E8F0' };
+      case 'byte_mecha_valkyrie':
+        return { c1: '#FB7185', c2: '#E11D48', c3: '#881337', orb: '#F472B6', border: '#FDA4AF', bg1: '#FFF1F2', bg2: '#FECDD3' };
+      case 'byte_titan_gold':
+        return { c1: '#FDE047', c2: '#F59E0B', c3: '#B45309', orb: '#FEF08A', border: '#FDE047', bg1: '#FEF9C3', bg2: '#FEF08A' };
+      case 'byte_classic':
+      default:
+        return { c1: '#38BDF8', c2: '#0EA5E9', c3: '#0284C7', orb: '#FBBF24', border: '#7DD3FC', bg1: '#F0F9FF', bg2: '#BAE6FD' };
+    }
+  };
 
-    {/* Fondo base circular 3D */}
-    <circle cx="50" cy="50" r="47" fill="url(#byte-bg)" stroke="#7DD3FC" strokeWidth="2.5" />
-    <ellipse cx="50" cy="91" rx="28" ry="4" fill="#0284C7" fillOpacity="0.22" />
+  const sc = getSkinColors();
+
+  return (
+    <svg width={size} height={size} viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
+      <defs>
+        <linearGradient id={`byte-bg-${skinId}`} x1="50" y1="2" x2="50" y2="98" gradientUnits="userSpaceOnUse">
+          <stop stopColor={sc.bg1} />
+          <stop offset="100%" stopColor={sc.bg2} />
+        </linearGradient>
+        <linearGradient id={`byte-chassis-${skinId}`} x1="24" y1="20" x2="76" y2="76" gradientUnits="userSpaceOnUse">
+          <stop stopColor={sc.c1} />
+          <stop offset="50%" stopColor={sc.c2} />
+          <stop offset="100%" stopColor={sc.c3} />
+        </linearGradient>
+        <linearGradient id={`byte-visor-${skinId}`} x1="30" y1="32" x2="70" y2="58" gradientUnits="userSpaceOnUse">
+          <stop stopColor="#0F172A" />
+          <stop offset="100%" stopColor="#1E293B" />
+        </linearGradient>
+        <radialGradient id={`byte-gold-${skinId}`} cx="40%" cy="35%" r="65%">
+          <stop stopColor="#FFFBEB" />
+          <stop offset="40%" stopColor={sc.orb} />
+          <stop offset="100%" stopColor="#B45309" />
+        </radialGradient>
+        <linearGradient id={`byte-ear-${skinId}`} x1="0" y1="0" x2="0" y2="1">
+          <stop stopColor={sc.c3} />
+          <stop offset="100%" stopColor="#0369A1" />
+        </linearGradient>
+      </defs>
+
+      {/* Fondo base circular 3D */}
+      <circle cx="50" cy="50" r="47" fill={`url(#byte-bg-${skinId})`} stroke={sc.border} strokeWidth="2.5" />
+      <ellipse cx="50" cy="91" rx="28" ry="4" fill={sc.c3} fillOpacity="0.22" />
 
     {/* Antena 3D con esfera de oro */}
     <rect x="47" y="10" width="6" height="12" rx="3" fill="#94A3B8" stroke="#475569" strokeWidth="1" />
@@ -84,9 +122,9 @@ export const ByteBotAvatar: React.FC<AvatarProps> = ({ size = 48, className = ''
     <path d="M34 70 L66 70 L74 96 L26 96 Z" fill="#0284C7" stroke="#0369A1" strokeWidth="2" />
     <rect x="42" y="76" width="16" height="12" rx="6" fill="#0369A1" />
     <circle cx="50" cy="82" r="4" fill="#22C55E" />
-    <circle cx="51" cy="81" r="1.2" fill="#FFFFFF" />
-  </svg>
-);
+    </svg>
+  );
+};
 
 /**
  * 2. Ada la Coder: Programadora audaz, sudadera 3D coral, gafas de montura gruesa y headset gamer.
@@ -332,11 +370,15 @@ export const DevAvatar: React.FC<{ avatarId: string; size?: number; className?: 
   size = 48,
   className = ''
 }) => {
+  if (avatarId && avatarId.startsWith('byte_')) {
+    return <ByteBotAvatar size={size} className={className} skinId={avatarId} />;
+  }
+
   switch (avatarId) {
     case 'console_dev':
       return <ConsoleMascotAvatar size={size} className={className} />;
     case 'robot_byte':
-      return <ByteBotAvatar size={size} className={className} />;
+      return <ByteBotAvatar size={size} className={className} skinId="byte_classic" />;
     case 'ada_hacker':
       return <AdaHackerAvatar size={size} className={className} />;
     case 'linus_coder':
@@ -344,6 +386,6 @@ export const DevAvatar: React.FC<{ avatarId: string; size?: number; className?: 
     case 'turing_wizard':
       return <TuringSageAvatar size={size} className={className} />;
     default:
-      return <ByteBotAvatar size={size} className={className} />;
+      return <ByteBotAvatar size={size} className={className} skinId="byte_classic" />;
   }
 };

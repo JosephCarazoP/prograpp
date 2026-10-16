@@ -371,7 +371,7 @@ export const DailyQuestsModal: React.FC<DailyQuestsModalProps> = ({
 
   return (
     <div
-      className="modal-backdrop"
+      className="modal-backdrop quests-modal-backdrop"
       onClick={onClose}
       role="dialog"
       aria-modal="true"
@@ -388,7 +388,7 @@ export const DailyQuestsModal: React.FC<DailyQuestsModalProps> = ({
       }}
     >
       <div
-        className="modal-card"
+        className="modal-card quests-modal-card"
         onClick={(e) => e.stopPropagation()}
         style={{
           maxWidth: '780px',
@@ -396,8 +396,8 @@ export const DailyQuestsModal: React.FC<DailyQuestsModalProps> = ({
           background: '#FFFFFF',
           border: '2.5px solid #CBD5E1',
           borderBottom: '6px solid #94A3B8',
-          borderRadius: 28,
-          padding: '20px 22px 24px 22px',
+          borderRadius: 24,
+          padding: '14px 14px 18px 14px',
           maxHeight: '92vh',
           display: 'flex',
           flexDirection: 'column',
@@ -409,6 +409,7 @@ export const DailyQuestsModal: React.FC<DailyQuestsModalProps> = ({
       >
         {/* Botón Cerrar 3D */}
         <button
+          className="quests-modal-close"
           onClick={() => {
             soundService.playToken();
             onClose();
@@ -416,14 +417,14 @@ export const DailyQuestsModal: React.FC<DailyQuestsModalProps> = ({
           aria-label="Cerrar modal de objetivos"
           style={{
             position: 'absolute',
-            top: '16px',
-            right: '16px',
+            top: '12px',
+            right: '12px',
             background: '#FFFFFF',
             border: '2px solid #E2E8F0',
             boxShadow: '0 3px 0 #CBD5E1',
-            borderRadius: '14px',
-            width: '38px',
-            height: '38px',
+            borderRadius: '12px',
+            width: '32px',
+            height: '32px',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
@@ -441,30 +442,30 @@ export const DailyQuestsModal: React.FC<DailyQuestsModalProps> = ({
             e.currentTarget.style.boxShadow = '0 3px 0 #CBD5E1';
           }}
         >
-          <X size={20} strokeWidth={2.6} />
+          <X size={17} strokeWidth={2.6} />
         </button>
 
         {/* ENCABEZADO SUPERIOR: NIVEL DE PASE & PUNTOS (Estilo Fortnite Battle Pass) */}
-        <div style={{ marginBottom: '14px', flexShrink: 0, paddingRight: '46px' }}>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '8px' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+        <div className="quests-header-section" style={{ marginBottom: '10px', flexShrink: 0, paddingRight: '38px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '6px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
               <span
                 style={{
                   background: '#FEF3C7',
                   border: '1.5px solid #FDE68A',
                   color: '#B45309',
                   borderRadius: '999px',
-                  padding: '3px 12px',
-                  fontSize: '0.72rem',
+                  padding: '2px 8px',
+                  fontSize: '0.66rem',
                   fontWeight: 900,
                   textTransform: 'uppercase',
-                  letterSpacing: '0.8px',
+                  letterSpacing: '0.6px',
                   display: 'inline-flex',
                   alignItems: 'center',
-                  gap: '5px'
+                  gap: '4px'
                 }}
               >
-                <Trophy size={13} color="#D97706" /> TEMPORADA 1 • FUNDAMENTOS
+                <Trophy size={12} color="#D97706" /> TEMPORADA 1 • FUNDAMENTOS
               </span>
             </div>
 
@@ -473,32 +474,33 @@ export const DailyQuestsModal: React.FC<DailyQuestsModalProps> = ({
               style={{
                 background: '#ECFEFF',
                 border: '1.5px solid #A5F3FC',
-                borderRadius: '12px',
-                padding: '4px 12px',
-                fontSize: '0.82rem',
+                borderRadius: '10px',
+                padding: '3px 8px',
+                fontSize: '0.72rem',
                 fontWeight: 900,
                 color: '#0891B2',
                 display: 'inline-flex',
                 alignItems: 'center',
-                gap: '5px'
+                gap: '4px'
               }}
             >
-              <Zap size={14} color="#0891B2" fill="#0891B2" />
-              <span>{totalPassPoints} PUNTOS DE PASE</span>
+              <Zap size={12} color="#0891B2" fill="#0891B2" />
+              <span>{totalPassPoints} PTS PASE</span>
             </div>
           </div>
 
           {/* Barra de Nivel de Pase estilo Fortnite */}
           <div
+            className="quests-tier-progress-box"
             style={{
-              marginTop: '8px',
+              marginTop: '6px',
               background: '#F8FAFC',
               border: '2px solid #E2E8F0',
-              borderRadius: '16px',
-              padding: '10px 14px',
+              borderRadius: '14px',
+              padding: '6px 10px',
               display: 'flex',
               alignItems: 'center',
-              gap: '14px',
+              gap: '10px',
               boxShadow: '0 2px 0 #CBD5E1'
             }}
           >
@@ -509,33 +511,33 @@ export const DailyQuestsModal: React.FC<DailyQuestsModalProps> = ({
                 border: '2px solid #FDE68A',
                 boxShadow: '0 3px 0 #92400E',
                 color: '#FFFFFF',
-                borderRadius: '14px',
-                padding: '5px 14px',
-                fontSize: '0.9rem',
+                borderRadius: '11px',
+                padding: '3px 9px',
+                fontSize: '0.78rem',
                 fontWeight: 900,
                 display: 'inline-flex',
                 alignItems: 'center',
-                gap: '6px',
+                gap: '4px',
                 flexShrink: 0
               }}
             >
-              <Star size={16} fill="#FFFFFF" color="#FFFFFF" />
+              <Star size={13} fill="#FFFFFF" color="#FFFFFF" />
               <span>NIVEL {currentTierLevel}</span>
             </div>
 
             {/* Barra de progreso */}
             <div style={{ flex: 1, minWidth: 0 }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
-                <span style={{ fontSize: '0.76rem', fontWeight: 800, color: '#334155' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '2px' }}>
+                <span style={{ fontSize: '0.68rem', fontWeight: 800, color: '#334155' }}>
                   Progreso al Nivel {Math.min(10, currentTierLevel + 1)}
                 </span>
-                <span style={{ fontSize: '0.76rem', fontWeight: 900, color: '#0284C7' }}>
+                <span style={{ fontSize: '0.68rem', fontWeight: 900, color: '#0284C7' }}>
                   {totalPassPoints} / {nextTierPoints} Pts
                 </span>
               </div>
               <div
                 style={{
-                  height: '12px',
+                  height: '9px',
                   background: '#E2E8F0',
                   borderRadius: '999px',
                   overflow: 'hidden',
@@ -556,11 +558,11 @@ export const DailyQuestsModal: React.FC<DailyQuestsModalProps> = ({
                     style={{
                       position: 'absolute',
                       top: '1px',
-                      left: '6px',
-                      right: '6px',
-                      height: '3px',
+                      left: '4px',
+                      right: '4px',
+                      height: '2px',
                       background: 'rgba(255, 255, 255, 0.5)',
-                      borderRadius: '3px'
+                      borderRadius: '2px'
                     }}
                   />
                 </div>
@@ -571,26 +573,28 @@ export const DailyQuestsModal: React.FC<DailyQuestsModalProps> = ({
 
         {/* PESTAÑAS PRINCIPALES ESTILO FORTNITE BATTLE PASS (100% DUOLINGO 3D) */}
         <div
+          className="quests-tabs-wrapper"
           style={{
             display: 'flex',
-            gap: '10px',
-            marginBottom: '16px',
+            gap: '6px',
+            marginBottom: '10px',
             flexShrink: 0,
             background: '#F1F5F9',
-            padding: '6px',
-            borderRadius: '18px'
+            padding: '4px',
+            borderRadius: '15px'
           }}
         >
           {/* Pestaña 1: Camino de Recompensas */}
           <button
+            className="quests-tab-btn"
             onClick={() => {
               soundService.playToken();
               setActiveTab('pass');
             }}
             style={{
               flex: 1,
-              padding: '10px 14px',
-              borderRadius: '14px',
+              padding: '7px 8px',
+              borderRadius: '11px',
               border: activeTab === 'pass' ? '2px solid #CBD5E1' : '2px solid transparent',
               background: activeTab === 'pass' ? '#FFFFFF' : 'transparent',
               boxShadow: activeTab === 'pass' ? '0 3px 0 #94A3B8' : 'none',
@@ -598,23 +602,24 @@ export const DailyQuestsModal: React.FC<DailyQuestsModalProps> = ({
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              gap: '8px',
-              fontSize: '0.88rem',
+              gap: '5px',
+              fontSize: '0.8rem',
               fontWeight: 900,
               color: activeTab === 'pass' ? '#0F172A' : '#64748B',
               transition: 'all 0.15s ease'
             }}
           >
-            <Trophy size={18} color={activeTab === 'pass' ? '#F59E0B' : '#94A3B8'} strokeWidth={2.4} />
-            <span>Camino de Recompensas</span>
+            <Trophy size={15} color={activeTab === 'pass' ? '#F59E0B' : '#94A3B8'} strokeWidth={2.4} />
+            <span className="tab-text-desktop">Camino de Recompensas</span>
+            <span className="tab-text-mobile">Recompensas</span>
             {unclaimedTiersCount > 0 && (
               <span
                 style={{
                   background: '#22C55E',
                   color: '#FFFFFF',
                   borderRadius: '999px',
-                  padding: '2px 8px',
-                  fontSize: '0.7rem',
+                  padding: '1px 6px',
+                  fontSize: '0.64rem',
                   fontWeight: 900
                 }}
               >
@@ -625,14 +630,15 @@ export const DailyQuestsModal: React.FC<DailyQuestsModalProps> = ({
 
           {/* Pestaña 2: Misiones y Objetivos */}
           <button
+            className="quests-tab-btn"
             onClick={() => {
               soundService.playToken();
               setActiveTab('quests');
             }}
             style={{
               flex: 1,
-              padding: '10px 14px',
-              borderRadius: '14px',
+              padding: '7px 8px',
+              borderRadius: '11px',
               border: activeTab === 'quests' ? '2px solid #CBD5E1' : '2px solid transparent',
               background: activeTab === 'quests' ? '#FFFFFF' : 'transparent',
               boxShadow: activeTab === 'quests' ? '0 3px 0 #94A3B8' : 'none',
@@ -640,23 +646,24 @@ export const DailyQuestsModal: React.FC<DailyQuestsModalProps> = ({
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              gap: '8px',
-              fontSize: '0.88rem',
+              gap: '5px',
+              fontSize: '0.8rem',
               fontWeight: 900,
               color: activeTab === 'quests' ? '#0F172A' : '#64748B',
               transition: 'all 0.15s ease'
             }}
           >
-            <Target size={18} color={activeTab === 'quests' ? '#2563EB' : '#94A3B8'} strokeWidth={2.4} />
-            <span>Misiones & Objetivos</span>
+            <Target size={15} color={activeTab === 'quests' ? '#2563EB' : '#94A3B8'} strokeWidth={2.4} />
+            <span className="tab-text-desktop">Misiones & Objetivos</span>
+            <span className="tab-text-mobile">Misiones</span>
             {unclaimedQuestsCount > 0 && (
               <span
                 style={{
                   background: '#F59E0B',
                   color: '#FFFFFF',
                   borderRadius: '999px',
-                  padding: '2px 8px',
-                  fontSize: '0.7rem',
+                  padding: '1px 6px',
+                  fontSize: '0.64rem',
                   fontWeight: 900
                 }}
               >
@@ -667,162 +674,198 @@ export const DailyQuestsModal: React.FC<DailyQuestsModalProps> = ({
         </div>
 
         {/* CONTENIDO DE LA PESTAÑA SELECCIONADA */}
-        <div style={{ flex: 1, overflowY: 'auto', minHeight: 0, paddingRight: '4px' }}>
+        <div style={{ flex: 1, overflowY: 'auto', minHeight: 0, paddingRight: '2px' }}>
           {/* VISTA 1: PASE DE BATALLA (SHOWCASE + CAMINO HORIZONTAL) */}
           {activeTab === 'pass' && (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
               {/* ESCAPARATE PRINCIPAL (HERO SHOWCASE DE FORTNITE) */}
               <div
+                className="pass-hero-card"
                 style={{
                   background: 'linear-gradient(180deg, #F8FAFC 0%, #FFFFFF 100%)',
                   border: '2.5px solid #CBD5E1',
                   boxShadow: '0 4px 0 #94A3B8',
-                  borderRadius: '24px',
-                  padding: '18px 20px',
+                  borderRadius: '18px',
+                  padding: '12px 14px',
                   display: 'flex',
-                  alignItems: 'center',
-                  gap: '20px',
+                  flexDirection: 'column',
+                  gap: '10px',
                   boxSizing: 'border-box'
                 }}
               >
-                {/* Gran Icono 3D de Recompensa */}
-                <div
-                  style={{
-                    width: '90px',
-                    height: '90px',
-                    borderRadius: '22px',
-                    background: isFeaturedTierUnlocked ? featuredTier.rarityColor : '#64748B',
-                    border: '3px solid rgba(255, 255, 255, 0.4)',
-                    boxShadow: '0 6px 0 rgba(0, 0, 0, 0.18)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    color: '#FFFFFF',
-                    flexShrink: 0
-                  }}
-                >
-                  {featuredTier.rewardType === 'bytes' ? (
-                    <Zap size={44} fill="#FFFFFF" />
-                  ) : featuredTier.rewardType === 'xp' ? (
-                    <Star size={44} fill="#FFFFFF" />
-                  ) : featuredTier.rewardType === 'chest' ? (
-                    <Gift size={44} strokeWidth={2.2} />
-                  ) : featuredTier.powerupKey === 'teacherHint' ? (
-                    <GraduationCap size={44} strokeWidth={2.2} />
-                  ) : featuredTier.powerupKey === 'eliminateOptions' ? (
-                    <EyeOff size={44} strokeWidth={2.2} />
-                  ) : featuredTier.powerupKey === 'secondChance' ? (
-                    <ShieldCheck size={44} strokeWidth={2.2} />
-                  ) : (
-                    <Code2 size={44} strokeWidth={2.2} />
-                  )}
-                </div>
-
-                {/* Detalles de la Recompensa Seleccionada */}
-                <div style={{ flex: 1, minWidth: 0 }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
-                    <span
-                      style={{
-                        background: featuredTier.rarityColor,
-                        color: '#FFFFFF',
-                        fontSize: '0.68rem',
-                        fontWeight: 900,
-                        padding: '2px 8px',
-                        borderRadius: '6px',
-                        letterSpacing: '0.6px'
-                      }}
-                    >
-                      ★ {featuredTier.rarity} ★
-                    </span>
-                    <span style={{ fontSize: '0.74rem', fontWeight: 800, color: '#64748B' }}>
-                      Nivel {featuredTier.tierNumber} • {featuredTier.reqPoints === 0 ? 'Desbloqueo Inicial' : `${featuredTier.reqPoints} Pts Requeridos`}
-                    </span>
-                  </div>
-
-                  <h3 style={{ fontSize: '1.25rem', fontWeight: 900, color: '#0F172A', margin: '0 0 4px 0' }}>
-                    {featuredTier.title}
-                  </h3>
-                  <p style={{ fontSize: '0.84rem', color: '#64748B', fontWeight: 700, margin: '0 0 12px 0', lineHeight: 1.35 }}>
-                    {featuredTier.description}
-                  </p>
-
-                  {/* Botón de Acción Principal en Escaparate */}
-                  <div>
-                    {isFeaturedTierClaimed ? (
-                      <div
-                        style={{
-                          display: 'inline-flex',
-                          alignItems: 'center',
-                          gap: '6px',
-                          background: '#DCFCE7',
-                          border: '2px solid #86EFAC',
-                          color: '#15803D',
-                          borderRadius: '12px',
-                          padding: '8px 16px',
-                          fontSize: '0.84rem',
-                          fontWeight: 900
-                        }}
-                      >
-                        <CheckCircle2 size={16} /> Recompensa Reclamada
-                      </div>
-                    ) : canClaimFeatured ? (
-                      <button
-                        onClick={() => handleClaimTier(featuredTier)}
-                        style={{
-                          display: 'inline-flex',
-                          alignItems: 'center',
-                          gap: '8px',
-                          background: '#22C55E',
-                          border: '2.5px solid #86EFAC',
-                          boxShadow: '0 4px 0 #15803D',
-                          color: '#FFFFFF',
-                          borderRadius: '14px',
-                          padding: '9px 20px',
-                          fontSize: '0.88rem',
-                          fontWeight: 900,
-                          cursor: 'pointer',
-                          transition: 'all 0.12s ease'
-                        }}
-                        onMouseDown={(e) => {
-                          e.currentTarget.style.transform = 'translateY(2px)';
-                          e.currentTarget.style.boxShadow = '0 2px 0 #15803D';
-                        }}
-                        onMouseUp={(e) => {
-                          e.currentTarget.style.transform = 'translateY(0)';
-                          e.currentTarget.style.boxShadow = '0 4px 0 #15803D';
-                        }}
-                      >
-                        <Sparkles size={16} /> ¡RECLAMAR RECOMPENSA!
-                      </button>
+                {/* Fila superior: Icono 3D + Rango, Nivel y Título */}
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', width: '100%' }}>
+                  {/* Icono 3D de Recompensa */}
+                  <div
+                    className="pass-hero-icon"
+                    style={{
+                      width: '54px',
+                      height: '54px',
+                      borderRadius: '14px',
+                      background: isFeaturedTierUnlocked ? featuredTier.rarityColor : '#64748B',
+                      border: '2.5px solid rgba(255, 255, 255, 0.4)',
+                      boxShadow: '0 4px 0 rgba(0, 0, 0, 0.18)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      color: '#FFFFFF',
+                      flexShrink: 0
+                    }}
+                  >
+                    {featuredTier.rewardType === 'bytes' ? (
+                      <Zap size={26} fill="#FFFFFF" />
+                    ) : featuredTier.rewardType === 'xp' ? (
+                      <Star size={26} fill="#FFFFFF" />
+                    ) : featuredTier.rewardType === 'chest' ? (
+                      <Gift size={26} strokeWidth={2.2} />
+                    ) : featuredTier.powerupKey === 'teacherHint' ? (
+                      <GraduationCap size={26} strokeWidth={2.2} />
+                    ) : featuredTier.powerupKey === 'eliminateOptions' ? (
+                      <EyeOff size={26} strokeWidth={2.2} />
+                    ) : featuredTier.powerupKey === 'secondChance' ? (
+                      <ShieldCheck size={26} strokeWidth={2.2} />
                     ) : (
-                      <div
-                        style={{
-                          display: 'inline-flex',
-                          alignItems: 'center',
-                          gap: '6px',
-                          background: '#F1F5F9',
-                          border: '2px solid #CBD5E1',
-                          color: '#94A3B8',
-                          borderRadius: '12px',
-                          padding: '8px 16px',
-                          fontSize: '0.84rem',
-                          fontWeight: 800
-                        }}
-                      >
-                        <Lock size={16} /> Bloqueado • Requiere Nivel {featuredTier.tierNumber} ({featuredTier.reqPoints} Pts)
-                      </div>
+                      <Code2 size={26} strokeWidth={2.2} />
                     )}
                   </div>
+
+                  {/* Rango, Nivel y Título de la Recompensa Seleccionada */}
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '2px', flexWrap: 'wrap' }}>
+                      <span
+                        style={{
+                          background: featuredTier.rarityColor,
+                          color: '#FFFFFF',
+                          fontSize: '0.62rem',
+                          fontWeight: 900,
+                          padding: '1px 6px',
+                          borderRadius: '5px',
+                          letterSpacing: '0.5px'
+                        }}
+                      >
+                        ★ {featuredTier.rarity} ★
+                      </span>
+                      <span style={{ fontSize: '0.68rem', fontWeight: 800, color: '#64748B' }}>
+                        Nivel {featuredTier.tierNumber} • {featuredTier.reqPoints === 0 ? 'Desbloqueo Inicial' : `${featuredTier.reqPoints} Pts`}
+                      </span>
+                    </div>
+
+                    <h3
+                      style={{
+                        fontSize: '0.98rem',
+                        fontWeight: 900,
+                        color: '#0F172A',
+                        margin: 0,
+                        lineHeight: 1.25,
+                        wordBreak: 'break-word'
+                      }}
+                    >
+                      {featuredTier.title}
+                    </h3>
+                  </div>
+                </div>
+
+                {/* Descripción Detallada */}
+                <p
+                  style={{
+                    fontSize: '0.74rem',
+                    color: '#64748B',
+                    fontWeight: 700,
+                    margin: 0,
+                    lineHeight: 1.3
+                  }}
+                >
+                  {featuredTier.description}
+                </p>
+
+                {/* Botón de Acción Principal en Escaparate (Ancho Completo y Táctil) */}
+                <div className="pass-hero-action" style={{ width: '100%', display: 'flex' }}>
+                  {isFeaturedTierClaimed ? (
+                    <div
+                      style={{
+                        width: '100%',
+                        boxSizing: 'border-box',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: '5px',
+                        background: '#DCFCE7',
+                        border: '2px solid #86EFAC',
+                        color: '#15803D',
+                        borderRadius: '11px',
+                        padding: '8px 12px',
+                        fontSize: '0.78rem',
+                        fontWeight: 900,
+                        textAlign: 'center'
+                      }}
+                    >
+                      <CheckCircle2 size={15} /> Recompensa Reclamada
+                    </div>
+                  ) : canClaimFeatured ? (
+                    <button
+                      onClick={() => handleClaimTier(featuredTier)}
+                      style={{
+                        width: '100%',
+                        boxSizing: 'border-box',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: '6px',
+                        background: '#22C55E',
+                        border: '2.5px solid #86EFAC',
+                        boxShadow: '0 3px 0 #15803D',
+                        color: '#FFFFFF',
+                        borderRadius: '12px',
+                        padding: '8px 14px',
+                        fontSize: '0.8rem',
+                        fontWeight: 900,
+                        cursor: 'pointer',
+                        transition: 'all 0.12s ease',
+                        textAlign: 'center'
+                      }}
+                      onMouseDown={(e) => {
+                        e.currentTarget.style.transform = 'translateY(2px)';
+                        e.currentTarget.style.boxShadow = '0 1px 0 #15803D';
+                      }}
+                      onMouseUp={(e) => {
+                        e.currentTarget.style.transform = 'translateY(0)';
+                        e.currentTarget.style.boxShadow = '0 3px 0 #15803D';
+                      }}
+                    >
+                      <Sparkles size={15} /> ¡RECLAMAR RECOMPENSA!
+                    </button>
+                  ) : (
+                    <div
+                      style={{
+                        width: '100%',
+                        boxSizing: 'border-box',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: '5px',
+                        background: '#F1F5F9',
+                        border: '2px solid #CBD5E1',
+                        color: '#94A3B8',
+                        borderRadius: '11px',
+                        padding: '8px 12px',
+                        fontSize: '0.74rem',
+                        fontWeight: 800,
+                        textAlign: 'center'
+                      }}
+                    >
+                      <Lock size={13} /> Bloqueado • Requiere Nivel {featuredTier.tierNumber} ({featuredTier.reqPoints} Pts)
+                    </div>
+                  )}
                 </div>
               </div>
 
               {/* CAMINO HORIZONTAL DE CASILLAS (TIERS RIBBON) */}
-              <div>
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px', padding: '0 4px' }}>
-                  <span style={{ fontSize: '0.82rem', fontWeight: 900, color: '#334155' }}>
-                    Camino de Temporada (Toca una casilla para inspeccionar y reclamar):
+              <div style={{ width: '100%', overflow: 'hidden' }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '6px', padding: '0 2px' }}>
+                  <span style={{ fontSize: '0.74rem', fontWeight: 900, color: '#334155' }}>
+                    Camino de Temporada:
                   </span>
-                  <span style={{ fontSize: '0.74rem', fontWeight: 800, color: '#0284C7' }}>
+                  <span style={{ fontSize: '0.68rem', fontWeight: 800, color: '#0284C7' }}>
                     Desliza horizontalmente ➔
                   </span>
                 </div>
@@ -831,11 +874,13 @@ export const DailyQuestsModal: React.FC<DailyQuestsModalProps> = ({
                   className="battlepass-track"
                   style={{
                     display: 'flex',
-                    gap: '10px',
+                    gap: '8px',
                     overflowX: 'auto',
-                    padding: '6px 2px 14px 2px',
+                    padding: '4px 2px 10px 2px',
                     WebkitOverflowScrolling: 'touch',
-                    scrollbarWidth: 'thin'
+                    scrollbarWidth: 'thin',
+                    width: '100%',
+                    boxSizing: 'border-box'
                   }}
                 >
                   {BATTLE_PASS_TIERS.map((tier, idx) => {
@@ -852,8 +897,8 @@ export const DailyQuestsModal: React.FC<DailyQuestsModalProps> = ({
                           setSelectedTierIndex(idx);
                         }}
                         style={{
-                          minWidth: '125px',
-                          maxWidth: '130px',
+                          minWidth: '92px',
+                          maxWidth: '98px',
                           flexShrink: 0,
                           background: isSelected
                             ? '#FEF3C7'
@@ -875,14 +920,14 @@ export const DailyQuestsModal: React.FC<DailyQuestsModalProps> = ({
                             ? '#CBD5E1'
                             : '#E2E8F0',
                           boxShadow: isSelected
-                            ? '0 4px 0 #D97706'
+                            ? '0 3px 0 #D97706'
                             : canClaim
                             ? '0 3px 0 #D97706'
                             : isClaimed
-                            ? '0 3px 0 #86EFAC'
-                            : '0 3px 0 #CBD5E1',
-                          borderRadius: '16px',
-                          padding: '10px 8px',
+                            ? '0 2px 0 #86EFAC'
+                            : '0 2px 0 #CBD5E1',
+                          borderRadius: '13px',
+                          padding: '7px 5px',
                           display: 'flex',
                           flexDirection: 'column',
                           alignItems: 'center',
@@ -894,13 +939,13 @@ export const DailyQuestsModal: React.FC<DailyQuestsModalProps> = ({
                       >
                         <div
                           style={{
-                            fontSize: '0.64rem',
+                            fontSize: '0.62rem',
                             fontWeight: 900,
                             background: isUnlocked ? '#0284C7' : '#94A3B8',
                             color: '#FFFFFF',
-                            padding: '2px 6px',
+                            padding: '1px 5px',
                             borderRadius: '999px',
-                            marginBottom: '6px'
+                            marginBottom: '4px'
                           }}
                         >
                           Nivel {tier.tierNumber}
@@ -909,45 +954,45 @@ export const DailyQuestsModal: React.FC<DailyQuestsModalProps> = ({
                         {/* Icono Mini */}
                         <div
                           style={{
-                            width: '38px',
-                            height: '38px',
-                            borderRadius: '11px',
+                            width: '32px',
+                            height: '32px',
+                            borderRadius: '9px',
                             background: isUnlocked ? tier.rarityColor : '#CBD5E1',
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',
                             color: '#FFFFFF',
-                            marginBottom: '6px'
+                            marginBottom: '4px'
                           }}
                         >
                           {tier.rewardType === 'bytes' ? (
-                            <Zap size={20} fill="#FFFFFF" />
+                            <Zap size={16} fill="#FFFFFF" />
                           ) : tier.rewardType === 'xp' ? (
-                            <Star size={20} fill="#FFFFFF" />
+                            <Star size={16} fill="#FFFFFF" />
                           ) : tier.rewardType === 'chest' ? (
-                            <Gift size={20} />
+                            <Gift size={16} />
                           ) : tier.powerupKey === 'teacherHint' ? (
-                            <GraduationCap size={20} />
+                            <GraduationCap size={16} />
                           ) : tier.powerupKey === 'eliminateOptions' ? (
-                            <EyeOff size={20} />
+                            <EyeOff size={16} />
                           ) : tier.powerupKey === 'secondChance' ? (
-                            <ShieldCheck size={20} />
+                            <ShieldCheck size={16} />
                           ) : (
-                            <Code2 size={20} />
+                            <Code2 size={16} />
                           )}
                         </div>
 
                         <div
                           style={{
-                            fontSize: '0.74rem',
+                            fontSize: '0.68rem',
                             fontWeight: 900,
                             color: isUnlocked ? '#0F172A' : '#64748B',
-                            lineHeight: 1.2,
-                            marginBottom: '6px',
+                            lineHeight: 1.15,
+                            marginBottom: '4px',
                             whiteSpace: 'nowrap',
                             overflow: 'hidden',
                             textOverflow: 'ellipsis',
-                            maxWidth: '115px'
+                            maxWidth: '86px'
                           }}
                         >
                           {tier.title}
@@ -955,11 +1000,11 @@ export const DailyQuestsModal: React.FC<DailyQuestsModalProps> = ({
 
                         {/* Estado */}
                         {isClaimed ? (
-                          <span style={{ fontSize: '0.68rem', fontWeight: 900, color: '#16A34A' }}>✓ Reclamado</span>
+                          <span style={{ fontSize: '0.64rem', fontWeight: 900, color: '#16A34A' }}>✓ Reclamado</span>
                         ) : canClaim ? (
-                          <span style={{ fontSize: '0.68rem', fontWeight: 900, color: '#D97706' }}>✨ ¡Listo!</span>
+                          <span style={{ fontSize: '0.64rem', fontWeight: 900, color: '#D97706' }}>✨ ¡Listo!</span>
                         ) : (
-                          <span style={{ fontSize: '0.66rem', fontWeight: 800, color: '#94A3B8' }}>{tier.reqPoints} Pts</span>
+                          <span style={{ fontSize: '0.62rem', fontWeight: 800, color: '#94A3B8' }}>{tier.reqPoints} Pts</span>
                         )}
                       </button>
                     );
@@ -971,21 +1016,21 @@ export const DailyQuestsModal: React.FC<DailyQuestsModalProps> = ({
 
           {/* VISTA 2: CUADRO DE MISIONES Y OBJETIVOS CON PROGRESSBARS */}
           {activeTab === 'quests' && (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
               <div
                 style={{
                   background: '#EFF6FF',
                   border: '1.5px solid #BFDBFE',
-                  borderRadius: '16px',
-                  padding: '10px 14px',
+                  borderRadius: '13px',
+                  padding: '7px 10px',
                   display: 'flex',
                   alignItems: 'center',
-                  gap: '10px'
+                  gap: '8px'
                 }}
               >
-                <Target size={20} color="#2563EB" />
-                <span style={{ fontSize: '0.8rem', color: '#1E40AF', fontWeight: 800, lineHeight: 1.35 }}>
-                  Completa cada objetivo de programación para sumar Puntos de Pase. Cada punto llena la barra y desbloquea el camino de recompensas.
+                <Target size={16} color="#2563EB" flex-shrink="0" />
+                <span style={{ fontSize: '0.74rem', color: '#1E40AF', fontWeight: 800, lineHeight: 1.3 }}>
+                  Completa cada objetivo de programación para sumar Puntos de Pase y desbloquear recompensas.
                 </span>
               </div>
 
@@ -999,6 +1044,7 @@ export const DailyQuestsModal: React.FC<DailyQuestsModalProps> = ({
                 return (
                   <div
                     key={quest.id}
+                    className="quest-card-item"
                     style={{
                       background: canClaim ? '#FFFBEB' : isClaimed ? '#F0FDF4' : '#FFFFFF',
                       border: '2px solid',
@@ -1008,28 +1054,28 @@ export const DailyQuestsModal: React.FC<DailyQuestsModalProps> = ({
                         ? '#86EFAC'
                         : '#E2E8F0',
                       boxShadow: canClaim
-                        ? '0 4px 0 #D97706'
+                        ? '0 3px 0 #D97706'
                         : isClaimed
-                        ? '0 3px 0 #BBF7D0'
-                        : '0 3px 0 #CBD5E1',
-                      borderRadius: '18px',
-                      padding: '14px 16px',
+                        ? '0 2px 0 #BBF7D0'
+                        : '0 2px 0 #CBD5E1',
+                      borderRadius: '14px',
+                      padding: '10px 10px',
                       display: 'flex',
                       flexDirection: 'column',
-                      gap: '10px',
+                      gap: '8px',
                       boxSizing: 'border-box',
                       transition: 'all 0.15s ease'
                     }}
                   >
                     {/* Encabezado del Objetivo */}
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '10px' }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '12px', minWidth: 0 }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '6px', flexWrap: 'wrap' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', minWidth: 0, flex: 1 }}>
                         {/* Icono del objetivo */}
                         <div
                           style={{
-                            width: '42px',
-                            height: '42px',
-                            borderRadius: '13px',
+                            width: '32px',
+                            height: '32px',
+                            borderRadius: '9px',
                             background:
                               quest.iconType === 'flame'
                                 ? '#FFF7ED'
@@ -1057,54 +1103,54 @@ export const DailyQuestsModal: React.FC<DailyQuestsModalProps> = ({
                             flexShrink: 0
                           }}
                         >
-                          {quest.iconType === 'flame' && <Flame size={20} color="#EA580C" fill="#EA580C" />}
-                          {quest.iconType === 'star' && <Star size={20} color="#D97706" fill="#D97706" />}
-                          {quest.iconType === 'target' && <Target size={20} color="#2563EB" strokeWidth={2.4} />}
-                          {quest.iconType === 'shield' && <ShieldCheck size={20} color="#16A34A" strokeWidth={2.4} />}
-                          {quest.iconType === 'code' && <Code2 size={20} color="#9333EA" strokeWidth={2.4} />}
+                          {quest.iconType === 'flame' && <Flame size={16} color="#EA580C" fill="#EA580C" />}
+                          {quest.iconType === 'star' && <Star size={16} color="#D97706" fill="#D97706" />}
+                          {quest.iconType === 'target' && <Target size={16} color="#2563EB" strokeWidth={2.4} />}
+                          {quest.iconType === 'shield' && <ShieldCheck size={16} color="#16A34A" strokeWidth={2.4} />}
+                          {quest.iconType === 'code' && <Code2 size={16} color="#9333EA" strokeWidth={2.4} />}
                         </div>
 
                         <div style={{ minWidth: 0 }}>
-                          <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '2px' }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '4px', marginBottom: '1px' }}>
                             <span
                               style={{
-                                fontSize: '0.64rem',
+                                fontSize: '0.58rem',
                                 fontWeight: 900,
                                 background: '#E2E8F0',
                                 color: '#475569',
-                                padding: '1px 6px',
+                                padding: '1px 5px',
                                 borderRadius: '4px'
                               }}
                             >
                               {quest.category}
                             </span>
                           </div>
-                          <div style={{ fontSize: '0.96rem', fontWeight: 900, color: '#0F172A' }}>
+                          <div style={{ fontSize: '0.86rem', fontWeight: 900, color: '#0F172A', lineHeight: 1.2 }}>
                             {quest.title}
                           </div>
-                          <div style={{ fontSize: '0.8rem', color: '#64748B', fontWeight: 700, lineHeight: 1.3 }}>
+                          <div style={{ fontSize: '0.72rem', color: '#64748B', fontWeight: 700, lineHeight: 1.25 }}>
                             {quest.desc}
                           </div>
                         </div>
                       </div>
 
                       {/* Recompensa en Puntos del Pase */}
-                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', justifyContent: 'flex-end', flexShrink: 0 }}>
+                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px', justifyContent: 'flex-end', flexShrink: 0, marginLeft: 'auto' }}>
                         <span
                           style={{
                             background: '#ECFEFF',
                             border: '1.5px solid #A5F3FC',
-                            borderRadius: '8px',
-                            padding: '3px 8px',
-                            fontSize: '0.74rem',
+                            borderRadius: '7px',
+                            padding: '2px 6px',
+                            fontSize: '0.68rem',
                             fontWeight: 900,
                             color: '#0891B2',
                             display: 'inline-flex',
                             alignItems: 'center',
-                            gap: '4px'
+                            gap: '3px'
                           }}
                         >
-                          <Zap size={12} color="#0891B2" fill="#0891B2" /> +{quest.rewardPoints} Pts Pase
+                          <Zap size={11} color="#0891B2" fill="#0891B2" /> +{quest.rewardPoints} Pts Pase
                         </span>
 
                         {quest.rewardBytes && (
@@ -1112,9 +1158,9 @@ export const DailyQuestsModal: React.FC<DailyQuestsModalProps> = ({
                             style={{
                               background: '#EFF6FF',
                               border: '1.5px solid #BFDBFE',
-                              borderRadius: '8px',
-                              padding: '3px 8px',
-                              fontSize: '0.74rem',
+                              borderRadius: '7px',
+                              padding: '2px 6px',
+                              fontSize: '0.68rem',
                               fontWeight: 900,
                               color: '#2563EB'
                             }}
@@ -1128,9 +1174,9 @@ export const DailyQuestsModal: React.FC<DailyQuestsModalProps> = ({
                             style={{
                               background: '#FAF5FF',
                               border: '1.5px solid #E9D5FF',
-                              borderRadius: '8px',
-                              padding: '3px 8px',
-                              fontSize: '0.74rem',
+                              borderRadius: '7px',
+                              padding: '2px 6px',
+                              fontSize: '0.68rem',
                               fontWeight: 900,
                               color: '#9333EA'
                             }}
@@ -1142,12 +1188,12 @@ export const DailyQuestsModal: React.FC<DailyQuestsModalProps> = ({
                     </div>
 
                     {/* BARRA DE PROGRESO DE ESTE OBJETIVO + BOTÓN DE RECLAMACIÓN */}
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '14px', marginTop: '2px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '2px', flexWrap: 'wrap' }}>
                       {/* Chunky Duolingo 3D Progress Bar */}
-                      <div style={{ flex: 1 }}>
+                      <div style={{ flex: 1, minWidth: '70px' }}>
                         <div
                           style={{
-                            height: '14px',
+                            height: '10px',
                             background: '#E2E8F0',
                             border: '1.5px solid #CBD5E1',
                             borderRadius: '999px',
@@ -1169,9 +1215,9 @@ export const DailyQuestsModal: React.FC<DailyQuestsModalProps> = ({
                               style={{
                                 position: 'absolute',
                                 top: '1px',
-                                left: '6px',
-                                right: '6px',
-                                height: '3px',
+                                left: '4px',
+                                right: '4px',
+                                height: '2px',
                                 background: 'rgba(255, 255, 255, 0.5)',
                                 borderRadius: '2px'
                               }}
@@ -1183,10 +1229,10 @@ export const DailyQuestsModal: React.FC<DailyQuestsModalProps> = ({
                       {/* Contador numérico */}
                       <span
                         style={{
-                          fontSize: '0.8rem',
+                          fontSize: '0.72rem',
                           fontWeight: 900,
                           color: '#1E293B',
-                          minWidth: '55px',
+                          minWidth: '45px',
                           textAlign: 'right'
                         }}
                       >
@@ -1197,37 +1243,37 @@ export const DailyQuestsModal: React.FC<DailyQuestsModalProps> = ({
                       {isClaimed ? (
                         <div
                           style={{
-                            fontSize: '0.76rem',
+                            fontSize: '0.72rem',
                             fontWeight: 900,
                             color: '#16A34A',
                             background: '#DCFCE7',
                             border: '1.5px solid #86EFAC',
-                            borderRadius: '10px',
-                            padding: '6px 12px',
+                            borderRadius: '8px',
+                            padding: '4px 8px',
                             display: 'inline-flex',
                             alignItems: 'center',
-                            gap: '5px',
+                            gap: '3px',
                             flexShrink: 0
                           }}
                         >
-                          <CheckCircle2 size={14} /> Reclamado
+                          <CheckCircle2 size={12} /> Reclamado
                         </div>
                       ) : canClaim ? (
                         <button
                           onClick={() => handleClaimQuest(quest)}
                           style={{
-                            fontSize: '0.8rem',
+                            fontSize: '0.74rem',
                             fontWeight: 900,
                             color: '#FFFFFF',
                             background: '#22C55E',
                             border: '2px solid #86EFAC',
-                            boxShadow: '0 3px 0 #15803D',
-                            borderRadius: '10px',
-                            padding: '6px 14px',
+                            boxShadow: '0 2px 0 #15803D',
+                            borderRadius: '9px',
+                            padding: '4px 10px',
                             cursor: 'pointer',
                             display: 'inline-flex',
                             alignItems: 'center',
-                            gap: '5px',
+                            gap: '4px',
                             flexShrink: 0,
                             transition: 'all 0.1s ease'
                           }}
@@ -1237,27 +1283,12 @@ export const DailyQuestsModal: React.FC<DailyQuestsModalProps> = ({
                           }}
                           onMouseUp={(e) => {
                             e.currentTarget.style.transform = 'translateY(0)';
-                            e.currentTarget.style.boxShadow = '0 3px 0 #15803D';
+                            e.currentTarget.style.boxShadow = '0 2px 0 #15803D';
                           }}
                         >
-                          <Sparkles size={14} /> ¡Reclamar Puntos!
+                          <Sparkles size={12} /> ¡Reclamar!
                         </button>
-                      ) : (
-                        <div
-                          style={{
-                            fontSize: '0.74rem',
-                            fontWeight: 800,
-                            color: '#64748B',
-                            background: '#F1F5F9',
-                            border: '1px solid #CBD5E1',
-                            borderRadius: '10px',
-                            padding: '6px 12px',
-                            flexShrink: 0
-                          }}
-                        >
-                          En Progreso
-                        </div>
-                      )}
+                      ) : null}
                     </div>
                   </div>
                 );

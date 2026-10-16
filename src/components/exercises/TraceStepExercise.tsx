@@ -61,9 +61,10 @@ export const TraceStepComponent: React.FC<TraceStepProps> = ({
         style={{
           background: '#FFFFFF',
           borderRadius: '20px',
-          padding: '18px 20px',
-          border: '2.5px solid #38BDF8',
-          boxShadow: '0 5px 0 #0284C7'
+          padding: '16px 18px',
+          border: '2.5px solid #E2E8F0',
+          borderBottom: '5px solid #CBD5E1',
+          boxShadow: '0 4px 12px rgba(0, 0, 0, 0.04)'
         }}
       >
         <div
@@ -71,7 +72,7 @@ export const TraceStepComponent: React.FC<TraceStepProps> = ({
             fontSize: '0.82rem',
             fontWeight: 900,
             color: '#0284C7',
-            marginBottom: '14px',
+            marginBottom: '12px',
             textTransform: 'uppercase',
             letterSpacing: '0.6px',
             display: 'flex',
@@ -79,14 +80,14 @@ export const TraceStepComponent: React.FC<TraceStepProps> = ({
             gap: '6px'
           }}
         >
-          <span>Tabla de Seguimiento • Valor por Cada Iteración</span>
+          <span>Tabla de valores por paso</span>
         </div>
 
         <div style={{ overflowX: 'auto' }}>
           <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'center', minWidth: '280px' }}>
             <thead>
               <tr style={{ borderBottom: '2px solid #E2E8F0', color: '#0F172A', fontSize: '0.88rem' }}>
-                <th style={{ padding: '10px 12px', fontWeight: 900, textAlign: 'left' }}>Iteración</th>
+                <th style={{ padding: '10px 12px', fontWeight: 900, textAlign: 'left' }}>Paso</th>
                 {Object.keys(exercise.iterations[0].expectedVariables).map(v => (
                   <th key={v} style={{ padding: '10px 12px', fontWeight: 900, fontFamily: 'JetBrains Mono, monospace' }}>
                     {v}
@@ -97,15 +98,18 @@ export const TraceStepComponent: React.FC<TraceStepProps> = ({
             <tbody>
               {exercise.iterations.map(iter => (
                 <tr key={iter.iteration} style={{ borderBottom: '1px solid #F1F5F9' }}>
-                  <td style={{ padding: '12px 10px', fontWeight: 900, color: '#EA580C', textAlign: 'left' }}>
+                  <td style={{ padding: '12px 10px', textAlign: 'left' }}>
                     <span
                       style={{
                         background: '#FFF7ED',
-                        border: '1.5px solid #FFEDD5',
-                        color: '#EA580C',
-                        padding: '3px 10px',
-                        borderRadius: '8px',
-                        fontSize: '0.82rem'
+                        border: '1.5px solid #FED7AA',
+                        borderBottom: '3px solid #F97316',
+                        color: '#C2410C',
+                        padding: '4px 10px',
+                        borderRadius: '10px',
+                        fontSize: '0.82rem',
+                        fontWeight: 900,
+                        display: 'inline-block'
                       }}
                     >
                       Paso {iter.iteration}
@@ -115,32 +119,32 @@ export const TraceStepComponent: React.FC<TraceStepProps> = ({
                     <td key={varName} style={{ padding: '10px 8px' }}>
                       <input
                         type="text"
-                        placeholder="valor"
+                        placeholder="ej: 2"
                         value={userInputs[iter.iteration]?.[varName] || ''}
                         onChange={(e) => handleInputChange(iter.iteration, varName, e.target.value)}
                         style={{
-                          width: '84px',
+                          width: '90px',
                           textAlign: 'center',
                           background: '#FFFFFF',
-                          border: '2px solid #CBD5E1',
-                          borderRadius: '12px',
+                          border: '2.5px solid #CBD5E1',
+                          borderBottom: '4.5px solid #94A3B8',
+                          borderRadius: '14px',
                           padding: '8px 10px',
                           color: '#0F172A',
-                          fontWeight: 800,
-                          fontSize: '0.94rem',
+                          fontWeight: 900,
+                          fontSize: '1rem',
                           fontFamily: 'JetBrains Mono, monospace',
-                          boxShadow: '0 2px 0 #E2E8F0',
                           outline: 'none',
                           boxSizing: 'border-box',
-                          transition: 'border-color 0.15s ease'
+                          transition: 'all 0.15s ease'
                         }}
                         onFocus={(e) => {
-                          e.target.style.borderColor = '#0284C7';
-                          e.target.style.boxShadow = '0 2px 0 #0284C7';
+                          e.target.style.borderColor = '#38BDF8';
+                          e.target.style.borderBottomColor = '#0284C7';
                         }}
                         onBlur={(e) => {
                           e.target.style.borderColor = '#CBD5E1';
-                          e.target.style.boxShadow = '0 2px 0 #E2E8F0';
+                          e.target.style.borderBottomColor = '#94A3B8';
                         }}
                       />
                     </td>

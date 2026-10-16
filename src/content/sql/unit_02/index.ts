@@ -41,11 +41,11 @@ const SQL_U02_BANKS: Record<number, { title: string; desc: string; exercises: Ex
       {
         id: 'sql-u02-l01-e04',
         type: 'spot_the_bug',
-        prompt: 'Toca la línea que contiene un error de sintaxis en la consulta:',
+        prompt: 'Toca la línea con el error de paginación (recuerda que el desplazamiento OFFSET no puede ser negativo):',
         codeSnippet: [
           'SELECT id, nombre',
           'FROM clientes AS c',
-          'LIMIT 10 OFFSET -5; -- Offset no puede ser negativo'
+          'LIMIT 10 OFFSET -5;'
         ],
         bugLineIndex: 2,
         explanation: 'El valor de OFFSET debe ser un número entero no negativo.',
@@ -54,7 +54,7 @@ const SQL_U02_BANKS: Record<number, { title: string; desc: string; exercises: Ex
       {
         id: 'sql-u02-l01-e05',
         type: 'code_cloze',
-        prompt: 'Completa la palabra clave para eliminar filas duplicadas:',
+        prompt: 'Completa la palabra clave de SQL (DISTINCT) para eliminar filas duplicadas:',
         codeWithBlank: 'SELECT ___ ciudad FROM sucursales;',
         options: ['DISTINCT', 'UNIQUE', 'SINGLE', 'FILTER'],
         correctOption: 'DISTINCT',
@@ -97,7 +97,7 @@ const SQL_U02_BANKS: Record<number, { title: string; desc: string; exercises: Ex
       {
         id: 'sql-u02-l01-e09',
         type: 'code_cloze',
-        prompt: 'Completa la consulta para limitar el resultado a las primeras 5 filas:',
+        prompt: 'Completa la cláusula de SQL (LIMIT) para obtener únicamente las primeras 5 filas:',
         codeWithBlank: 'SELECT * FROM productos ___ 5;',
         options: ['LIMIT', 'TOP', 'MAX', 'FIRST'],
         correctOption: 'LIMIT',
@@ -107,7 +107,7 @@ const SQL_U02_BANKS: Record<number, { title: string; desc: string; exercises: Ex
       {
         id: 'sql-u02-l01-e10',
         type: 'parsons_puzzle',
-        prompt: 'Ordena la estructura de la consulta completa con proyección, origen y paginación:',
+        prompt: 'Ordena las cláusulas de la consulta SQL en el orden correcto (SELECT, FROM, LIMIT, OFFSET):',
         lines: [
           'SELECT codigo, descripcion',
           'FROM catalogo.articulos',
@@ -159,11 +159,11 @@ const SQL_U02_BANKS: Record<number, { title: string; desc: string; exercises: Ex
       {
         id: 'sql-u02-l02-e04',
         type: 'spot_the_bug',
-        prompt: 'Toca la línea que contiene un error de sintaxis en la consulta:',
+        prompt: 'Toca la línea con el error de paginación (recuerda que el desplazamiento OFFSET no puede ser negativo):',
         codeSnippet: [
           'SELECT id, nombre',
           'FROM clientes AS c',
-          'LIMIT 10 OFFSET -5; -- Offset no puede ser negativo'
+          'LIMIT 10 OFFSET -5;'
         ],
         bugLineIndex: 2,
         explanation: 'El valor de OFFSET debe ser un número entero no negativo.',
@@ -172,7 +172,7 @@ const SQL_U02_BANKS: Record<number, { title: string; desc: string; exercises: Ex
       {
         id: 'sql-u02-l02-e05',
         type: 'code_cloze',
-        prompt: 'Completa la palabra clave para eliminar filas duplicadas:',
+        prompt: 'Completa la palabra clave de SQL (DISTINCT) para eliminar filas duplicadas:',
         codeWithBlank: 'SELECT ___ ciudad FROM sucursales;',
         options: ['DISTINCT', 'UNIQUE', 'SINGLE', 'FILTER'],
         correctOption: 'DISTINCT',
@@ -215,7 +215,7 @@ const SQL_U02_BANKS: Record<number, { title: string; desc: string; exercises: Ex
       {
         id: 'sql-u02-l02-e09',
         type: 'code_cloze',
-        prompt: 'Completa la consulta para limitar el resultado a las primeras 5 filas:',
+        prompt: 'Completa la cláusula de SQL (LIMIT) para obtener únicamente las primeras 5 filas:',
         codeWithBlank: 'SELECT * FROM productos ___ 5;',
         options: ['LIMIT', 'TOP', 'MAX', 'FIRST'],
         correctOption: 'LIMIT',
@@ -225,7 +225,7 @@ const SQL_U02_BANKS: Record<number, { title: string; desc: string; exercises: Ex
       {
         id: 'sql-u02-l02-e10',
         type: 'parsons_puzzle',
-        prompt: 'Ordena la estructura de la consulta completa con proyección, origen y paginación:',
+        prompt: 'Ordena las cláusulas de la consulta SQL en el orden correcto (SELECT, FROM, LIMIT, OFFSET):',
         lines: [
           'SELECT codigo, descripcion',
           'FROM catalogo.articulos',
@@ -277,11 +277,11 @@ const SQL_U02_BANKS: Record<number, { title: string; desc: string; exercises: Ex
       {
         id: 'sql-u02-l03-e04',
         type: 'spot_the_bug',
-        prompt: 'Toca la línea que contiene un error de sintaxis en la consulta:',
+        prompt: 'Toca la línea con el error de paginación (recuerda que el desplazamiento OFFSET no puede ser negativo):',
         codeSnippet: [
           'SELECT id, nombre',
           'FROM clientes AS c',
-          'LIMIT 10 OFFSET -5; -- Offset no puede ser negativo'
+          'LIMIT 10 OFFSET -5;'
         ],
         bugLineIndex: 2,
         explanation: 'El valor de OFFSET debe ser un número entero no negativo.',
@@ -290,7 +290,7 @@ const SQL_U02_BANKS: Record<number, { title: string; desc: string; exercises: Ex
       {
         id: 'sql-u02-l03-e05',
         type: 'code_cloze',
-        prompt: 'Completa la palabra clave para eliminar filas duplicadas:',
+        prompt: 'Completa la palabra clave de SQL (DISTINCT) para eliminar filas duplicadas:',
         codeWithBlank: 'SELECT ___ ciudad FROM sucursales;',
         options: ['DISTINCT', 'UNIQUE', 'SINGLE', 'FILTER'],
         correctOption: 'DISTINCT',
@@ -333,7 +333,7 @@ const SQL_U02_BANKS: Record<number, { title: string; desc: string; exercises: Ex
       {
         id: 'sql-u02-l03-e09',
         type: 'code_cloze',
-        prompt: 'Completa la consulta para limitar el resultado a las primeras 5 filas:',
+        prompt: 'Completa la cláusula de SQL (LIMIT) para obtener únicamente las primeras 5 filas:',
         codeWithBlank: 'SELECT * FROM productos ___ 5;',
         options: ['LIMIT', 'TOP', 'MAX', 'FIRST'],
         correctOption: 'LIMIT',
@@ -343,7 +343,7 @@ const SQL_U02_BANKS: Record<number, { title: string; desc: string; exercises: Ex
       {
         id: 'sql-u02-l03-e10',
         type: 'parsons_puzzle',
-        prompt: 'Ordena la estructura de la consulta completa con proyección, origen y paginación:',
+        prompt: 'Ordena las cláusulas de la consulta SQL en el orden correcto (SELECT, FROM, LIMIT, OFFSET):',
         lines: [
           'SELECT codigo, descripcion',
           'FROM catalogo.articulos',
@@ -395,11 +395,11 @@ const SQL_U02_BANKS: Record<number, { title: string; desc: string; exercises: Ex
       {
         id: 'sql-u02-l04-e04',
         type: 'spot_the_bug',
-        prompt: 'Toca la línea que contiene un error de sintaxis en la consulta:',
+        prompt: 'Toca la línea con el error de paginación (recuerda que el desplazamiento OFFSET no puede ser negativo):',
         codeSnippet: [
           'SELECT id, nombre',
           'FROM clientes AS c',
-          'LIMIT 10 OFFSET -5; -- Offset no puede ser negativo'
+          'LIMIT 10 OFFSET -5;'
         ],
         bugLineIndex: 2,
         explanation: 'El valor de OFFSET debe ser un número entero no negativo.',
@@ -408,7 +408,7 @@ const SQL_U02_BANKS: Record<number, { title: string; desc: string; exercises: Ex
       {
         id: 'sql-u02-l04-e05',
         type: 'code_cloze',
-        prompt: 'Completa la palabra clave para eliminar filas duplicadas:',
+        prompt: 'Completa la palabra clave de SQL (DISTINCT) para eliminar filas duplicadas:',
         codeWithBlank: 'SELECT ___ ciudad FROM sucursales;',
         options: ['DISTINCT', 'UNIQUE', 'SINGLE', 'FILTER'],
         correctOption: 'DISTINCT',
@@ -451,7 +451,7 @@ const SQL_U02_BANKS: Record<number, { title: string; desc: string; exercises: Ex
       {
         id: 'sql-u02-l04-e09',
         type: 'code_cloze',
-        prompt: 'Completa la consulta para limitar el resultado a las primeras 5 filas:',
+        prompt: 'Completa la cláusula de SQL (LIMIT) para obtener únicamente las primeras 5 filas:',
         codeWithBlank: 'SELECT * FROM productos ___ 5;',
         options: ['LIMIT', 'TOP', 'MAX', 'FIRST'],
         correctOption: 'LIMIT',
@@ -461,7 +461,7 @@ const SQL_U02_BANKS: Record<number, { title: string; desc: string; exercises: Ex
       {
         id: 'sql-u02-l04-e10',
         type: 'parsons_puzzle',
-        prompt: 'Ordena la estructura de la consulta completa con proyección, origen y paginación:',
+        prompt: 'Ordena las cláusulas de la consulta SQL en el orden correcto (SELECT, FROM, LIMIT, OFFSET):',
         lines: [
           'SELECT codigo, descripcion',
           'FROM catalogo.articulos',
@@ -513,11 +513,11 @@ const SQL_U02_BANKS: Record<number, { title: string; desc: string; exercises: Ex
       {
         id: 'sql-u02-l05-e04',
         type: 'spot_the_bug',
-        prompt: 'Toca la línea que contiene un error de sintaxis en la consulta:',
+        prompt: 'Toca la línea con el error de paginación (recuerda que el desplazamiento OFFSET no puede ser negativo):',
         codeSnippet: [
           'SELECT id, nombre',
           'FROM clientes AS c',
-          'LIMIT 10 OFFSET -5; -- Offset no puede ser negativo'
+          'LIMIT 10 OFFSET -5;'
         ],
         bugLineIndex: 2,
         explanation: 'El valor de OFFSET debe ser un número entero no negativo.',
@@ -526,7 +526,7 @@ const SQL_U02_BANKS: Record<number, { title: string; desc: string; exercises: Ex
       {
         id: 'sql-u02-l05-e05',
         type: 'code_cloze',
-        prompt: 'Completa la palabra clave para eliminar filas duplicadas:',
+        prompt: 'Completa la palabra clave de SQL (DISTINCT) para eliminar filas duplicadas:',
         codeWithBlank: 'SELECT ___ ciudad FROM sucursales;',
         options: ['DISTINCT', 'UNIQUE', 'SINGLE', 'FILTER'],
         correctOption: 'DISTINCT',
@@ -569,7 +569,7 @@ const SQL_U02_BANKS: Record<number, { title: string; desc: string; exercises: Ex
       {
         id: 'sql-u02-l05-e09',
         type: 'code_cloze',
-        prompt: 'Completa la consulta para limitar el resultado a las primeras 5 filas:',
+        prompt: 'Completa la cláusula de SQL (LIMIT) para obtener únicamente las primeras 5 filas:',
         codeWithBlank: 'SELECT * FROM productos ___ 5;',
         options: ['LIMIT', 'TOP', 'MAX', 'FIRST'],
         correctOption: 'LIMIT',
@@ -579,7 +579,7 @@ const SQL_U02_BANKS: Record<number, { title: string; desc: string; exercises: Ex
       {
         id: 'sql-u02-l05-e10',
         type: 'parsons_puzzle',
-        prompt: 'Ordena la estructura de la consulta completa con proyección, origen y paginación:',
+        prompt: 'Ordena las cláusulas de la consulta SQL en el orden correcto (SELECT, FROM, LIMIT, OFFSET):',
         lines: [
           'SELECT codigo, descripcion',
           'FROM catalogo.articulos',
@@ -631,11 +631,11 @@ const SQL_U02_BANKS: Record<number, { title: string; desc: string; exercises: Ex
       {
         id: 'sql-u02-l06-e04',
         type: 'spot_the_bug',
-        prompt: 'Toca la línea que contiene un error de sintaxis en la consulta:',
+        prompt: 'Toca la línea con el error de paginación (recuerda que el desplazamiento OFFSET no puede ser negativo):',
         codeSnippet: [
           'SELECT id, nombre',
           'FROM clientes AS c',
-          'LIMIT 10 OFFSET -5; -- Offset no puede ser negativo'
+          'LIMIT 10 OFFSET -5;'
         ],
         bugLineIndex: 2,
         explanation: 'El valor de OFFSET debe ser un número entero no negativo.',
@@ -644,7 +644,7 @@ const SQL_U02_BANKS: Record<number, { title: string; desc: string; exercises: Ex
       {
         id: 'sql-u02-l06-e05',
         type: 'code_cloze',
-        prompt: 'Completa la palabra clave para eliminar filas duplicadas:',
+        prompt: 'Completa la palabra clave de SQL (DISTINCT) para eliminar filas duplicadas:',
         codeWithBlank: 'SELECT ___ ciudad FROM sucursales;',
         options: ['DISTINCT', 'UNIQUE', 'SINGLE', 'FILTER'],
         correctOption: 'DISTINCT',
@@ -687,7 +687,7 @@ const SQL_U02_BANKS: Record<number, { title: string; desc: string; exercises: Ex
       {
         id: 'sql-u02-l06-e09',
         type: 'code_cloze',
-        prompt: 'Completa la consulta para limitar el resultado a las primeras 5 filas:',
+        prompt: 'Completa la cláusula de SQL (LIMIT) para obtener únicamente las primeras 5 filas:',
         codeWithBlank: 'SELECT * FROM productos ___ 5;',
         options: ['LIMIT', 'TOP', 'MAX', 'FIRST'],
         correctOption: 'LIMIT',
@@ -697,7 +697,7 @@ const SQL_U02_BANKS: Record<number, { title: string; desc: string; exercises: Ex
       {
         id: 'sql-u02-l06-e10',
         type: 'parsons_puzzle',
-        prompt: 'Ordena la estructura de la consulta completa con proyección, origen y paginación:',
+        prompt: 'Ordena las cláusulas de la consulta SQL en el orden correcto (SELECT, FROM, LIMIT, OFFSET):',
         lines: [
           'SELECT codigo, descripcion',
           'FROM catalogo.articulos',
@@ -749,11 +749,11 @@ const SQL_U02_BANKS: Record<number, { title: string; desc: string; exercises: Ex
       {
         id: 'sql-u02-l07-e04',
         type: 'spot_the_bug',
-        prompt: 'Toca la línea que contiene un error de sintaxis en la consulta:',
+        prompt: 'Toca la línea con el error de paginación (recuerda que el desplazamiento OFFSET no puede ser negativo):',
         codeSnippet: [
           'SELECT id, nombre',
           'FROM clientes AS c',
-          'LIMIT 10 OFFSET -5; -- Offset no puede ser negativo'
+          'LIMIT 10 OFFSET -5;'
         ],
         bugLineIndex: 2,
         explanation: 'El valor de OFFSET debe ser un número entero no negativo.',
@@ -762,7 +762,7 @@ const SQL_U02_BANKS: Record<number, { title: string; desc: string; exercises: Ex
       {
         id: 'sql-u02-l07-e05',
         type: 'code_cloze',
-        prompt: 'Completa la palabra clave para eliminar filas duplicadas:',
+        prompt: 'Completa la palabra clave de SQL (DISTINCT) para eliminar filas duplicadas:',
         codeWithBlank: 'SELECT ___ ciudad FROM sucursales;',
         options: ['DISTINCT', 'UNIQUE', 'SINGLE', 'FILTER'],
         correctOption: 'DISTINCT',
@@ -805,7 +805,7 @@ const SQL_U02_BANKS: Record<number, { title: string; desc: string; exercises: Ex
       {
         id: 'sql-u02-l07-e09',
         type: 'code_cloze',
-        prompt: 'Completa la consulta para limitar el resultado a las primeras 5 filas:',
+        prompt: 'Completa la cláusula de SQL (LIMIT) para obtener únicamente las primeras 5 filas:',
         codeWithBlank: 'SELECT * FROM productos ___ 5;',
         options: ['LIMIT', 'TOP', 'MAX', 'FIRST'],
         correctOption: 'LIMIT',
@@ -815,7 +815,7 @@ const SQL_U02_BANKS: Record<number, { title: string; desc: string; exercises: Ex
       {
         id: 'sql-u02-l07-e10',
         type: 'parsons_puzzle',
-        prompt: 'Ordena la estructura de la consulta completa con proyección, origen y paginación:',
+        prompt: 'Ordena las cláusulas de la consulta SQL en el orden correcto (SELECT, FROM, LIMIT, OFFSET):',
         lines: [
           'SELECT codigo, descripcion',
           'FROM catalogo.articulos',
@@ -867,11 +867,11 @@ const SQL_U02_BANKS: Record<number, { title: string; desc: string; exercises: Ex
       {
         id: 'sql-u02-l08-e04',
         type: 'spot_the_bug',
-        prompt: 'Toca la línea que contiene un error de sintaxis en la consulta:',
+        prompt: 'Toca la línea con el error de paginación (recuerda que el desplazamiento OFFSET no puede ser negativo):',
         codeSnippet: [
           'SELECT id, nombre',
           'FROM clientes AS c',
-          'LIMIT 10 OFFSET -5; -- Offset no puede ser negativo'
+          'LIMIT 10 OFFSET -5;'
         ],
         bugLineIndex: 2,
         explanation: 'El valor de OFFSET debe ser un número entero no negativo.',
@@ -880,7 +880,7 @@ const SQL_U02_BANKS: Record<number, { title: string; desc: string; exercises: Ex
       {
         id: 'sql-u02-l08-e05',
         type: 'code_cloze',
-        prompt: 'Completa la palabra clave para eliminar filas duplicadas:',
+        prompt: 'Completa la palabra clave de SQL (DISTINCT) para eliminar filas duplicadas:',
         codeWithBlank: 'SELECT ___ ciudad FROM sucursales;',
         options: ['DISTINCT', 'UNIQUE', 'SINGLE', 'FILTER'],
         correctOption: 'DISTINCT',
@@ -923,7 +923,7 @@ const SQL_U02_BANKS: Record<number, { title: string; desc: string; exercises: Ex
       {
         id: 'sql-u02-l08-e09',
         type: 'code_cloze',
-        prompt: 'Completa la consulta para limitar el resultado a las primeras 5 filas:',
+        prompt: 'Completa la cláusula de SQL (LIMIT) para obtener únicamente las primeras 5 filas:',
         codeWithBlank: 'SELECT * FROM productos ___ 5;',
         options: ['LIMIT', 'TOP', 'MAX', 'FIRST'],
         correctOption: 'LIMIT',
@@ -933,7 +933,7 @@ const SQL_U02_BANKS: Record<number, { title: string; desc: string; exercises: Ex
       {
         id: 'sql-u02-l08-e10',
         type: 'parsons_puzzle',
-        prompt: 'Ordena la estructura de la consulta completa con proyección, origen y paginación:',
+        prompt: 'Ordena las cláusulas de la consulta SQL en el orden correcto (SELECT, FROM, LIMIT, OFFSET):',
         lines: [
           'SELECT codigo, descripcion',
           'FROM catalogo.articulos',
@@ -985,11 +985,11 @@ const SQL_U02_BANKS: Record<number, { title: string; desc: string; exercises: Ex
       {
         id: 'sql-u02-l09-e04',
         type: 'spot_the_bug',
-        prompt: 'Toca la línea que contiene un error de sintaxis en la consulta:',
+        prompt: 'Toca la línea con el error de paginación (recuerda que el desplazamiento OFFSET no puede ser negativo):',
         codeSnippet: [
           'SELECT id, nombre',
           'FROM clientes AS c',
-          'LIMIT 10 OFFSET -5; -- Offset no puede ser negativo'
+          'LIMIT 10 OFFSET -5;'
         ],
         bugLineIndex: 2,
         explanation: 'El valor de OFFSET debe ser un número entero no negativo.',
@@ -998,7 +998,7 @@ const SQL_U02_BANKS: Record<number, { title: string; desc: string; exercises: Ex
       {
         id: 'sql-u02-l09-e05',
         type: 'code_cloze',
-        prompt: 'Completa la palabra clave para eliminar filas duplicadas:',
+        prompt: 'Completa la palabra clave de SQL (DISTINCT) para eliminar filas duplicadas:',
         codeWithBlank: 'SELECT ___ ciudad FROM sucursales;',
         options: ['DISTINCT', 'UNIQUE', 'SINGLE', 'FILTER'],
         correctOption: 'DISTINCT',
@@ -1041,7 +1041,7 @@ const SQL_U02_BANKS: Record<number, { title: string; desc: string; exercises: Ex
       {
         id: 'sql-u02-l09-e09',
         type: 'code_cloze',
-        prompt: 'Completa la consulta para limitar el resultado a las primeras 5 filas:',
+        prompt: 'Completa la cláusula de SQL (LIMIT) para obtener únicamente las primeras 5 filas:',
         codeWithBlank: 'SELECT * FROM productos ___ 5;',
         options: ['LIMIT', 'TOP', 'MAX', 'FIRST'],
         correctOption: 'LIMIT',
@@ -1051,7 +1051,7 @@ const SQL_U02_BANKS: Record<number, { title: string; desc: string; exercises: Ex
       {
         id: 'sql-u02-l09-e10',
         type: 'parsons_puzzle',
-        prompt: 'Ordena la estructura de la consulta completa con proyección, origen y paginación:',
+        prompt: 'Ordena las cláusulas de la consulta SQL en el orden correcto (SELECT, FROM, LIMIT, OFFSET):',
         lines: [
           'SELECT codigo, descripcion',
           'FROM catalogo.articulos',
@@ -1103,11 +1103,11 @@ const SQL_U02_BANKS: Record<number, { title: string; desc: string; exercises: Ex
       {
         id: 'sql-u02-l10-e04',
         type: 'spot_the_bug',
-        prompt: 'Toca la línea que contiene un error de sintaxis en la consulta:',
+        prompt: 'Toca la línea con el error de paginación (recuerda que el desplazamiento OFFSET no puede ser negativo):',
         codeSnippet: [
           'SELECT id, nombre',
           'FROM clientes AS c',
-          'LIMIT 10 OFFSET -5; -- Offset no puede ser negativo'
+          'LIMIT 10 OFFSET -5;'
         ],
         bugLineIndex: 2,
         explanation: 'El valor de OFFSET debe ser un número entero no negativo.',
@@ -1116,7 +1116,7 @@ const SQL_U02_BANKS: Record<number, { title: string; desc: string; exercises: Ex
       {
         id: 'sql-u02-l10-e05',
         type: 'code_cloze',
-        prompt: 'Completa la palabra clave para eliminar filas duplicadas:',
+        prompt: 'Completa la palabra clave de SQL (DISTINCT) para eliminar filas duplicadas:',
         codeWithBlank: 'SELECT ___ ciudad FROM sucursales;',
         options: ['DISTINCT', 'UNIQUE', 'SINGLE', 'FILTER'],
         correctOption: 'DISTINCT',
@@ -1159,7 +1159,7 @@ const SQL_U02_BANKS: Record<number, { title: string; desc: string; exercises: Ex
       {
         id: 'sql-u02-l10-e09',
         type: 'code_cloze',
-        prompt: 'Completa la consulta para limitar el resultado a las primeras 5 filas:',
+        prompt: 'Completa la cláusula de SQL (LIMIT) para obtener únicamente las primeras 5 filas:',
         codeWithBlank: 'SELECT * FROM productos ___ 5;',
         options: ['LIMIT', 'TOP', 'MAX', 'FIRST'],
         correctOption: 'LIMIT',
@@ -1169,7 +1169,7 @@ const SQL_U02_BANKS: Record<number, { title: string; desc: string; exercises: Ex
       {
         id: 'sql-u02-l10-e10',
         type: 'parsons_puzzle',
-        prompt: 'Ordena la estructura de la consulta completa con proyección, origen y paginación:',
+        prompt: 'Ordena las cláusulas de la consulta SQL en el orden correcto (SELECT, FROM, LIMIT, OFFSET):',
         lines: [
           'SELECT codigo, descripcion',
           'FROM catalogo.articulos',
@@ -1221,11 +1221,11 @@ const SQL_U02_BANKS: Record<number, { title: string; desc: string; exercises: Ex
       {
         id: 'sql-u02-l11-e04',
         type: 'spot_the_bug',
-        prompt: 'Toca la línea que contiene un error de sintaxis en la consulta:',
+        prompt: 'Toca la línea con el error de paginación (recuerda que el desplazamiento OFFSET no puede ser negativo):',
         codeSnippet: [
           'SELECT id, nombre',
           'FROM clientes AS c',
-          'LIMIT 10 OFFSET -5; -- Offset no puede ser negativo'
+          'LIMIT 10 OFFSET -5;'
         ],
         bugLineIndex: 2,
         explanation: 'El valor de OFFSET debe ser un número entero no negativo.',
@@ -1234,7 +1234,7 @@ const SQL_U02_BANKS: Record<number, { title: string; desc: string; exercises: Ex
       {
         id: 'sql-u02-l11-e05',
         type: 'code_cloze',
-        prompt: 'Completa la palabra clave para eliminar filas duplicadas:',
+        prompt: 'Completa la palabra clave de SQL (DISTINCT) para eliminar filas duplicadas:',
         codeWithBlank: 'SELECT ___ ciudad FROM sucursales;',
         options: ['DISTINCT', 'UNIQUE', 'SINGLE', 'FILTER'],
         correctOption: 'DISTINCT',
@@ -1277,7 +1277,7 @@ const SQL_U02_BANKS: Record<number, { title: string; desc: string; exercises: Ex
       {
         id: 'sql-u02-l11-e09',
         type: 'code_cloze',
-        prompt: 'Completa la consulta para limitar el resultado a las primeras 5 filas:',
+        prompt: 'Completa la cláusula de SQL (LIMIT) para obtener únicamente las primeras 5 filas:',
         codeWithBlank: 'SELECT * FROM productos ___ 5;',
         options: ['LIMIT', 'TOP', 'MAX', 'FIRST'],
         correctOption: 'LIMIT',
@@ -1287,7 +1287,7 @@ const SQL_U02_BANKS: Record<number, { title: string; desc: string; exercises: Ex
       {
         id: 'sql-u02-l11-e10',
         type: 'parsons_puzzle',
-        prompt: 'Ordena la estructura de la consulta completa con proyección, origen y paginación:',
+        prompt: 'Ordena las cláusulas de la consulta SQL en el orden correcto (SELECT, FROM, LIMIT, OFFSET):',
         lines: [
           'SELECT codigo, descripcion',
           'FROM catalogo.articulos',
@@ -1339,11 +1339,11 @@ const SQL_U02_BANKS: Record<number, { title: string; desc: string; exercises: Ex
       {
         id: 'sql-u02-l12-e04',
         type: 'spot_the_bug',
-        prompt: 'Toca la línea que contiene un error de sintaxis en la consulta:',
+        prompt: 'Toca la línea con el error de paginación (recuerda que el desplazamiento OFFSET no puede ser negativo):',
         codeSnippet: [
           'SELECT id, nombre',
           'FROM clientes AS c',
-          'LIMIT 10 OFFSET -5; -- Offset no puede ser negativo'
+          'LIMIT 10 OFFSET -5;'
         ],
         bugLineIndex: 2,
         explanation: 'El valor de OFFSET debe ser un número entero no negativo.',
@@ -1352,7 +1352,7 @@ const SQL_U02_BANKS: Record<number, { title: string; desc: string; exercises: Ex
       {
         id: 'sql-u02-l12-e05',
         type: 'code_cloze',
-        prompt: 'Completa la palabra clave para eliminar filas duplicadas:',
+        prompt: 'Completa la palabra clave de SQL (DISTINCT) para eliminar filas duplicadas:',
         codeWithBlank: 'SELECT ___ ciudad FROM sucursales;',
         options: ['DISTINCT', 'UNIQUE', 'SINGLE', 'FILTER'],
         correctOption: 'DISTINCT',
@@ -1395,7 +1395,7 @@ const SQL_U02_BANKS: Record<number, { title: string; desc: string; exercises: Ex
       {
         id: 'sql-u02-l12-e09',
         type: 'code_cloze',
-        prompt: 'Completa la consulta para limitar el resultado a las primeras 5 filas:',
+        prompt: 'Completa la cláusula de SQL (LIMIT) para obtener únicamente las primeras 5 filas:',
         codeWithBlank: 'SELECT * FROM productos ___ 5;',
         options: ['LIMIT', 'TOP', 'MAX', 'FIRST'],
         correctOption: 'LIMIT',
@@ -1405,7 +1405,7 @@ const SQL_U02_BANKS: Record<number, { title: string; desc: string; exercises: Ex
       {
         id: 'sql-u02-l12-e10',
         type: 'parsons_puzzle',
-        prompt: 'Ordena la estructura de la consulta completa con proyección, origen y paginación:',
+        prompt: 'Ordena las cláusulas de la consulta SQL en el orden correcto (SELECT, FROM, LIMIT, OFFSET):',
         lines: [
           'SELECT codigo, descripcion',
           'FROM catalogo.articulos',
@@ -1457,11 +1457,11 @@ const SQL_U02_BANKS: Record<number, { title: string; desc: string; exercises: Ex
       {
         id: 'sql-u02-l13-e04',
         type: 'spot_the_bug',
-        prompt: 'Toca la línea que contiene un error de sintaxis en la consulta:',
+        prompt: 'Toca la línea con el error de paginación (recuerda que el desplazamiento OFFSET no puede ser negativo):',
         codeSnippet: [
           'SELECT id, nombre',
           'FROM clientes AS c',
-          'LIMIT 10 OFFSET -5; -- Offset no puede ser negativo'
+          'LIMIT 10 OFFSET -5;'
         ],
         bugLineIndex: 2,
         explanation: 'El valor de OFFSET debe ser un número entero no negativo.',
@@ -1470,7 +1470,7 @@ const SQL_U02_BANKS: Record<number, { title: string; desc: string; exercises: Ex
       {
         id: 'sql-u02-l13-e05',
         type: 'code_cloze',
-        prompt: 'Completa la palabra clave para eliminar filas duplicadas:',
+        prompt: 'Completa la palabra clave de SQL (DISTINCT) para eliminar filas duplicadas:',
         codeWithBlank: 'SELECT ___ ciudad FROM sucursales;',
         options: ['DISTINCT', 'UNIQUE', 'SINGLE', 'FILTER'],
         correctOption: 'DISTINCT',
@@ -1513,7 +1513,7 @@ const SQL_U02_BANKS: Record<number, { title: string; desc: string; exercises: Ex
       {
         id: 'sql-u02-l13-e09',
         type: 'code_cloze',
-        prompt: 'Completa la consulta para limitar el resultado a las primeras 5 filas:',
+        prompt: 'Completa la cláusula de SQL (LIMIT) para obtener únicamente las primeras 5 filas:',
         codeWithBlank: 'SELECT * FROM productos ___ 5;',
         options: ['LIMIT', 'TOP', 'MAX', 'FIRST'],
         correctOption: 'LIMIT',
@@ -1523,7 +1523,7 @@ const SQL_U02_BANKS: Record<number, { title: string; desc: string; exercises: Ex
       {
         id: 'sql-u02-l13-e10',
         type: 'parsons_puzzle',
-        prompt: 'Ordena la estructura de la consulta completa con proyección, origen y paginación:',
+        prompt: 'Ordena las cláusulas de la consulta SQL en el orden correcto (SELECT, FROM, LIMIT, OFFSET):',
         lines: [
           'SELECT codigo, descripcion',
           'FROM catalogo.articulos',
@@ -1575,11 +1575,11 @@ const SQL_U02_BANKS: Record<number, { title: string; desc: string; exercises: Ex
       {
         id: 'sql-u02-l14-e04',
         type: 'spot_the_bug',
-        prompt: 'Toca la línea que contiene un error de sintaxis en la consulta:',
+        prompt: 'Toca la línea con el error de paginación (recuerda que el desplazamiento OFFSET no puede ser negativo):',
         codeSnippet: [
           'SELECT id, nombre',
           'FROM clientes AS c',
-          'LIMIT 10 OFFSET -5; -- Offset no puede ser negativo'
+          'LIMIT 10 OFFSET -5;'
         ],
         bugLineIndex: 2,
         explanation: 'El valor de OFFSET debe ser un número entero no negativo.',
@@ -1588,7 +1588,7 @@ const SQL_U02_BANKS: Record<number, { title: string; desc: string; exercises: Ex
       {
         id: 'sql-u02-l14-e05',
         type: 'code_cloze',
-        prompt: 'Completa la palabra clave para eliminar filas duplicadas:',
+        prompt: 'Completa la palabra clave de SQL (DISTINCT) para eliminar filas duplicadas:',
         codeWithBlank: 'SELECT ___ ciudad FROM sucursales;',
         options: ['DISTINCT', 'UNIQUE', 'SINGLE', 'FILTER'],
         correctOption: 'DISTINCT',
@@ -1631,7 +1631,7 @@ const SQL_U02_BANKS: Record<number, { title: string; desc: string; exercises: Ex
       {
         id: 'sql-u02-l14-e09',
         type: 'code_cloze',
-        prompt: 'Completa la consulta para limitar el resultado a las primeras 5 filas:',
+        prompt: 'Completa la cláusula de SQL (LIMIT) para obtener únicamente las primeras 5 filas:',
         codeWithBlank: 'SELECT * FROM productos ___ 5;',
         options: ['LIMIT', 'TOP', 'MAX', 'FIRST'],
         correctOption: 'LIMIT',
@@ -1641,7 +1641,7 @@ const SQL_U02_BANKS: Record<number, { title: string; desc: string; exercises: Ex
       {
         id: 'sql-u02-l14-e10',
         type: 'parsons_puzzle',
-        prompt: 'Ordena la estructura de la consulta completa con proyección, origen y paginación:',
+        prompt: 'Ordena las cláusulas de la consulta SQL en el orden correcto (SELECT, FROM, LIMIT, OFFSET):',
         lines: [
           'SELECT codigo, descripcion',
           'FROM catalogo.articulos',
@@ -1693,11 +1693,11 @@ const SQL_U02_BANKS: Record<number, { title: string; desc: string; exercises: Ex
       {
         id: 'sql-u02-l15-e04',
         type: 'spot_the_bug',
-        prompt: 'Toca la línea que contiene un error de sintaxis en la consulta:',
+        prompt: 'Toca la línea con el error de paginación (recuerda que el desplazamiento OFFSET no puede ser negativo):',
         codeSnippet: [
           'SELECT id, nombre',
           'FROM clientes AS c',
-          'LIMIT 10 OFFSET -5; -- Offset no puede ser negativo'
+          'LIMIT 10 OFFSET -5;'
         ],
         bugLineIndex: 2,
         explanation: 'El valor de OFFSET debe ser un número entero no negativo.',
@@ -1706,7 +1706,7 @@ const SQL_U02_BANKS: Record<number, { title: string; desc: string; exercises: Ex
       {
         id: 'sql-u02-l15-e05',
         type: 'code_cloze',
-        prompt: 'Completa la palabra clave para eliminar filas duplicadas:',
+        prompt: 'Completa la palabra clave de SQL (DISTINCT) para eliminar filas duplicadas:',
         codeWithBlank: 'SELECT ___ ciudad FROM sucursales;',
         options: ['DISTINCT', 'UNIQUE', 'SINGLE', 'FILTER'],
         correctOption: 'DISTINCT',
@@ -1749,7 +1749,7 @@ const SQL_U02_BANKS: Record<number, { title: string; desc: string; exercises: Ex
       {
         id: 'sql-u02-l15-e09',
         type: 'code_cloze',
-        prompt: 'Completa la consulta para limitar el resultado a las primeras 5 filas:',
+        prompt: 'Completa la cláusula de SQL (LIMIT) para obtener únicamente las primeras 5 filas:',
         codeWithBlank: 'SELECT * FROM productos ___ 5;',
         options: ['LIMIT', 'TOP', 'MAX', 'FIRST'],
         correctOption: 'LIMIT',
@@ -1759,7 +1759,7 @@ const SQL_U02_BANKS: Record<number, { title: string; desc: string; exercises: Ex
       {
         id: 'sql-u02-l15-e10',
         type: 'parsons_puzzle',
-        prompt: 'Ordena la estructura de la consulta completa con proyección, origen y paginación:',
+        prompt: 'Ordena las cláusulas de la consulta SQL en el orden correcto (SELECT, FROM, LIMIT, OFFSET):',
         lines: [
           'SELECT codigo, descripcion',
           'FROM catalogo.articulos',
@@ -1811,11 +1811,11 @@ const SQL_U02_BANKS: Record<number, { title: string; desc: string; exercises: Ex
       {
         id: 'sql-u02-l16-e04',
         type: 'spot_the_bug',
-        prompt: 'Toca la línea que contiene un error de sintaxis en la consulta:',
+        prompt: 'Toca la línea con el error de paginación (recuerda que el desplazamiento OFFSET no puede ser negativo):',
         codeSnippet: [
           'SELECT id, nombre',
           'FROM clientes AS c',
-          'LIMIT 10 OFFSET -5; -- Offset no puede ser negativo'
+          'LIMIT 10 OFFSET -5;'
         ],
         bugLineIndex: 2,
         explanation: 'El valor de OFFSET debe ser un número entero no negativo.',
@@ -1824,7 +1824,7 @@ const SQL_U02_BANKS: Record<number, { title: string; desc: string; exercises: Ex
       {
         id: 'sql-u02-l16-e05',
         type: 'code_cloze',
-        prompt: 'Completa la palabra clave para eliminar filas duplicadas:',
+        prompt: 'Completa la palabra clave de SQL (DISTINCT) para eliminar filas duplicadas:',
         codeWithBlank: 'SELECT ___ ciudad FROM sucursales;',
         options: ['DISTINCT', 'UNIQUE', 'SINGLE', 'FILTER'],
         correctOption: 'DISTINCT',
@@ -1867,7 +1867,7 @@ const SQL_U02_BANKS: Record<number, { title: string; desc: string; exercises: Ex
       {
         id: 'sql-u02-l16-e09',
         type: 'code_cloze',
-        prompt: 'Completa la consulta para limitar el resultado a las primeras 5 filas:',
+        prompt: 'Completa la cláusula de SQL (LIMIT) para obtener únicamente las primeras 5 filas:',
         codeWithBlank: 'SELECT * FROM productos ___ 5;',
         options: ['LIMIT', 'TOP', 'MAX', 'FIRST'],
         correctOption: 'LIMIT',
@@ -1877,7 +1877,7 @@ const SQL_U02_BANKS: Record<number, { title: string; desc: string; exercises: Ex
       {
         id: 'sql-u02-l16-e10',
         type: 'parsons_puzzle',
-        prompt: 'Ordena la estructura de la consulta completa con proyección, origen y paginación:',
+        prompt: 'Ordena las cláusulas de la consulta SQL en el orden correcto (SELECT, FROM, LIMIT, OFFSET):',
         lines: [
           'SELECT codigo, descripcion',
           'FROM catalogo.articulos',
@@ -1929,11 +1929,11 @@ const SQL_U02_BANKS: Record<number, { title: string; desc: string; exercises: Ex
       {
         id: 'sql-u02-l17-e04',
         type: 'spot_the_bug',
-        prompt: 'Toca la línea que contiene un error de sintaxis en la consulta:',
+        prompt: 'Toca la línea con el error de paginación (recuerda que el desplazamiento OFFSET no puede ser negativo):',
         codeSnippet: [
           'SELECT id, nombre',
           'FROM clientes AS c',
-          'LIMIT 10 OFFSET -5; -- Offset no puede ser negativo'
+          'LIMIT 10 OFFSET -5;'
         ],
         bugLineIndex: 2,
         explanation: 'El valor de OFFSET debe ser un número entero no negativo.',
@@ -1942,7 +1942,7 @@ const SQL_U02_BANKS: Record<number, { title: string; desc: string; exercises: Ex
       {
         id: 'sql-u02-l17-e05',
         type: 'code_cloze',
-        prompt: 'Completa la palabra clave para eliminar filas duplicadas:',
+        prompt: 'Completa la palabra clave de SQL (DISTINCT) para eliminar filas duplicadas:',
         codeWithBlank: 'SELECT ___ ciudad FROM sucursales;',
         options: ['DISTINCT', 'UNIQUE', 'SINGLE', 'FILTER'],
         correctOption: 'DISTINCT',
@@ -1985,7 +1985,7 @@ const SQL_U02_BANKS: Record<number, { title: string; desc: string; exercises: Ex
       {
         id: 'sql-u02-l17-e09',
         type: 'code_cloze',
-        prompt: 'Completa la consulta para limitar el resultado a las primeras 5 filas:',
+        prompt: 'Completa la cláusula de SQL (LIMIT) para obtener únicamente las primeras 5 filas:',
         codeWithBlank: 'SELECT * FROM productos ___ 5;',
         options: ['LIMIT', 'TOP', 'MAX', 'FIRST'],
         correctOption: 'LIMIT',
@@ -1995,7 +1995,7 @@ const SQL_U02_BANKS: Record<number, { title: string; desc: string; exercises: Ex
       {
         id: 'sql-u02-l17-e10',
         type: 'parsons_puzzle',
-        prompt: 'Ordena la estructura de la consulta completa con proyección, origen y paginación:',
+        prompt: 'Ordena las cláusulas de la consulta SQL en el orden correcto (SELECT, FROM, LIMIT, OFFSET):',
         lines: [
           'SELECT codigo, descripcion',
           'FROM catalogo.articulos',
@@ -2047,11 +2047,11 @@ const SQL_U02_BANKS: Record<number, { title: string; desc: string; exercises: Ex
       {
         id: 'sql-u02-l18-e04',
         type: 'spot_the_bug',
-        prompt: 'Toca la línea que contiene un error de sintaxis en la consulta:',
+        prompt: 'Toca la línea con el error de paginación (recuerda que el desplazamiento OFFSET no puede ser negativo):',
         codeSnippet: [
           'SELECT id, nombre',
           'FROM clientes AS c',
-          'LIMIT 10 OFFSET -5; -- Offset no puede ser negativo'
+          'LIMIT 10 OFFSET -5;'
         ],
         bugLineIndex: 2,
         explanation: 'El valor de OFFSET debe ser un número entero no negativo.',
@@ -2060,7 +2060,7 @@ const SQL_U02_BANKS: Record<number, { title: string; desc: string; exercises: Ex
       {
         id: 'sql-u02-l18-e05',
         type: 'code_cloze',
-        prompt: 'Completa la palabra clave para eliminar filas duplicadas:',
+        prompt: 'Completa la palabra clave de SQL (DISTINCT) para eliminar filas duplicadas:',
         codeWithBlank: 'SELECT ___ ciudad FROM sucursales;',
         options: ['DISTINCT', 'UNIQUE', 'SINGLE', 'FILTER'],
         correctOption: 'DISTINCT',
@@ -2103,7 +2103,7 @@ const SQL_U02_BANKS: Record<number, { title: string; desc: string; exercises: Ex
       {
         id: 'sql-u02-l18-e09',
         type: 'code_cloze',
-        prompt: 'Completa la consulta para limitar el resultado a las primeras 5 filas:',
+        prompt: 'Completa la cláusula de SQL (LIMIT) para obtener únicamente las primeras 5 filas:',
         codeWithBlank: 'SELECT * FROM productos ___ 5;',
         options: ['LIMIT', 'TOP', 'MAX', 'FIRST'],
         correctOption: 'LIMIT',
@@ -2113,7 +2113,7 @@ const SQL_U02_BANKS: Record<number, { title: string; desc: string; exercises: Ex
       {
         id: 'sql-u02-l18-e10',
         type: 'parsons_puzzle',
-        prompt: 'Ordena la estructura de la consulta completa con proyección, origen y paginación:',
+        prompt: 'Ordena las cláusulas de la consulta SQL en el orden correcto (SELECT, FROM, LIMIT, OFFSET):',
         lines: [
           'SELECT codigo, descripcion',
           'FROM catalogo.articulos',
@@ -2165,11 +2165,11 @@ const SQL_U02_BANKS: Record<number, { title: string; desc: string; exercises: Ex
       {
         id: 'sql-u02-l19-e04',
         type: 'spot_the_bug',
-        prompt: 'Toca la línea que contiene un error de sintaxis en la consulta:',
+        prompt: 'Toca la línea con el error de paginación (recuerda que el desplazamiento OFFSET no puede ser negativo):',
         codeSnippet: [
           'SELECT id, nombre',
           'FROM clientes AS c',
-          'LIMIT 10 OFFSET -5; -- Offset no puede ser negativo'
+          'LIMIT 10 OFFSET -5;'
         ],
         bugLineIndex: 2,
         explanation: 'El valor de OFFSET debe ser un número entero no negativo.',
@@ -2178,7 +2178,7 @@ const SQL_U02_BANKS: Record<number, { title: string; desc: string; exercises: Ex
       {
         id: 'sql-u02-l19-e05',
         type: 'code_cloze',
-        prompt: 'Completa la palabra clave para eliminar filas duplicadas:',
+        prompt: 'Completa la palabra clave de SQL (DISTINCT) para eliminar filas duplicadas:',
         codeWithBlank: 'SELECT ___ ciudad FROM sucursales;',
         options: ['DISTINCT', 'UNIQUE', 'SINGLE', 'FILTER'],
         correctOption: 'DISTINCT',
@@ -2221,7 +2221,7 @@ const SQL_U02_BANKS: Record<number, { title: string; desc: string; exercises: Ex
       {
         id: 'sql-u02-l19-e09',
         type: 'code_cloze',
-        prompt: 'Completa la consulta para limitar el resultado a las primeras 5 filas:',
+        prompt: 'Completa la cláusula de SQL (LIMIT) para obtener únicamente las primeras 5 filas:',
         codeWithBlank: 'SELECT * FROM productos ___ 5;',
         options: ['LIMIT', 'TOP', 'MAX', 'FIRST'],
         correctOption: 'LIMIT',
@@ -2231,7 +2231,7 @@ const SQL_U02_BANKS: Record<number, { title: string; desc: string; exercises: Ex
       {
         id: 'sql-u02-l19-e10',
         type: 'parsons_puzzle',
-        prompt: 'Ordena la estructura de la consulta completa con proyección, origen y paginación:',
+        prompt: 'Ordena las cláusulas de la consulta SQL en el orden correcto (SELECT, FROM, LIMIT, OFFSET):',
         lines: [
           'SELECT codigo, descripcion',
           'FROM catalogo.articulos',
@@ -2283,11 +2283,11 @@ const SQL_U02_BANKS: Record<number, { title: string; desc: string; exercises: Ex
       {
         id: 'sql-u02-l20-e04',
         type: 'spot_the_bug',
-        prompt: 'Toca la línea que contiene un error de sintaxis en la consulta:',
+        prompt: 'Toca la línea con el error de paginación (recuerda que el desplazamiento OFFSET no puede ser negativo):',
         codeSnippet: [
           'SELECT id, nombre',
           'FROM clientes AS c',
-          'LIMIT 10 OFFSET -5; -- Offset no puede ser negativo'
+          'LIMIT 10 OFFSET -5;'
         ],
         bugLineIndex: 2,
         explanation: 'El valor de OFFSET debe ser un número entero no negativo.',
@@ -2296,7 +2296,7 @@ const SQL_U02_BANKS: Record<number, { title: string; desc: string; exercises: Ex
       {
         id: 'sql-u02-l20-e05',
         type: 'code_cloze',
-        prompt: 'Completa la palabra clave para eliminar filas duplicadas:',
+        prompt: 'Completa la palabra clave de SQL (DISTINCT) para eliminar filas duplicadas:',
         codeWithBlank: 'SELECT ___ ciudad FROM sucursales;',
         options: ['DISTINCT', 'UNIQUE', 'SINGLE', 'FILTER'],
         correctOption: 'DISTINCT',
@@ -2339,7 +2339,7 @@ const SQL_U02_BANKS: Record<number, { title: string; desc: string; exercises: Ex
       {
         id: 'sql-u02-l20-e09',
         type: 'code_cloze',
-        prompt: 'Completa la consulta para limitar el resultado a las primeras 5 filas:',
+        prompt: 'Completa la cláusula de SQL (LIMIT) para obtener únicamente las primeras 5 filas:',
         codeWithBlank: 'SELECT * FROM productos ___ 5;',
         options: ['LIMIT', 'TOP', 'MAX', 'FIRST'],
         correctOption: 'LIMIT',
@@ -2349,7 +2349,7 @@ const SQL_U02_BANKS: Record<number, { title: string; desc: string; exercises: Ex
       {
         id: 'sql-u02-l20-e10',
         type: 'parsons_puzzle',
-        prompt: 'Ordena la estructura de la consulta completa con proyección, origen y paginación:',
+        prompt: 'Ordena las cláusulas de la consulta SQL en el orden correcto (SELECT, FROM, LIMIT, OFFSET):',
         lines: [
           'SELECT codigo, descripcion',
           'FROM catalogo.articulos',
