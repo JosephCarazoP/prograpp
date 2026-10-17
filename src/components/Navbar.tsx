@@ -9,7 +9,8 @@ import {
   ChevronDown,
   ShieldCheck,
   LogOut,
-  Shirt
+  Shirt,
+  Users
 } from 'lucide-react';
 import { UserProfile } from '../types/user';
 import { soundService } from '../services/soundService';
@@ -18,12 +19,14 @@ import { DevAvatar } from './Avatars';
 interface NavbarProps {
   user: UserProfile;
   isAdmin?: boolean;
+  onlineUsersCount?: number;
   onPathToggle: () => void;
   onOpenQuests: () => void;
   onOpenPractice?: () => void;
   onOpenProfile: () => void;
   onOpenStreak?: () => void;
   onOpenAcademic?: () => void;
+  onOpenLiveUsers?: () => void;
   onOpenLocker?: () => void;
   onSignOut?: () => void;
   onLogoClick?: () => void;
@@ -32,16 +35,21 @@ interface NavbarProps {
 export const Navbar: React.FC<NavbarProps> = ({
   user,
   isAdmin = false,
+  onlineUsersCount = 0,
   onPathToggle,
   onOpenQuests,
   onOpenProfile,
   onOpenStreak,
   onOpenAcademic,
+  onOpenLiveUsers,
   onOpenLocker,
   onSignOut,
   onLogoClick: _onLogoClick
 }) => {
   const [isMuted, setIsMuted] = useState(soundService.getMuted());
+  const isTeacherAdmin = Boolean(
+    isAdmin || (user?.email && user.email.toLowerCase() === 'josephcarazo56@gmail.com')
+  );
 
   const handleSoundToggle = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -155,7 +163,7 @@ export const Navbar: React.FC<NavbarProps> = ({
         </button>
 
         {/* Botón Exclusivo de Seguimiento Académico para josephcarazo56@gmail.com */}
-        {isAdmin && onOpenAcademic && (
+        {isTeacherAdmin && onOpenAcademic && (
           <button
             className="btn-3d btn-orange nav-admin-btn"
             onClick={() => {
@@ -168,6 +176,31 @@ export const Navbar: React.FC<NavbarProps> = ({
           >
             <ShieldCheck size={16} color="#FFFFFF" strokeWidth={2.5} />
             <span className="nav-admin-label">Seguimiento</span>
+          </button>
+        )}
+
+        {/* Botón Exclusivo EN LÍNEA para josephcarazo56@gmail.com (A la izquierda de logout) */}
+        {isTeacherAdmin && onOpenLiveUsers && (
+          <button
+            className="btn-3d btn-green nav-live-users-btn"
+            onClick={() => {
+              soundService.playToken();
+              onOpenLiveUsers();
+            }}
+            title="Usuarios en Línea en Tiempo Real (Exclusivo josephcarazo56@gmail.com)"
+            aria-label="Usuarios en Línea"
+            type="button"
+          >
+            <span className="live-pulsing-dot" />
+            <Users size={15} color="#FFFFFF" strokeWidth={2.5} />
+            <span className="nav-live-users-label">
+              En Línea{onlineUsersCount > 0 ? ` (${onlineUsersCount})` : ''}
+            </span>
+            {onlineUsersCount > 0 && (
+              <span className="nav-live-users-badge-mobile">
+                {onlineUsersCount}
+              </span>
+            )}
           </button>
         )}
 

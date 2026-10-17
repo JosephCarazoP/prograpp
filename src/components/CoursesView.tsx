@@ -343,10 +343,28 @@ export const CoursesView: React.FC<CoursesViewProps> = ({
                     )}
                   </div>
                   <div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px', flexWrap: 'wrap' }}>
                       <h3 style={{ fontSize: '1.1rem', fontWeight: 900, color: '#0F172A', margin: 0, lineHeight: 1.3 }}>
                         {lesson.title}
                       </h3>
+                      {prog?.theoryCompleted && (
+                        <span
+                          style={{
+                            background: '#DCFCE7',
+                            border: '1.5px solid #86EFAC',
+                            color: '#15803D',
+                            fontSize: '0.72rem',
+                            fontWeight: 900,
+                            padding: '1px 7px',
+                            borderRadius: '6px',
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: '3px'
+                          }}
+                        >
+                          <CheckCircle2 size={11} strokeWidth={2.8} /> Teoría Aprobada
+                        </span>
+                      )}
                       {!isUnlocked && (
                         <span
                           style={{

@@ -61,6 +61,47 @@ export const progressService = {
     }
   },
 
+  // Registrar materia teórica/micro-quiz completado para habilitar la práctica del nivel
+  async saveTheoryCompleted(
+    uid: string,
+    lessonId: string,
+    pathId: LearningPath,
+    unitId: number,
+    levelId: number
+  ): Promise<Record<string, LessonProgress>> {
+    const current = await this.getAllProgress(uid);
+    const existing = current[lessonId];
+
+    const updated: LessonProgress = {
+      lessonId,
+      pathId,
+      unitId,
+      levelId,
+      starsEarned: (existing?.starsEarned || 0) as 1 | 2 | 3,
+      completedAt: existing?.completedAt || 0,
+      attempts: existing?.attempts || 0,
+      mistakesCount: existing?.mistakesCount || 0,
+      scorePercentage: existing?.scorePercentage || 0,
+      lastReviewedAt: Date.now(),
+      theoryCompleted: true,
+      theoryCompletedAt: Date.now()
+    };
+
+    current[lessonId] = updated;
+    storageService.setItem('user_progress', current);
+
+    if (!isLocalMockMode && db) {
+      try {
+        const lessonRef = doc(db, 'users', uid, 'progress', lessonId);
+        await setDoc(lessonRef, { theoryCompleted: true, theoryCompletedAt: Date.now() }, { merge: true });
+      } catch (err) {
+        console.warn('[progressService] Guardado de teoría local:', err);
+      }
+    }
+
+    return current;
+  },
+
   // Calcular resumen estadístico de la ruta
   calculatePathSummary(
     path: LearningPath,

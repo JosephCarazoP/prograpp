@@ -47,5 +47,19 @@ export interface UserProfile {
   hasCompletedInitialDiagnostic?: boolean; // Si ya completó la prueba diagnóstica inicial obligatoria
   totalActiveTimeSeconds?: number; // Tiempo activo total de aprendizaje
   lastActiveAt?: number;
+  isOnline?: boolean; // Estado de conexión en tiempo real
+  currentActivity?: UserActivityStatus; // Actividad actual detallada en tiempo real
+}
+
+export type UserPresenceStatus = 'playing' | 'lesson' | 'theory' | 'practice' | 'boss' | 'evaluation' | 'idle' | 'offline';
+
+export interface UserActivityStatus {
+  status: UserPresenceStatus;
+  activityText: string; // Ej: "En lección: Bucles While", "Leyendo materia: Consultas SELECT"
+  details?: string; // Ej: "Ruta Kotlin • Unidad 1", "Materia: SQL Básico"
+  path?: LearningPath;
+  targetId?: string;
+  targetTitle?: string;
+  updatedAt?: number;
 }
 

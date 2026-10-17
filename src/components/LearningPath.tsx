@@ -573,10 +573,22 @@ export const LearningPath: React.FC<LearningPathProps> = ({
                               display: 'inline-flex',
                               alignItems: 'center',
                               gap: '4px',
-                              background: '#EFF6FF',
-                              color: '#2563EB',
-                              border: '1.5px solid #BFDBFE',
-                              boxShadow: '0 2px 0 #93C5FD',
+                              background: (safeProgress[node.lesson.id]?.theoryCompleted || isCompleted)
+                                ? '#F0FDF4'
+                                : '#EFF6FF',
+                              color: (safeProgress[node.lesson.id]?.theoryCompleted || isCompleted)
+                                ? '#16A34A'
+                                : '#2563EB',
+                              border: `1.5px solid ${
+                                (safeProgress[node.lesson.id]?.theoryCompleted || isCompleted)
+                                  ? '#86EFAC'
+                                  : '#BFDBFE'
+                              }`,
+                              boxShadow: `0 2px 0 ${
+                                (safeProgress[node.lesson.id]?.theoryCompleted || isCompleted)
+                                  ? '#4ADE80'
+                                  : '#93C5FD'
+                              }`,
                               padding: '3px 9px',
                               borderRadius: '12px',
                               fontSize: '0.72rem',
@@ -584,10 +596,23 @@ export const LearningPath: React.FC<LearningPathProps> = ({
                               cursor: 'pointer',
                               transition: 'all 0.15s ease'
                             }}
-                            title="Estudiar la materia antes de poner a prueba"
+                            title={
+                              (safeProgress[node.lesson.id]?.theoryCompleted || isCompleted)
+                                ? 'Materia y Micro-Quiz completados'
+                                : 'Estudiar la materia antes de poner a prueba'
+                            }
                           >
-                            <BookOpen size={12} />
-                            <span>Teoría</span>
+                            {(safeProgress[node.lesson.id]?.theoryCompleted || isCompleted) ? (
+                              <>
+                                <CheckCircle2 size={12} color="#16A34A" />
+                                <span>Teoría Lista</span>
+                              </>
+                            ) : (
+                              <>
+                                <BookOpen size={12} />
+                                <span>Teoría Requerida</span>
+                              </>
+                            )}
                           </button>
                         )}
                       </div>

@@ -27,6 +27,7 @@ import { Navbar } from './components/Navbar';
 import { LearningPath } from './components/LearningPath';
 import { CoursesView } from './components/CoursesView';
 import { TheoryViewer } from './components/TheoryViewer';
+import { TheoryCheckpointModal } from './components/TheoryCheckpointModal';
 import { AuthModal } from './components/AuthModal';
 import { ProfilePage } from './components/ProfilePage';
 import { DailyQuestsModal } from './components/DailyQuestsModal';
@@ -45,8 +46,10 @@ import { EvaluationPage } from './components/EvaluationPage';
 import { ActivityOpinionModal } from './components/ActivityOpinionModal';
 import { StreakCelebrationModal } from './components/StreakCelebrationModal';
 import { ByteLockerModal } from './components/ByteLockerModal';
+import { LiveUsersModal } from './components/LiveUsersModal';
 import { academicService } from './services/academicService';
 import { timeTrackingService } from './services/timeTrackingService';
+import { presenceService } from './services/presenceService';
 import {
   getInstrument,
   EvaluationInstrument,
@@ -186,6 +189,15 @@ export default function App() {
 
   // Modal 3D del Vestidor de Byte (Locker)
   const [isLockerOpen, setIsLockerOpen] = useState(false);
+
+  // Modal de Usuarios en Línea en Tiempo Real (Exclusivo Docente josephcarazo56@gmail.com)
+  const [isLiveUsersOpen, setIsLiveUsersOpen] = useState(false);
+  const [onlineUsersCount, setOnlineUsersCount] = useState(0);
+  const [selectedAcademicStudentUid, setSelectedAcademicStudentUid] = useState<string | null>(null);
+
+  // Modal 3D de Checkpoint Teórico Obligatorio (Lectura rápida + 2 preguntas micro-quiz antes de jugar)
+  const [checkpointLesson, setCheckpointLesson] = useState<Lesson | null>(null);
+  const [checkpointTheory, setCheckpointTheory] = useState<TheoryLesson | null>(null);
 
   // Combate de Jefe activo a pantalla completa
   const [activeBossData, setActiveBossData] = useState<{
@@ -327,11 +339,175 @@ export default function App() {
     loadData();
   }, []);
 
+  const isTeacherAdmin = Boolean(
+    authService.isCurrentUserAdmin() ||
+    (user?.email && user.email.toLowerCase() === 'josephcarazo56@gmail.com')
+  );
+
+  // Suscripción en tiempo real a la presencia de todos los estudiantes (Exclusivo Docente josephcarazo56@gmail.com)
+  useEffect(() => {
+    if (!isTeacherAdmin) {
+      setOnlineUsersCount(0);
+      return;
+    }
+
+    const unsubscribe = presenceService.subscribeToAllStudents((studentsList) => {
+      const count = studentsList.filter((s) => presenceService.isUserOnline(s)).length;
+      setOnlineUsersCount(count);
+    });
+
+    return () => {
+      unsubscribe();
+    };
+  }, [isTeacherAdmin]);
+
+  // Latido de presencia en tiempo real (reporta estado y actividad cada 30 segundos o al cambiar de contexto)
+  useEffect(() => {
+    if (!user || !user.uid || !isAuthenticated || user.uid === 'guest_user_1') return;
+
+    let activity: {
+      status: 'idle' | 'playing' | 'lesson' | 'theory' | 'practice' | 'boss' | 'evaluation';
+      activityText: string;
+      targetId?: string;
+      targetTitle?: string;
+      path?: PathType;
+    };
+
+    if (activeEvaluationInstrument) {
+      activity = {
+        status: 'evaluation',
+        activityText: `En Evaluación: ${activeEvaluationInstrument.title}`,
+        targetTitle: activeEvaluationInstrument.title
+      };
+    } else if (activeTheory) {
+      activity = {
+        status: 'theory',
+        activityText: `Leyendo Materia: ${activeTheory.title}`,
+        targetTitle: activeTheory.title,
+        path: activeTheory.pathId
+      };
+    } else if (view === 'lesson' && activeLesson) {
+      activity = {
+        status: 'lesson',
+        activityText: `En Lección: ${activeLesson.title}`,
+        targetId: activeLesson.id,
+        targetTitle: activeLesson.title,
+        path: user.currentPath
+      };
+    } else if (view === 'practice') {
+      activity = {
+        status: 'practice',
+        activityText: 'En Modo Práctica',
+        path: user.currentPath
+      };
+    } else if (view === 'boss') {
+      activity = {
+        status: 'boss',
+        activityText: 'Combatiendo al Jefe de Unidad',
+        path: user.currentPath
+      };
+    } else if (view === 'academic') {
+      activity = {
+        status: 'idle',
+        activityText: 'Revisando Seguimiento Académico'
+      };
+    } else if (view === 'profile') {
+      activity = {
+        status: 'idle',
+        activityText: 'Personalizando Perfil'
+      };
+    } else if (mainTab === 'courses') {
+      activity = {
+        status: 'theory',
+        activityText: 'Explorando Catálogo de Cursos',
+        path: user.currentPath
+      };
+    } else {
+      activity = {
+        status: 'playing',
+        activityText: `Jugando en Ruta de ${user.currentPath === 'kotlin' ? 'Kotlin' : 'SQL'}`,
+        path: user.currentPath
+      };
+    }
+
+    // Reportar de inmediato
+    presenceService.reportActivity(user.uid, activity);
+
+    // Latido periódico de 30 segundos
+    const heartbeatTimer = setInterval(() => {
+      presenceService.reportActivity(user.uid, activity);
+    }, 30000);
+
+    return () => clearInterval(heartbeatTimer);
+  }, [
+    user?.uid,
+    isAuthenticated,
+    view,
+    mainTab,
+    activeTheory,
+    activeLesson,
+    activeEvaluationInstrument,
+    user?.currentPath
+  ]);
+
+  // Marcar como desconectado al cerrar o recargar la pestaña
+  useEffect(() => {
+    if (!user || !user.uid || !isAuthenticated || user.uid === 'guest_user_1') return;
+
+    const handleBeforeUnload = () => {
+      if (user.uid) {
+        presenceService.setOffline(user.uid);
+      }
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+    };
+  }, [user?.uid, isAuthenticated]);
+
+  // Función unificada de cierre de sesión seguro con reporte offline
+  const handleSignOut = async () => {
+    soundService.playToken();
+    timeTrackingService.stopLessonTracking();
+    if (user?.uid && user.uid !== 'guest_user_1') {
+      await presenceService.setOffline(user.uid);
+    }
+    await authService.signOutUser();
+    setIsAuthenticated(false);
+    setUser(DEFAULT_PROFILE);
+    setProgress({});
+    setView('path');
+    setIsAuthOpen(true);
+  };
+
   const currentPath: PathType = user?.currentPath === 'sql' ? 'sql' : 'kotlin';
   const units = getUnitsByPath(currentPath);
 
+  // Al superar el micro-quiz y resumen de teoría del nivel
+  const handleCompleteCheckpoint = async (lesson: Lesson) => {
+    setCheckpointLesson(null);
+    setCheckpointTheory(null);
+
+    // Guardar teoría completada en almacenamiento y base de datos
+    const updatedProgress = await progressService.saveTheoryCompleted(
+      user.uid,
+      lesson.id,
+      lesson.path,
+      lesson.unit,
+      lesson.level
+    );
+    // Recompensar con +10 XP y +5 Bytes por completar la preparación teórica
+    const updatedUser = await userService.rewardUser(user, 10, 5);
+    setUser(updatedUser);
+    setProgress(updatedProgress);
+
+    // Iniciar la sesión de lección inmediatamente con bypassCheckpoint = true
+    handleStartLesson(lesson, true);
+  };
+
   // Iniciar lección o prueba: Control del Sistema + Banco de preguntas + Seguimiento de Tiempo
-  const handleStartLesson = (lesson: Lesson) => {
+  const handleStartLesson = (lesson: Lesson, bypassCheckpoint: boolean = false) => {
     // 0. Comprobación obligatoria de autenticación (No permitir invitados)
     if (!isAuthenticated || !user.uid || user.uid === 'guest_user_1') {
       soundService.playError();
@@ -355,6 +531,18 @@ export default function App() {
         });
         return;
       }
+    }
+
+    // 2. Control de Lectura y Micro-Quiz Teórico Obligatorio (Flujo Integrado)
+    // Si el usuario no ha completado el nivel previamente ni ha pasado el checkpoint de teoría:
+    const isAlreadyCompleted = (progress[lesson.id]?.starsEarned || 0) > 0;
+    const isTheoryCompleted = Boolean(progress[lesson.id]?.theoryCompleted);
+
+    if (!bypassCheckpoint && !isAlreadyCompleted && !isTheoryCompleted) {
+      const th = getTheoryByLessonId(lesson.id);
+      setCheckpointLesson(lesson);
+      setCheckpointTheory(th || null);
+      return;
     }
 
     if (irisTransition.active) return;
@@ -828,6 +1016,11 @@ export default function App() {
         <Navbar
           user={user}
           isAdmin={authService.isCurrentUserAdmin()}
+          onlineUsersCount={onlineUsersCount}
+          onOpenLiveUsers={() => {
+            soundService.playToken();
+            setIsLiveUsersOpen(true);
+          }}
           onLogoClick={() => {
             setView('path');
             setMainTab('play');
@@ -867,16 +1060,7 @@ export default function App() {
             soundService.playToken();
             setIsLockerOpen(true);
           }}
-          onSignOut={async () => {
-            soundService.playToken();
-            timeTrackingService.stopLessonTracking();
-            await authService.signOutUser();
-            setIsAuthenticated(false);
-            setUser(DEFAULT_PROFILE);
-            setProgress({});
-            setView('path');
-            setIsAuthOpen(true);
-          }}
+          onSignOut={handleSignOut}
         />
       )}
 
@@ -898,9 +1082,19 @@ export default function App() {
             <TheoryViewer
               theory={activeTheory}
               onBack={() => setActiveTheory(null)}
-              onStartPractice={(lessonId) => {
+              onStartPractice={async (lessonId) => {
                 const l = getLessonById(lessonId);
-                if (l) handleStartLesson(l);
+                if (l) {
+                  const updatedProgress = await progressService.saveTheoryCompleted(
+                    user.uid,
+                    l.id,
+                    l.path,
+                    l.unit,
+                    l.level
+                  );
+                  setProgress(updatedProgress);
+                  handleStartLesson(l, true);
+                }
               }}
             />
           ) : (
@@ -1631,16 +1825,7 @@ export default function App() {
             }
           }}
           onOpenFinalTest={() => setActiveEvaluationInstrument(getInstrument(currentPath, 'final'))}
-          onSignOut={async () => {
-            soundService.playToken();
-            timeTrackingService.stopLessonTracking();
-            await authService.signOutUser();
-            setIsAuthenticated(false);
-            setUser(DEFAULT_PROFILE);
-            setProgress({});
-            setView('path');
-            setIsAuthOpen(true);
-          }}
+          onSignOut={handleSignOut}
         />
       )}
 
@@ -1649,6 +1834,11 @@ export default function App() {
         <AcademicDashboard
           currentUser={user}
           onBack={() => setView('path')}
+          onOpenLiveUsers={() => {
+            soundService.playToken();
+            setIsLiveUsersOpen(true);
+          }}
+          initialSelectedStudentUid={selectedAcademicStudentUid}
         />
       )}
 
@@ -1710,8 +1900,40 @@ export default function App() {
         onUpdateUser={(updated) => setUser(updated)}
       />
 
+      {/* MODAL DE USUARIOS EN LÍNEA EN TIEMPO REAL (DOCENTE josephcarazo56@gmail.com) */}
+      <LiveUsersModal
+        isOpen={isLiveUsersOpen}
+        onClose={() => setIsLiveUsersOpen(false)}
+        onSelectStudent={(uid) => {
+          setIsLiveUsersOpen(false);
+          setSelectedAcademicStudentUid(uid);
+          setView('academic');
+        }}
+      />
+
       {/* Alertas Nativas del Juego (Reemplazo total de window.alert) */}
       <GameAlertModal alert={gameAlert} onClose={() => setGameAlert(null)} />
+
+      {/* Modal 3D de Checkpoint Teórico Obligatorio (Lectura rápida + 2 preguntas micro-quiz antes de jugar) */}
+      {checkpointLesson && (
+        <TheoryCheckpointModal
+          lesson={checkpointLesson}
+          theory={checkpointTheory || undefined}
+          isOpen={Boolean(checkpointLesson)}
+          onClose={() => {
+            setCheckpointLesson(null);
+            setCheckpointTheory(null);
+          }}
+          onComplete={handleCompleteCheckpoint}
+          onOpenFullTheory={(th) => {
+            setCheckpointLesson(null);
+            setCheckpointTheory(null);
+            setMainTab('courses');
+            setActiveTheory(th);
+            window.scrollTo({ top: 0, behavior: 'instant' });
+          }}
+        />
+      )}
 
       {/* Transición de Círculo Naranja (Iris Wipe) con Dev '¡A jugar!' */}
       {irisTransition.active && (

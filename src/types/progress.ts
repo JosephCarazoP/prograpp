@@ -12,6 +12,8 @@ export interface LessonProgress {
   scorePercentage: number;
   lastReviewedAt: number;
   isCracked?: boolean; // Para el sistema de repetición espaciada
+  theoryCompleted?: boolean; // Indica si aprobó el micro-quiz / leyó la materia requerida
+  theoryCompletedAt?: number;
 }
 
 export interface PathProgressSummary {

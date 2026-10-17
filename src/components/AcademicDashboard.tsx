@@ -48,16 +48,26 @@ import { progressService } from '../services/progressService';
 import { excelExportService } from '../services/excelExportService';
 import { pdfExportService } from '../services/pdfExportService';
 import { soundService } from '../services/soundService';
+import { presenceService } from '../services/presenceService';
+import { LiveUsersModal } from './LiveUsersModal';
 import { DevAvatar } from './Avatars';
 
 interface AcademicDashboardProps {
   currentUser: UserProfile;
   onBack: () => void;
+  onOpenLiveUsers?: () => void;
+  initialSelectedStudentUid?: string | null;
 }
 
-export const AcademicDashboard: React.FC<AcademicDashboardProps> = ({ currentUser, onBack }) => {
+export const AcademicDashboard: React.FC<AcademicDashboardProps> = ({
+  currentUser,
+  onBack,
+  onOpenLiveUsers,
+  initialSelectedStudentUid
+}) => {
   // Estado de sesión docente en el panel
   const [isUnlocked, setIsUnlocked] = useState(adminSecurityService.isSessionUnlocked());
+  const [showInternalLiveModal, setShowInternalLiveModal] = useState(false);
 
   // Pestañas del Panel
   const [activeTab, setActiveTab] = useState<'group' | 'student' | 'assignDiagnostic' | 'evaluations' | 'attempts' | 'observations'>('group');
@@ -85,9 +95,16 @@ export const AcademicDashboard: React.FC<AcademicDashboardProps> = ({ currentUse
   const [selectedGroup, setSelectedGroup] = useState<string>('all');
   const [selectedPath, setSelectedPath] = useState<LearningPath | 'all'>('all');
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedStudentUid, setSelectedStudentUid] = useState<string | null>(null);
+  const [selectedStudentUid, setSelectedStudentUid] = useState<string | null>(initialSelectedStudentUid || null);
   const [groupViewMode, setGroupViewMode] = useState<'cards' | 'table'>('cards');
-  const [statusFilter, setStatusFilter] = useState<'all' | 'evaluated' | 'pending' | 'participants'>('all');
+  const [statusFilter, setStatusFilter] = useState<'all' | 'online' | 'evaluated' | 'pending' | 'participants'>('all');
+
+  useEffect(() => {
+    if (initialSelectedStudentUid) {
+      setSelectedStudentUid(initialSelectedStudentUid);
+      setActiveTab('group');
+    }
+  }, [initialSelectedStudentUid]);
 
   // Modal para agregar observación docente
   const [showObsModal, setShowObsModal] = useState(false);
@@ -183,10 +200,13 @@ export const AcademicDashboard: React.FC<AcademicDashboardProps> = ({ currentUse
     );
   });
 
+  const onlineStudentsCount = students.filter(s => presenceService.isUserOnline(s)).length;
+
   // 2. Filtrado de estudiantes con distinción clara por estado y búsqueda
   const filteredStudents = students.filter(st => {
     if (selectedGroup !== 'all' && (st.group || 'Grupo A') !== selectedGroup) return false;
     if (selectedPath !== 'all' && st.currentPath !== selectedPath) return false;
+    if (statusFilter === 'online' && !presenceService.isUserOnline(st)) return false;
     if (statusFilter === 'evaluated' && indicatorsMap[st.uid]?.diagnosticPercentage === null) return false;
     if (statusFilter === 'pending' && indicatorsMap[st.uid]?.diagnosticPercentage !== null) return false;
     if (statusFilter === 'participants' && !st.isResearchParticipant) return false;
@@ -548,7 +568,7 @@ export const AcademicDashboard: React.FC<AcademicDashboardProps> = ({ currentUse
               <span className="academic-teacher-badge">Docente</span>
             </h1>
             <p className="academic-header-sub">
-              Profesor: <strong>{currentUser.displayName || currentUser.email}</strong> • {students.length} estudiantes
+              Profesor: <strong>{currentUser.displayName || currentUser.email}</strong> • {students.length} estudiantes • <span style={{ color: '#10B981', fontWeight: 800 }}>{onlineStudentsCount} en línea</span>
             </p>
           </div>
 
@@ -562,6 +582,23 @@ export const AcademicDashboard: React.FC<AcademicDashboardProps> = ({ currentUse
         </div>
 
         <div className="academic-header-actions">
+          <button
+            onClick={() => {
+              soundService.playToken();
+              if (onOpenLiveUsers) {
+                onOpenLiveUsers();
+              } else {
+                setShowInternalLiveModal(true);
+              }
+            }}
+            className="btn-3d btn-green academic-action-btn"
+            title="Monitorear usuarios y su actividad en tiempo real"
+            style={{ background: '#10B981', borderColor: '#059669' }}
+          >
+            <span className="live-pulsing-dot-small" style={{ marginRight: 4 }} />
+            <Users size={15} /> <span>En Línea ({onlineStudentsCount})</span>
+          </button>
+
           <button
             onClick={handleExportExcel}
             className="btn-3d btn-green academic-action-btn"
@@ -756,10 +793,36 @@ export const AcademicDashboard: React.FC<AcademicDashboardProps> = ({ currentUse
                     <Filter size={13} /> Filtro:
                   </span>
                   {[
-                    { key: 'all' as const, label: `Todos (${students.length})`, short: `Todos (${students.length})` },
-                    { key: 'evaluated' as const, label: `✓ Evaluados (${students.filter(s => indicatorsMap[s.uid]?.diagnosticPercentage !== null).length})`, short: `✓ Eval (${students.filter(s => indicatorsMap[s.uid]?.diagnosticPercentage !== null).length})` },
-                    { key: 'pending' as const, label: `⏳ Pendientes (${students.filter(s => indicatorsMap[s.uid]?.diagnosticPercentage === null).length})`, short: `⏳ Pend (${students.filter(s => indicatorsMap[s.uid]?.diagnosticPercentage === null).length})` },
-                    { key: 'participants' as const, label: `🧪 Participantes (${students.filter(s => s.isResearchParticipant).length})`, short: `🧪 Part (${students.filter(s => s.isResearchParticipant).length})` }
+                    {
+                      key: 'all' as const,
+                      label: `Todos (${students.length})`,
+                      short: `Todos (${students.length})`,
+                      title: 'Mostrar todos los estudiantes registrados'
+                    },
+                    {
+                      key: 'online' as const,
+                      label: `🟢 En Línea (${onlineStudentsCount})`,
+                      short: `🟢 En Línea (${onlineStudentsCount})`,
+                      title: 'Estudiantes conectados activamente en tiempo real'
+                    },
+                    {
+                      key: 'evaluated' as const,
+                      label: `✓ Evaluados (${students.filter(s => indicatorsMap[s.uid]?.diagnosticPercentage !== null).length})`,
+                      short: `✓ Eval (${students.filter(s => indicatorsMap[s.uid]?.diagnosticPercentage !== null).length})`,
+                      title: 'Estudiantes que ya completaron su evaluación diagnóstica'
+                    },
+                    {
+                      key: 'pending' as const,
+                      label: `⏳ Sin Diagnóstico (${students.filter(s => indicatorsMap[s.uid]?.diagnosticPercentage === null).length})`,
+                      short: `⏳ Sin Diag (${students.filter(s => indicatorsMap[s.uid]?.diagnosticPercentage === null).length})`,
+                      title: 'Estudiantes que aún no han realizado la evaluación diagnóstica inicial'
+                    },
+                    {
+                      key: 'participants' as const,
+                      label: `🧪 Participantes (${students.filter(s => s.isResearchParticipant).length})`,
+                      short: `🧪 Part (${students.filter(s => s.isResearchParticipant).length})`,
+                      title: 'Estudiantes con consentimiento para el estudio de investigación'
+                    }
                   ].map(btn => (
                     <button
                       key={btn.key}
@@ -768,6 +831,7 @@ export const AcademicDashboard: React.FC<AcademicDashboardProps> = ({ currentUse
                         setStatusFilter(btn.key);
                       }}
                       className={`academic-status-btn ${statusFilter === btn.key ? 'active' : ''}`}
+                      title={btn.title}
                     >
                       <span className="tab-text-desktop">{btn.label}</span>
                       <span className="tab-text-mobile">{btn.short}</span>
@@ -856,6 +920,25 @@ export const AcademicDashboard: React.FC<AcademicDashboardProps> = ({ currentUse
                                 >
                                   {st.group || 'Grupo A'}
                                 </span>
+                                {presenceService.isUserOnline(st) && (
+                                  <span
+                                    style={{
+                                      fontSize: '0.68rem',
+                                      fontWeight: 800,
+                                      padding: '2px 6px',
+                                      borderRadius: 6,
+                                      background: '#DCFCE7',
+                                      color: '#15803D',
+                                      display: 'inline-flex',
+                                      alignItems: 'center',
+                                      gap: 4
+                                    }}
+                                    title="Usuario conectado activamente a la app"
+                                  >
+                                    <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#22C55E' }} />
+                                    En Línea
+                                  </span>
+                                )}
                               </div>
 
                               <div
@@ -893,6 +976,7 @@ export const AcademicDashboard: React.FC<AcademicDashboardProps> = ({ currentUse
                                     alignItems: 'center',
                                     gap: 3
                                   }}
+                                  title="Evaluación diagnóstica completada"
                                 >
                                   ✓ {ind.diagnosticPercentage}%
                                 </span>
@@ -907,12 +991,37 @@ export const AcademicDashboard: React.FC<AcademicDashboardProps> = ({ currentUse
                                     fontSize: '0.72rem',
                                     fontWeight: 800
                                   }}
+                                  title="Aún no ha realizado la evaluación diagnóstica"
                                 >
-                                  ⏳ Pendiente
+                                  ⏳ Sin Diagnóstico
                                 </span>
                               )}
                             </div>
                           </div>
+
+                          {/* Actividad en vivo si el usuario está en línea */}
+                          {presenceService.isUserOnline(st) && st.currentActivity?.activityText && (
+                            <div
+                              style={{
+                                margin: '4px 0 6px 0',
+                                padding: '4px 8px',
+                                borderRadius: 8,
+                                background: '#F0FDF4',
+                                border: '1px solid #BBF7D0',
+                                color: '#15803D',
+                                fontSize: '0.72rem',
+                                fontWeight: 700,
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: 6
+                              }}
+                            >
+                              <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#22C55E' }} />
+                              <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                                {st.currentActivity.activityText}
+                              </span>
+                            </div>
+                          )}
 
                           {/* Cuadrícula de 4 Métricas Reales Clave */}
                           <div className="academic-student-pill-grid">
@@ -2501,6 +2610,17 @@ export const AcademicDashboard: React.FC<AcademicDashboardProps> = ({ currentUse
           </div>
         </div>
       )}
+
+      {/* Modal de Usuarios en Línea en Tiempo Real */}
+      <LiveUsersModal
+        isOpen={showInternalLiveModal}
+        onClose={() => setShowInternalLiveModal(false)}
+        onSelectStudent={(uid) => {
+          setSelectedStudentUid(uid);
+          setShowInternalLiveModal(false);
+          setActiveTab('group');
+        }}
+      />
     </div>
   );
 };
