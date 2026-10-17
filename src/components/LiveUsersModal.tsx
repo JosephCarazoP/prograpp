@@ -16,6 +16,7 @@ import {
 } from 'lucide-react';
 import { UserProfile, UserActivityStatus } from '../types/user';
 import { presenceService } from '../services/presenceService';
+import { userService } from '../services/userService';
 import { DevAvatar } from './Avatars';
 import { soundService } from '../services/soundService';
 
@@ -35,6 +36,7 @@ export const LiveUsersModal: React.FC<LiveUsersModalProps> = ({
   const [isRefreshing, setIsRefreshing] = useState<boolean>(false);
   const [searchTerm, setSearchTerm] = useState<string>('');
   const [filterType, setFilterType] = useState<'all' | 'online' | 'lesson' | 'theory' | 'playing' | 'offline'>('online');
+  const [, setTicker] = useState<number>(0);
 
   // Suscribirse a usuarios en tiempo real
   useEffect(() => {
@@ -47,18 +49,25 @@ export const LiveUsersModal: React.FC<LiveUsersModalProps> = ({
       setIsRefreshing(false);
     });
 
+    const tickerInterval = setInterval(() => {
+      setTicker((t) => t + 1);
+    }, 5000);
+
     return () => {
       unsubscribe();
+      clearInterval(tickerInterval);
     };
   }, [isOpen]);
 
-  const handleManualRefresh = () => {
+  const handleManualRefresh = async () => {
     soundService.playToken();
     setIsRefreshing(true);
-    presenceService.subscribeToAllStudents((list) => {
+    try {
+      const list = await userService.getAllStudents();
       setStudents(list);
+    } finally {
       setIsRefreshing(false);
-    });
+    }
   };
 
   // Métricas en tiempo real
@@ -67,17 +76,22 @@ export const LiveUsersModal: React.FC<LiveUsersModalProps> = ({
   }, [students]);
 
   const lessonCount = useMemo(() => {
-    return onlineStudents.filter((s) => s.currentActivity?.status === 'lesson').length;
+    return onlineStudents.filter(
+      (s) => presenceService.getUserActivityInfo(s).status === 'lesson'
+    ).length;
   }, [onlineStudents]);
 
   const theoryCount = useMemo(() => {
-    return onlineStudents.filter((s) => s.currentActivity?.status === 'theory').length;
+    return onlineStudents.filter(
+      (s) => presenceService.getUserActivityInfo(s).status === 'theory'
+    ).length;
   }, [onlineStudents]);
 
   const playingCount = useMemo(() => {
-    return onlineStudents.filter(
-      (s) => s.currentActivity?.status === 'playing' || s.currentActivity?.status === 'boss'
-    ).length;
+    return onlineStudents.filter((s) => {
+      const st = presenceService.getUserActivityInfo(s).status;
+      return st === 'playing' || st === 'boss' || st === 'practice';
+    }).length;
   }, [onlineStudents]);
 
   // Lista filtrada
@@ -98,18 +112,18 @@ export const LiveUsersModal: React.FC<LiveUsersModalProps> = ({
       result = result.filter((s) => presenceService.isUserOnline(s));
     } else if (filterType === 'lesson') {
       result = result.filter(
-        (s) => presenceService.isUserOnline(s) && s.currentActivity?.status === 'lesson'
+        (s) => presenceService.isUserOnline(s) && presenceService.getUserActivityInfo(s).status === 'lesson'
       );
     } else if (filterType === 'theory') {
       result = result.filter(
-        (s) => presenceService.isUserOnline(s) && s.currentActivity?.status === 'theory'
+        (s) => presenceService.isUserOnline(s) && presenceService.getUserActivityInfo(s).status === 'theory'
       );
     } else if (filterType === 'playing') {
-      result = result.filter(
-        (s) =>
-          presenceService.isUserOnline(s) &&
-          (s.currentActivity?.status === 'playing' || s.currentActivity?.status === 'boss')
-      );
+      result = result.filter((s) => {
+        if (!presenceService.isUserOnline(s)) return false;
+        const st = presenceService.getUserActivityInfo(s).status;
+        return st === 'playing' || st === 'boss' || st === 'practice';
+      });
     } else if (filterType === 'offline') {
       result = result.filter((s) => !presenceService.isUserOnline(s));
     }
@@ -123,7 +137,8 @@ export const LiveUsersModal: React.FC<LiveUsersModalProps> = ({
           s.email?.toLowerCase().includes(term) ||
           s.studentCode?.toLowerCase().includes(term) ||
           s.group?.toLowerCase().includes(term) ||
-          s.currentActivity?.activityText?.toLowerCase().includes(term)
+          s.currentActivity?.activityText?.toLowerCase().includes(term) ||
+          presenceService.getUserActivityInfo(s).activityText.toLowerCase().includes(term)
       );
     }
 
@@ -389,10 +404,12 @@ export const LiveUsersModal: React.FC<LiveUsersModalProps> = ({
             <div className="live-users-cards-grid">
               {filteredList.map((st) => {
                 const isOnline = presenceService.isUserOnline(st);
-                const badge = getActivityBadge(st.currentActivity, isOnline);
-                const activityText = isOnline
-                  ? st.currentActivity?.activityText || 'En línea explorando la plataforma'
-                  : `Desconectado (${presenceService.formatTimeAgo(st.lastActiveAt)})`;
+                const info = presenceService.getUserActivityInfo(st);
+                const badge = getActivityBadge(
+                  st.currentActivity || { status: info.status, activityText: info.activityText },
+                  isOnline
+                );
+                const activityText = info.activityText;
 
                 return (
                   <div

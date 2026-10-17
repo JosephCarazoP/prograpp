@@ -68,6 +68,7 @@ export const AcademicDashboard: React.FC<AcademicDashboardProps> = ({
   // Estado de sesión docente en el panel
   const [isUnlocked, setIsUnlocked] = useState(adminSecurityService.isSessionUnlocked());
   const [showInternalLiveModal, setShowInternalLiveModal] = useState(false);
+  const [, setPresenceTicker] = useState(0);
 
   // Pestañas del Panel
   const [activeTab, setActiveTab] = useState<'group' | 'student' | 'assignDiagnostic' | 'evaluations' | 'attempts' | 'observations'>('group');
@@ -139,6 +140,37 @@ export const AcademicDashboard: React.FC<AcademicDashboardProps> = ({
     if (isUnlocked) {
       loadAllAcademicData();
     }
+  }, [isUnlocked]);
+
+  // 2b. Suscripción en tiempo real y ticker de presencia para mantener indicadores siempre frescos
+  useEffect(() => {
+    if (!isUnlocked) return;
+
+    // Ticker cada 10s para re-evaluar umbrales de tiempo activo
+    const ticker = setInterval(() => {
+      setPresenceTicker(t => t + 1);
+    }, 10000);
+
+    const unsubscribe = presenceService.subscribeToAllStudents((liveList) => {
+      setStudents(prevStudents => {
+        if (prevStudents.length === 0) return liveList;
+        return prevStudents.map(st => {
+          const liveMatch = liveList.find(l => l.uid === st.uid);
+          if (!liveMatch) return st;
+          return {
+            ...st,
+            isOnline: liveMatch.isOnline,
+            lastActiveAt: liveMatch.lastActiveAt,
+            currentActivity: liveMatch.currentActivity
+          };
+        });
+      });
+    });
+
+    return () => {
+      clearInterval(ticker);
+      unsubscribe();
+    };
   }, [isUnlocked]);
 
   const loadAllAcademicData = async () => {
@@ -1000,7 +1032,7 @@ export const AcademicDashboard: React.FC<AcademicDashboardProps> = ({
                           </div>
 
                           {/* Actividad en vivo si el usuario está en línea */}
-                          {presenceService.isUserOnline(st) && st.currentActivity?.activityText && (
+                          {presenceService.isUserOnline(st) && (
                             <div
                               style={{
                                 margin: '4px 0 6px 0',
@@ -1018,7 +1050,7 @@ export const AcademicDashboard: React.FC<AcademicDashboardProps> = ({
                             >
                               <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#22C55E' }} />
                               <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                                {st.currentActivity.activityText}
+                                {presenceService.getUserActivityInfo(st).activityText}
                               </span>
                             </div>
                           )}

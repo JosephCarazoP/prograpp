@@ -148,8 +148,8 @@ export function sanitizeUserProfile(raw: any, fallbackUid = 'guest_user_1'): Use
     isResearchParticipant: typeof raw.isResearchParticipant === 'boolean' ? raw.isResearchParticipant : false,
     hasCompletedInitialDiagnostic: typeof raw.hasCompletedInitialDiagnostic === 'boolean' ? raw.hasCompletedInitialDiagnostic : false,
     totalActiveTimeSeconds: typeof raw.totalActiveTimeSeconds === 'number' ? raw.totalActiveTimeSeconds : 0,
-    lastActiveAt: typeof raw.lastActiveAt === 'number' ? raw.lastActiveAt : Date.now(),
-    isOnline: typeof raw.isOnline === 'boolean' ? raw.isOnline : false,
+    lastActiveAt: typeof raw.lastActiveAt === 'number' ? raw.lastActiveAt : (typeof raw.createdAt === 'number' ? raw.createdAt : 0),
+    isOnline: typeof raw.isOnline === 'boolean' ? raw.isOnline : undefined,
     currentActivity: raw.currentActivity && typeof raw.currentActivity === 'object' ? raw.currentActivity : undefined
   };
 }
@@ -405,7 +405,8 @@ export const userService = {
     const updated: UserProfile = {
       ...profile,
       totalActiveTimeSeconds: (profile.totalActiveTimeSeconds || 0) + seconds,
-      lastActiveAt: Date.now()
+      lastActiveAt: Date.now(),
+      isOnline: true
     };
     await this.updateProfile(updated);
   }
