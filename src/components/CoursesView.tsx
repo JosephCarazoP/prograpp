@@ -144,24 +144,6 @@ export const CoursesView: React.FC<CoursesViewProps> = ({
                 Domina la teoría curricular paso a paso con código conceptual antes de ponerla a prueba en los retos.
               </p>
             </div>
-
-            {/* Icono 3D de estudio */}
-            <div
-              style={{
-                width: '52px',
-                height: '52px',
-                borderRadius: '16px',
-                background: '#FFFFFF',
-                boxShadow: '0 4px 0 rgba(0,0,0,0.15)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                color: pathThemeColor,
-                flexShrink: 0
-              }}
-            >
-              <BookOpen size={26} strokeWidth={2.4} />
-            </div>
           </div>
 
           {/* Mini Barra de Progreso de la Unidad */}

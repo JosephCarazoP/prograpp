@@ -272,6 +272,8 @@ export const ByteFullBody3D: React.FC<ByteFullBody3DProps> = ({
       style={{
         width: size,
         height: size * 1.32,
+        maxHeight: '100%',
+        maxWidth: '100%',
         display: 'inline-flex',
         flexDirection: 'column',
         alignItems: 'center',

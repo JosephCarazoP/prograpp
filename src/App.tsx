@@ -828,6 +828,11 @@ export default function App() {
         <Navbar
           user={user}
           isAdmin={authService.isCurrentUserAdmin()}
+          onLogoClick={() => {
+            setView('path');
+            setMainTab('play');
+            setActiveTheory(null);
+          }}
           onPathToggle={() => {
             soundService.playToken();
             const nextPath: PathType = user.currentPath === 'kotlin' ? 'sql' : 'kotlin';

@@ -414,8 +414,72 @@ button, a, input, select, .path-node, .token-chip, .pair-card {
 .nav-left {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 12px;
   flex-shrink: 0;
+}
+
+/* ═══ LOGO 3D DE BYTE EN NAVBAR Y CABECERAS ═══ */
+.nav-brand-logo {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  user-select: none;
+  transition: transform 0.15s cubic-bezier(0.34, 1.56, 0.64, 1);
+  flex-shrink: 0;
+}
+
+.nav-brand-logo:hover {
+  transform: translateY(-2px) scale(1.03);
+}
+
+.nav-brand-logo:active {
+  transform: translateY(2px) scale(0.97);
+}
+
+.auth-brand-header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 16px;
+  padding-bottom: 4px;
+}
+
+/* Animaciones vectoriales Duolingo 3D para el Logo de Byte */
+.byte-logo-animated .bracket-left-3d {
+  animation: byteBracketFloatLeft 3.2s ease-in-out infinite alternate;
+}
+
+.byte-logo-animated .bracket-right-3d {
+  animation: byteBracketFloatRight 3.2s ease-in-out infinite alternate;
+}
+
+.byte-logo-animated .achievement-sparkle-3d {
+  animation: byteSparklePulse 2.6s ease-in-out infinite alternate;
+}
+
+@keyframes byteBracketFloatLeft {
+  0% { transform: translate(18px, 92px); }
+  50% { transform: translate(16px, 90px); }
+  100% { transform: translate(18px, 94px); }
+}
+
+@keyframes byteBracketFloatRight {
+  0% { transform: translate(164px, 92px); }
+  50% { transform: translate(166px, 90px); }
+  100% { transform: translate(164px, 94px); }
+}
+
+@keyframes byteSparklePulse {
+  0% { transform: translate(154px, 30px) scale(1); opacity: 0.9; }
+  50% { transform: translate(154px, 28px) scale(1.15) rotate(10deg); opacity: 1; }
+  100% { transform: translate(154px, 30px) scale(0.95); opacity: 0.85; }
+}
+
+/* Responsive: En pantallas muy pequeñas, ocultar el texto de PrograApp y dejar el ícono 3D compacto */
+@media (max-width: 580px) {
+  .nav-brand-logo .byte-app-logo-wrapper > div:last-child {
+    display: none;
+  }
 }
 
 .course-switcher-btn {
@@ -4953,15 +5017,20 @@ button, a, input, select, .path-node, .token-chip, .pair-card {
 }
 
 @media (max-width: 768px) {
+  .locker-modal-backdrop {
+    padding: 8px;
+  }
+
   .locker-modal-card {
-    width: 95vw;
+    width: 100%;
     max-width: 430px;
-    height: min(93vh, 640px);
-    max-height: 93vh;
+    height: calc(100dvh - 20px);
+    max-height: 670px;
     padding: 10px 12px;
     border-radius: 20px;
     border-width: 2.5px;
     border-bottom-width: 5px;
+    overflow: hidden;
   }
 }
 
@@ -5090,6 +5159,7 @@ button, a, input, select, .path-node, .token-chip, .pair-card {
 .locker-main-grid {
   flex: 1;
   min-height: 0;
+  min-width: 0;
   display: grid;
   grid-template-columns: 320px 1fr;
   gap: 16px;
@@ -5102,6 +5172,8 @@ button, a, input, select, .path-node, .token-chip, .pair-card {
     flex-direction: column;
     gap: 8px;
     overflow: hidden;
+    min-height: 0;
+    min-width: 0;
   }
 }
 
@@ -5145,29 +5217,51 @@ button, a, input, select, .path-node, .token-chip, .pair-card {
   pointer-events: none;
 }
 
+/* Badge de giro 360° en la esquina superior izquierda (NUNCA tapa la cabeza de Byte) */
 .locker-turntable-badge {
   position: absolute;
-  top: 8px;
+  top: 10px;
+  left: 12px;
   z-index: 5;
   display: inline-flex;
   align-items: center;
   gap: 5px;
-  background: rgba(255, 255, 255, 0.9);
-  backdrop-filter: blur(4px);
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(6px);
   border: 1.5px solid #CBD5E1;
   box-shadow: 0 2px 0 #94A3B8;
-  padding: 2.5px 9px;
+  padding: 3px 9px;
   border-radius: 999px;
   font-size: 0.68rem;
   font-weight: 800;
-  color: #475569;
+  color: #334155;
+  pointer-events: none;
+  user-select: none;
+}
+
+/* Hint indicador 360° en la esquina superior derecha */
+.locker-360-hint {
+  position: absolute;
+  top: 10px;
+  right: 12px;
+  z-index: 5;
+  display: inline-flex;
+  align-items: center;
+  background: #E0F2FE;
+  border: 1.5px solid #BAE6FD;
+  box-shadow: 0 2px 0 #7DD3FC;
+  padding: 2.5px 8px;
+  border-radius: 999px;
+  font-size: 0.64rem;
+  font-weight: 900;
+  color: #0284C7;
   pointer-events: none;
   user-select: none;
 }
 
 .locker-avatar-viewport {
   width: 100%;
-  height: 215px;
+  height: 200px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -5184,7 +5278,8 @@ button, a, input, select, .path-node, .token-chip, .pair-card {
 
 @media (max-width: 768px) {
   .locker-avatar-viewport {
-    height: 135px;
+    height: 125px;
+    min-height: 125px;
   }
 }
 
@@ -5195,13 +5290,14 @@ button, a, input, select, .path-node, .token-chip, .pair-card {
   flex-direction: column;
   align-items: center;
   gap: 5px;
-  margin: 2px 0 6px 0;
+  margin: 2px 0 5px 0;
 }
 
 @media (max-width: 768px) {
   .locker-stage-controls {
-    flex-direction: row;
-    justify-content: space-between;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
     margin: 2px 0 4px 0;
   }
 }
@@ -5210,6 +5306,8 @@ button, a, input, select, .path-node, .token-chip, .pair-card {
   display: flex;
   align-items: center;
   gap: 5px;
+  flex-wrap: nowrap;
+  justify-content: center;
 }
 
 .locker-icon-control-btn {
@@ -5262,7 +5360,7 @@ button, a, input, select, .path-node, .token-chip, .pair-card {
 .locker-poses-row {
   display: flex;
   gap: 4px;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   justify-content: center;
 }
 
@@ -5283,6 +5381,23 @@ button, a, input, select, .path-node, .token-chip, .pair-card {
   border-color: #0284C7;
   box-shadow: 0 2px 0 #0369A1;
   color: #FFFFFF;
+}
+
+@media (max-width: 768px) {
+  .locker-icon-control-btn {
+    padding: 2.5px 7px;
+    font-size: 0.7rem;
+    border-radius: 8px;
+  }
+  .locker-angle-btn {
+    padding: 2.5px 8px;
+    font-size: 0.68rem;
+    border-radius: 8px;
+  }
+  .locker-pose-chip {
+    padding: 2px 7px;
+    font-size: 0.64rem;
+  }
 }
 
 /* Caja de acción de skin seleccionada (RÍGIDA, TAMAÑO FIJO) */
@@ -5428,6 +5543,8 @@ button, a, input, select, .path-node, .token-chip, .pair-card {
   flex-direction: column;
   gap: 8px;
   overflow: hidden;
+  min-width: 0;
+  min-height: 0;
 }
 
 .locker-catalog-header {
@@ -5457,19 +5574,48 @@ button, a, input, select, .path-node, .token-chip, .pair-card {
 .locker-skins-grid {
   flex: 1;
   min-height: 0;
+  min-width: 0;
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(115px, 1fr));
   gap: 10px;
   overflow-y: auto;
+  overflow-x: hidden;
   padding-right: 4px;
   padding-bottom: 6px;
+  scrollbar-width: thin;
+  scrollbar-color: #CBD5E1 transparent;
+}
+
+.locker-skins-grid::-webkit-scrollbar {
+  width: 5px;
+}
+.locker-skins-grid::-webkit-scrollbar-track {
+  background: transparent;
+}
+.locker-skins-grid::-webkit-scrollbar-thumb {
+  background: #CBD5E1;
+  border-radius: 999px;
+}
+.locker-skins-grid::-webkit-scrollbar-thumb:hover {
+  background: #94A3B8;
 }
 
 @media (max-width: 768px) {
+  .locker-catalog-panel {
+    gap: 5px;
+  }
+  .locker-catalog-title {
+    font-size: 0.92rem;
+  }
+  .locker-catalog-counter {
+    font-size: 0.68rem;
+    padding: 2px 7px;
+  }
   .locker-skins-grid {
     grid-template-columns: repeat(3, 1fr);
     gap: 6px;
     padding-right: 2px;
+    padding-bottom: 6px;
   }
 }
 
@@ -5486,6 +5632,15 @@ button, a, input, select, .path-node, .token-chip, .pair-card {
   position: relative;
   transition: transform 0.08s ease, border-color 0.12s ease, box-shadow 0.12s ease, background 0.12s ease;
   box-sizing: border-box;
+}
+
+@media (max-width: 768px) {
+  .locker-skin-card {
+    padding: 4px 3px;
+    border-radius: 11px;
+    border-width: 1.5px;
+    border-bottom-width: 3px;
+  }
 }
 
 .locker-skin-card:hover {
@@ -5561,7 +5716,16 @@ button, a, input, select, .path-node, .token-chip, .pair-card {
 
 @media (max-width: 768px) {
   .locker-card-avatar-preview {
-    height: 60px;
+    height: 48px;
+  }
+  .locker-card-rarity {
+    font-size: 0.52rem;
+    padding: 1px 3px;
+    border-radius: 4px;
+  }
+  .locker-card-lock-badge {
+    font-size: 0.56rem;
+    padding: 1px 3px;
   }
 }
 

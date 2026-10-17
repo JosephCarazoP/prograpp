@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 540 160" width="540" height="160" fill="none">
+  <!-- Ícono Oficial 3D de Byte proporcionado por el usuario -->
+  <image href="/byte-app-icon.png" x="10" y="8" width="144" height="144" preserveAspectRatio="xMidYMid meet" />
+
+  <!-- Wordmark 3D "PrograApp" -->
+  <g transform="translate(170, 95)" font-family="'Nunito', 'Outfit', sans-serif" font-weight="900">
+    <!-- Sombra 3D de "Progra" -->
+    <text x="0" y="4" font-size="64" fill="#CBD5E1" letter-spacing="-1">Progra</text>
+    <!-- Frente de "Progra" -->
+    <text x="0" y="0" font-size="64" fill="#0F172A" letter-spacing="-1">Progra</text>
+
+    <!-- Sombra 3D de "App" -->
+    <text x="212" y="4" font-size="64" fill="#15803D" letter-spacing="-1">App</text>
+    <!-- Frente de "App" en Verde Duolingo -->
+    <text x="212" y="0" font-size="64" fill="#22C55E" letter-spacing="-1">App</text>
+
+    <!-- Destello estrella en la cresta de la "A" -->
+    <circle cx="216" cy="-48" r="4" fill="#F59E0B" />
+    <circle cx="216" cy="-48" r="2" fill="#FEF08A" />
+
+    <!-- Tagline / Eslogan 3D -->
+    <g transform="translate(4, 26)">
+      <rect x="0" y="0" width="220" height="24" rx="8" fill="#F0F9FF" stroke="#BAE6FD" stroke-width="1.5" />
+      <text x="12" y="16" font-size="12" font-weight="900" fill="#0284C7" letter-spacing="1">CONECTA CON EL CÓDIGO</text>
+    </g>
+  </g>
+</svg>

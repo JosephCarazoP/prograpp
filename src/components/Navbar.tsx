@@ -26,6 +26,7 @@ interface NavbarProps {
   onOpenAcademic?: () => void;
   onOpenLocker?: () => void;
   onSignOut?: () => void;
+  onLogoClick?: () => void;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
@@ -37,7 +38,8 @@ export const Navbar: React.FC<NavbarProps> = ({
   onOpenStreak,
   onOpenAcademic,
   onOpenLocker,
-  onSignOut
+  onSignOut,
+  onLogoClick: _onLogoClick
 }) => {
   const [isMuted, setIsMuted] = useState(soundService.getMuted());
 
@@ -50,8 +52,9 @@ export const Navbar: React.FC<NavbarProps> = ({
 
   return (
     <header className="top-nav" role="banner">
-      {/* Lado Izquierdo: Selector de Ruta / Curso estilo Duolingo */}
+      {/* Lado Izquierdo: Selector de Ruta */}
       <div className="nav-left">
+
         <button
           className="course-switcher-btn"
           onClick={() => {

@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   X,
   Lock,
@@ -44,6 +44,17 @@ export const ByteLockerModal: React.FC<ByteLockerModalProps> = ({
   const [rotationAngle, setRotationAngle] = useState<number>(0);
   const [isDragging, setIsDragging] = useState<boolean>(false);
   const [unlockMessage, setUnlockMessage] = useState<string | null>(null);
+  const [isMobile, setIsMobile] = useState<boolean>(() =>
+    typeof window !== 'undefined' ? window.innerWidth <= 768 : false
+  );
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   const dragStartRef = useRef<{ startX: number; startAngle: number } | null>(null);
 
@@ -223,10 +234,14 @@ export const ByteLockerModal: React.FC<ByteLockerModalProps> = ({
           <div className="locker-stage-panel">
             <div className="locker-stage-glow"></div>
 
-            {/* Indicador de giro 360° */}
+            {/* Indicador de giro 360° en la esquina superior (completamente libre de la cabeza del avatar) */}
             <div className="locker-turntable-badge">
-              <MoveHorizontal size={13} />
+              <MoveHorizontal size={12} />
               <span>{isDragging ? 'Girando...' : getViewAngleLabel()}</span>
+            </div>
+
+            <div className="locker-360-hint">
+              <span>360° Giro</span>
             </div>
 
             {/* Viewport Interactivo con Drag & Touch */}
@@ -242,7 +257,7 @@ export const ByteLockerModal: React.FC<ByteLockerModalProps> = ({
                 skinId={previewSkinId}
                 pose={currentPose}
                 rotation={rotationAngle}
-                size={195}
+                size={isMobile ? 105 : 145}
                 showPedestal={true}
                 isDragging={isDragging}
               />
@@ -423,7 +438,7 @@ export const ByteLockerModal: React.FC<ByteLockerModalProps> = ({
                       <ByteFullBody3D
                         skinId={skin.id}
                         pose="idle"
-                        size={64}
+                        size={isMobile ? 44 : 54}
                         showPedestal={false}
                       />
                     </div>
