@@ -15,11 +15,14 @@ import {
   X,
   Zap,
   ShoppingBag,
-  Heart
+  Award,
+  Sparkles,
+  Star
 } from 'lucide-react';
 import { UserProfile } from '../types/user';
 import { soundService } from '../services/soundService';
 import { DevAvatar } from './Avatars';
+import { getRankByUser } from '../types/skins';
 
 interface NavbarProps {
   user: UserProfile;
@@ -61,6 +64,8 @@ export const Navbar: React.FC<NavbarProps> = ({
   const isTeacherAdmin = Boolean(
     isAdmin || (user?.email && user.email.toLowerCase() === 'josephcarazo56@gmail.com')
   );
+
+  const currentRank = getRankByUser(user?.totalXp || 0, 0);
 
   const handleSoundToggle = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -194,7 +199,11 @@ export const Navbar: React.FC<NavbarProps> = ({
               type="button"
               aria-label="Abrir Mi Perfil"
             >
-              <DevAvatar avatarId={user?.avatarId || 'robot_byte'} size={32} />
+              <DevAvatar
+                avatarId={user?.avatarId || 'robot_byte'}
+                skinId={user?.equippedSkin}
+                size={32}
+              />
             </button>
 
             {/* Docente: Seguimiento */}
@@ -264,7 +273,7 @@ export const Navbar: React.FC<NavbarProps> = ({
         </div>
       </header>
 
-      {/* DRAWER MÓVIL HAMBURGUESA (HB-NAV) */}
+      {/* DRAWER MÓVIL HAMBURGUESA (HB-NAV 100% DUOLINGO 3D) */}
       {isDrawerOpen && (
         <div
           className="hb-drawer-backdrop"
@@ -276,245 +285,323 @@ export const Navbar: React.FC<NavbarProps> = ({
             className="hb-drawer-content"
             onClick={(e) => e.stopPropagation()}
           >
-            {/* ═══ CABECERA DUOLINGO 3D ═══ */}
-            <div className="hb-drawer-header">
-              <div style={{ display: 'flex', alignItems: 'center', gap: 12, minWidth: 0 }}>
-                <div className="duo-hb-avatar-ring">
-                  <DevAvatar avatarId={user?.avatarId || 'robot_byte'} size={46} />
-                </div>
-                <div style={{ minWidth: 0, flex: 1 }}>
-                  <div className="duo-hb-user-name">
-                    {user?.displayName || 'Desarrollador'}
-                  </div>
-                  <div className="duo-hb-user-sub">
-                    <span className="duo-hb-code-tag">[{user?.studentCode || 'E01'}]</span>
-                    <span>•</span>
-                    <span>{user?.group || 'Grupo A'}</span>
-                  </div>
-                </div>
+            {/* ═══ CABECERA SUPERIOR DUOLINGO 3D ═══ */}
+            <div className="duo-hb-top-bar">
+              <div className="duo-hb-top-badge">
+                <Sparkles size={14} color="#FF9600" />
+                <span>CENTRO DE CONTROL</span>
               </div>
-
               <button
                 type="button"
-                className="duo-3d-close-btn"
+                className="duo-hb-close-btn"
                 onClick={() => {
                   soundService.playToken();
                   setIsDrawerOpen(false);
                 }}
                 aria-label="Cerrar Menú"
               >
-                <X size={18} strokeWidth={2.8} />
+                <X size={18} strokeWidth={3} />
               </button>
             </div>
 
-            {/* ═══ BARRA DE RECURSOS DUOLINGO 3D ═══ */}
-            <div className="hb-drawer-stats">
-              <div className="hb-stat-box streak">
-                <Flame size={18} color="#FF9600" fill="#FF9600" strokeWidth={2.5} />
-                <span className="hb-stat-val">{user?.streak?.count ?? 0}</span>
-                <span className="hb-stat-lbl">RACHA</span>
+            {/* ═══ TARJETA HERO DEL ESTUDIANTE DUOLINGO 3D ═══ */}
+            <div className="duo-hb-player-card">
+              <div
+                className="duo-hb-player-rank-chip"
+                style={{
+                  color: currentRank.color,
+                  borderColor: currentRank.color
+                }}
+              >
+                <Award size={13} strokeWidth={2.8} />
+                <span>RANGO {currentRank.name.toUpperCase()}</span>
               </div>
-              <div className="hb-stat-box bytes">
-                <Zap size={18} color="#1CB0F6" fill="#1CB0F6" strokeWidth={2.5} />
-                <span className="hb-stat-val">{user?.bytes ?? 0}</span>
-                <span className="hb-stat-lbl">BYTES</span>
-              </div>
-              <div className="hb-stat-box hearts">
-                <Heart size={18} color="#FF4B4B" fill="#FF4B4B" strokeWidth={2.5} />
-                <span className="hb-stat-val">{user?.batteries ?? 5}/5</span>
-                <span className="hb-stat-lbl">VIDAS</span>
+
+              <div className="duo-hb-player-body">
+                <div className="duo-hb-avatar-podium">
+                  <DevAvatar
+                    avatarId={user?.avatarId || 'robot_byte'}
+                    skinId={user?.equippedSkin}
+                    size={52}
+                  />
+                  <div className="duo-hb-avatar-pedestal" />
+                </div>
+
+                <div className="duo-hb-player-info">
+                  <div className="duo-hb-speech-bubble">
+                    ¡A programar hoy! 🚀
+                  </div>
+                  <div className="duo-hb-player-name">{user?.displayName || 'Desarrollador'}</div>
+                  <div className="duo-hb-player-meta">
+                    <span className="duo-hb-code-tag">[{user?.studentCode || 'E01'}]</span>
+                    <span>•</span>
+                    <span className="duo-hb-group-tag">{user?.group || 'Grupo A'}</span>
+                  </div>
+                </div>
               </div>
             </div>
 
-            {/* ═══ LISTA DE ACCIONES DUOLINGO 3D ═══ */}
-            <div className="hb-drawer-menu">
-              {/* Cambiar Ruta */}
-              <button
-                type="button"
-                className="hb-menu-item"
-                onClick={() => {
-                  soundService.playToken();
-                  setIsDrawerOpen(false);
-                  onPathToggle();
-                }}
-              >
-                <div className="hb-menu-icon" style={{ background: user.currentPath === 'kotlin' ? '#CE82FF' : '#1CB0F6', color: '#FFFFFF', boxShadow: user.currentPath === 'kotlin' ? '0 3.5px 0 #A559D9' : '0 3.5px 0 #1899D6' }}>
-                  {user.currentPath === 'kotlin' ? <Code2 size={20} strokeWidth={2.6} /> : <Database size={20} strokeWidth={2.6} />}
+            {/* ═══ TIRA DE RECURSOS TÁCTIL 3D (ZERO VIDAS) ═══ */}
+            <div className="duo-hb-stats-strip">
+              <div className="duo-hb-stat-box streak">
+                <div className="duo-hb-stat-icon-wrap" style={{ background: '#FF9600' }}>
+                  <Flame size={16} color="#FFFFFF" fill="#FFFFFF" />
                 </div>
-                <div className="hb-menu-text">
-                  <div className="hb-menu-title">CAMBIAR A {user.currentPath === 'kotlin' ? 'SQL' : 'KOTLIN'}</div>
-                  <div className="hb-menu-desc">Ruta activa: {user.currentPath === 'kotlin' ? 'Kotlin' : 'SQL'}</div>
+                <div className="duo-hb-stat-data">
+                  <span className="duo-hb-stat-val">{user?.streak?.count ?? 0}</span>
+                  <span className="duo-hb-stat-lbl">RACHA</span>
                 </div>
-              </button>
+              </div>
 
-              {/* Mi Perfil */}
-              <button
-                type="button"
-                className="hb-menu-item"
-                onClick={() => {
-                  soundService.playToken();
-                  setIsDrawerOpen(false);
-                  onOpenProfile();
-                }}
-              >
-                <div className="hb-menu-icon" style={{ background: '#58CC02', color: '#FFFFFF', boxShadow: '0 3.5px 0 #46A302' }}>
-                  <DevAvatar avatarId={user?.avatarId || 'robot_byte'} size={24} />
+              <div className="duo-hb-stat-box bytes">
+                <div className="duo-hb-stat-icon-wrap" style={{ background: '#1CB0F6' }}>
+                  <Zap size={16} color="#FFFFFF" fill="#FFFFFF" />
                 </div>
-                <div className="hb-menu-text">
-                  <div className="hb-menu-title">MI PERFIL</div>
-                  <div className="hb-menu-desc">Estadísticas, medallas y cuenta</div>
+                <div className="duo-hb-stat-data">
+                  <span className="duo-hb-stat-val">{(user?.bytes ?? 0).toLocaleString()}</span>
+                  <span className="duo-hb-stat-lbl">BYTES</span>
                 </div>
-              </button>
+              </div>
 
-              {/* Tienda de Byte y Vestidor 3D */}
-              {onOpenLocker && (
+              <div className="duo-hb-stat-box xp">
+                <div className="duo-hb-stat-icon-wrap" style={{ background: '#FFC800' }}>
+                  <Star size={16} color="#FFFFFF" fill="#FFFFFF" />
+                </div>
+                <div className="duo-hb-stat-data">
+                  <span className="duo-hb-stat-val">{(user?.totalXp ?? 0).toLocaleString()}</span>
+                  <span className="duo-hb-stat-lbl">XP TOTAL</span>
+                </div>
+              </div>
+            </div>
+
+            {/* ═══ LISTA DE ACCIONES AGRUPADAS DUOLINGO 3D ═══ */}
+            <div className="duo-hb-scroll-area">
+              {/* GRUPO 1: RUTA Y APRENDIZAJE */}
+              <div className="duo-hb-group-section">
+                <div className="duo-hb-section-title">⚡ APRENDIZAJE ACTIVO</div>
                 <button
                   type="button"
-                  className="hb-menu-item"
+                  className="duo-hb-card-btn course"
                   onClick={() => {
                     soundService.playToken();
                     setIsDrawerOpen(false);
-                    onOpenLocker();
+                    onPathToggle();
                   }}
                 >
-                  <div className="hb-menu-icon" style={{ background: '#1CB0F6', color: '#FFFFFF', boxShadow: '0 3.5px 0 #1899D6' }}>
-                    <ShoppingBag size={20} strokeWidth={2.6} />
+                  <div
+                    className="duo-hb-card-icon"
+                    style={{
+                      background: user.currentPath === 'kotlin' ? '#CE82FF' : '#1CB0F6',
+                      borderColor: user.currentPath === 'kotlin' ? '#A559D9' : '#1899D6'
+                    }}
+                  >
+                    {user.currentPath === 'kotlin' ? <Code2 size={22} color="#FFF" strokeWidth={2.8} /> : <Database size={22} color="#FFF" strokeWidth={2.8} />}
                   </div>
-                  <div className="hb-menu-text">
-                    <div className="hb-menu-title" style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                      <span>TIENDA DE BYTE</span>
-                      <span className="hb-menu-badge" style={{ background: '#FEF9C3', color: '#854D0E', border: '1px solid #FDE047' }}>3D</span>
+                  <div className="duo-hb-card-text">
+                    <div className="duo-hb-card-heading">
+                      RUTA {user.currentPath === 'kotlin' ? 'KOTLIN' : 'SQL'}
                     </div>
-                    <div className="hb-menu-desc">Skins de Byte, vidas y potenciadores</div>
+                    <div className="duo-hb-card-caption">
+                      Toca para cambiar a {user.currentPath === 'kotlin' ? 'SQL' : 'Kotlin'}
+                    </div>
                   </div>
+                  <span className="duo-hb-pill-btn">CAMBIAR</span>
                 </button>
-              )}
+              </div>
 
-              {/* Misiones Diarias */}
-              <button
-                type="button"
-                className="hb-menu-item"
-                onClick={() => {
-                  soundService.playToken();
-                  setIsDrawerOpen(false);
-                  onOpenQuests();
-                }}
-              >
-                <div className="hb-menu-icon" style={{ background: '#FFC800', color: '#FFFFFF', boxShadow: '0 3.5px 0 #E5A500' }}>
-                  <Target size={20} strokeWidth={2.8} />
-                </div>
-                <div className="hb-menu-text">
-                  <div className="hb-menu-title">MISIONES DIARIAS</div>
-                  <div className="hb-menu-desc">Retos del día y recompensas XP</div>
-                </div>
-              </button>
+              {/* GRUPO 2: AVENTURA & TIENDA */}
+              <div className="duo-hb-group-section">
+                <div className="duo-hb-section-title">🎒 AVENTURA & OBJETIVOS</div>
 
-              {/* Notificaciones y Avisos */}
-              {onOpenNotifications && (
+                {onOpenLocker && (
+                  <button
+                    type="button"
+                    className="duo-hb-card-btn store"
+                    onClick={() => {
+                      soundService.playToken();
+                      setIsDrawerOpen(false);
+                      onOpenLocker();
+                    }}
+                  >
+                    <div className="duo-hb-card-icon" style={{ background: '#1CB0F6', borderColor: '#1899D6' }}>
+                      <ShoppingBag size={22} color="#FFF" strokeWidth={2.6} />
+                    </div>
+                    <div className="duo-hb-card-text">
+                      <div className="duo-hb-card-heading">TIENDA Y VESTIDOR</div>
+                      <div className="duo-hb-card-caption">Skins para todos los avatares y poderes</div>
+                    </div>
+                    <span className="duo-hb-pill-badge blue">3D</span>
+                  </button>
+                )}
+
                 <button
                   type="button"
-                  className="hb-menu-item"
+                  className="duo-hb-card-btn quest"
                   onClick={() => {
                     soundService.playToken();
                     setIsDrawerOpen(false);
-                    onOpenNotifications();
+                    onOpenQuests();
                   }}
                 >
-                  <div className="hb-menu-icon" style={{ background: '#FF9600', color: '#FFFFFF', boxShadow: '0 3.5px 0 #CC7A00' }}>
-                    <Bell size={20} strokeWidth={2.6} />
+                  <div className="duo-hb-card-icon" style={{ background: '#FFC800', borderColor: '#E5A500' }}>
+                    <Target size={22} color="#FFF" strokeWidth={2.8} />
                   </div>
-                  <div className="hb-menu-text">
-                    <div className="hb-menu-title" style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                      <span>NOTIFICACIONES</span>
-                      {(unreadNotificationsCount ?? 0) > 0 && (
-                        <span className="hb-menu-badge red">{unreadNotificationsCount} NUEVAS</span>
+                  <div className="duo-hb-card-text">
+                    <div className="duo-hb-card-heading">MISIONES DIARIAS</div>
+                    <div className="duo-hb-card-caption">Retos del día y recompensas XP</div>
+                  </div>
+                  <span className="duo-hb-pill-badge yellow">HOY</span>
+                </button>
+
+                {onOpenNotifications && (
+                  <button
+                    type="button"
+                    className="duo-hb-card-btn notif"
+                    onClick={() => {
+                      soundService.playToken();
+                      setIsDrawerOpen(false);
+                      onOpenNotifications();
+                    }}
+                  >
+                    <div className="duo-hb-card-icon" style={{ background: '#FF9600', borderColor: '#CC7A00' }}>
+                      <Bell size={22} color="#FFF" strokeWidth={2.6} />
+                    </div>
+                    <div className="duo-hb-card-text">
+                      <div className="duo-hb-card-heading">NOTIFICACIONES</div>
+                      <div className="duo-hb-card-caption">Avisos del profesor y plataforma</div>
+                    </div>
+                    {(unreadNotificationsCount ?? 0) > 0 ? (
+                      <span className="duo-hb-pill-badge red">{unreadNotificationsCount} NUEVAS</span>
+                    ) : (
+                      <span className="duo-hb-pill-badge gray">AL DÍA</span>
+                    )}
+                  </button>
+                )}
+              </div>
+
+              {/* GRUPO 3: PREFERENCIAS & CUENTA */}
+              <div className="duo-hb-group-section">
+                <div className="duo-hb-section-title">⚙️ CUENTA & AJUSTES</div>
+
+                <button
+                  type="button"
+                  className="duo-hb-card-btn profile"
+                  onClick={() => {
+                    soundService.playToken();
+                    setIsDrawerOpen(false);
+                    onOpenProfile();
+                  }}
+                >
+                  <div className="duo-hb-card-icon" style={{ background: '#58CC02', borderColor: '#46A302' }}>
+                    <DevAvatar
+                      avatarId={user?.avatarId || 'robot_byte'}
+                      skinId={user?.equippedSkin}
+                      size={26}
+                    />
+                  </div>
+                  <div className="duo-hb-card-text">
+                    <div className="duo-hb-card-heading">MI PERFIL</div>
+                    <div className="duo-hb-card-caption">Estadísticas, medallas y avatar</div>
+                  </div>
+                  <span className="duo-hb-pill-badge green">VER</span>
+                </button>
+
+                <button
+                  type="button"
+                  className="duo-hb-card-btn sound"
+                  onClick={(e) => handleSoundToggle(e)}
+                >
+                  <div
+                    className="duo-hb-card-icon"
+                    style={{
+                      background: isMuted ? '#E2E8F0' : '#22C55E',
+                      borderColor: isMuted ? '#CBD5E1' : '#16A34A'
+                    }}
+                  >
+                    {isMuted ? <VolumeX size={22} color="#64748B" strokeWidth={2.6} /> : <Volume2 size={22} color="#FFF" strokeWidth={2.6} />}
+                  </div>
+                  <div className="duo-hb-card-text">
+                    <div className="duo-hb-card-heading">SONIDO Y EFECTOS</div>
+                    <div className="duo-hb-card-caption">
+                      {isMuted ? 'Silenciado (Toca para activar)' : 'Efectos de audio activos'}
+                    </div>
+                  </div>
+                  <span className={`duo-hb-pill-badge ${isMuted ? 'gray' : 'green'}`}>
+                    {isMuted ? 'MUTE' : 'ON'}
+                  </span>
+                </button>
+              </div>
+
+              {/* GRUPO 4: DOCENTE / ADMINISTRADOR */}
+              {isTeacherAdmin && (
+                <div className="duo-hb-group-section">
+                  <div className="duo-hb-section-title">🛡️ PANEL DOCENTE</div>
+
+                  {onOpenAcademic && (
+                    <button
+                      type="button"
+                      className="duo-hb-card-btn admin"
+                      onClick={() => {
+                        soundService.playToken();
+                        setIsDrawerOpen(false);
+                        onOpenAcademic();
+                      }}
+                    >
+                      <div className="duo-hb-card-icon" style={{ background: '#FF9600', borderColor: '#CC7A00' }}>
+                        <ShieldCheck size={22} color="#FFF" strokeWidth={2.6} />
+                      </div>
+                      <div className="duo-hb-card-text">
+                        <div className="duo-hb-card-heading">SEGUIMIENTO DOCENTE</div>
+                        <div className="duo-hb-card-caption">Analíticas de progreso y estudiantes</div>
+                      </div>
+                      <span className="duo-hb-pill-badge orange">ADMIN</span>
+                    </button>
+                  )}
+
+                  {onOpenLiveUsers && (
+                    <button
+                      type="button"
+                      className="duo-hb-card-btn admin"
+                      onClick={() => {
+                        soundService.playToken();
+                        setIsDrawerOpen(false);
+                        onOpenLiveUsers();
+                      }}
+                    >
+                      <div className="duo-hb-card-icon" style={{ background: '#58CC02', borderColor: '#46A302' }}>
+                        <Users size={22} color="#FFF" strokeWidth={2.6} />
+                      </div>
+                      <div className="duo-hb-card-text">
+                        <div className="duo-hb-card-heading">ALUMNOS EN LÍNEA</div>
+                        <div className="duo-hb-card-caption">
+                          {onlineUsersCount > 0 ? `${onlineUsersCount} estudiantes conectados` : 'Sin alumnos activos ahora'}
+                        </div>
+                      </div>
+                      {onlineUsersCount > 0 ? (
+                        <span className="duo-hb-pill-badge green">{onlineUsersCount} ACTIVOS</span>
+                      ) : (
+                        <span className="duo-hb-pill-badge gray">0 EN LÍNEA</span>
                       )}
-                    </div>
-                    <div className="hb-menu-desc">Comunicados del docente y retos</div>
-                  </div>
-                </button>
-              )}
-
-              {/* Efectos de Sonido */}
-              <button
-                type="button"
-                className="hb-menu-item"
-                onClick={(e) => {
-                  handleSoundToggle(e);
-                }}
-              >
-                <div className="hb-menu-icon" style={{ background: isMuted ? '#E5E5E5' : '#22C55E', color: isMuted ? '#777777' : '#FFFFFF', boxShadow: isMuted ? '0 3.5px 0 #CECECE' : '0 3.5px 0 #16A34A' }}>
-                  {isMuted ? <VolumeX size={20} strokeWidth={2.6} /> : <Volume2 size={20} strokeWidth={2.6} />}
+                    </button>
+                  )}
                 </div>
-                <div className="hb-menu-text">
-                  <div className="hb-menu-title">EFECTOS DE SONIDO</div>
-                  <div className="hb-menu-desc">{isMuted ? 'Silenciado (Toca para activar)' : 'Activado (Toca para silenciar)'}</div>
-                </div>
-              </button>
-
-              {/* Docente / Admin: Seguimiento */}
-              {isTeacherAdmin && onOpenAcademic && (
-                <button
-                  type="button"
-                  className="hb-menu-item admin"
-                  onClick={() => {
-                    soundService.playToken();
-                    setIsDrawerOpen(false);
-                    onOpenAcademic();
-                  }}
-                >
-                  <div className="hb-menu-icon" style={{ background: '#FF9600', color: '#FFFFFF', boxShadow: '0 3.5px 0 #CC7A00' }}>
-                    <ShieldCheck size={20} strokeWidth={2.6} />
-                  </div>
-                  <div className="hb-menu-text">
-                    <div className="hb-menu-title">SEGUIMIENTO DOCENTE</div>
-                    <div className="hb-menu-desc">Panel pedagógico e investigación</div>
-                  </div>
-                </button>
               )}
 
-              {/* Docente / Admin: Usuarios en Línea */}
-              {isTeacherAdmin && onOpenLiveUsers && (
-                <button
-                  type="button"
-                  className="hb-menu-item admin"
-                  onClick={() => {
-                    soundService.playToken();
-                    setIsDrawerOpen(false);
-                    onOpenLiveUsers();
-                  }}
-                >
-                  <div className="hb-menu-icon" style={{ background: '#58CC02', color: '#FFFFFF', boxShadow: '0 3.5px 0 #46A302' }}>
-                    <Users size={20} strokeWidth={2.6} />
-                  </div>
-                  <div className="hb-menu-text">
-                    <div className="hb-menu-title" style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                      <span>USUARIOS EN LÍNEA</span>
-                      {onlineUsersCount > 0 && <span className="hb-menu-badge green">{onlineUsersCount} ACTIVOS</span>}
-                    </div>
-                    <div className="hb-menu-desc">Alumnos conectados en tiempo real</div>
-                  </div>
-                </button>
-              )}
-
-              {/* Cerrar Sesión */}
+              {/* CERRAR SESIÓN */}
               {onSignOut && (
-                <button
-                  type="button"
-                  className="hb-menu-item logout"
-                  onClick={() => {
-                    setIsDrawerOpen(false);
-                    onSignOut();
-                  }}
-                >
-                  <div className="hb-menu-icon" style={{ background: '#FF4B4B', color: '#FFFFFF', boxShadow: '0 3.5px 0 #D33131' }}>
-                    <LogOut size={20} strokeWidth={2.6} />
-                  </div>
-                  <div className="hb-menu-text">
-                    <div className="hb-menu-title" style={{ color: '#EA2B2B' }}>CERRAR SESIÓN</div>
-                    <div className="hb-menu-desc">Salir de tu cuenta en este dispositivo</div>
-                  </div>
-                </button>
+                <div className="duo-hb-logout-section">
+                  <button
+                    type="button"
+                    className="duo-hb-logout-btn"
+                    onClick={() => {
+                      setIsDrawerOpen(false);
+                      onSignOut();
+                    }}
+                  >
+                    <LogOut size={18} strokeWidth={2.8} />
+                    <span>CERRAR SESIÓN SEGURA</span>
+                  </button>
+                </div>
               )}
             </div>
           </div>

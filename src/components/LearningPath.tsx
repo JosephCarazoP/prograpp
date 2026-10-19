@@ -495,6 +495,7 @@ export const LearningPath: React.FC<LearningPathProps> = ({
                             side={companion.side}
                             isCurrentLevelGuide={companion.isCurrent}
                             userAvatarId={user.avatarId}
+                            userSkinId={user.equippedSkin}
                           />
                         )}
 

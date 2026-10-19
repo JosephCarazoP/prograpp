@@ -27,7 +27,7 @@ import { userService } from '../services/userService';
 import { authService } from '../services/authService';
 import { soundService } from '../services/soundService';
 import { DevAvatar } from './Avatars';
-import { AVATARS, THEMES } from '../constants/avatars';
+import { AVATARS } from '../constants/avatars';
 
 interface ProfileModalProps {
   isOpen: boolean;
@@ -46,7 +46,7 @@ export const ProfileModal: React.FC<ProfileModalProps> = ({
 }) => {
   const [displayName, setDisplayName] = useState(user.displayName);
   const [selectedAvatar, setSelectedAvatar] = useState(user.avatarId || 'robot_byte');
-  const [selectedTheme, setSelectedTheme] = useState(user.currentThemeId || 'theme_default');
+  const selectedTheme = 'theme_default';
   const [selectedPath, setSelectedPath] = useState<PathType>(user.currentPath || 'kotlin');
   const [soundEnabled, setSoundEnabled] = useState(!soundService.getMuted());
   const [activeTab, setActiveTab] = useState<'sheet' | 'inventory' | 'custom'>('sheet');
@@ -128,13 +128,6 @@ export const ProfileModal: React.FC<ProfileModalProps> = ({
 
   const handleTestSound = () => {
     soundService.playToken();
-  };
-
-  const handleSelectTheme = (themeId: string) => {
-    soundService.playToken();
-    setSelectedTheme(themeId);
-    document.documentElement.setAttribute('data-theme', themeId);
-    localStorage.setItem('prograapp_theme', themeId);
   };
 
   const handleSave = async () => {
@@ -252,7 +245,11 @@ export const ProfileModal: React.FC<ProfileModalProps> = ({
               flexShrink: 0
             }}
           >
-            <DevAvatar avatarId={selectedAvatar} size={64} />
+            <DevAvatar
+              avatarId={selectedAvatar}
+              skinId={user.equippedSkin}
+              size={64}
+            />
             <div
               style={{
                 position: 'absolute',
@@ -743,7 +740,11 @@ export const ProfileModal: React.FC<ProfileModalProps> = ({
                           transition: 'all 0.15s ease'
                         }}
                       >
-                        <DevAvatar avatarId={av.id} size={42} />
+                        <DevAvatar
+                          avatarId={av.id}
+                          skinId={user.equippedSkin}
+                          size={42}
+                        />
                         <span style={{ fontSize: '0.66rem', fontWeight: 900, color: isSelected ? '#B45309' : '#475569' }}>
                           {av.name.split(' ')[0]}
                         </span>
@@ -853,28 +854,22 @@ export const ProfileModal: React.FC<ProfileModalProps> = ({
                     Cambio en vivo
                   </span>
                 </div>
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 8 }}>
-                  {THEMES.map((th) => (
-                    <button
-                      key={th.id}
-                      type="button"
-                      onClick={() => handleSelectTheme(th.id)}
-                      style={{
-                        background: th.preview,
-                        border: selectedTheme === th.id ? '2.5px solid #0284C7' : '2px solid #CBD5E1',
-                        boxShadow: selectedTheme === th.id ? '0 3px 0 #0369A1' : '0 2px 0 #CBD5E1',
-                        borderRadius: 12,
-                        padding: '10px 6px',
-                        color: '#FFFFFF',
-                        fontSize: '0.76rem',
-                        fontWeight: 900,
-                        cursor: 'pointer',
-                        textShadow: '0 1px 2px rgba(0,0,0,0.4)'
-                      }}
-                    >
-                      {th.name}
-                    </button>
-                  ))}
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: 8 }}>
+                  <div
+                    style={{
+                      background: '#121D28',
+                      border: '2.5px solid #0284C7',
+                      boxShadow: '0 3px 0 #0369A1',
+                      borderRadius: 12,
+                      padding: '10px 14px',
+                      color: '#FFFFFF',
+                      fontSize: '0.8rem',
+                      fontWeight: 900,
+                      textAlign: 'center'
+                    }}
+                  >
+                    Paint Studio (Predeterminado)
+                  </div>
                 </div>
               </div>
             </div>

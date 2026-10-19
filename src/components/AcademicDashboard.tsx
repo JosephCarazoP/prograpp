@@ -1162,7 +1162,11 @@ export const AcademicDashboard: React.FC<AcademicDashboardProps> = ({
                           {/* Cabecera de la Tarjeta con Avatar y Datos */}
                           <div className="academic-student-card-header">
                             <div className="academic-student-avatar-wrap">
-                              <DevAvatar avatarId={st.avatarId || 'robot_byte'} size={46} />
+                              <DevAvatar
+                                avatarId={st.avatarId || 'robot_byte'}
+                                skinId={st.equippedSkin}
+                                size={46}
+                              />
                               <div
                                 style={{
                                   position: 'absolute',
@@ -1475,7 +1479,11 @@ export const AcademicDashboard: React.FC<AcademicDashboardProps> = ({
                           return (
                             <tr key={st.uid}>
                               <td style={{ width: 40, padding: '8px 10px' }}>
-                                <DevAvatar avatarId={st.avatarId || 'robot_byte'} size={32} />
+                                <DevAvatar
+                                  avatarId={st.avatarId || 'robot_byte'}
+                                  skinId={st.equippedSkin}
+                                  size={32}
+                                />
                               </td>
                               <td>
                                 <span className="academic-student-code-badge">
@@ -1660,7 +1668,11 @@ export const AcademicDashboard: React.FC<AcademicDashboardProps> = ({
                     flexShrink: 0
                   }}
                 >
-                  <DevAvatar avatarId={selectedStudent.avatarId || 'robot_byte'} size={68} />
+                  <DevAvatar
+                    avatarId={selectedStudent.avatarId || 'robot_byte'}
+                    skinId={selectedStudent.equippedSkin}
+                    size={68}
+                  />
                 </div>
 
                 <div style={{ flex: 1, minWidth: 240 }}>

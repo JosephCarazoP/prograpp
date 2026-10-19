@@ -419,7 +419,11 @@ export const LiveUsersModal: React.FC<LiveUsersModalProps> = ({
                     {/* Header de la tarjeta */}
                     <div className="live-card-top">
                       <div className="live-card-avatar-wrap">
-                        <DevAvatar avatarId={st.avatarId || 'robot_byte'} size={42} />
+                        <DevAvatar
+                          avatarId={st.avatarId || 'robot_byte'}
+                          skinId={st.equippedSkin}
+                          size={42}
+                        />
                         <span
                           className={`live-avatar-status-dot ${isOnline ? 'online' : 'offline'}`}
                           title={isOnline ? 'En línea en este instante' : 'Desconectado'}

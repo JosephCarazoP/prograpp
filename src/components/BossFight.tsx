@@ -600,7 +600,11 @@ export const BossFightArena: React.FC<BossFightProps> = ({
                         : 'drop-shadow(0 0 14px rgba(56, 189, 248, 0.6))'
                   }}
                 >
-                  <DevAvatar avatarId={user.avatarId || 'robot_byte'} size={76} />
+                  <DevAvatar
+                    avatarId={user.avatarId || 'robot_byte'}
+                    skinId={user.equippedSkin}
+                    size={76}
+                  />
                 </div>
 
                 {/* Plataforma holográfica de batalla del Jugador */}

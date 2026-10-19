@@ -22,6 +22,8 @@ interface DevRoadmapCharacterProps {
   isCurrentLevelGuide?: boolean;
   /** Avatar elegido por el estudiante (se usa en el nivel actual) */
   userAvatarId?: string;
+  /** Skin equipada por el estudiante */
+  userSkinId?: string;
 }
 
 interface BuddyConfig {
@@ -108,7 +110,8 @@ export const DevRoadmapCharacter: React.FC<DevRoadmapCharacterProps> = ({
   side = 'right',
   className = '',
   isCurrentLevelGuide = false,
-  userAvatarId = 'robot_byte'
+  userAvatarId = 'robot_byte',
+  userSkinId
 }) => {
   const isGuide = isCurrentLevelGuide || action === 'activeGuide';
   const buddy = action !== 'activeGuide' ? BUDDIES[action] : BUDDIES.celebrating;
@@ -188,7 +191,11 @@ export const DevRoadmapCharacter: React.FC<DevRoadmapCharacterProps> = ({
         }}
       >
         <span className="roadmap-buddy__avatar">
-          <DevAvatar avatarId={avatarId} size={avatarSize} />
+          <DevAvatar
+            avatarId={avatarId}
+            skinId={isGuide ? userSkinId : undefined}
+            size={avatarSize}
+          />
         </span>
 
         {/* Insignia: "TÚ" para el estudiante, accesorio temático para compañeros */}

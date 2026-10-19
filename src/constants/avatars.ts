@@ -7,8 +7,5 @@ export const AVATARS = [
 ];
 
 export const THEMES = [
-  { id: 'theme_default', name: 'Paint Studio', preview: '#121D28' },
-  { id: 'theme_duo_green', name: 'Duolingo Verde', preview: '#58CC02' },
-  { id: 'theme_dracula', name: 'Dracula Code', preview: '#BD93F9' },
-  { id: 'theme_dark', name: 'Deep Cyber', preview: '#38BDF8' }
+  { id: 'theme_default', name: 'Paint Studio', preview: '#121D28' }
 ];

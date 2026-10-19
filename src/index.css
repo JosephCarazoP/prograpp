@@ -6560,29 +6560,33 @@ button, a, input, select, .path-node, .token-chip, .pair-card {
   }
 }
 
-/* Drawer Backdrop y Contenido */
+/* ═══════════════════════════════════════════════════════════════
+   1. DRAWER MÓVIL HAMBURGUESA (HB-NAV 100% DUOLINGO 3D - 0% IA)
+   ═══════════════════════════════════════════════════════════════ */
 .hb-drawer-backdrop {
   position: fixed;
   inset: 0;
-  background: rgba(15, 23, 42, 0.55);
-  backdrop-filter: blur(4px);
+  background: rgba(15, 23, 42, 0.6);
+  backdrop-filter: blur(5px);
   z-index: 999;
   display: flex;
   justify-content: flex-end;
-  animation: fadeIn 0.15s ease-out;
+  animation: fadeIn 0.18s ease-out;
 }
 
 .hb-drawer-content {
-  width: 86%;
-  max-width: 320px;
+  width: 90%;
+  max-width: 350px;
   height: 100%;
   background: #FFFFFF;
-  box-shadow: -4px 0 28px rgba(0, 0, 0, 0.2);
+  box-shadow: -6px 0 32px rgba(15, 23, 42, 0.28);
   display: flex;
   flex-direction: column;
   z-index: 1000;
-  animation: slideInRight 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+  animation: slideInRight 0.25s cubic-bezier(0.16, 1, 0.3, 1);
   box-sizing: border-box;
+  overflow: hidden;
+  border-left: 3px solid #E2E8F0;
 }
 
 @keyframes slideInRight {
@@ -6594,142 +6598,536 @@ button, a, input, select, .path-node, .token-chip, .pair-card {
   }
 }
 
-.hb-drawer-header {
-  padding: 14px 14px 12px 14px;
-  border-bottom: 2px solid #F1F5F9;
+/* Cabecera Superior */
+.duo-hb-top-bar {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 10px;
-  flex-shrink: 0;
-}
-
-.hb-drawer-close-btn {
-  width: 34px;
-  height: 34px;
-  border-radius: 50%;
-  background: #F1F5F9;
-  border: 1.5px solid #E2E8F0;
-  color: #64748B;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  flex-shrink: 0;
-}
-.hb-drawer-close-btn:active {
-  background: #E2E8F0;
-}
-
-.hb-drawer-stats {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 6px;
-  padding: 10px 14px;
-  background: #F8FAFC;
+  padding: 14px 16px 10px 16px;
   border-bottom: 2px solid #F1F5F9;
   flex-shrink: 0;
 }
 
-.hb-stat-box {
-  background: #FFFFFF;
-  border: 1.5px solid #E2E8F0;
+.duo-hb-top-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #FFF7ED;
+  border: 1.5px solid #FFEDD5;
+  border-bottom: 3px solid #FED7AA;
+  border-radius: 999px;
+  padding: 4px 10px;
+  font-size: 0.68rem;
+  font-weight: 900;
+  color: #C2410C;
+  letter-spacing: 0.04em;
+}
+
+.duo-hb-close-btn {
+  width: 36px;
+  height: 36px;
   border-radius: 12px;
-  padding: 6px 4px;
+  background: #F1F5F9;
+  border: 2px solid #E2E8F0;
+  border-bottom: 4px solid #CBD5E1;
+  color: #64748B;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.08s ease;
+  box-sizing: border-box;
+}
+.duo-hb-close-btn:active {
+  transform: translateY(2px);
+  border-bottom-width: 2px;
+}
+
+/* Tarjeta Hero del Estudiante Duolingo 3D */
+.duo-hb-player-card {
+  margin: 12px 14px 8px 14px;
+  padding: 12px 14px;
+  background: #F8FAFC;
+  border: 2px solid #E2E8F0;
+  border-bottom: 5px solid #CBD5E1;
+  border-radius: 18px;
+  position: relative;
+  flex-shrink: 0;
+}
+
+.duo-hb-player-rank-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: #FFFFFF;
+  border: 1.5px solid currentColor;
+  border-bottom: 2.5px solid currentColor;
+  border-radius: 999px;
+  padding: 2px 8px;
+  font-size: 0.64rem;
+  font-weight: 900;
+  letter-spacing: 0.03em;
+  margin-bottom: 8px;
+}
+
+.duo-hb-player-body {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.duo-hb-avatar-podium {
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  gap: 2px;
-  text-align: center;
+  flex-shrink: 0;
 }
 
-.hb-stat-val {
-  font-size: 0.88rem;
+.duo-hb-avatar-pedestal {
+  width: 46px;
+  height: 8px;
+  background: #E2E8F0;
+  border: 1.5px solid #CBD5E1;
+  border-radius: 50%;
+  margin-top: -4px;
+}
+
+.duo-hb-player-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.duo-hb-speech-bubble {
+  display: inline-block;
+  background: #FFFFFF;
+  border: 1.5px solid #E2E8F0;
+  border-bottom: 2.5px solid #CBD5E1;
+  border-radius: 10px;
+  padding: 3px 8px;
+  font-size: 0.72rem;
+  font-weight: 800;
+  color: #0F172A;
+  margin-bottom: 4px;
+  position: relative;
+}
+.duo-hb-speech-bubble::after {
+  content: '';
+  position: absolute;
+  bottom: -5px;
+  left: 12px;
+  width: 0;
+  height: 0;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-top: 5px solid #CBD5E1;
+}
+
+.duo-hb-player-name {
+  font-size: 0.96rem;
+  font-weight: 900;
+  color: #0F172A;
+  line-height: 1.2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.duo-hb-player-meta {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.72rem;
+  color: #64748B;
+  font-weight: 700;
+  margin-top: 2px;
+}
+
+.duo-hb-code-tag {
+  background: #E2E8F0;
+  color: #334155;
+  padding: 1px 6px;
+  border-radius: 6px;
+  font-family: monospace;
+  font-weight: 800;
+  font-size: 0.68rem;
+}
+
+.duo-hb-group-tag {
+  color: #64748B;
+  font-weight: 700;
+}
+
+/* Tira de Recursos Táctil 3D (CERO VIDAS) */
+.duo-hb-stats-strip {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+  margin: 0 14px 10px 14px;
+  flex-shrink: 0;
+}
+
+.duo-hb-stat-box {
+  background: #FFFFFF;
+  border: 2px solid #E2E8F0;
+  border-bottom: 4px solid #CBD5E1;
+  border-radius: 14px;
+  padding: 8px 6px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  text-align: center;
+  transition: all 0.08s ease;
+}
+.duo-hb-stat-box.streak {
+  border-color: #FED7AA;
+  border-bottom-color: #F97316;
+  background: #FFFBF5;
+}
+.duo-hb-stat-box.bytes {
+  border-color: #BAE6FD;
+  border-bottom-color: #0284C7;
+  background: #F8FCFF;
+}
+.duo-hb-stat-box.xp {
+  border-color: #FEF08A;
+  border-bottom-color: #EAB308;
+  background: #FFFFF5;
+}
+
+.duo-hb-stat-icon-wrap {
+  width: 26px;
+  height: 26px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.duo-hb-stat-data {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.duo-hb-stat-val {
+  font-size: 0.95rem;
   font-weight: 900;
   color: #0F172A;
   line-height: 1.1;
 }
 
-.hb-stat-lbl {
-  font-size: 0.62rem;
-  font-weight: 800;
+.duo-hb-stat-lbl {
+  font-size: 0.58rem;
+  font-weight: 900;
   color: #64748B;
+  letter-spacing: 0.05em;
   text-transform: uppercase;
 }
 
-.hb-drawer-menu {
+/* Área Scrollable y Tarjetas Agrupadas Duolingo 3D */
+.duo-hb-scroll-area {
   flex: 1;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
-  padding: 12px 14px;
+  padding: 4px 14px 20px 14px;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 14px;
 }
 
-.hb-menu-item {
+.duo-hb-group-section {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.duo-hb-section-title {
+  font-size: 0.65rem;
+  font-weight: 900;
+  color: #94A3B8;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding-left: 4px;
+  margin-bottom: 2px;
+}
+
+.duo-hb-card-btn {
   display: flex;
   align-items: center;
   gap: 12px;
   width: 100%;
   padding: 10px 12px;
   background: #FFFFFF;
-  border: 2px solid #F1F5F9;
-  border-bottom: 3.5px solid #E2E8F0;
-  border-radius: 14px;
+  border: 2px solid #E2E8F0;
+  border-bottom: 4px solid #CBD5E1;
+  border-radius: 16px;
   cursor: pointer;
   text-align: left;
   transition: all 0.08s ease;
   box-sizing: border-box;
 }
-.hb-menu-item:active {
+.duo-hb-card-btn:active {
   transform: translateY(2px);
-  border-bottom-width: 1.5px;
+  border-bottom-width: 2px;
+}
+.duo-hb-card-btn:hover {
+  background: #F8FAFC;
 }
 
-.hb-menu-icon {
-  width: 38px;
-  height: 38px;
-  border-radius: 10px;
+.duo-hb-card-btn.course {
+  background: #FAF5FF;
+  border-color: #E9D5FF;
+  border-bottom-color: #A855F7;
+}
+
+.duo-hb-card-btn.store {
+  border-color: #BAE6FD;
+  border-bottom-color: #0EA5E9;
+}
+
+.duo-hb-card-btn.quest {
+  border-color: #FEF08A;
+  border-bottom-color: #EAB308;
+}
+
+.duo-hb-card-btn.notif {
+  border-color: #FED7AA;
+  border-bottom-color: #F97316;
+}
+
+.duo-hb-card-btn.profile {
+  border-color: #BBF7D0;
+  border-bottom-color: #22C55E;
+}
+
+.duo-hb-card-btn.admin {
+  border-color: #FED7AA;
+  border-bottom-color: #EA580C;
+}
+
+.duo-hb-card-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  border: 2px solid transparent;
+  border-bottom-width: 3.5px;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
 }
 
-.hb-menu-text {
+.duo-hb-card-text {
   flex: 1;
   min-width: 0;
 }
 
-.hb-menu-title {
-  font-size: 0.88rem;
+.duo-hb-card-heading {
+  font-size: 0.86rem;
   font-weight: 900;
   color: #0F172A;
   line-height: 1.2;
 }
 
-.hb-menu-desc {
-  font-size: 0.72rem;
+.duo-hb-card-caption {
+  font-size: 0.70rem;
   color: #64748B;
-  font-weight: 500;
+  font-weight: 600;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  margin-top: 1px;
 }
 
-.hb-menu-badge {
-  background: #FEE2E2;
-  color: #DC2626;
+.duo-hb-pill-btn {
+  background: #1CB0F6;
+  border: 1.5px solid #0284C7;
+  border-bottom: 3px solid #0369A1;
+  border-radius: 10px;
+  color: #FFFFFF;
   font-size: 0.65rem;
   font-weight: 900;
-  padding: 2px 6px;
-  border-radius: 6px;
+  padding: 4px 8px;
+  letter-spacing: 0.04em;
+  flex-shrink: 0;
 }
-.hb-menu-badge.green {
+
+.duo-hb-pill-badge {
+  font-size: 0.65rem;
+  font-weight: 900;
+  padding: 3px 8px;
+  border-radius: 10px;
+  border: 1.5px solid transparent;
+  border-bottom-width: 2.5px;
+  flex-shrink: 0;
+}
+.duo-hb-pill-badge.blue {
+  background: #E0F2FE;
+  border-color: #BAE6FD;
+  border-bottom-color: #0284C7;
+  color: #0369A1;
+}
+.duo-hb-pill-badge.yellow {
+  background: #FEF9C3;
+  border-color: #FDE047;
+  border-bottom-color: #CA8A04;
+  color: #854D0E;
+}
+.duo-hb-pill-badge.red {
+  background: #FEE2E2;
+  border-color: #FCA5A5;
+  border-bottom-color: #DC2626;
+  color: #B91C1C;
+}
+.duo-hb-pill-badge.green {
   background: #DCFCE7;
-  color: #16A34A;
+  border-color: #86EFAC;
+  border-bottom-color: #16A34A;
+  color: #15803D;
+}
+.duo-hb-pill-badge.gray {
+  background: #F1F5F9;
+  border-color: #CBD5E1;
+  border-bottom-color: #94A3B8;
+  color: #475569;
+}
+.duo-hb-pill-badge.orange {
+  background: #FFEDD5;
+  border-color: #FED7AA;
+  border-bottom-color: #EA580C;
+  color: #C2410C;
+}
+
+.duo-hb-logout-section {
+  margin-top: 6px;
+  padding-top: 4px;
+}
+
+.duo-hb-logout-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px;
+  background: #FEF2F2;
+  border: 2px solid #FCA5A5;
+  border-bottom: 4px solid #EF4444;
+  border-radius: 16px;
+  color: #DC2626;
+  font-size: 0.82rem;
+  font-weight: 900;
+  cursor: pointer;
+  transition: all 0.08s ease;
+  box-sizing: border-box;
+}
+.duo-hb-logout-btn:active {
+  transform: translateY(2px);
+  border-bottom-width: 2px;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   TIENDA DE BYTE: BARRA DE AVATARES Y ADAPTACIÓN MULTI-AVATAR 3D
+   ═══════════════════════════════════════════════════════════════ */
+.duo-store-skins-container {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.duo-store-avatar-bar {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  background: #FFFFFF;
+  border: 2px solid #E2E8F0;
+  border-bottom: 4px solid #CBD5E1;
+  border-radius: 18px;
+  padding: 12px 14px;
+}
+
+.duo-store-avatar-bar-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.duo-store-avatar-bar-tag {
+  background: #E0F2FE;
+  border: 1.5px solid #BAE6FD;
+  color: #0369A1;
+  font-size: 0.65rem;
+  font-weight: 900;
+  padding: 2px 8px;
+  border-radius: 999px;
+  letter-spacing: 0.04em;
+}
+
+.duo-store-avatar-bar-title {
+  font-size: 0.82rem;
+  font-weight: 800;
+  color: #0F172A;
+}
+
+.duo-store-avatar-tabs {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+  -webkit-overflow-scrolling: touch;
+}
+
+.duo-3d-avatar-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: #F8FAFC;
+  border: 2px solid #E2E8F0;
+  border-bottom: 4px solid #CBD5E1;
+  border-radius: 14px;
+  padding: 6px 12px;
+  cursor: pointer;
+  transition: all 0.08s ease;
+  flex-shrink: 0;
+}
+.duo-3d-avatar-tab:active {
+  transform: translateY(2px);
+  border-bottom-width: 2px;
+}
+.duo-3d-avatar-tab.active {
+  background: #F0FDF4;
+  border-color: #86EFAC;
+  border-bottom-color: #22C55E;
+}
+
+.duo-avatar-tab-name {
+  font-size: 0.78rem;
+  font-weight: 900;
+  color: #0F172A;
+}
+
+.duo-stage-custom-avatar-wrap {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.duo-custom-pedestal-disc {
+  width: 110px;
+  height: 18px;
+  background: radial-gradient(ellipse at center, rgba(56, 189, 248, 0.4) 0%, rgba(14, 165, 233, 0.1) 70%, transparent 100%);
+  border: 2px solid rgba(56, 189, 248, 0.6);
+  border-radius: 50%;
+  margin-top: 6px;
+  box-shadow: 0 4px 12px rgba(14, 165, 233, 0.25);
 }
 
 /* ═══════════════════════════════════════════════════════════════

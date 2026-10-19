@@ -2,7 +2,6 @@ import React, { useState, useEffect, useRef } from 'react';
 import {
   ArrowLeft,
   Zap,
-  Heart,
   Flame,
   Lock,
   Check,
@@ -22,6 +21,7 @@ import confetti from 'canvas-confetti';
 import { UserProfile } from '../types/user';
 import { BYTE_SKINS, ByteSkin, getRankByUser } from '../types/skins';
 import { ByteFullBody3D, BytePose } from './ByteFullBody3D';
+import { DevAvatar } from './Avatars';
 import { soundService } from '../services/soundService';
 import { userService } from '../services/userService';
 
@@ -33,6 +33,14 @@ interface StorePageProps {
 }
 
 type StoreTab = 'skins' | 'powerups';
+
+const AVATAR_OPTIONS = [
+  { id: 'robot_byte', name: 'Byte', label: 'Robot Asistente' },
+  { id: 'ada_hacker', name: 'Ada', label: 'Hacker & Lógica' },
+  { id: 'linus_coder', name: 'Linus', label: 'Kernel & Coder' },
+  { id: 'turing_wizard', name: 'Turing', label: 'Sabio & Algoritmos' },
+  { id: 'console_dev', name: 'Consola', label: 'Terminal Dev' }
+];
 
 export const StorePage: React.FC<StorePageProps> = ({
   user,
@@ -47,6 +55,13 @@ export const StorePage: React.FC<StorePageProps> = ({
     : ['byte_classic'];
 
   const currentEquipped = user.equippedSkin || 'byte_classic';
+
+  const [selectedAvatarId, setSelectedAvatarId] = useState<string>(() => {
+    const raw = user.avatarId || 'robot_byte';
+    if (raw.startsWith('byte_')) return 'robot_byte';
+    if (raw.includes('__')) return raw.split('__')[0];
+    return raw;
+  });
 
   const [previewSkinId, setPreviewSkinId] = useState<string>(currentEquipped);
   const [currentPose, setCurrentPose] = useState<BytePose>('idle');
@@ -70,7 +85,10 @@ export const StorePage: React.FC<StorePageProps> = ({
   const currentRank = getRankByUser(user.totalXp || 0, totalStars);
   const selectedSkin = BYTE_SKINS.find((s) => s.id === previewSkinId) || BYTE_SKINS[0];
   const isSelectedUnlocked = unlockedList.includes(selectedSkin.id);
-  const isSelectedEquipped = currentEquipped === selectedSkin.id;
+  const isSelectedEquipped =
+    currentEquipped === selectedSkin.id &&
+    ((user.avatarId || 'robot_byte') === selectedAvatarId ||
+      (user.avatarId?.startsWith('byte_') && selectedAvatarId === 'robot_byte'));
 
   // Requisitos de desbloqueo de skins
   const canAffordSkin = (user.bytes || 0) >= selectedSkin.costBytes;
@@ -123,16 +141,17 @@ export const StorePage: React.FC<StorePageProps> = ({
     setCurrentPose(newPose);
   };
 
-  // Equipar skin
+  // Equipar skin en el avatar seleccionado
   const handleEquipSkin = async (skin: ByteSkin) => {
     soundService.playToken();
     const updated: UserProfile = {
       ...user,
-      equippedSkin: skin.id,
-      avatarId: skin.id
+      avatarId: selectedAvatarId,
+      equippedSkin: skin.id
     };
     onUpdateUser(updated);
-    showToast(`¡Equipaste ${skin.name}!`, 'success');
+    const avName = AVATAR_OPTIONS.find((a) => a.id === selectedAvatarId)?.name || 'tu avatar';
+    showToast(`¡Equipaste ${skin.name} a ${avName}!`, 'success');
     await userService.updateProfile(updated);
   };
 
@@ -160,43 +179,12 @@ export const StorePage: React.FC<StorePageProps> = ({
       ...user,
       bytes: nextBytes,
       unlockedSkins: nextUnlocked,
-      equippedSkin: skin.id,
-      avatarId: skin.id
+      avatarId: selectedAvatarId,
+      equippedSkin: skin.id
     };
 
     onUpdateUser(updated);
     showToast(`¡Desbloqueaste ${skin.name}!`, 'success');
-    await userService.updateProfile(updated);
-  };
-
-  // COMPRA DE POTENCIADORES ESTILO DUOLINGO
-  // 1. Recarga de vidas (Baterías) a 5 por 150 Bytes
-  const handleBuyHeartsRefill = async () => {
-    const cost = 150;
-    if ((user.bytes || 0) < cost) {
-      soundService.playError();
-      showToast('No tienes suficientes Bytes para recargar vidas', 'info');
-      return;
-    }
-    if ((user.batteries || 0) >= 5) {
-      soundService.playToken();
-      showToast('¡Tus vidas ya están completamente llenas!', 'info');
-      return;
-    }
-
-    soundService.playChest();
-    try {
-      confetti({ particleCount: 50, spread: 50, origin: { y: 0.6 }, colors: ['#FF4B4B', '#FF8585'] });
-    } catch {}
-
-    const updated: UserProfile = {
-      ...user,
-      bytes: Math.max(0, (user.bytes || 0) - cost),
-      batteries: 5,
-      lastBatteryRechargeAt: Date.now()
-    };
-    onUpdateUser(updated);
-    showToast('¡Vidas recargadas al máximo (5/5)!', 'success');
     await userService.updateProfile(updated);
   };
 
@@ -313,16 +301,11 @@ export const StorePage: React.FC<StorePageProps> = ({
             <span className="duo-3d-stat-lbl">Bytes</span>
           </div>
 
-          {/* Vidas / Baterías */}
-          <div className="duo-3d-stat-pill hearts" title="Vidas disponibles">
-            <Heart size={16} fill="#FF4B4B" color="#FF4B4B" strokeWidth={2.5} />
-            <span className="duo-3d-stat-val">{user.batteries ?? 5}/5</span>
-          </div>
-
           {/* Racha */}
           <div className="duo-3d-stat-pill streak" title="Racha activa">
             <Flame size={16} fill="#FF9600" color="#FF9600" strokeWidth={2.5} />
             <span className="duo-3d-stat-val">{user.streak?.count || 0}</span>
+            <span className="duo-3d-stat-lbl">Días</span>
           </div>
         </div>
       </header>
@@ -364,45 +347,96 @@ export const StorePage: React.FC<StorePageProps> = ({
 
       {/* ═══ TAB 1: VESTIDOR 3D (SKINS) ═══ */}
       {activeTab === 'skins' && (
-        <div className="duo-store-skins-layout">
-          {/* LADO IZQUIERDO: PODIO 3D CON GIRO 360° Y ACCIÓN DUOLINGO */}
-          <div className="duo-store-stage-card">
-            <div className="duo-stage-header">
+        <div className="duo-store-skins-container">
+          {/* BARRA DE SELECCIÓN DE AVATAR (ADAPTACIÓN MULTI-AVATAR 100%) */}
+          <div className="duo-store-avatar-bar">
+            <div className="duo-store-avatar-bar-info">
+              <span className="duo-store-avatar-bar-tag">VESTIR PERSONAJE</span>
+              <span className="duo-store-avatar-bar-title">Elige qué avatar equipar con los trajes:</span>
+            </div>
+            <div className="duo-store-avatar-tabs">
+              {AVATAR_OPTIONS.map((av) => {
+                const isAct = selectedAvatarId === av.id;
+                return (
+                  <button
+                    key={av.id}
+                    type="button"
+                    className={`duo-3d-avatar-tab ${isAct ? 'active' : ''}`}
+                    onClick={() => {
+                      soundService.playToken();
+                      setSelectedAvatarId(av.id);
+                    }}
+                    title={av.label}
+                  >
+                    <DevAvatar avatarId={av.id} skinId={previewSkinId} size={28} />
+                    <span className="duo-avatar-tab-name">{av.name}</span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          <div className="duo-store-skins-layout">
+            {/* LADO IZQUIERDO: PODIO 3D CON GIRO 360° Y ACCIÓN DUOLINGO */}
+            <div className="duo-store-stage-card">
+              <div className="duo-stage-header">
+                <div
+                  className="duo-rank-chip"
+                  style={{
+                    border: `2px solid ${currentRank.color}`,
+                    color: currentRank.color
+                  }}
+                >
+                  <Award size={13} strokeWidth={2.6} />
+                  <span>RANGO {currentRank.name.toUpperCase()}</span>
+                </div>
+
+                <div className="duo-turntable-indicator">
+                  <MoveHorizontal size={13} />
+                  <span>{isDragging ? 'GIRANDO...' : getViewAngleLabel().toUpperCase()}</span>
+                </div>
+              </div>
+
+              {/* Viewport Interactivo con Drag & Touch */}
               <div
-                className="duo-rank-chip"
-                style={{
-                  border: `2px solid ${currentRank.color}`,
-                  color: currentRank.color
-                }}
+                className={`duo-stage-viewport ${isDragging ? 'dragging' : ''}`}
+                onPointerDown={handlePointerDown}
+                onPointerMove={handlePointerMove}
+                onPointerUp={handlePointerUp}
+                onPointerCancel={handlePointerUp}
+                title="Arrastra con el dedo o mouse para girar el avatar 360°"
               >
-                <Award size={13} strokeWidth={2.6} />
-                <span>RANGO {currentRank.name.toUpperCase()}</span>
+                {selectedAvatarId === 'robot_byte' ? (
+                  <ByteFullBody3D
+                    skinId={previewSkinId}
+                    pose={currentPose}
+                    rotation={rotationAngle}
+                    size={isMobile ? 105 : 155}
+                    showPedestal={true}
+                    isDragging={isDragging}
+                  />
+                ) : (
+                  <div
+                    className="duo-stage-custom-avatar-wrap"
+                    style={{
+                      display: 'flex',
+                      flexDirection: 'column',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      height: '100%',
+                      transform: `rotateY(${rotationAngle}deg)`,
+                      transition: isDragging ? 'none' : 'transform 0.15s ease'
+                    }}
+                  >
+                    <DevAvatar
+                      avatarId={selectedAvatarId}
+                      skinId={previewSkinId}
+                      size={isMobile ? 115 : 150}
+                    />
+                    <div className="duo-custom-pedestal-disc" />
+                  </div>
+                )}
               </div>
-
-              <div className="duo-turntable-indicator">
-                <MoveHorizontal size={13} />
-                <span>{isDragging ? 'GIRANDO...' : getViewAngleLabel().toUpperCase()}</span>
-              </div>
-            </div>
-
-            {/* Viewport Interactivo con Drag & Touch */}
-            <div
-              className={`duo-stage-viewport ${isDragging ? 'dragging' : ''}`}
-              onPointerDown={handlePointerDown}
-              onPointerMove={handlePointerMove}
-              onPointerUp={handlePointerUp}
-              onPointerCancel={handlePointerUp}
-              title="Arrastra con el dedo o mouse para girar a Byte 360°"
-            >
-              <ByteFullBody3D
-                skinId={previewSkinId}
-                pose={currentPose}
-                rotation={rotationAngle}
-                size={isMobile ? 105 : 155}
-                showPedestal={true}
-                isDragging={isDragging}
-              />
-            </div>
 
             {/* Botones de Control de Giro y Poses Duolingo 3D */}
             <div className="duo-stage-controls-wrap">
@@ -573,13 +607,12 @@ export const StorePage: React.FC<StorePageProps> = ({
                       ) : null}
                     </div>
 
-                    {/* Miniatura 3D del Avatar */}
+                    {/* Miniatura 3D del Avatar con la Skin Seleccionada */}
                     <div className="duo-card-avatar-slot">
-                      <ByteFullBody3D
+                      <DevAvatar
+                        avatarId={selectedAvatarId}
                         skinId={skin.id}
-                        pose="idle"
-                        size={isMobile ? 48 : 58}
-                        showPedestal={false}
+                        size={isMobile ? 44 : 52}
                       />
                     </div>
 
@@ -596,47 +629,13 @@ export const StorePage: React.FC<StorePageProps> = ({
             </div>
           </div>
         </div>
+      </div>
       )}
 
       {/* ═══ TAB 2: POTENCIADORES DUOLINGO 3D ═══ */}
       {activeTab === 'powerups' && (
         <div className="duo-store-powerups-grid">
-          {/* 1. Recarga de Vidas */}
-          <div className="duo-3d-item-card">
-            <div className="duo-item-icon-box" style={{ background: '#FEE2E2', borderColor: '#FCA5A5' }}>
-              <Heart size={32} color="#EF4444" fill="#EF4444" strokeWidth={2.5} />
-            </div>
-            <div className="duo-item-body">
-              <div className="duo-item-tag">SUPERVIVENCIA</div>
-              <h3 className="duo-item-title">Recarga Completa de Vidas</h3>
-              <p className="duo-item-desc">
-                ¿Te quedaste sin vidas en una lección difícil? Rellena tus 5 vidas al instante y continúa programando sin esperas.
-              </p>
-              <div className="duo-item-inventory">
-                Estado: <strong>{user.batteries ?? 5}/5 vidas actuales</strong>
-              </div>
-            </div>
-            <div className="duo-item-action">
-              <button
-                type="button"
-                disabled={(user.batteries ?? 5) >= 5}
-                className={`duo-3d-btn ${(user.batteries ?? 5) >= 5 ? 'gray' : 'green'}`}
-                onClick={handleBuyHeartsRefill}
-              >
-                {(user.batteries ?? 5) >= 5 ? (
-                  <>
-                    <CheckCircle2 size={16} strokeWidth={3} /> VIDAS AL MÁXIMO
-                  </>
-                ) : (
-                  <>
-                    <Zap size={16} fill="#FFF" /> RECARGAR (150 B)
-                  </>
-                )}
-              </button>
-            </div>
-          </div>
-
-          {/* 2. Protector de Racha */}
+          {/* 1. Protector de Racha */}
           <div className="duo-3d-item-card">
             <div className="duo-item-icon-box" style={{ background: '#E0F2FE', borderColor: '#7DD3FC' }}>
               <Shield size={32} color="#0284C7" strokeWidth={2.5} />
@@ -709,7 +708,7 @@ export const StorePage: React.FC<StorePageProps> = ({
               <div className="duo-item-tag purple">ESCUDO</div>
               <h3 className="duo-item-title">Segunda Oportunidad</h3>
               <p className="duo-item-desc">
-                Si cometes una equivocación al validar código, este comodín absorbe el error sin restar vidas a tu batería.
+                Si cometes una equivocación al validar código o responder, este comodín absorbe el error permitiéndote reintentar de inmediato.
               </p>
               <div className="duo-item-inventory">
                 Inventario: <strong>{user.powerups?.secondChance || 0} disponibles</strong>

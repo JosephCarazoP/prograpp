@@ -33,7 +33,7 @@ import { authService } from '../services/authService';
 import { soundService } from '../services/soundService';
 import { storageService } from '../services/storageService';
 import { DevAvatar } from './Avatars';
-import { AVATARS, THEMES } from '../constants/avatars';
+import { AVATARS } from '../constants/avatars';
 
 interface ProfilePageProps {
   user: UserProfile;
@@ -64,7 +64,7 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({
 }) => {
   const [displayName, setDisplayName] = useState(user.displayName);
   const [selectedAvatar, setSelectedAvatar] = useState(user.avatarId || 'robot_byte');
-  const [selectedTheme, setSelectedTheme] = useState(user.currentThemeId || 'theme_default');
+  const selectedTheme = 'theme_default';
   const [selectedPath, setSelectedPath] = useState<PathType>(user.currentPath || 'kotlin');
   const [soundEnabled, setSoundEnabled] = useState(!soundService.getMuted());
   const [activeTab, setActiveTab] = useState<'stats' | 'powerups' | 'settings'>('stats');
@@ -138,14 +138,6 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({
       color: '#8B5CF6'
     }
   ];
-
-  // Aplicar tema en tiempo real para que los ajustes funcionen inmediatamente
-  const handleSelectTheme = (themeId: string) => {
-    soundService.playToken();
-    setSelectedTheme(themeId);
-    document.documentElement.setAttribute('data-theme', themeId);
-    localStorage.setItem('prograapp_theme', themeId);
-  };
 
   // Alternar sonido de forma real
   const handleToggleSound = () => {
@@ -300,7 +292,11 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({
           <section className="profile-hero-banner">
             {/* Círculo 3D del Avatar */}
             <div className="profile-avatar-circle">
-              <DevAvatar avatarId={selectedAvatar} size={84} />
+              <DevAvatar
+                avatarId={selectedAvatar}
+                skinId={user.equippedSkin}
+                size={84}
+              />
             </div>
 
             {/* Nombre y Título del Dev */}
@@ -689,7 +685,11 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({
                       className={`profile-avatar-btn ${selectedAvatar === av.id ? 'selected' : ''}`}
                       type="button"
                     >
-                      <DevAvatar avatarId={av.id} size={42} />
+                      <DevAvatar
+                        avatarId={av.id}
+                        skinId={user.equippedSkin}
+                        size={42}
+                      />
                       <span
                         style={{
                           fontSize: '0.62rem',
@@ -704,26 +704,21 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({
                 </div>
               </div>
 
-              {/* Selector de Tema Visual REAL Y EN VIVO */}
+              {/* Tema Visual Oficial */}
               <div className="profile-card-duo">
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
-                  <span className="profile-card-label" style={{ margin: 0 }}>Tema Visual (Cambio en Vivo)</span>
-                  <span style={{ fontSize: '0.72rem', fontWeight: 800, color: 'var(--green-main)' }}>
-                    Aplicado al instante
+                  <span className="profile-card-label" style={{ margin: 0 }}>Tema Visual Oficial</span>
+                  <span style={{ fontSize: '0.72rem', fontWeight: 800, color: '#16A34A' }}>
+                    Predeterminado
                   </span>
                 </div>
                 <div className="profile-theme-grid-duo">
-                  {THEMES.map((th) => (
-                    <button
-                      key={th.id}
-                      onClick={() => handleSelectTheme(th.id)}
-                      className={`profile-theme-btn ${selectedTheme === th.id ? 'selected' : ''}`}
-                      style={{ background: th.preview }}
-                      type="button"
-                    >
-                      {th.name}
-                    </button>
-                  ))}
+                  <div
+                    className="profile-theme-btn selected"
+                    style={{ background: '#121D28', cursor: 'default' }}
+                  >
+                    Paint Studio
+                  </div>
                 </div>
               </div>
 
