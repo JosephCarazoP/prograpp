@@ -67,6 +67,20 @@ export const Navbar: React.FC<NavbarProps> = ({
     if (!nextMuted) soundService.playToken();
   };
 
+  // Prevenir que el scroll del fondo bloquee o interfiera con el scroll del drawer en móvil
+  React.useEffect(() => {
+    if (isDrawerOpen) {
+      const originalOverflow = document.body.style.overflow;
+      const originalTouchAction = document.body.style.touchAction;
+      document.body.style.overflow = 'hidden';
+      document.body.style.touchAction = 'none';
+      return () => {
+        document.body.style.overflow = originalOverflow;
+        document.body.style.touchAction = originalTouchAction;
+      };
+    }
+  }, [isDrawerOpen]);
+
   return (
     <>
       <header className="top-nav" role="banner">

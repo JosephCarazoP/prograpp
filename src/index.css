@@ -6555,6 +6555,7 @@ button, a, input, select, .path-node, .token-chip, .pair-card {
   height: 100%;
   height: 100dvh;
   max-height: 100dvh;
+  min-height: 0;
   background: #F7F7F7;
   display: flex;
   flex-direction: column;
@@ -6563,13 +6564,21 @@ button, a, input, select, .path-node, .token-chip, .pair-card {
   box-sizing: border-box;
   overflow: hidden;
   box-shadow: -4px 0 28px rgba(0, 0, 0, 0.18);
+  touch-action: pan-y !important;
 }
 
 /* En teléfonos (<= 640px) toma el 100% de la pantalla para verse como una app nativa (Foto 1) */
 @media (max-width: 640px) {
+  .hb-drawer-backdrop {
+    overflow: hidden;
+  }
   .hb-drawer-content.duo-settings-drawer {
     width: 100% !important;
     max-width: 100% !important;
+    height: 100% !important;
+    height: 100dvh !important;
+    max-height: 100dvh !important;
+    min-height: 0 !important;
     box-shadow: none !important;
   }
 }
@@ -6626,12 +6635,18 @@ button, a, input, select, .path-node, .token-chip, .pair-card {
   opacity: 0.6;
 }
 
-/* Contenido con scroll suave */
+/* Contenido con scroll suave optimizado para touch en mobile */
 .duo-settings-scroll {
-  flex: 1;
-  overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
-  padding: 16px 16px max(36px, env(safe-area-inset-bottom, 24px)) 16px;
+  flex: 1 1 0%;
+  min-height: 0 !important;
+  max-height: 100% !important;
+  height: 0;
+  overflow-y: scroll !important;
+  overflow-x: hidden !important;
+  -webkit-overflow-scrolling: touch !important;
+  touch-action: pan-y !important;
+  overscroll-behavior-y: contain !important;
+  padding: 16px 16px max(50px, env(safe-area-inset-bottom, 32px)) 16px;
   display: flex;
   flex-direction: column;
   gap: 10px;
@@ -6645,6 +6660,8 @@ button, a, input, select, .path-node, .token-chip, .pair-card {
   color: #4B4B4B;
   padding: 12px 6px 4px 6px;
   letter-spacing: -0.01em;
+  user-select: none;
+  -webkit-user-select: none;
 }
 
 /* Tabla Agrupada estilo Duolingo / iOS */
@@ -6657,6 +6674,7 @@ button, a, input, select, .path-node, .token-chip, .pair-card {
   flex-direction: column;
   width: 100%;
   box-sizing: border-box;
+  touch-action: pan-y !important;
 }
 
 /* Fila individual de la tabla */
@@ -6675,6 +6693,9 @@ button, a, input, select, .path-node, .token-chip, .pair-card {
   transition: background-color 0.1s ease;
   box-sizing: border-box;
   gap: 10px;
+  touch-action: pan-y !important;
+  user-select: none;
+  -webkit-user-select: none;
 }
 .duo-settings-row:last-child {
   border-bottom: none;
