@@ -1,4 +1,4 @@
-import { doc, getDoc, setDoc, collection, getDocs } from 'firebase/firestore';
+import { doc, getDoc, setDoc, collection, getDocs, deleteDoc } from 'firebase/firestore';
 import { db, isLocalMockMode } from '../config/firebase';
 import { UserProfile, LeagueTier } from '../types/user';
 import { storageService } from './storageService';
@@ -409,6 +409,29 @@ export const userService = {
       isOnline: true
     };
     await this.updateProfile(updated);
+  },
+
+  // Eliminar estudiante de Firestore y limpiar cachés locales (Solo Administrador)
+  async deleteStudent(uid: string): Promise<void> {
+    if (!isLocalMockMode && db) {
+      try {
+        const userDocRef = doc(db, 'users', uid);
+        await deleteDoc(userDocRef);
+        // Eliminar presencia si existe
+        try {
+          const presenceRef = doc(db, 'presence', uid);
+          await deleteDoc(presenceRef);
+        } catch {}
+      } catch (err) {
+        console.warn('[userService] Error al eliminar usuario de Firestore:', err);
+      }
+    }
+    // Limpiar claves locales asociadas
+    try {
+      storageService.removeItem('academic_attempts_' + uid);
+      storageService.removeItem('academic_evaluations_' + uid);
+      storageService.removeItem('user_presence_' + uid);
+    } catch {}
   }
 };
 

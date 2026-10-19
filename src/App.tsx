@@ -47,9 +47,12 @@ import { ActivityOpinionModal } from './components/ActivityOpinionModal';
 import { StreakCelebrationModal } from './components/StreakCelebrationModal';
 import { ByteLockerModal } from './components/ByteLockerModal';
 import { LiveUsersModal } from './components/LiveUsersModal';
+import { NotificationsModal } from './components/NotificationsModal';
 import { academicService } from './services/academicService';
 import { timeTrackingService } from './services/timeTrackingService';
 import { presenceService } from './services/presenceService';
+import { notificationService } from './services/notificationService';
+import { AppNotification } from './types/notification';
 import {
   getInstrument,
   EvaluationInstrument,
@@ -194,6 +197,10 @@ export default function App() {
   const [isLiveUsersOpen, setIsLiveUsersOpen] = useState(false);
   const [onlineUsersCount, setOnlineUsersCount] = useState(0);
   const [selectedAcademicStudentUid, setSelectedAcademicStudentUid] = useState<string | null>(null);
+
+  // Modal de Notificaciones y Avisos para el Alumno
+  const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
+  const [notifications, setNotifications] = useState<AppNotification[]>([]);
 
   // Modal 3D de Checkpoint Teórico Obligatorio (Lectura rápida + 2 preguntas micro-quiz antes de jugar)
   const [checkpointLesson, setCheckpointLesson] = useState<Lesson | null>(null);
@@ -465,6 +472,51 @@ export default function App() {
       window.removeEventListener('beforeunload', handleBeforeUnload);
     };
   }, [user?.uid, isAuthenticated]);
+
+  // Cargar notificaciones para el estudiante / usuario activo
+  useEffect(() => {
+    if (!user || !user.uid || user.uid === 'guest_user_1') return;
+    async function loadNotifications() {
+      try {
+        const notifs = await notificationService.getNotificationsForUser(user);
+        setNotifications(notifs);
+      } catch (err) {
+        console.warn('Error al sincronizar notificaciones:', err);
+      }
+    }
+    loadNotifications();
+
+    const notifTimer = setInterval(loadNotifications, 45000);
+    return () => clearInterval(notifTimer);
+  }, [user?.uid, user?.group]);
+
+  const handleMarkNotificationAsRead = async (id: string) => {
+    if (!user?.uid) return;
+    await notificationService.markAsRead(id, user.uid);
+    setNotifications((prev) =>
+      prev.map((n) =>
+        n.id === id && !n.readBy.includes(user.uid)
+          ? { ...n, readBy: [...n.readBy, user.uid] }
+          : n
+      )
+    );
+  };
+
+  const handleMarkAllNotificationsAsRead = async () => {
+    if (!user?.uid) return;
+    await notificationService.markAllAsRead(notifications, user.uid);
+    setNotifications((prev) =>
+      prev.map((n) =>
+        !n.readBy.includes(user.uid)
+          ? { ...n, readBy: [...n.readBy, user.uid] }
+          : n
+      )
+    );
+  };
+
+  const unreadNotificationsCount = user?.uid
+    ? notifications.filter((n) => !n.readBy.includes(user.uid)).length
+    : 0;
 
   // Función unificada de cierre de sesión seguro con reporte offline
   const handleSignOut = async () => {
@@ -1017,9 +1069,14 @@ export default function App() {
           user={user}
           isAdmin={authService.isCurrentUserAdmin()}
           onlineUsersCount={onlineUsersCount}
+          unreadNotificationsCount={unreadNotificationsCount}
           onOpenLiveUsers={() => {
             soundService.playToken();
             setIsLiveUsersOpen(true);
+          }}
+          onOpenNotifications={() => {
+            soundService.playToken();
+            setIsNotificationsOpen(true);
           }}
           onLogoClick={() => {
             setView('path');
@@ -1909,6 +1966,16 @@ export default function App() {
           setSelectedAcademicStudentUid(uid);
           setView('academic');
         }}
+      />
+
+      {/* MODAL DE NOTIFICACIONES Y AVISOS PARA ESTUDIANTES */}
+      <NotificationsModal
+        isOpen={isNotificationsOpen}
+        onClose={() => setIsNotificationsOpen(false)}
+        user={user}
+        notifications={notifications}
+        onMarkAsRead={handleMarkNotificationAsRead}
+        onMarkAllAsRead={handleMarkAllNotificationsAsRead}
       />
 
       {/* Alertas Nativas del Juego (Reemplazo total de window.alert) */}

@@ -257,7 +257,7 @@ export const ByteLockerModal: React.FC<ByteLockerModalProps> = ({
                 skinId={previewSkinId}
                 pose={currentPose}
                 rotation={rotationAngle}
-                size={isMobile ? 105 : 145}
+                size={isMobile ? 95 : 145}
                 showPedestal={true}
                 isDragging={isDragging}
               />

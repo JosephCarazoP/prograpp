@@ -5100,18 +5100,21 @@ button, a, input, select, .path-node, .token-chip, .pair-card {
 @media (max-width: 768px) {
   .locker-modal-backdrop {
     padding: 8px;
+    align-items: center;
   }
 
   .locker-modal-card {
     width: 100%;
-    max-width: 430px;
-    height: calc(100dvh - 20px);
-    max-height: 670px;
+    max-width: 440px;
+    height: calc(100dvh - 16px);
+    max-height: 94dvh;
     padding: 10px 12px;
     border-radius: 20px;
     border-width: 2.5px;
     border-bottom-width: 5px;
     overflow: hidden;
+    display: flex;
+    flex-direction: column;
   }
 }
 
@@ -5251,10 +5254,11 @@ button, a, input, select, .path-node, .token-chip, .pair-card {
   .locker-main-grid {
     display: flex;
     flex-direction: column;
-    gap: 8px;
-    overflow: hidden;
+    flex: 1;
     min-height: 0;
     min-width: 0;
+    gap: 8px;
+    overflow: hidden;
   }
 }
 
@@ -5359,8 +5363,8 @@ button, a, input, select, .path-node, .token-chip, .pair-card {
 
 @media (max-width: 768px) {
   .locker-avatar-viewport {
-    height: 125px;
-    min-height: 125px;
+    height: 105px;
+    min-height: 105px;
   }
 }
 
@@ -5683,7 +5687,13 @@ button, a, input, select, .path-node, .token-chip, .pair-card {
 
 @media (max-width: 768px) {
   .locker-catalog-panel {
-    gap: 5px;
+    height: auto;
+    flex: 1;
+    min-height: 0;
+    gap: 6px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
   }
   .locker-catalog-title {
     font-size: 0.92rem;
@@ -5693,10 +5703,30 @@ button, a, input, select, .path-node, .token-chip, .pair-card {
     padding: 2px 7px;
   }
   .locker-skins-grid {
+    flex: 1;
+    min-height: 0;
     grid-template-columns: repeat(3, 1fr);
     gap: 6px;
     padding-right: 2px;
-    padding-bottom: 6px;
+    padding-bottom: 28px;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+    touch-action: pan-y;
+  }
+}
+
+@media (max-width: 768px) and (max-height: 680px) {
+  .locker-main-grid {
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  .locker-stage-panel {
+    flex-shrink: 0;
+  }
+  .locker-catalog-panel {
+    flex-shrink: 0;
+    min-height: 280px;
   }
 }
 

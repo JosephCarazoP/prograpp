@@ -69,13 +69,13 @@ export const academicService = {
     return localAttempts;
   },
 
-  // Obtener todos los intentos para el panel administrativo
+  // Obtener todos los intentos para el panel administrativo (EN PARALELO para máxima velocidad)
   async getAllAttempts(students: UserProfile[]): Promise<ExerciseAttempt[]> {
-    const all: ExerciseAttempt[] = [];
-    for (const student of students) {
-      const studentAttempts = await this.getAttemptsByStudent(student.uid);
-      all.push(...studentAttempts);
-    }
+    if (!students || students.length === 0) return [];
+    const results = await Promise.all(
+      students.map(student => this.getAttemptsByStudent(student.uid))
+    );
+    const all = results.flat();
     return all.sort((a, b) => b.timestamp - a.timestamp);
   },
 

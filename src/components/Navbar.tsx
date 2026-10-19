@@ -10,7 +10,8 @@ import {
   ShieldCheck,
   LogOut,
   Shirt,
-  Users
+  Users,
+  Bell
 } from 'lucide-react';
 import { UserProfile } from '../types/user';
 import { soundService } from '../services/soundService';
@@ -20,6 +21,7 @@ interface NavbarProps {
   user: UserProfile;
   isAdmin?: boolean;
   onlineUsersCount?: number;
+  unreadNotificationsCount?: number;
   onPathToggle: () => void;
   onOpenQuests: () => void;
   onOpenPractice?: () => void;
@@ -28,6 +30,7 @@ interface NavbarProps {
   onOpenAcademic?: () => void;
   onOpenLiveUsers?: () => void;
   onOpenLocker?: () => void;
+  onOpenNotifications?: () => void;
   onSignOut?: () => void;
   onLogoClick?: () => void;
 }
@@ -36,6 +39,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   user,
   isAdmin = false,
   onlineUsersCount = 0,
+  unreadNotificationsCount = 0,
   onPathToggle,
   onOpenQuests,
   onOpenProfile,
@@ -43,6 +47,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   onOpenAcademic,
   onOpenLiveUsers,
   onOpenLocker,
+  onOpenNotifications,
   onSignOut,
   onLogoClick: _onLogoClick
 }) => {
@@ -135,6 +140,47 @@ export const Navbar: React.FC<NavbarProps> = ({
             style={{ color: '#0EA5E9' }}
           >
             <Shirt size={18} strokeWidth={2.4} />
+          </button>
+        )}
+
+        {/* Botón 3D de Notificaciones y Avisos */}
+        {onOpenNotifications && (
+          <button
+            className="nav-icon-btn"
+            onClick={() => {
+              soundService.playToken();
+              onOpenNotifications();
+            }}
+            title="Avisos y Notificaciones"
+            type="button"
+            aria-label="Abrir Notificaciones"
+            style={{ position: 'relative', color: (unreadNotificationsCount ?? 0) > 0 ? '#D97706' : '#64748B' }}
+          >
+            <Bell size={18} strokeWidth={2.4} />
+            {(unreadNotificationsCount ?? 0) > 0 && (
+              <span
+                style={{
+                  position: 'absolute',
+                  top: -2,
+                  right: -2,
+                  background: '#EF4444',
+                  color: '#FFFFFF',
+                  fontSize: '0.62rem',
+                  fontWeight: 900,
+                  minWidth: 16,
+                  height: 16,
+                  borderRadius: 999,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  padding: '0 3px',
+                  border: '1.5px solid #FFFFFF',
+                  boxShadow: '0 2px 4px rgba(239, 68, 68, 0.4)'
+                }}
+              >
+                {unreadNotificationsCount}
+              </span>
+            )}
           </button>
         )}
 
