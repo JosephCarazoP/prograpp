@@ -111,33 +111,33 @@ export const NotificationsPage: React.FC<NotificationsPageProps> = ({
   };
 
   return (
-    <div className="notif-page-root">
-      {/* Barra Superior de la Página */}
-      <div className="notif-page-header">
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+    <div className="notif-page-root duo-notif-page">
+      {/* ═══ CABECERA DUOLINGO 3D ═══ */}
+      <div className="notif-page-header duo-notif-topbar">
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12, minWidth: 0 }}>
           <button
             type="button"
-            className="notif-back-btn"
+            className="duo-3d-back-btn"
             onClick={() => {
               soundService.playToken();
               onBack();
             }}
-            title="Volver a la ruta"
+            title="Volver a la ruta de aprendizaje"
             aria-label="Volver"
           >
-            <ArrowLeft size={20} />
+            <ArrowLeft size={20} strokeWidth={3} />
           </button>
-          <div>
+          <div style={{ minWidth: 0 }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-              <h1 className="notif-page-title">Avisos y Notificaciones</h1>
+              <h1 className="notif-page-title duo-notif-title">NOTIFICACIONES</h1>
               {unreadCount > 0 && (
-                <span className="notif-unread-pill">
-                  {unreadCount} {unreadCount === 1 ? 'nuevo' : 'nuevos'}
+                <span className="duo-3d-unread-pill">
+                  {unreadCount} {unreadCount === 1 ? 'NUEVA' : 'NUEVAS'}
                 </span>
               )}
             </div>
-            <p className="notif-page-subtitle">
-              Comunicados de tus profesores, actualizaciones de retos y observaciones de clase
+            <p className="notif-page-subtitle duo-notif-sub">
+              Avisos pedagógicos, notas del docente y novedades del curso
             </p>
           </div>
         </div>
@@ -145,92 +145,103 @@ export const NotificationsPage: React.FC<NotificationsPageProps> = ({
         {unreadCount > 0 && (
           <button
             type="button"
-            className="notif-mark-all-btn"
+            className="duo-3d-btn green sm"
             onClick={() => {
               soundService.playToken();
               onMarkAllAsRead();
             }}
             title="Marcar todas las notificaciones como leídas"
           >
-            <CheckCheck size={16} />
-            <span className="notif-mark-all-text">Marcar todo leído</span>
+            <CheckCheck size={16} strokeWidth={2.8} />
+            <span className="notif-mark-all-text">MARCAR LEÍDAS</span>
           </button>
         )}
       </div>
 
-      {/* Barra de Filtros Compacta */}
-      <div className="notif-filter-bar">
+      {/* ═══ FILTROS DUOLINGO 3D ═══ */}
+      <div className="notif-filter-bar duo-filter-row">
         <button
           type="button"
-          className={`notif-filter-chip ${filterType === 'all' ? 'active' : ''}`}
+          className={`duo-3d-filter-chip ${filterType === 'all' ? 'active' : ''}`}
           onClick={() => {
             soundService.playToken();
             setFilterType('all');
           }}
         >
-          Todas ({notifications.length})
+          TODAS ({notifications.length})
         </button>
 
         <button
           type="button"
-          className={`notif-filter-chip ${filterType === 'unread' ? 'active' : ''}`}
+          className={`duo-3d-filter-chip ${filterType === 'unread' ? 'active' : ''}`}
           onClick={() => {
             soundService.playToken();
             setFilterType('unread');
           }}
         >
-          No leídas ({unreadCount})
+          NO LEÍDAS ({unreadCount})
         </button>
 
         <button
           type="button"
-          className={`notif-filter-chip ${filterType === 'observation' ? 'active' : ''}`}
+          className={`duo-3d-filter-chip ${filterType === 'observation' ? 'active' : ''}`}
           onClick={() => {
             soundService.playToken();
             setFilterType('observation');
           }}
         >
-          Observaciones
+          OBSERVACIONES
         </button>
 
         <button
           type="button"
-          className={`notif-filter-chip ${filterType === 'update' ? 'active' : ''}`}
+          className={`duo-3d-filter-chip ${filterType === 'update' ? 'active' : ''}`}
           onClick={() => {
             soundService.playToken();
             setFilterType('update');
           }}
         >
-          Actualizaciones
+          ACTUALIZACIONES
         </button>
 
         <button
           type="button"
-          className={`notif-filter-chip ${filterType === 'reminder' ? 'active' : ''}`}
+          className={`duo-3d-filter-chip ${filterType === 'reminder' ? 'active' : ''}`}
           onClick={() => {
             soundService.playToken();
             setFilterType('reminder');
           }}
         >
-          Recordatorios
+          RECORDATORIOS
         </button>
       </div>
 
-      {/* Lista de Notificaciones Organizada y Compacta */}
+      {/* ═══ LISTA DE NOTIFICACIONES DUOLINGO 3D ═══ */}
       <div className="notif-list-container">
         {filteredNotifications.length === 0 ? (
-          <div className="notif-empty-state">
-            <div className="notif-empty-icon">
-              <Bell size={36} color="#94A3B8" />
+          <div className="notif-empty-state duo-notif-empty">
+            <div className="duo-empty-icon-box">
+              <Bell size={38} color="#0284C7" strokeWidth={2.5} />
             </div>
-            <h3 style={{ fontSize: '1.05rem', fontWeight: 900, color: '#0F172A', margin: '0 0 4px 0' }}>
-              No hay avisos en esta categoría
+            <h3 className="duo-empty-title">
+              {filterType === 'unread' ? '¡ESTÁS AL DÍA!' : 'NO HAY NOTIFICACIONES'}
             </h3>
-            <p style={{ fontSize: '0.82rem', color: '#64748B', margin: 0, maxWidth: 320 }}>
+            <p className="duo-empty-desc">
               {filterType === 'unread'
-                ? '¡Estás al día! Has leído todas tus notificaciones.'
-                : 'Cuando tu profesor o el sistema envíen un comunicado, aparecerá aquí.'}
+                ? 'Has leído todos tus avisos y comunicados pendientes.'
+                : 'Cuando haya novedades o notas de tu profesor las verás aquí.'}
             </p>
+            <button
+              type="button"
+              className="duo-3d-btn blue sm"
+              style={{ marginTop: 12 }}
+              onClick={() => {
+                soundService.playToken();
+                onBack();
+              }}
+            >
+              VOLVER A LA RUTA
+            </button>
           </div>
         ) : (
           filteredNotifications.map((notif) => {
@@ -240,7 +251,7 @@ export const NotificationsPage: React.FC<NotificationsPageProps> = ({
             return (
               <article
                 key={notif.id}
-                className={`notif-card ${isUnread ? 'unread' : 'read'}`}
+                className={`duo-3d-notif-card ${isUnread ? 'unread' : 'read'}`}
                 onClick={() => {
                   if (isUnread) {
                     soundService.playToken();
@@ -248,11 +259,11 @@ export const NotificationsPage: React.FC<NotificationsPageProps> = ({
                   }
                 }}
               >
-                {/* Cabecera del aviso: Tipo + Remitente + Fecha + Punto no leído */}
+                {/* Cabecera del aviso Duolingo 3D */}
                 <div className="notif-card-header">
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 7, flexWrap: 'wrap' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
                     <span
-                      className="notif-type-tag"
+                      className="duo-3d-tag"
                       style={{
                         background: meta.bg,
                         color: meta.color,
@@ -260,7 +271,7 @@ export const NotificationsPage: React.FC<NotificationsPageProps> = ({
                       }}
                     >
                       {meta.icon}
-                      <span>{meta.label}</span>
+                      <span>{meta.label.toUpperCase()}</span>
                     </span>
 
                     <span className="notif-sender-label">
@@ -272,18 +283,18 @@ export const NotificationsPage: React.FC<NotificationsPageProps> = ({
                     <span className="notif-time-text">
                       {formatRelativeTime(notif.createdAt)}
                     </span>
-                    {isUnread && <span className="notif-unread-dot" title="Aviso sin leer" />}
+                    {isUnread && <span className="duo-unread-glow-dot" title="Aviso sin leer" />}
                   </div>
                 </div>
 
                 {/* Título y Mensaje */}
-                <h3 className="notif-card-title">{notif.title}</h3>
-                <p className="notif-card-message">{notif.message}</p>
+                <h3 className="notif-card-title duo-card-h3">{notif.title}</h3>
+                <p className="notif-card-message duo-card-p">{notif.message}</p>
 
-                {/* Footer de acción compacta */}
+                {/* Footer de acción táctil */}
                 {isUnread && (
                   <div className="notif-card-footer">
-                    <span className="notif-tap-hint">Toca para marcar como leído</span>
+                    <span className="duo-tap-read-hint">TOCA PARA MARCAR COMO LEÍDO</span>
                   </div>
                 )}
               </article>

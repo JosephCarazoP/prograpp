@@ -45,7 +45,7 @@ import { AcademicDashboard } from './components/AcademicDashboard';
 import { EvaluationPage } from './components/EvaluationPage';
 import { ActivityOpinionModal } from './components/ActivityOpinionModal';
 import { StreakCelebrationModal } from './components/StreakCelebrationModal';
-import { ByteLockerModal } from './components/ByteLockerModal';
+import { StorePage } from './components/StorePage';
 import { LiveUsersModal } from './components/LiveUsersModal';
 import { NotificationsPage } from './components/NotificationsPage';
 import { academicService } from './services/academicService';
@@ -129,13 +129,14 @@ export default function App() {
     return raw && typeof raw === 'object' ? raw : {};
   });
 
-  // Vistas principales: path, lesson, practice, boss, profile, academic, notifications
-  const [view, setView] = useState<'path' | 'lesson' | 'practice' | 'boss' | 'profile' | 'academic' | 'notifications'>(() => {
+  // Vistas principales: path, lesson, practice, boss, profile, academic, notifications, store
+  const [view, setView] = useState<'path' | 'lesson' | 'practice' | 'boss' | 'profile' | 'academic' | 'notifications' | 'store'>(() => {
     if (typeof window !== 'undefined') {
       const params = new URLSearchParams(window.location.search);
       if (params.get('view') === 'boss') return 'boss';
       if (params.get('view') === 'academic') return 'academic';
       if (params.get('view') === 'notifications') return 'notifications';
+      if (params.get('view') === 'store' || params.get('view') === 'shop') return 'store';
     }
     return 'path';
   });
@@ -190,9 +191,6 @@ export default function App() {
   // Modal 3D de Celebración de Racha (estilo Duolingo con Avatar)
   const [isStreakModalOpen, setIsStreakModalOpen] = useState(false);
   const [isJustFinishedStreak, setIsJustFinishedStreak] = useState(false);
-
-  // Modal 3D del Vestidor de Byte (Locker)
-  const [isLockerOpen, setIsLockerOpen] = useState(false);
 
   // Modal de Usuarios en Línea en Tiempo Real (Exclusivo Docente josephcarazo56@gmail.com)
   const [isLiveUsersOpen, setIsLiveUsersOpen] = useState(false);
@@ -1070,8 +1068,8 @@ export default function App() {
         />
       )}
 
-      {/* Barra de Estado Superior (solo visible en path y practice cuando no se está leyendo teoría) */}
-      {view !== 'boss' && view !== 'lesson' && view !== 'academic' && view !== 'notifications' && !activeTheory && (
+      {/* Barra de Estado Superior (solo visible en path y practice cuando no se está leyendo teoría o en páginas dedicadas) */}
+      {view !== 'boss' && view !== 'lesson' && view !== 'academic' && view !== 'notifications' && view !== 'store' && !activeTheory && (
         <Navbar
           user={user}
           isAdmin={authService.isCurrentUserAdmin()}
@@ -1122,7 +1120,7 @@ export default function App() {
           }}
           onOpenLocker={() => {
             soundService.playToken();
-            setIsLockerOpen(true);
+            setView('store');
           }}
           onSignOut={handleSignOut}
         />
@@ -1878,7 +1876,10 @@ export default function App() {
           onUpdate={(updated) => setUser(updated)}
           onOpenAuth={() => { setView('path'); setIsAuthOpen(true); }}
           onOpenAcademic={() => setView('academic')}
-          onOpenLocker={() => setIsLockerOpen(true)}
+          onOpenLocker={() => {
+            soundService.playToken();
+            setView('store');
+          }}
           onOpenDiagnostic={() => {
             if (activePendingAssignment) {
               const inst = getDiagnosticInstrumentById(activePendingAssignment.instrumentId);
@@ -1914,6 +1915,16 @@ export default function App() {
           onBack={() => setView('path')}
           onMarkAsRead={handleMarkNotificationAsRead}
           onMarkAllAsRead={handleMarkAllNotificationsAsRead}
+        />
+      )}
+
+      {/* VISTA DEDICADA 100% DUOLINGO 3D: TIENDA Y VESTIDOR DE BYTE (NO MODAL) */}
+      {view === 'store' && (
+        <StorePage
+          user={user}
+          totalStars={Object.values(progress).reduce((acc, curr) => acc + (curr?.starsEarned || 0), 0)}
+          onBack={() => setView('path')}
+          onUpdateUser={(updated) => setUser(updated)}
         />
       )}
 
@@ -1964,15 +1975,6 @@ export default function App() {
         onClose={() => setIsStreakModalOpen(false)}
         user={user}
         isJustCompleted={isJustFinishedStreak}
-      />
-
-      {/* VESTIDOR 3D DE BYTE (ESTILO FORTNITE LOCKER / DUOLINGO 3D) */}
-      <ByteLockerModal
-        isOpen={isLockerOpen}
-        user={user}
-        totalStars={Object.values(progress).reduce((acc, curr) => acc + (curr?.starsEarned || 0), 0)}
-        onClose={() => setIsLockerOpen(false)}
-        onUpdateUser={(updated) => setUser(updated)}
       />
 
       {/* MODAL DE USUARIOS EN LÍNEA EN TIEMPO REAL (DOCENTE josephcarazo56@gmail.com) */}

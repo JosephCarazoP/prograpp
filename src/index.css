@@ -7065,5 +7065,1092 @@ button, a, input, select, .path-node, .token-chip, .pair-card {
   }
 }
 
+/* ═══════════════════════════════════════════════════════════════════
+   5. DISEÑO 100% DUOLINGO 3D (0% IA): BOTONES TÁCTILES Y COMPONENTES
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* Botones 3D Táctiles Auténticos de Duolingo */
+.duo-3d-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-family: inherit;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border-radius: 16px;
+  cursor: pointer;
+  transition: all 0.08s ease;
+  border: 2.5px solid;
+  box-sizing: border-box;
+  user-select: none;
+}
+
+.duo-3d-btn.green {
+  background: #58CC02;
+  border-color: #46A302;
+  border-bottom: 4.5px solid #388202;
+  color: #FFFFFF;
+}
+.duo-3d-btn.green:hover {
+  background: #61E002;
+}
+.duo-3d-btn.green:active {
+  transform: translateY(2.5px);
+  border-bottom-width: 2px;
+}
+
+.duo-3d-btn.blue {
+  background: #1CB0F6;
+  border-color: #1899D6;
+  border-bottom: 4.5px solid #1377A6;
+  color: #FFFFFF;
+}
+.duo-3d-btn.blue:hover {
+  background: #28BAFF;
+}
+.duo-3d-btn.blue:active {
+  transform: translateY(2.5px);
+  border-bottom-width: 2px;
+}
+
+.duo-3d-btn.orange {
+  background: #FF9600;
+  border-color: #E07700;
+  border-bottom: 4.5px solid #CC7A00;
+  color: #FFFFFF;
+}
+.duo-3d-btn.orange:hover {
+  background: #FFA726;
+}
+.duo-3d-btn.orange:active {
+  transform: translateY(2.5px);
+  border-bottom-width: 2px;
+}
+
+.duo-3d-btn.purple {
+  background: #CE82FF;
+  border-color: #A559D9;
+  border-bottom: 4.5px solid #8C37C4;
+  color: #FFFFFF;
+}
+.duo-3d-btn.purple:hover {
+  background: #D896FF;
+}
+.duo-3d-btn.purple:active {
+  transform: translateY(2.5px);
+  border-bottom-width: 2px;
+}
+
+.duo-3d-btn.gray {
+  background: #E5E5E5;
+  border-color: #D4D4D4;
+  border-bottom: 4.5px solid #BFBFBF;
+  color: #777777;
+  cursor: not-allowed;
+}
+
+.duo-3d-btn.sm {
+  padding: 8px 14px;
+  font-size: 0.78rem;
+  border-radius: 12px;
+  border-bottom-width: 3.5px;
+}
+.duo-3d-btn.sm:active {
+  transform: translateY(2px);
+  border-bottom-width: 1.5px;
+}
+
+.duo-3d-btn.full-width {
+  width: 100%;
+  padding: 14px 18px;
+  font-size: 0.95rem;
+}
+
+/* Botón Duolingo 3D de Regreso (Back Button) */
+.duo-3d-back-btn {
+  width: 42px;
+  height: 42px;
+  border-radius: 14px;
+  background: #FFFFFF;
+  border: 2.5px solid #E5E5E5;
+  border-bottom: 4.5px solid #CECECE;
+  color: #4B4B4B;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: all 0.08s ease;
+}
+.duo-3d-back-btn:hover {
+  background: #F7F7F7;
+  border-color: #D4D4D4;
+}
+.duo-3d-back-btn:active {
+  transform: translateY(2.5px);
+  border-bottom-width: 2px;
+}
+
+/* Botón 3D de Cierre Circular/Squircle */
+.duo-3d-close-btn {
+  width: 38px;
+  height: 38px;
+  border-radius: 12px;
+  background: #FFFFFF;
+  border: 2.5px solid #E5E5E5;
+  border-bottom: 4px solid #CECECE;
+  color: #777777;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: all 0.08s ease;
+}
+.duo-3d-close-btn:hover {
+  background: #F7F7F7;
+  color: #3C3C3C;
+}
+.duo-3d-close-btn:active {
+  transform: translateY(2px);
+  border-bottom-width: 2px;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   6. DUOLINGO 3D: HAMBURGER NAVIGATION (HB-NAV)
+   ═══════════════════════════════════════════════════════════════════ */
+.duo-hb-avatar-ring {
+  border: 3.5px solid #58CC02;
+  box-shadow: 0 4px 0 #46A302;
+  border-radius: 50%;
+  padding: 2px;
+  background: #FFFFFF;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.duo-hb-user-name {
+  font-size: 1.05rem;
+  font-weight: 900;
+  color: #3C3C3C;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.duo-hb-user-sub {
+  font-size: 0.76rem;
+  color: #777777;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 1px;
+}
+
+.duo-hb-code-tag {
+  color: #1CB0F6;
+  font-weight: 900;
+}
+
+.hb-stat-box.streak {
+  border-color: #FED7AA;
+  border-bottom: 4px solid #FB923C;
+}
+.hb-stat-box.bytes {
+  border-color: #BAE6FD;
+  border-bottom: 4px solid #38BDF8;
+}
+.hb-stat-box.hearts {
+  border-color: #FECACA;
+  border-bottom: 4px solid #F87171;
+}
+
+.hb-menu-badge.red {
+  background: #FF4B4B;
+  color: #FFFFFF;
+  box-shadow: 0 2px 0 #D33131;
+}
+.hb-menu-badge.green {
+  background: #58CC02;
+  color: #FFFFFF;
+  box-shadow: 0 2px 0 #46A302;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   7. DUOLINGO 3D: PÁGINA DE NOTIFICACIONES (NOTIFICATIONS PAGE)
+   ═══════════════════════════════════════════════════════════════════ */
+.duo-notif-page {
+  max-width: 760px;
+}
+
+.duo-notif-topbar {
+  border-bottom: 2.5px solid #E5E5E5;
+}
+
+.duo-notif-title {
+  font-size: 1.35rem;
+  font-weight: 900;
+  color: #3C3C3C;
+  letter-spacing: 0.04em;
+  margin: 0;
+}
+
+.duo-notif-sub {
+  font-size: 0.8rem;
+  color: #777777;
+  font-weight: 700;
+  margin: 3px 0 0 0;
+}
+
+.duo-3d-unread-pill {
+  background: #FF4B4B;
+  color: #FFFFFF;
+  border: 1.5px solid #D33131;
+  border-bottom: 3.5px solid #B91C1C;
+  font-size: 0.68rem;
+  font-weight: 900;
+  padding: 3px 8px;
+  border-radius: 999px;
+  letter-spacing: 0.04em;
+}
+
+.duo-filter-row {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  padding-bottom: 8px;
+  margin-bottom: 14px;
+}
+
+.duo-3d-filter-chip {
+  padding: 8px 14px;
+  border-radius: 14px;
+  font-size: 0.76rem;
+  font-weight: 900;
+  background: #FFFFFF;
+  color: #777777;
+  border: 2px solid #E5E5E5;
+  border-bottom: 4px solid #CECECE;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.08s ease;
+  flex-shrink: 0;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  font-family: inherit;
+}
+.duo-3d-filter-chip:hover {
+  background: #F7F7F7;
+  border-color: #D4D4D4;
+}
+.duo-3d-filter-chip.active {
+  background: #1CB0F6;
+  color: #FFFFFF;
+  border-color: #1899D6;
+  border-bottom: 4px solid #1377A6;
+  box-shadow: 0 2px 8px rgba(28, 176, 246, 0.25);
+}
+.duo-3d-filter-chip:active {
+  transform: translateY(2px);
+  border-bottom-width: 2px;
+}
+
+.duo-3d-notif-card {
+  background: #FFFFFF;
+  border: 2.5px solid #E5E5E5;
+  border-bottom: 5px solid #CECECE;
+  border-radius: 20px;
+  padding: 16px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  cursor: pointer;
+  transition: all 0.08s ease;
+  position: relative;
+  box-sizing: border-box;
+}
+.duo-3d-notif-card.unread {
+  background: #F0F9FF;
+  border-color: #84D8FF;
+  border-bottom-color: #1CB0F6;
+}
+.duo-3d-notif-card:hover {
+  border-color: #D4D4D4;
+}
+.duo-3d-notif-card.unread:hover {
+  border-color: #38BDF8;
+}
+.duo-3d-notif-card:active {
+  transform: translateY(2.5px);
+  border-bottom-width: 2.5px;
+}
+
+.duo-3d-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 9px;
+  border-radius: 10px;
+  font-size: 0.68rem;
+  font-weight: 900;
+  border: 1.5px solid;
+  border-bottom-width: 3px;
+  letter-spacing: 0.04em;
+}
+
+.duo-card-h3 {
+  font-size: 1.02rem;
+  font-weight: 900;
+  color: #3C3C3C;
+  margin: 2px 0 0 0;
+  line-height: 1.25;
+}
+
+.duo-card-p {
+  font-size: 0.88rem;
+  color: #4B4B4B;
+  line-height: 1.5;
+  margin: 0;
+  font-weight: 600;
+  white-space: pre-wrap;
+}
+
+.duo-tap-read-hint {
+  font-size: 0.68rem;
+  font-weight: 900;
+  color: #1CB0F6;
+  letter-spacing: 0.04em;
+}
+
+.duo-unread-glow-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #1CB0F6;
+  box-shadow: 0 0 0 3px rgba(28, 176, 246, 0.25);
+  flex-shrink: 0;
+}
+
+.duo-notif-empty {
+  border: 2.5px dashed #D4D4D4 !important;
+  background: #FAFAFA !important;
+  border-radius: 22px !important;
+  padding: 40px 20px !important;
+}
+.duo-empty-icon-box {
+  width: 68px;
+  height: 68px;
+  border-radius: 20px;
+  background: #E0F2FE;
+  border: 2px solid #BAE6FD;
+  box-shadow: 0 4px 0 #7DD3FC;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 8px;
+}
+.duo-empty-title {
+  font-size: 1.15rem;
+  font-weight: 900;
+  color: #3C3C3C;
+  margin: 0 0 4px 0;
+  letter-spacing: 0.03em;
+}
+.duo-empty-desc {
+  font-size: 0.85rem;
+  color: #777777;
+  margin: 0;
+  max-width: 340px;
+  font-weight: 600;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   8. DUOLINGO 3D: TIENDA COMPLETA Y VESTIDOR DE BYTE (STORE PAGE)
+   ═══════════════════════════════════════════════════════════════════ */
+.duo-store-page-root {
+  width: 100%;
+  max-width: 980px;
+  margin: 0 auto;
+  padding: 16px 14px 80px 14px;
+  box-sizing: border-box;
+  animation: fadeIn 0.2s ease-out;
+}
+
+.duo-store-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding-bottom: 16px;
+  border-bottom: 2.5px solid #E5E5E5;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+
+.duo-store-nav-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.duo-store-badge-top {
+  font-size: 0.66rem;
+  font-weight: 900;
+  color: #1CB0F6;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  letter-spacing: 0.06em;
+  margin-bottom: 2px;
+}
+
+.duo-store-title {
+  font-size: 1.35rem;
+  font-weight: 900;
+  color: #3C3C3C;
+  margin: 0;
+  line-height: 1.2;
+  letter-spacing: 0.03em;
+}
+
+.duo-store-stats-cluster {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.duo-3d-stat-pill {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 14px;
+  background: #FFFFFF;
+  font-weight: 900;
+  border: 2px solid;
+  border-bottom: 4px solid;
+}
+.duo-3d-stat-pill.bytes {
+  border-color: #BAE6FD;
+  border-bottom-color: #1CB0F6;
+  color: #0284C7;
+}
+.duo-3d-stat-pill.hearts {
+  border-color: #FECACA;
+  border-bottom-color: #FF4B4B;
+  color: #DC2626;
+}
+.duo-3d-stat-pill.streak {
+  border-color: #FED7AA;
+  border-bottom-color: #FF9600;
+  color: #D97706;
+}
+.duo-3d-stat-val {
+  font-size: 0.95rem;
+  font-weight: 900;
+  color: #3C3C3C;
+}
+.duo-3d-stat-lbl {
+  font-size: 0.68rem;
+  font-weight: 900;
+  color: #777777;
+  text-transform: uppercase;
+}
+
+/* Tabs Duolingo 3D */
+.duo-store-tab-selector {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 18px;
+}
+
+.duo-3d-tab-btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 16px;
+  border-radius: 16px;
+  font-size: 0.84rem;
+  font-weight: 900;
+  cursor: pointer;
+  transition: all 0.08s ease;
+  letter-spacing: 0.04em;
+  font-family: inherit;
+  background: #FFFFFF;
+  border: 2.5px solid #E5E5E5;
+  border-bottom: 4.5px solid #CECECE;
+  color: #777777;
+}
+.duo-3d-tab-btn:hover {
+  background: #F7F7F7;
+  border-color: #D4D4D4;
+}
+.duo-3d-tab-btn.active {
+  background: #1CB0F6;
+  border-color: #1899D6;
+  border-bottom: 4.5px solid #1377A6;
+  color: #FFFFFF;
+}
+.duo-3d-tab-btn:active {
+  transform: translateY(2.5px);
+  border-bottom-width: 2px;
+}
+
+/* Toast Duolingo 3D */
+.duo-store-toast {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #58CC02;
+  color: #FFFFFF;
+  border: 2px solid #46A302;
+  border-bottom: 4px solid #388202;
+  border-radius: 14px;
+  padding: 10px 16px;
+  font-size: 0.88rem;
+  font-weight: 900;
+  margin-bottom: 16px;
+  animation: slideInDown 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.duo-store-toast.info {
+  background: #1CB0F6;
+  border-color: #1899D6;
+  border-bottom-color: #1377A6;
+}
+
+/* Layout de Skins */
+.duo-store-skins-layout {
+  display: grid;
+  grid-template-columns: 360px 1fr;
+  gap: 18px;
+  align-items: start;
+}
+
+.duo-store-stage-card {
+  background: #FFFFFF;
+  border: 2.5px solid #E5E5E5;
+  border-bottom: 5px solid #CECECE;
+  border-radius: 22px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  box-sizing: border-box;
+}
+
+.duo-stage-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.duo-rank-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 8px;
+  border-radius: 8px;
+  font-size: 0.68rem;
+  font-weight: 900;
+  letter-spacing: 0.04em;
+  background: #FFFFFF;
+}
+
+.duo-turntable-indicator {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: #F1F5F9;
+  border: 1.5px solid #E2E8F0;
+  border-radius: 8px;
+  padding: 3px 8px;
+  font-size: 0.66rem;
+  font-weight: 900;
+  color: #64748B;
+  letter-spacing: 0.03em;
+}
+
+.duo-stage-viewport {
+  height: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: radial-gradient(circle at center, #F0F9FF 0%, #FFFFFF 72%);
+  border-radius: 18px;
+  border: 2px dashed #BAE6FD;
+  cursor: grab;
+  position: relative;
+  user-select: none;
+  touch-action: none;
+}
+.duo-stage-viewport.dragging {
+  cursor: grabbing;
+}
+
+.duo-stage-controls-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.duo-rotation-btn-group {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.duo-3d-icon-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 12px;
+  background: #FFFFFF;
+  border: 2px solid #E5E5E5;
+  border-bottom: 3.5px solid #CECECE;
+  color: #4B4B4B;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.08s ease;
+}
+.duo-3d-icon-btn:hover {
+  background: #F7F7F7;
+}
+.duo-3d-icon-btn:active {
+  transform: translateY(2px);
+  border-bottom-width: 1.5px;
+}
+
+.duo-3d-angle-chip {
+  padding: 7px 14px;
+  border-radius: 12px;
+  font-size: 0.72rem;
+  font-weight: 900;
+  background: #FFFFFF;
+  border: 2px solid #E5E5E5;
+  border-bottom: 3.5px solid #CECECE;
+  color: #777777;
+  cursor: pointer;
+  transition: all 0.08s ease;
+  font-family: inherit;
+}
+.duo-3d-angle-chip:hover {
+  background: #F7F7F7;
+}
+.duo-3d-angle-chip.active {
+  background: #58CC02;
+  color: #FFFFFF;
+  border-color: #46A302;
+  border-bottom: 3.5px solid #388202;
+}
+.duo-3d-angle-chip:active {
+  transform: translateY(2px);
+  border-bottom-width: 1.5px;
+}
+
+.duo-poses-chip-row {
+  display: flex;
+  gap: 6px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.duo-3d-pose-chip {
+  padding: 5px 10px;
+  border-radius: 10px;
+  font-size: 0.68rem;
+  font-weight: 900;
+  background: #F7F7F7;
+  border: 1.5px solid #E5E5E5;
+  border-bottom: 3px solid #CECECE;
+  color: #777777;
+  cursor: pointer;
+  transition: all 0.08s ease;
+  font-family: inherit;
+}
+.duo-3d-pose-chip:hover {
+  background: #EFEFEF;
+}
+.duo-3d-pose-chip.active {
+  background: #CE82FF;
+  color: #FFFFFF;
+  border-color: #A559D9;
+  border-bottom: 3px solid #8C37C4;
+}
+.duo-3d-pose-chip:active {
+  transform: translateY(1.5px);
+  border-bottom-width: 1.5px;
+}
+
+/* Ficha de la skin seleccionada */
+.duo-skin-meta-box {
+  background: #F8FAFC;
+  border: 2px solid #E2E8F0;
+  border-radius: 16px;
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.duo-skin-meta-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.duo-skin-name {
+  font-size: 1.08rem;
+  font-weight: 900;
+  color: #3C3C3C;
+  margin: 0;
+  line-height: 1.2;
+}
+
+.duo-skin-sub {
+  font-size: 0.74rem;
+  color: #777777;
+  margin: 2px 0 0 0;
+  font-weight: 700;
+}
+
+.duo-3d-rarity-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 8px;
+  border-radius: 8px;
+  font-size: 0.66rem;
+  font-weight: 900;
+  border: 1.5px solid;
+  letter-spacing: 0.04em;
+}
+
+.duo-skin-desc {
+  font-size: 0.8rem;
+  color: #4B4B4B;
+  margin: 0;
+  line-height: 1.45;
+  font-weight: 600;
+}
+
+.duo-skin-action-area {
+  margin-top: 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.duo-equipped-badge {
+  background: #DCFCE7;
+  color: #15803D;
+  border: 2px solid #86EFAC;
+  border-bottom: 4px solid #4ADE80;
+  border-radius: 14px;
+  padding: 10px 14px;
+  font-size: 0.88rem;
+  font-weight: 900;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  letter-spacing: 0.04em;
+}
+
+.duo-skin-requirement-hint {
+  font-size: 0.7rem;
+  color: #D97706;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  justify-content: center;
+}
+
+/* Catálogo de Skins */
+.duo-store-catalog-card {
+  background: #FFFFFF;
+  border: 2.5px solid #E5E5E5;
+  border-bottom: 5px solid #CECECE;
+  border-radius: 22px;
+  padding: 16px;
+  box-sizing: border-box;
+}
+
+.duo-catalog-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding-bottom: 12px;
+  border-bottom: 2px solid #F1F5F9;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+}
+
+.duo-catalog-title {
+  font-size: 1.15rem;
+  font-weight: 900;
+  color: #3C3C3C;
+  margin: 0;
+  letter-spacing: 0.02em;
+}
+
+.duo-catalog-sub {
+  font-size: 0.76rem;
+  color: #777777;
+  margin: 2px 0 0 0;
+  font-weight: 700;
+}
+
+.duo-catalog-count-pill {
+  background: #F1F5F9;
+  border: 1.5px solid #E2E8F0;
+  border-radius: 10px;
+  padding: 4px 10px;
+  font-size: 0.72rem;
+  font-weight: 900;
+  color: #475569;
+  letter-spacing: 0.03em;
+}
+
+.duo-skins-wrap-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(105px, 1fr));
+  gap: 10px;
+}
+
+.duo-3d-skin-card {
+  background: #FFFFFF;
+  border: 2.5px solid #E5E5E5;
+  border-bottom: 4.5px solid #CECECE;
+  border-radius: 18px;
+  padding: 8px 6px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+  transition: all 0.08s ease;
+  box-sizing: border-box;
+  width: 100%;
+}
+.duo-3d-skin-card:hover {
+  border-color: #D4D4D4;
+}
+.duo-3d-skin-card.selected {
+  border-color: #1CB0F6;
+  border-bottom-color: #1899D6;
+  background: #F0F9FF;
+  box-shadow: 0 4px 14px rgba(28, 176, 246, 0.18);
+}
+.duo-3d-skin-card.equipped {
+  border-color: #58CC02;
+  border-bottom-color: #46A302;
+}
+.duo-3d-skin-card:active {
+  transform: translateY(2px);
+  border-bottom-width: 2.5px;
+}
+
+.duo-card-badge-row {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 4px;
+}
+
+.duo-card-rarity-tag {
+  font-size: 0.58rem;
+  font-weight: 900;
+  padding: 1.5px 5px;
+  border-radius: 5px;
+  border: 1px solid;
+  letter-spacing: 0.02em;
+}
+
+.duo-card-lock-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  background: #FEF3C7;
+  color: #B45309;
+  border: 1px solid #FDE68A;
+  border-radius: 5px;
+  padding: 1.5px 4px;
+  font-size: 0.6rem;
+  font-weight: 900;
+}
+
+.duo-card-check-tag {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #58CC02;
+  border: 1.5px solid #46A302;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.duo-card-avatar-slot {
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.duo-card-meta {
+  width: 100%;
+  text-align: center;
+}
+
+.duo-card-skin-title {
+  font-size: 0.74rem;
+  font-weight: 900;
+  color: #3C3C3C;
+  line-height: 1.2;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.duo-card-skin-status {
+  font-size: 0.64rem;
+  color: #777777;
+  font-weight: 800;
+  margin-top: 1px;
+}
+
+/* Potenciadores Duolingo 3D */
+.duo-store-powerups-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 14px;
+}
+
+.duo-3d-item-card {
+  background: #FFFFFF;
+  border: 2.5px solid #E5E5E5;
+  border-bottom: 5px solid #CECECE;
+  border-radius: 20px;
+  padding: 18px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  box-sizing: border-box;
+}
+
+.duo-item-icon-box {
+  width: 56px;
+  height: 56px;
+  border-radius: 16px;
+  border: 2px solid;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.duo-item-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.duo-item-tag {
+  font-size: 0.64rem;
+  font-weight: 900;
+  color: #DC2626;
+  letter-spacing: 0.05em;
+}
+.duo-item-tag.blue {
+  color: #0284C7;
+}
+.duo-item-tag.orange {
+  color: #D97706;
+}
+.duo-item-tag.purple {
+  color: #7E22CE;
+}
+.duo-item-tag.green {
+  color: #16A34A;
+}
+
+.duo-item-title {
+  font-size: 1.05rem;
+  font-weight: 900;
+  color: #3C3C3C;
+  margin: 0;
+  line-height: 1.25;
+}
+
+.duo-item-desc {
+  font-size: 0.82rem;
+  color: #4B4B4B;
+  line-height: 1.45;
+  margin: 0;
+  font-weight: 600;
+}
+
+.duo-item-inventory {
+  font-size: 0.74rem;
+  color: #64748B;
+  font-weight: 700;
+  margin-top: 4px;
+}
+
+.duo-item-action {
+  margin-top: 4px;
+}
+.duo-item-action .duo-3d-btn {
+  width: 100%;
+  padding: 12px 14px;
+  font-size: 0.86rem;
+}
+
+/* Adaptación Móvil Específica (375x667 y pantallas pequeñas) */
+@media (max-width: 768px) {
+  .duo-store-skins-layout {
+    grid-template-columns: 1fr;
+  }
+  .duo-store-title {
+    font-size: 1.15rem;
+  }
+  .duo-store-stats-cluster {
+    width: 100%;
+    justify-content: flex-start;
+  }
+  .duo-3d-stat-pill {
+    padding: 5px 9px;
+  }
+  .duo-3d-stat-val {
+    font-size: 0.85rem;
+  }
+  .duo-skins-wrap-grid {
+    grid-template-columns: repeat(auto-fill, minmax(92px, 1fr));
+    gap: 8px;
+  }
+  .duo-card-avatar-slot {
+    height: 52px;
+  }
+}
+
+
 
 

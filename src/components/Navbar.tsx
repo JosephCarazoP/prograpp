@@ -9,13 +9,13 @@ import {
   ChevronDown,
   ShieldCheck,
   LogOut,
-  Shirt,
   Users,
   Bell,
   Menu,
   X,
-  Sparkles,
-  Zap
+  Zap,
+  ShoppingBag,
+  Heart
 } from 'lucide-react';
 import { UserProfile } from '../types/user';
 import { soundService } from '../services/soundService';
@@ -156,7 +156,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               <Target size={18} color="#F59E0B" strokeWidth={2.5} />
             </button>
 
-            {/* Vestidor de Byte */}
+            {/* Tienda y Vestidor de Byte */}
             {onOpenLocker && (
               <button
                 className="nav-icon-btn"
@@ -164,12 +164,12 @@ export const Navbar: React.FC<NavbarProps> = ({
                   soundService.playToken();
                   onOpenLocker();
                 }}
-                title="Vestidor 3D de Byte (Skins y Trajes)"
+                title="Tienda de Byte y Vestidor 3D"
                 type="button"
-                aria-label="Abrir Vestidor de Byte"
-                style={{ color: '#0EA5E9' }}
+                aria-label="Abrir Tienda de Byte"
+                style={{ color: '#0284C7' }}
               >
-                <Shirt size={18} strokeWidth={2.4} />
+                <ShoppingBag size={18} strokeWidth={2.4} />
               </button>
             )}
 
@@ -276,51 +276,57 @@ export const Navbar: React.FC<NavbarProps> = ({
             className="hb-drawer-content"
             onClick={(e) => e.stopPropagation()}
           >
-            {/* Cabecera del Drawer */}
+            {/* ═══ CABECERA DUOLINGO 3D ═══ */}
             <div className="hb-drawer-header">
-              <div style={{ display: 'flex', alignItems: 'center', gap: 10, minWidth: 0 }}>
-                <DevAvatar avatarId={user?.avatarId || 'robot_byte'} size={42} />
+              <div style={{ display: 'flex', alignItems: 'center', gap: 12, minWidth: 0 }}>
+                <div className="duo-hb-avatar-ring">
+                  <DevAvatar avatarId={user?.avatarId || 'robot_byte'} size={46} />
+                </div>
                 <div style={{ minWidth: 0, flex: 1 }}>
-                  <div style={{ fontWeight: 900, fontSize: '0.95rem', color: '#0F172A', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                  <div className="duo-hb-user-name">
                     {user?.displayName || 'Desarrollador'}
                   </div>
-                  <div style={{ fontSize: '0.74rem', color: '#64748B', display: 'flex', gap: 6, alignItems: 'center' }}>
-                    <span style={{ fontWeight: 800, color: '#0284C7' }}>[{user?.studentCode || 'E01'}]</span>
+                  <div className="duo-hb-user-sub">
+                    <span className="duo-hb-code-tag">[{user?.studentCode || 'E01'}]</span>
                     <span>•</span>
                     <span>{user?.group || 'Grupo A'}</span>
                   </div>
                 </div>
               </div>
+
               <button
                 type="button"
-                className="hb-drawer-close-btn"
-                onClick={() => setIsDrawerOpen(false)}
+                className="duo-3d-close-btn"
+                onClick={() => {
+                  soundService.playToken();
+                  setIsDrawerOpen(false);
+                }}
                 aria-label="Cerrar Menú"
               >
-                <X size={18} />
+                <X size={18} strokeWidth={2.8} />
               </button>
             </div>
 
-            {/* Quick Stats Grid */}
+            {/* ═══ BARRA DE RECURSOS DUOLINGO 3D ═══ */}
             <div className="hb-drawer-stats">
-              <div className="hb-stat-box">
-                <Flame size={16} color="#FF9500" fill="#FF9500" />
+              <div className="hb-stat-box streak">
+                <Flame size={18} color="#FF9600" fill="#FF9600" strokeWidth={2.5} />
                 <span className="hb-stat-val">{user?.streak?.count ?? 0}</span>
-                <span className="hb-stat-lbl">Racha</span>
+                <span className="hb-stat-lbl">RACHA</span>
               </div>
-              <div className="hb-stat-box">
-                <Sparkles size={16} color="#0EA5E9" />
+              <div className="hb-stat-box bytes">
+                <Zap size={18} color="#1CB0F6" fill="#1CB0F6" strokeWidth={2.5} />
                 <span className="hb-stat-val">{user?.bytes ?? 0}</span>
-                <span className="hb-stat-lbl">Bytes</span>
+                <span className="hb-stat-lbl">BYTES</span>
               </div>
-              <div className="hb-stat-box">
-                <Zap size={16} color="#22C55E" />
+              <div className="hb-stat-box hearts">
+                <Heart size={18} color="#FF4B4B" fill="#FF4B4B" strokeWidth={2.5} />
                 <span className="hb-stat-val">{user?.batteries ?? 5}/5</span>
-                <span className="hb-stat-lbl">Vidas</span>
+                <span className="hb-stat-lbl">VIDAS</span>
               </div>
             </div>
 
-            {/* Lista de Acciones y Enlaces */}
+            {/* ═══ LISTA DE ACCIONES DUOLINGO 3D ═══ */}
             <div className="hb-drawer-menu">
               {/* Cambiar Ruta */}
               <button
@@ -332,16 +338,16 @@ export const Navbar: React.FC<NavbarProps> = ({
                   onPathToggle();
                 }}
               >
-                <div className="hb-menu-icon" style={{ background: user.currentPath === 'kotlin' ? '#EDE9FE' : '#E0F2FE', color: user.currentPath === 'kotlin' ? '#7C3AED' : '#0284C7' }}>
-                  {user.currentPath === 'kotlin' ? <Code2 size={19} /> : <Database size={19} />}
+                <div className="hb-menu-icon" style={{ background: user.currentPath === 'kotlin' ? '#CE82FF' : '#1CB0F6', color: '#FFFFFF', boxShadow: user.currentPath === 'kotlin' ? '0 3.5px 0 #A559D9' : '0 3.5px 0 #1899D6' }}>
+                  {user.currentPath === 'kotlin' ? <Code2 size={20} strokeWidth={2.6} /> : <Database size={20} strokeWidth={2.6} />}
                 </div>
                 <div className="hb-menu-text">
-                  <div className="hb-menu-title">Cambiar a {user.currentPath === 'kotlin' ? 'SQL' : 'Kotlin'}</div>
-                  <div className="hb-menu-desc">Ruta activa actual: {user.currentPath === 'kotlin' ? 'Kotlin' : 'SQL'}</div>
+                  <div className="hb-menu-title">CAMBIAR A {user.currentPath === 'kotlin' ? 'SQL' : 'KOTLIN'}</div>
+                  <div className="hb-menu-desc">Ruta activa: {user.currentPath === 'kotlin' ? 'Kotlin' : 'SQL'}</div>
                 </div>
               </button>
 
-              {/* Perfil */}
+              {/* Mi Perfil */}
               <button
                 type="button"
                 className="hb-menu-item"
@@ -351,16 +357,16 @@ export const Navbar: React.FC<NavbarProps> = ({
                   onOpenProfile();
                 }}
               >
-                <div className="hb-menu-icon" style={{ background: '#F1F5F9', color: '#475569' }}>
-                  <DevAvatar avatarId={user?.avatarId || 'robot_byte'} size={22} />
+                <div className="hb-menu-icon" style={{ background: '#58CC02', color: '#FFFFFF', boxShadow: '0 3.5px 0 #46A302' }}>
+                  <DevAvatar avatarId={user?.avatarId || 'robot_byte'} size={24} />
                 </div>
                 <div className="hb-menu-text">
-                  <div className="hb-menu-title">Mi Perfil</div>
+                  <div className="hb-menu-title">MI PERFIL</div>
                   <div className="hb-menu-desc">Estadísticas, medallas y cuenta</div>
                 </div>
               </button>
 
-              {/* Vestidor */}
+              {/* Tienda de Byte y Vestidor 3D */}
               {onOpenLocker && (
                 <button
                   type="button"
@@ -371,17 +377,20 @@ export const Navbar: React.FC<NavbarProps> = ({
                     onOpenLocker();
                   }}
                 >
-                  <div className="hb-menu-icon" style={{ background: '#E0F2FE', color: '#0284C7' }}>
-                    <Shirt size={19} />
+                  <div className="hb-menu-icon" style={{ background: '#1CB0F6', color: '#FFFFFF', boxShadow: '0 3.5px 0 #1899D6' }}>
+                    <ShoppingBag size={20} strokeWidth={2.6} />
                   </div>
                   <div className="hb-menu-text">
-                    <div className="hb-menu-title">Vestidor 3D de Byte</div>
-                    <div className="hb-menu-desc">Catálogo de skins y personalización</div>
+                    <div className="hb-menu-title" style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                      <span>TIENDA DE BYTE</span>
+                      <span className="hb-menu-badge" style={{ background: '#FEF9C3', color: '#854D0E', border: '1px solid #FDE047' }}>3D</span>
+                    </div>
+                    <div className="hb-menu-desc">Skins de Byte, vidas y potenciadores</div>
                   </div>
                 </button>
               )}
 
-              {/* Misiones */}
+              {/* Misiones Diarias */}
               <button
                 type="button"
                 className="hb-menu-item"
@@ -391,16 +400,16 @@ export const Navbar: React.FC<NavbarProps> = ({
                   onOpenQuests();
                 }}
               >
-                <div className="hb-menu-icon" style={{ background: '#FEF3C7', color: '#D97706' }}>
-                  <Target size={19} />
+                <div className="hb-menu-icon" style={{ background: '#FFC800', color: '#FFFFFF', boxShadow: '0 3.5px 0 #E5A500' }}>
+                  <Target size={20} strokeWidth={2.8} />
                 </div>
                 <div className="hb-menu-text">
-                  <div className="hb-menu-title">Misiones Diarias</div>
-                  <div className="hb-menu-desc">Retos del día y recompensas</div>
+                  <div className="hb-menu-title">MISIONES DIARIAS</div>
+                  <div className="hb-menu-desc">Retos del día y recompensas XP</div>
                 </div>
               </button>
 
-              {/* Notificaciones */}
+              {/* Notificaciones y Avisos */}
               {onOpenNotifications && (
                 <button
                   type="button"
@@ -411,22 +420,22 @@ export const Navbar: React.FC<NavbarProps> = ({
                     onOpenNotifications();
                   }}
                 >
-                  <div className="hb-menu-icon" style={{ background: '#FEF3C7', color: '#B45309' }}>
-                    <Bell size={19} />
+                  <div className="hb-menu-icon" style={{ background: '#FF9600', color: '#FFFFFF', boxShadow: '0 3.5px 0 #CC7A00' }}>
+                    <Bell size={20} strokeWidth={2.6} />
                   </div>
                   <div className="hb-menu-text">
                     <div className="hb-menu-title" style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                      <span>Avisos y Notificaciones</span>
+                      <span>NOTIFICACIONES</span>
                       {(unreadNotificationsCount ?? 0) > 0 && (
-                        <span className="hb-menu-badge">{unreadNotificationsCount} nuevos</span>
+                        <span className="hb-menu-badge red">{unreadNotificationsCount} NUEVAS</span>
                       )}
                     </div>
-                    <div className="hb-menu-desc">Comunicados del profesor y novedades</div>
+                    <div className="hb-menu-desc">Comunicados del docente y retos</div>
                   </div>
                 </button>
               )}
 
-              {/* Sonido */}
+              {/* Efectos de Sonido */}
               <button
                 type="button"
                 className="hb-menu-item"
@@ -434,11 +443,11 @@ export const Navbar: React.FC<NavbarProps> = ({
                   handleSoundToggle(e);
                 }}
               >
-                <div className="hb-menu-icon" style={{ background: isMuted ? '#F1F5F9' : '#DCFCE7', color: isMuted ? '#64748B' : '#16A34A' }}>
-                  {isMuted ? <VolumeX size={19} /> : <Volume2 size={19} />}
+                <div className="hb-menu-icon" style={{ background: isMuted ? '#E5E5E5' : '#22C55E', color: isMuted ? '#777777' : '#FFFFFF', boxShadow: isMuted ? '0 3.5px 0 #CECECE' : '0 3.5px 0 #16A34A' }}>
+                  {isMuted ? <VolumeX size={20} strokeWidth={2.6} /> : <Volume2 size={20} strokeWidth={2.6} />}
                 </div>
                 <div className="hb-menu-text">
-                  <div className="hb-menu-title">Efectos de Sonido</div>
+                  <div className="hb-menu-title">EFECTOS DE SONIDO</div>
                   <div className="hb-menu-desc">{isMuted ? 'Silenciado (Toca para activar)' : 'Activado (Toca para silenciar)'}</div>
                 </div>
               </button>
@@ -454,12 +463,12 @@ export const Navbar: React.FC<NavbarProps> = ({
                     onOpenAcademic();
                   }}
                 >
-                  <div className="hb-menu-icon" style={{ background: '#FFEDD5', color: '#EA580C' }}>
-                    <ShieldCheck size={19} />
+                  <div className="hb-menu-icon" style={{ background: '#FF9600', color: '#FFFFFF', boxShadow: '0 3.5px 0 #CC7A00' }}>
+                    <ShieldCheck size={20} strokeWidth={2.6} />
                   </div>
                   <div className="hb-menu-text">
-                    <div className="hb-menu-title">Seguimiento Académico</div>
-                    <div className="hb-menu-desc">Panel docente y análisis de investigación</div>
+                    <div className="hb-menu-title">SEGUIMIENTO DOCENTE</div>
+                    <div className="hb-menu-desc">Panel pedagógico e investigación</div>
                   </div>
                 </button>
               )}
@@ -475,15 +484,15 @@ export const Navbar: React.FC<NavbarProps> = ({
                     onOpenLiveUsers();
                   }}
                 >
-                  <div className="hb-menu-icon" style={{ background: '#DCFCE7', color: '#16A34A' }}>
-                    <Users size={19} />
+                  <div className="hb-menu-icon" style={{ background: '#58CC02', color: '#FFFFFF', boxShadow: '0 3.5px 0 #46A302' }}>
+                    <Users size={20} strokeWidth={2.6} />
                   </div>
                   <div className="hb-menu-text">
                     <div className="hb-menu-title" style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                      <span>Usuarios en Línea</span>
-                      {onlineUsersCount > 0 && <span className="hb-menu-badge green">{onlineUsersCount} activos</span>}
+                      <span>USUARIOS EN LÍNEA</span>
+                      {onlineUsersCount > 0 && <span className="hb-menu-badge green">{onlineUsersCount} ACTIVOS</span>}
                     </div>
-                    <div className="hb-menu-desc">Presencia en tiempo real en la plataforma</div>
+                    <div className="hb-menu-desc">Alumnos conectados en tiempo real</div>
                   </div>
                 </button>
               )}
@@ -498,11 +507,11 @@ export const Navbar: React.FC<NavbarProps> = ({
                     onSignOut();
                   }}
                 >
-                  <div className="hb-menu-icon" style={{ background: '#FEE2E2', color: '#DC2626' }}>
-                    <LogOut size={19} />
+                  <div className="hb-menu-icon" style={{ background: '#FF4B4B', color: '#FFFFFF', boxShadow: '0 3.5px 0 #D33131' }}>
+                    <LogOut size={20} strokeWidth={2.6} />
                   </div>
                   <div className="hb-menu-text">
-                    <div className="hb-menu-title" style={{ color: '#DC2626' }}>Cerrar Sesión</div>
+                    <div className="hb-menu-title" style={{ color: '#EA2B2B' }}>CERRAR SESIÓN</div>
                     <div className="hb-menu-desc">Salir de tu cuenta en este dispositivo</div>
                   </div>
                 </button>
