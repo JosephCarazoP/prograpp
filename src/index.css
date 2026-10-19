@@ -5,8 +5,8 @@
 }
 
 :root {
-  --font-ui: 'Nunito', 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  --font-code: 'JetBrains Mono', 'Fira Code', monospace;
+  --font-ui: 'Nunito', sans-serif;
+  --font-code: 'JetBrains Mono', monospace;
 
   /* Fondo Blanco Limpio y Superficies estilo Duolingo */
   --bg-primary: #F8FAFC;
@@ -70,14 +70,23 @@
   --shadow-chunky: 0 4px 0 #CBD5E1;
 }
 
-html, body {
-  font-family: 'Nunito', 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+*, *::before, *::after {
+  box-sizing: border-box;
+  font-family: 'Nunito', sans-serif;
+}
+
+html, body, #root {
+  font-family: 'Nunito', sans-serif !important;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-button, input, select, textarea, optgroup {
-  font-family: 'Nunito', 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+button, input, select, textarea, optgroup, a, p, span, div, h1, h2, h3, h4, h5, h6, label, strong, b, em, i {
+  font-family: 'Nunito', sans-serif !important;
+}
+
+code, pre, .code-editor, .syntax-line, .terminal-output, .font-code {
+  font-family: 'JetBrains Mono', monospace !important;
 }
 
 /* === FONDO BLANCO CON CÍRCULOS PINTADOS ANIMADOS (ESTILO DUOLINGO DOODLE) === */
@@ -2270,7 +2279,7 @@ button, a, input, select, .path-node, .token-chip, .pair-card {
 }
 
 .duolingo-card-title {
-  font-family: var(--font-ui, system-ui, sans-serif);
+  font-family: var(--font-ui);
   font-size: 0.82rem;
   font-weight: 800;
   color: #718096;
@@ -2370,84 +2379,6 @@ button, a, input, select, .path-node, .token-chip, .pair-card {
 }
 
 @media (max-width: 480px) {
-  .top-nav {
-    padding: env(safe-area-inset-top, 0px) 6px 0 6px !important;
-    height: calc(56px + env(safe-area-inset-top, 0px)) !important;
-    overflow: hidden !important;
-    max-width: 100vw !important;
-  }
-
-  .nav-left {
-    gap: 3px !important;
-  }
-
-  .course-switcher-btn {
-    padding: 5px 7px !important;
-    font-size: 0.78rem !important;
-    gap: 3px !important;
-    border-radius: 12px !important;
-  }
-
-  .nav-right {
-    gap: 2px !important;
-  }
-
-  .stat-pill {
-    padding: 4px 5px !important;
-    font-size: 0.78rem !important;
-    gap: 2px !important;
-    border-radius: 11px !important;
-  }
-
-  .stat-number {
-    font-size: 0.78rem !important;
-  }
-
-  .nav-icon-btn {
-    width: 32px !important;
-    height: 32px !important;
-    border-radius: 11px !important;
-  }
-
-  .nav-avatar-btn {
-    width: 32px !important;
-    height: 32px !important;
-  }
-
-  .nav-admin-label {
-    display: none !important;
-  }
-
-  .nav-admin-btn {
-    padding: 0 !important;
-    width: 32px !important;
-    height: 32px !important;
-    min-width: 32px !important;
-    border-radius: 11px !important;
-    gap: 0 !important;
-    margin-left: 2px !important;
-    justify-content: center !important;
-  }
-
-  .nav-live-users-label {
-    display: none !important;
-  }
-
-  .nav-live-users-badge-mobile {
-    display: inline-flex !important;
-    font-size: 0.68rem;
-    font-weight: 900;
-  }
-
-  .nav-live-users-btn {
-    padding: 0 6px !important;
-    height: 32px !important;
-    min-width: 32px !important;
-    border-radius: 11px !important;
-    gap: 3px !important;
-    margin-left: 2px !important;
-    justify-content: center !important;
-  }
 
   /* Modal de Misiones y Pase en Móvil */
   .tab-text-desktop {
@@ -2714,56 +2645,7 @@ button, a, input, select, .path-node, .token-chip, .pair-card {
     padding: 12px 12px 125px 12px !important;
   }
 
-  /* Barra de Navegación Superior Compacta */
-  .top-nav {
-    padding: 0 10px !important;
-    height: 56px !important;
-  }
 
-  .course-switcher-btn {
-    padding: 5px 8px !important;
-    font-size: 0.84rem !important;
-    gap: 4px !important;
-  }
-
-  .course-switcher-btn svg {
-    width: 16px !important;
-    height: 16px !important;
-  }
-
-  .nav-right {
-    gap: 3px !important;
-  }
-
-  .stat-pill {
-    padding: 3px 6px !important;
-    font-size: 0.86rem !important;
-    gap: 3px !important;
-  }
-
-  .stat-pill svg {
-    width: 16px !important;
-    height: 16px !important;
-  }
-
-  .nav-icon-btn {
-    width: 32px !important;
-    height: 32px !important;
-  }
-
-  .nav-icon-btn svg {
-    width: 16px !important;
-    height: 16px !important;
-  }
-
-  .nav-avatar-btn {
-    padding: 0 !important;
-  }
-
-  .nav-avatar-btn svg {
-    width: 34px !important;
-    height: 34px !important;
-  }
 
   /* Mascota Consola Optimizada para Móvil */
   .console-mascot-container {
@@ -2847,31 +2729,7 @@ button, a, input, select, .path-node, .token-chip, .pair-card {
 
 /* Pantallas Ultra Estrechas (ej. 360px - 375px) */
 @media (max-width: 380px) {
-  .top-nav {
-    padding: 0 6px !important;
-  }
 
-  .nav-icon-btn.sound-toggle {
-    display: none !important;
-  }
-
-  .nav-admin-btn {
-    width: 30px !important;
-    height: 30px !important;
-    min-width: 30px !important;
-    padding: 0 !important;
-  }
-
-  .stat-pill {
-    padding: 2px 4px !important;
-    font-size: 0.8rem !important;
-    gap: 2px !important;
-  }
-
-  .course-switcher-btn {
-    padding: 4px 6px !important;
-    font-size: 0.78rem !important;
-  }
 
   .console-hardware-wrapper {
     width: 76px !important;
@@ -2957,7 +2815,7 @@ button, a, input, select, .path-node, .token-chip, .pair-card {
 
 .profile-page-container.duo-profile-screen,
 .profile-page-container.duo-profile-screen * {
-  font-family: 'Nunito', 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+  font-family: 'Nunito', sans-serif !important;
 }
 
 .profile-page-container.duo-profile-screen {
@@ -6609,31 +6467,62 @@ button, a, input, select, .path-node, .token-chip, .pair-card {
   box-shadow: 0 2px 5px rgba(239, 68, 68, 0.4);
 }
 
-@media (max-width: 768px) {
+/* Breakpoint para pantallas móviles y tablets (< 1024px) */
+@media (max-width: 1023px) {
   .nav-desktop-actions {
     display: none !important;
   }
   .nav-mobile-hamburger-btn {
-    display: flex !important;
+    display: inline-flex !important;
   }
   .top-nav {
-    padding: env(safe-area-inset-top, 0px) 10px 0 10px !important;
-    height: calc(54px + env(safe-area-inset-top, 0px)) !important;
+    padding: env(safe-area-inset-top, 0px) 12px 0 12px !important;
+    height: calc(58px + env(safe-area-inset-top, 0px)) !important;
   }
   .course-switcher-btn {
-    padding: 5px 9px !important;
-    font-size: 0.82rem !important;
+    padding: 6px 11px !important;
+    font-size: 0.86rem !important;
+    gap: 5px !important;
+  }
+  .stat-pill {
+    padding: 5px 10px !important;
+    height: 36px !important;
+    font-size: 0.84rem !important;
+  }
+  .stat-number {
+    font-size: 0.84rem !important;
+  }
+  .nav-icon-btn,
+  .nav-mobile-hamburger-btn {
+    width: 38px !important;
+    height: 38px !important;
+    min-width: 38px !important;
+  }
+}
+
+/* Pantallas extra pequeñas (<= 380px) */
+@media (max-width: 380px) {
+  .top-nav {
+    padding: env(safe-area-inset-top, 0px) 8px 0 8px !important;
+  }
+  .course-switcher-btn {
+    padding: 5px 8px !important;
+    font-size: 0.8rem !important;
     gap: 4px !important;
+  }
+  .course-switcher-text {
+    max-width: 58px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
   .stat-pill {
     padding: 4px 8px !important;
-    height: 34px !important;
-    font-size: 0.78rem !important;
+    font-size: 0.8rem !important;
+    gap: 3px !important;
   }
-  .stat-number {
-    font-size: 0.82rem !important;
-  }
-  .nav-icon-btn {
+  .nav-icon-btn,
+  .nav-mobile-hamburger-btn {
     width: 36px !important;
     height: 36px !important;
     min-width: 36px !important;
@@ -6641,14 +6530,15 @@ button, a, input, select, .path-node, .token-chip, .pair-card {
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   1. DUOLINGO SETTINGS DRAWER / HB-NAV (FOTO 1 - 0% IA)
+   1. DUOLINGO SETTINGS DRAWER / HB-NAV (FOTO 1 - 100% RESPONSIVE)
    ═══════════════════════════════════════════════════════════════ */
 .hb-drawer-backdrop {
   position: fixed;
   inset: 0;
   background: rgba(0, 0, 0, 0.45);
   backdrop-filter: blur(4px);
-  z-index: 999;
+  -webkit-backdrop-filter: blur(4px);
+  z-index: 1000;
   display: flex;
   justify-content: flex-end;
   animation: fadeIn 0.18s ease-out;
@@ -6656,21 +6546,32 @@ button, a, input, select, .path-node, .token-chip, .pair-card {
 
 .hb-drawer-content.duo-settings-drawer,
 .hb-drawer-content.duo-settings-drawer * {
-  font-family: 'Nunito', 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+  font-family: 'Nunito', sans-serif !important;
 }
 
 .hb-drawer-content.duo-settings-drawer {
   width: 100%;
-  max-width: 380px;
+  max-width: 400px;
   height: 100%;
+  height: 100dvh;
+  max-height: 100dvh;
   background: #F7F7F7;
   display: flex;
   flex-direction: column;
-  z-index: 1000;
+  z-index: 1001;
   animation: slideInRight 0.25s cubic-bezier(0.16, 1, 0.3, 1);
   box-sizing: border-box;
   overflow: hidden;
-  box-shadow: -4px 0 24px rgba(0, 0, 0, 0.15);
+  box-shadow: -4px 0 28px rgba(0, 0, 0, 0.18);
+}
+
+/* En teléfonos (<= 640px) toma el 100% de la pantalla para verse como una app nativa (Foto 1) */
+@media (max-width: 640px) {
+  .hb-drawer-content.duo-settings-drawer {
+    width: 100% !important;
+    max-width: 100% !important;
+    box-shadow: none !important;
+  }
 }
 
 @keyframes slideInRight {
@@ -6688,11 +6589,14 @@ button, a, input, select, .path-node, .token-chip, .pair-card {
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 56px;
+  height: calc(56px + env(safe-area-inset-top, 0px));
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-left: 16px;
+  padding-right: 16px;
   background: #FFFFFF;
   border-bottom: 1.5px solid #E5E5E5;
-  padding: 0 16px;
   flex-shrink: 0;
+  box-sizing: border-box;
 }
 
 .duo-settings-title {
@@ -6705,6 +6609,7 @@ button, a, input, select, .path-node, .token-chip, .pair-card {
 .duo-settings-done-btn {
   position: absolute;
   right: 16px;
+  top: calc(env(safe-area-inset-top, 0px) + (56px - 34px) / 2);
   background: transparent;
   border: none;
   color: #1CB0F6;
@@ -6715,6 +6620,7 @@ button, a, input, select, .path-node, .token-chip, .pair-card {
   padding: 6px 10px;
   border-radius: 8px;
   transition: opacity 0.12s ease;
+  line-height: 1;
 }
 .duo-settings-done-btn:active {
   opacity: 0.6;
@@ -6725,18 +6631,19 @@ button, a, input, select, .path-node, .token-chip, .pair-card {
   flex: 1;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
-  padding: 16px 16px 40px 16px;
+  padding: 16px 16px max(36px, env(safe-area-inset-bottom, 24px)) 16px;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 10px;
+  box-sizing: border-box;
 }
 
-/* Etiquetas de Grupo (Account, Support, etc.) */
+/* Etiquetas de Grupo (Cuenta, Soporte, etc.) */
 .duo-settings-group-label {
   font-size: 1.05rem;
   font-weight: 800;
   color: #4B4B4B;
-  padding: 12px 6px 6px 6px;
+  padding: 12px 6px 4px 6px;
   letter-spacing: -0.01em;
 }
 
@@ -6748,6 +6655,8 @@ button, a, input, select, .path-node, .token-chip, .pair-card {
   overflow: hidden;
   display: flex;
   flex-direction: column;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 /* Fila individual de la tabla */
@@ -6757,6 +6666,7 @@ button, a, input, select, .path-node, .token-chip, .pair-card {
   align-items: center;
   justify-content: space-between;
   padding: 14px 16px;
+  min-height: 52px;
   background: #FFFFFF;
   border: none;
   border-bottom: 1.5px solid #E5E5E5;
@@ -6764,6 +6674,7 @@ button, a, input, select, .path-node, .token-chip, .pair-card {
   text-align: left;
   transition: background-color 0.1s ease;
   box-sizing: border-box;
+  gap: 10px;
 }
 .duo-settings-row:last-child {
   border-bottom: none;
@@ -6787,6 +6698,8 @@ button, a, input, select, .path-node, .token-chip, .pair-card {
   font-weight: 700;
   color: #4B4B4B;
   letter-spacing: -0.01em;
+  flex: 1;
+  min-width: 0;
 }
 .duo-settings-row-label.red {
   color: #FF4B4B;
@@ -6796,6 +6709,7 @@ button, a, input, select, .path-node, .token-chip, .pair-card {
   display: flex;
   align-items: center;
   gap: 8px;
+  flex-shrink: 0;
 }
 
 .duo-settings-row-sub {

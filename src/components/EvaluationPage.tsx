@@ -370,7 +370,7 @@ export const EvaluationPage: React.FC<EvaluationPageProps> = ({
         width: '100%',
         backgroundColor: '#FFFFFF',
         color: '#0F172A',
-        fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
+        fontFamily: "'Nunito', sans-serif",
         display: 'flex',
         flexDirection: 'column'
       }}
