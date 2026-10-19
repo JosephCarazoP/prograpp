@@ -47,7 +47,7 @@ import { ActivityOpinionModal } from './components/ActivityOpinionModal';
 import { StreakCelebrationModal } from './components/StreakCelebrationModal';
 import { ByteLockerModal } from './components/ByteLockerModal';
 import { LiveUsersModal } from './components/LiveUsersModal';
-import { NotificationsModal } from './components/NotificationsModal';
+import { NotificationsPage } from './components/NotificationsPage';
 import { academicService } from './services/academicService';
 import { timeTrackingService } from './services/timeTrackingService';
 import { presenceService } from './services/presenceService';
@@ -129,12 +129,13 @@ export default function App() {
     return raw && typeof raw === 'object' ? raw : {};
   });
 
-  // Vistas principales: path, lesson, practice, boss, profile, academic
-  const [view, setView] = useState<'path' | 'lesson' | 'practice' | 'boss' | 'profile' | 'academic'>(() => {
+  // Vistas principales: path, lesson, practice, boss, profile, academic, notifications
+  const [view, setView] = useState<'path' | 'lesson' | 'practice' | 'boss' | 'profile' | 'academic' | 'notifications'>(() => {
     if (typeof window !== 'undefined') {
       const params = new URLSearchParams(window.location.search);
       if (params.get('view') === 'boss') return 'boss';
       if (params.get('view') === 'academic') return 'academic';
+      if (params.get('view') === 'notifications') return 'notifications';
     }
     return 'path';
   });
@@ -198,8 +199,7 @@ export default function App() {
   const [onlineUsersCount, setOnlineUsersCount] = useState(0);
   const [selectedAcademicStudentUid, setSelectedAcademicStudentUid] = useState<string | null>(null);
 
-  // Modal de Notificaciones y Avisos para el Alumno
-  const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
+  // Notificaciones y Avisos para el Alumno (Página Completa)
   const [notifications, setNotifications] = useState<AppNotification[]>([]);
 
   // Modal 3D de Checkpoint Teórico Obligatorio (Lectura rápida + 2 preguntas micro-quiz antes de jugar)
@@ -423,6 +423,11 @@ export default function App() {
         status: 'idle',
         activityText: 'Personalizando Perfil'
       };
+    } else if (view === 'notifications') {
+      activity = {
+        status: 'idle',
+        activityText: 'Revisando Avisos y Notificaciones'
+      };
     } else if (mainTab === 'courses') {
       activity = {
         status: 'theory',
@@ -440,10 +445,10 @@ export default function App() {
     // Reportar de inmediato
     presenceService.reportActivity(user.uid, activity);
 
-    // Latido periódico de 30 segundos
+    // Latido periódico de 20 segundos (mantiene presencia siempre fresca)
     const heartbeatTimer = setInterval(() => {
       presenceService.reportActivity(user.uid, activity);
-    }, 30000);
+    }, 20000);
 
     return () => clearInterval(heartbeatTimer);
   }, [
@@ -457,19 +462,21 @@ export default function App() {
     user?.currentPath
   ]);
 
-  // Marcar como desconectado al cerrar o recargar la pestaña
+  // Marcar como desconectado al cerrar o salir del navegador / pestaña
   useEffect(() => {
     if (!user || !user.uid || !isAuthenticated || user.uid === 'guest_user_1') return;
 
-    const handleBeforeUnload = () => {
+    const handleExit = () => {
       if (user.uid) {
         presenceService.setOffline(user.uid);
       }
     };
 
-    window.addEventListener('beforeunload', handleBeforeUnload);
+    window.addEventListener('beforeunload', handleExit);
+    window.addEventListener('pagehide', handleExit);
     return () => {
-      window.removeEventListener('beforeunload', handleBeforeUnload);
+      window.removeEventListener('beforeunload', handleExit);
+      window.removeEventListener('pagehide', handleExit);
     };
   }, [user?.uid, isAuthenticated]);
 
@@ -1064,7 +1071,7 @@ export default function App() {
       )}
 
       {/* Barra de Estado Superior (solo visible en path y practice cuando no se está leyendo teoría) */}
-      {view !== 'boss' && view !== 'lesson' && view !== 'academic' && !activeTheory && (
+      {view !== 'boss' && view !== 'lesson' && view !== 'academic' && view !== 'notifications' && !activeTheory && (
         <Navbar
           user={user}
           isAdmin={authService.isCurrentUserAdmin()}
@@ -1076,7 +1083,7 @@ export default function App() {
           }}
           onOpenNotifications={() => {
             soundService.playToken();
-            setIsNotificationsOpen(true);
+            setView('notifications');
           }}
           onLogoClick={() => {
             setView('path');
@@ -1899,6 +1906,17 @@ export default function App() {
         />
       )}
 
+      {/* VISTA DE PÁGINA COMPLETA: CENTRO DE NOTIFICACIONES Y AVISOS */}
+      {view === 'notifications' && (
+        <NotificationsPage
+          user={user}
+          notifications={notifications}
+          onBack={() => setView('path')}
+          onMarkAsRead={handleMarkNotificationAsRead}
+          onMarkAllAsRead={handleMarkAllNotificationsAsRead}
+        />
+      )}
+
       {/* MODAL DE OPINIÓN PEDAGÓGICA BREVE TRAS ENTREGAR PRÁCTICA */}
       {opinionActivityId && (
         <ActivityOpinionModal
@@ -1966,16 +1984,6 @@ export default function App() {
           setSelectedAcademicStudentUid(uid);
           setView('academic');
         }}
-      />
-
-      {/* MODAL DE NOTIFICACIONES Y AVISOS PARA ESTUDIANTES */}
-      <NotificationsModal
-        isOpen={isNotificationsOpen}
-        onClose={() => setIsNotificationsOpen(false)}
-        user={user}
-        notifications={notifications}
-        onMarkAsRead={handleMarkNotificationAsRead}
-        onMarkAllAsRead={handleMarkAllNotificationsAsRead}
       />
 
       {/* Alertas Nativas del Juego (Reemplazo total de window.alert) */}

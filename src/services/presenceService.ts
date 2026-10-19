@@ -4,9 +4,10 @@ import { UserProfile, UserActivityStatus, UserPresenceStatus } from '../types/us
 import { userService, sanitizeUserProfile } from './userService';
 import { storageService } from './storageService';
 
-// Umbral de tiempo para considerar a un usuario en línea (5 minutos)
-// Permite que estudiantes leyendo, pensando o escribiendo código sigan en línea sin desconectarse prematuramente
-export const ONLINE_THRESHOLD_MS = 5 * 60 * 1000;
+// Umbral de tiempo para considerar a un usuario en línea (65 segundos)
+// Con latidos periódicos cada 20-25s, si el usuario cierra el navegador o pestaña,
+// el sistema lo detecta como desconectado de inmediato o en máx 60 segundos
+export const ONLINE_THRESHOLD_MS = 65 * 1000;
 
 export const presenceService = {
   // Enviar latido de presencia y actividad actual
@@ -41,13 +42,19 @@ export const presenceService = {
     }
   },
 
-  // Marcar desconexión explícita (al cerrar sesión)
+  // Marcar desconexión explícita (al cerrar sesión o salir del navegador)
   async setOffline(uid: string): Promise<void> {
     if (!uid || uid === 'guest_user_1') return;
 
+    const now = Date.now();
     const payload = {
       isOnline: false,
-      lastActiveAt: Date.now()
+      lastActiveAt: now,
+      currentActivity: {
+        status: 'offline' as UserPresenceStatus,
+        activityText: 'Desconectado',
+        updatedAt: now
+      }
     };
 
     try {
@@ -59,7 +66,7 @@ export const presenceService = {
         const userRef = doc(db, 'users', uid);
         await setDoc(userRef, payload, { merge: true });
       } catch (err) {
-        // Ignorar error al cerrar
+        // Ignorar error al cerrar pestaña
       }
     }
   },
@@ -68,23 +75,19 @@ export const presenceService = {
   isUserOnline(user: Partial<UserProfile>): boolean {
     if (!user) return false;
 
+    // Si explícitamente se marcó como desconectado, está offline de inmediato
+    if (user.isOnline === false) {
+      return false;
+    }
+
     const now = Date.now();
     const lastActive = typeof user.lastActiveAt === 'number' ? user.lastActiveAt : 0;
     const activityUpdated = typeof user.currentActivity?.updatedAt === 'number' ? user.currentActivity.updatedAt : 0;
     const mostRecent = Math.max(lastActive, activityUpdated);
 
-    // Si explícitamente se cerró sesión
-    if (user.isOnline === false) {
-      // Si su desconexión fue reciente y no hay latidos nuevos posteriores, está desconectado
-      const diffMs = now - mostRecent;
-      if (diffMs > 60000 || mostRecent <= 0) {
-        return false;
-      }
-    }
-
     if (mostRecent <= 0) return false;
 
-    // Está activo si su última señal de vida (latido, reto, avance o tiempo activo) fue dentro de 5 minutos
+    // Está activo si su última señal de vida fue dentro de los últimos 65 segundos
     return (now - mostRecent) <= ONLINE_THRESHOLD_MS;
   },
 

@@ -1304,89 +1304,87 @@ export const AcademicDashboard: React.FC<AcademicDashboardProps> = ({
                             </div>
                           )}
 
-                          {/* Cuadrícula de 4 Métricas Reales y Claras (Solicitadas por el Usuario) */}
+                          {/* Panel Unificado de Métricas del Estudiante */}
                           <div className="academic-student-pill-grid">
                             {/* 1. Tiempo de Juego */}
                             <div className="academic-student-pill-box">
-                              <span className="academic-student-pill-label" style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-                                <Clock size={11} color="#0284C7" /> Tiempo de Juego
+                              <span className="academic-student-pill-label">
+                                <Clock size={12} color="#0284C7" /> Tiempo de Juego
                               </span>
                               <div className="academic-student-pill-val" style={{ color: '#0284C7' }}>
                                 {formatActiveTime(st.totalActiveTimeSeconds, ind?.estimatedActiveTimeMinutes)}
                               </div>
-                              <span style={{ fontSize: '0.68rem', color: '#64748B' }}>
-                                {ind?.activeDaysCount ?? 0} días practicando
+                              <span className="academic-student-pill-sub">
+                                {ind?.activeDaysCount ?? 0} {ind?.activeDaysCount === 1 ? 'día activo' : 'días activos'}
                               </span>
                             </div>
 
                             {/* 2. Última vez en línea */}
                             <div className="academic-student-pill-box">
-                              <span className="academic-student-pill-label" style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-                                <Radio size={11} color={lastSeen.isOnline ? '#16A34A' : '#64748B'} /> Última Conexión
+                              <span className="academic-student-pill-label">
+                                <Radio size={12} color={lastSeen.isOnline ? '#16A34A' : '#64748B'} /> Última Conexión
                               </span>
                               <div
                                 className="academic-student-pill-val"
                                 style={{
-                                  color: lastSeen.isOnline ? '#16A34A' : '#1E293B',
-                                  fontSize: '0.88rem'
+                                  color: lastSeen.isOnline ? '#16A34A' : '#1E293B'
                                 }}
                               >
                                 {lastSeen.text}
                               </div>
-                              <span style={{ fontSize: '0.68rem', color: '#64748B' }}>
-                                {st.streak?.count || 0} días de racha
+                              <span className="academic-student-pill-sub">
+                                {st.streak?.count || 0} {st.streak?.count === 1 ? 'día de racha' : 'días de racha'}
                               </span>
                             </div>
 
                             {/* 3. Nivel en Kotlin */}
                             <div className="academic-student-pill-box">
-                              <span className="academic-student-pill-label" style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-                                <Code2 size={11} color="#7C3AED" /> Nivel Kotlin
+                              <span className="academic-student-pill-label">
+                                <Code2 size={12} color="#7C3AED" /> Nivel Kotlin
                               </span>
-                              <div className="academic-student-pill-val" style={{ color: '#7C3AED', fontSize: '0.88rem' }}>
+                              <div className="academic-student-pill-val" style={{ color: '#7C3AED' }}>
                                 {roadmap.kotlin.currentLevelLabel}
                               </div>
-                              <span style={{ fontSize: '0.68rem', color: '#64748B' }}>
-                                {roadmap.kotlin.completedCount} lecciones hechas
+                              <span className="academic-student-pill-sub">
+                                {roadmap.kotlin.completedCount} lecciones
                               </span>
                             </div>
 
                             {/* 4. Nivel en SQL */}
                             <div className="academic-student-pill-box">
-                              <span className="academic-student-pill-label" style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-                                <Database size={11} color="#0284C7" /> Nivel SQL
+                              <span className="academic-student-pill-label">
+                                <Database size={12} color="#0284C7" /> Nivel SQL
                               </span>
-                              <div className="academic-student-pill-val" style={{ color: '#0284C7', fontSize: '0.88rem' }}>
+                              <div className="academic-student-pill-val" style={{ color: '#0284C7' }}>
                                 {roadmap.sql.currentLevelLabel}
                               </div>
-                              <span style={{ fontSize: '0.68rem', color: '#64748B' }}>
-                                {roadmap.sql.completedCount} lecciones hechas
+                              <span className="academic-student-pill-sub">
+                                {roadmap.sql.completedCount} lecciones
                               </span>
                             </div>
-                          </div>
 
-                          {/* Barra de progreso inferior compacta: Aciertos y Ejercicios */}
-                          <div
-                            style={{
-                              margin: '6px 0 8px 0',
-                              padding: '5px 8px',
-                              background: '#F8FAFC',
-                              borderRadius: 8,
-                              border: '1px solid #E2E8F0',
-                              display: 'flex',
-                              alignItems: 'center',
-                              justifyContent: 'space-between',
-                              fontSize: '0.72rem',
-                              color: '#475569',
-                              fontWeight: 700
-                            }}
-                          >
-                            <span>
-                              <strong>{ind?.distinctActivitiesCompleted ?? 0}</strong> ejercicios superados
-                            </span>
-                            <span style={{ color: '#16A34A', fontWeight: 800 }}>
-                              {ind?.firstAttemptAccuracyPercent ?? ind?.qualifiedAccuracyPercent ?? 0}% precisión
-                            </span>
+                            {/* Fila 5 Unificada: Ejercicios y Precisión */}
+                            <div className="academic-student-pill-summary">
+                              <div style={{ display: 'flex', alignItems: 'center', gap: 6, minWidth: 0 }}>
+                                <CheckCircle2 size={14} color="#16A34A" style={{ flexShrink: 0 }} />
+                                <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                                  <strong>{ind?.distinctActivitiesCompleted ?? 0}</strong> retos superados
+                                </span>
+                              </div>
+                              <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexShrink: 0 }}>
+                                <div className="academic-micro-progress-track">
+                                  <div
+                                    className="academic-micro-progress-bar"
+                                    style={{
+                                      width: `${Math.min(100, Math.max(0, ind?.firstAttemptAccuracyPercent ?? ind?.qualifiedAccuracyPercent ?? 0))}%`
+                                    }}
+                                  />
+                                </div>
+                                <span style={{ color: '#16A34A', fontWeight: 900 }}>
+                                  {ind?.firstAttemptAccuracyPercent ?? ind?.qualifiedAccuracyPercent ?? 0}%
+                                </span>
+                              </div>
+                            </div>
                           </div>
 
                           {/* Botones de Acción de la Tarjeta */}
@@ -1400,7 +1398,7 @@ export const AcademicDashboard: React.FC<AcademicDashboardProps> = ({
                               className="btn-3d btn-green academic-card-view-btn"
                               title="Ver ficha completa y avance detallado del estudiante"
                             >
-                              <UserCheck size={15} /> <span>Ver Ficha</span>
+                              <UserCheck size={16} /> <span>Ver Ficha</span>
                             </button>
 
                             <button
@@ -1411,8 +1409,9 @@ export const AcademicDashboard: React.FC<AcademicDashboardProps> = ({
                               }}
                               className="btn-3d btn-outline academic-card-obs-btn"
                               title="Añadir nota u observación pedagógica para este alumno"
+                              aria-label="Añadir Observación"
                             >
-                              <MessageSquare size={15} />
+                              <MessageSquare size={16} />
                             </button>
 
                             <button
@@ -1421,20 +1420,11 @@ export const AcademicDashboard: React.FC<AcademicDashboardProps> = ({
                                 soundService.playToken();
                                 setStudentToDelete(st);
                               }}
-                              className="btn-3d"
-                              style={{
-                                background: '#FEE2E2',
-                                color: '#DC2626',
-                                border: '1.5px solid #FCA5A5',
-                                boxShadow: '0 3px 0 #F87171',
-                                padding: '6px 10px',
-                                display: 'inline-flex',
-                                alignItems: 'center',
-                                justifyContent: 'center'
-                              }}
+                              className="btn-3d academic-card-del-btn"
                               title="Eliminar este estudiante de la plataforma (Firestore)"
+                              aria-label="Eliminar Estudiante"
                             >
-                              <Trash2 size={15} />
+                              <Trash2 size={16} />
                             </button>
                           </div>
                         </div>
