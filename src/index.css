@@ -70,6 +70,16 @@
   --shadow-chunky: 0 4px 0 #CBD5E1;
 }
 
+html, body {
+  font-family: 'Nunito', 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+button, input, select, textarea, optgroup {
+  font-family: 'Nunito', 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+}
+
 /* === FONDO BLANCO CON CÍRCULOS PINTADOS ANIMADOS (ESTILO DUOLINGO DOODLE) === */
 .animated-doodle-bg {
   position: fixed;
@@ -2945,6 +2955,11 @@ button, a, input, select, .path-node, .token-chip, .pair-card {
   to   { transform: translateY(0);    opacity: 1; }
 }
 
+.profile-page-container.duo-profile-screen,
+.profile-page-container.duo-profile-screen * {
+  font-family: 'Nunito', 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+}
+
 .profile-page-container.duo-profile-screen {
   width: 100%;
   max-width: 540px;
@@ -2988,8 +3003,8 @@ button, a, input, select, .path-node, .token-chip, .pair-card {
 }
 
 .duo-profile-header-username {
-  font-size: 1.2rem;
-  font-weight: 900;
+  font-size: 1.18rem;
+  font-weight: 800;
   color: #FFFFFF;
   letter-spacing: -0.01em;
   text-align: center;
@@ -3052,9 +3067,9 @@ button, a, input, select, .path-node, .token-chip, .pair-card {
   align-items: center;
   gap: 8px;
   font-size: 0.78rem;
-  font-weight: 800;
+  font-weight: 700;
   color: #AFAFAF;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.05em;
   text-transform: uppercase;
   margin-bottom: 12px;
 }
@@ -3077,7 +3092,7 @@ button, a, input, select, .path-node, .token-chip, .pair-card {
   background: #F7F7F7;
   border: 1.5px solid #E5E5E5;
   font-size: 0.78rem;
-  font-weight: 800;
+  font-weight: 700;
   color: #4B4B4B;
 }
 .duo-profile-tag-pill.path {
@@ -3118,7 +3133,7 @@ button, a, input, select, .path-node, .token-chip, .pair-card {
   border-radius: 16px;
   color: #1CB0F6;
   font-size: 0.92rem;
-  font-weight: 900;
+  font-weight: 800;
   letter-spacing: 0.04em;
   cursor: pointer;
   transition: all 0.08s ease;
@@ -3140,7 +3155,7 @@ button, a, input, select, .path-node, .token-chip, .pair-card {
 /* Título de Sección OVERVIEW */
 .duo-profile-section-title {
   font-size: 0.84rem;
-  font-weight: 900;
+  font-weight: 800;
   color: #777777;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -3172,7 +3187,7 @@ button, a, input, select, .path-node, .token-chip, .pair-card {
 
 .duo-overview-item-val {
   font-size: 1.05rem;
-  font-weight: 900;
+  font-weight: 800;
   color: #4B4B4B;
   line-height: 1.2;
 }
@@ -3198,7 +3213,7 @@ button, a, input, select, .path-node, .token-chip, .pair-card {
   display: flex;
   justify-content: space-between;
   font-size: 0.8rem;
-  font-weight: 800;
+  font-weight: 700;
   color: #4B4B4B;
   margin-bottom: 8px;
 }
@@ -6639,6 +6654,11 @@ button, a, input, select, .path-node, .token-chip, .pair-card {
   animation: fadeIn 0.18s ease-out;
 }
 
+.hb-drawer-content.duo-settings-drawer,
+.hb-drawer-content.duo-settings-drawer * {
+  font-family: 'Nunito', 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+}
+
 .hb-drawer-content.duo-settings-drawer {
   width: 100%;
   max-width: 380px;
@@ -6677,7 +6697,7 @@ button, a, input, select, .path-node, .token-chip, .pair-card {
 
 .duo-settings-title {
   font-size: 1.05rem;
-  font-weight: 800;
+  font-weight: 700;
   color: #8E8E93;
   letter-spacing: -0.01em;
 }
@@ -6689,7 +6709,7 @@ button, a, input, select, .path-node, .token-chip, .pair-card {
   border: none;
   color: #1CB0F6;
   font-size: 0.95rem;
-  font-weight: 900;
+  font-weight: 800;
   letter-spacing: 0.04em;
   cursor: pointer;
   padding: 6px 10px;
@@ -6764,7 +6784,7 @@ button, a, input, select, .path-node, .token-chip, .pair-card {
 
 .duo-settings-row-label {
   font-size: 0.98rem;
-  font-weight: 800;
+  font-weight: 700;
   color: #4B4B4B;
   letter-spacing: -0.01em;
 }
@@ -6780,14 +6800,14 @@ button, a, input, select, .path-node, .token-chip, .pair-card {
 
 .duo-settings-row-sub {
   font-size: 0.88rem;
-  font-weight: 700;
+  font-weight: 600;
   color: #8E8E93;
 }
 
 /* Etiquetas discretas para ruta o estado */
 .duo-settings-pill-tag {
   font-size: 0.72rem;
-  font-weight: 800;
+  font-weight: 700;
   padding: 3px 8px;
   border-radius: 8px;
   background: #F0F0F0;

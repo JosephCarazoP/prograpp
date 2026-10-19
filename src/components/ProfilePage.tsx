@@ -501,7 +501,7 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({
                         <div
                           style={{
                             fontSize: '0.94rem',
-                            fontWeight: 900,
+                            fontWeight: 800,
                             color: ach.unlocked ? '#0F172A' : '#64748B',
                             marginBottom: 2
                           }}
@@ -529,7 +529,7 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({
                             padding: '4px 10px',
                             borderRadius: 10,
                             fontSize: '0.72rem',
-                            fontWeight: 900,
+                            fontWeight: 800,
                             display: 'flex',
                             alignItems: 'center',
                             gap: 4
@@ -603,7 +603,7 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({
                       {item.icon}
                     </div>
 
-                    <div style={{ fontSize: '0.94rem', fontWeight: 900, color: '#1E293B', marginBottom: 6 }}>
+                    <div style={{ fontSize: '0.94rem', fontWeight: 800, color: '#1E293B', marginBottom: 6 }}>
                       {item.title}
                     </div>
 
@@ -616,7 +616,7 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({
                         borderRadius: 999,
                         padding: '3px 10px',
                         fontSize: '0.72rem',
-                        fontWeight: 900,
+                        fontWeight: 800,
                         textTransform: 'uppercase'
                       }}
                     >
@@ -833,7 +833,7 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({
                   marginTop: 6
                 }}
               >
-                <span style={{ fontSize: '0.74rem', fontWeight: 900, color: '#F87171', textTransform: 'uppercase', letterSpacing: '0.08em', display: 'block', marginBottom: 8 }}>
+                <span style={{ fontSize: '0.74rem', fontWeight: 800, color: '#F87171', textTransform: 'uppercase', letterSpacing: '0.08em', display: 'block', marginBottom: 8 }}>
                   Zona de Reinicio
                 </span>
                 <p style={{ fontSize: '0.78rem', color: 'var(--text-dim)', marginBottom: 12, lineHeight: 1.35 }}>
@@ -962,7 +962,7 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({
               <span>{evaluationAlert}</span>
               <button
                 onClick={() => setEvaluationAlert(null)}
-                style={{ background: 'transparent', border: 'none', cursor: 'pointer', color: '#991B1B', fontWeight: 900 }}
+                style={{ background: 'transparent', border: 'none', cursor: 'pointer', color: '#991B1B', fontWeight: 800 }}
                 type="button"
               >
                 ✕
