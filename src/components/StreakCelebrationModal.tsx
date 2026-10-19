@@ -456,6 +456,11 @@ export const StreakCelebrationModal: React.FC<StreakCelebrationModalProps> = ({
       aria-label="Celebración de Racha en Pantalla Completa"
     >
       <style>{`
+        .streak-fullscreen-screen,
+        .streak-fullscreen-screen * {
+          font-family: 'Nunito', sans-serif !important;
+        }
+
         .streak-fullscreen-screen {
           position: fixed;
           inset: 0;
@@ -676,8 +681,8 @@ export const StreakCelebrationModal: React.FC<StreakCelebrationModalProps> = ({
         .zzz-bubble {
           position: absolute;
           color: #94A3B8;
-          font-weight: 900;
-          font-family: monospace;
+          font-weight: 800;
+          font-family: 'Nunito', sans-serif !important;
           pointer-events: none;
           animation: zFloat 2.4s ease-in-out infinite;
         }
@@ -704,8 +709,8 @@ export const StreakCelebrationModal: React.FC<StreakCelebrationModalProps> = ({
           border-radius: 18px;
           padding: 3px 10px;
           font-size: clamp(0.92rem, 3vw, 1.15rem);
-          font-weight: 950;
-          letter-spacing: -0.02em;
+          font-weight: 800;
+          letter-spacing: -0.01em;
           box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
           display: flex;
           align-items: center;
@@ -747,7 +752,8 @@ export const StreakCelebrationModal: React.FC<StreakCelebrationModalProps> = ({
           border-radius: 14px;
           padding: 3px 8px;
           font-size: clamp(0.66rem, 2vw, 0.74rem);
-          font-weight: 900;
+          font-weight: 800;
+          letter-spacing: -0.01em;
           box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
           z-index: 30;
           white-space: nowrap;
@@ -815,7 +821,8 @@ export const StreakCelebrationModal: React.FC<StreakCelebrationModalProps> = ({
           border-radius: 9999px;
           padding: 2px 14px;
           font-size: clamp(1.15rem, 3.6vw, 1.5rem);
-          font-weight: 950;
+          font-weight: 800;
+          letter-spacing: -0.02em;
           line-height: 1.1;
           box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
           display: inline-flex;
@@ -839,9 +846,9 @@ export const StreakCelebrationModal: React.FC<StreakCelebrationModalProps> = ({
 
         .streak-hero-title {
           font-size: clamp(1.25rem, 3.8vw, 1.7rem);
-          font-weight: 950;
+          font-weight: 800;
           margin: 3px 0 2px;
-          letter-spacing: -0.02em;
+          letter-spacing: -0.01em;
           text-align: center;
           line-height: 1.15;
           color: #FFFFFF;
@@ -858,6 +865,7 @@ export const StreakCelebrationModal: React.FC<StreakCelebrationModalProps> = ({
         .streak-hero-desc {
           font-size: clamp(0.72rem, 2.2vw, 0.84rem);
           color: #CBD5E1;
+          font-weight: 600;
           margin: 0 0 5px;
           text-align: center;
           max-width: 340px;
@@ -891,6 +899,7 @@ export const StreakCelebrationModal: React.FC<StreakCelebrationModalProps> = ({
         .streak-day-label {
           font-size: clamp(0.62rem, 1.8vw, 0.7rem);
           font-weight: 800;
+          letter-spacing: 0.04em;
           text-transform: uppercase;
           white-space: nowrap;
         }
@@ -903,7 +912,7 @@ export const StreakCelebrationModal: React.FC<StreakCelebrationModalProps> = ({
           align-items: center;
           justify-content: center;
           font-size: clamp(0.7rem, 2vw, 0.8rem);
-          font-weight: 900;
+          font-weight: 800;
           transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
 
@@ -973,7 +982,7 @@ export const StreakCelebrationModal: React.FC<StreakCelebrationModalProps> = ({
           background: #334155;
           color: #94A3B8;
           font-size: 0.74rem;
-          font-weight: 950;
+          font-weight: 800;
           display: flex;
           align-items: center;
           justify-content: center;
@@ -996,7 +1005,7 @@ export const StreakCelebrationModal: React.FC<StreakCelebrationModalProps> = ({
 
         .day0-step-header {
           font-size: 0.74rem;
-          font-weight: 900;
+          font-weight: 800;
           color: #F8FAFC;
           white-space: nowrap;
         }
@@ -1010,7 +1019,7 @@ export const StreakCelebrationModal: React.FC<StreakCelebrationModalProps> = ({
 
         .day0-step-arrow {
           color: #64748B;
-          font-weight: 900;
+          font-weight: 800;
           font-size: 0.88rem;
           flex-shrink: 0;
         }
@@ -1069,8 +1078,8 @@ export const StreakCelebrationModal: React.FC<StreakCelebrationModalProps> = ({
           flex: 1;
           padding: clamp(9px, 1.6vh, 13px) 18px !important;
           font-size: clamp(0.92rem, 3.2vw, 1.02rem) !important;
-          font-weight: 950 !important;
-          letter-spacing: 0.03em !important;
+          font-weight: 800 !important;
+          letter-spacing: 0.04em !important;
           text-transform: uppercase !important;
         }
       `}</style>

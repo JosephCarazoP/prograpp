@@ -542,7 +542,7 @@ button, a, input, select, .path-node, .token-chip, .pair-card {
   align-items: center;
   gap: 5px;
   font-family: var(--font-ui);
-  font-weight: 900;
+  font-weight: 800;
   font-size: 0.88rem;
   padding: 6px 10px;
   border-radius: 14px;
