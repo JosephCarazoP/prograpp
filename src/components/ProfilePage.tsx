@@ -10,6 +10,7 @@ import {
   EyeOff,
   ShieldCheck,
   Code2,
+  Database,
   Trophy,
   CheckCircle2,
   Lock,
@@ -259,157 +260,185 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({
 
   return (
     <div className="profile-page-root" role="dialog" aria-modal="true" aria-label="Perfil de usuario">
-      <div className="profile-page-container">
-        {/* ═══ HEADER SUPERIOR DUOLINGO ═══ */}
-        <header className="profile-page-header">
-          <button
-            onClick={() => {
-              soundService.playToken();
-              onBack();
-            }}
-            className="profile-icon-btn-3d"
-            title="Volver al Camino"
-            aria-label="Volver al Camino"
-          >
-            <ArrowLeft size={22} strokeWidth={2.5} />
-          </button>
+      <div className="profile-page-container duo-profile-screen">
+        {/* ═══ BANNER VERDE DUOLINGO CON AVATAR ARRIBA (FOTO 2) ═══ */}
+        <section className="duo-profile-green-banner">
+          {/* Top Bar: Volver, Nombre del Usuario, Compartir y Ajustes */}
+          <div className="duo-profile-top-bar">
+            <button
+              onClick={() => {
+                soundService.playToken();
+                onBack();
+              }}
+              className="duo-profile-header-icon-btn"
+              title="Volver al Camino"
+              aria-label="Volver al Camino"
+              type="button"
+            >
+              <ArrowLeft size={22} color="#FFFFFF" strokeWidth={2.8} />
+            </button>
 
-          <span className="profile-page-title">Mi Perfil</span>
+            <span className="duo-profile-header-username">{displayName}</span>
 
-          <button
-            onClick={handleShare}
-            className="profile-icon-btn-3d"
-            title="Compartir Perfil"
-            aria-label="Compartir Perfil"
-          >
-            <Share2 size={20} strokeWidth={2.4} />
-          </button>
-        </header>
+            <div className="duo-profile-header-actions">
+              <button
+                onClick={handleShare}
+                className="duo-profile-header-icon-btn"
+                title="Compartir Perfil"
+                aria-label="Compartir Perfil"
+                type="button"
+              >
+                <Share2 size={20} color="#FFFFFF" strokeWidth={2.6} />
+              </button>
+              <button
+                onClick={() => {
+                  soundService.playToken();
+                  setActiveTab('settings');
+                }}
+                className="duo-profile-header-icon-btn"
+                title="Ajustes de Cuenta"
+                aria-label="Ajustes de Cuenta"
+                type="button"
+              >
+                <Settings size={20} color="#FFFFFF" strokeWidth={2.6} />
+              </button>
+            </div>
+          </div>
 
-        {/* ═══ CONTENIDO CON SCROLL FLUIDO ═══ */}
-        <main className="profile-page-scroll">
-          {/* ─── BANNER PRINCIPAL DE HERO (Estilo Banner Unidad Duolingo) ─── */}
-          <section className="profile-hero-banner">
-            {/* Círculo 3D del Avatar */}
-            <div className="profile-avatar-circle">
-              <DevAvatar
-                avatarId={selectedAvatar}
-                skinId={user.equippedSkin}
-                size={84}
-              />
+          {/* AVATAR ARRIBA (CENTRO DE LA SECCIÓN VERDE DUOLINGO) */}
+          <div className="duo-profile-avatar-hero-slot">
+            <DevAvatar
+              avatarId={selectedAvatar}
+              skinId={user.equippedSkin}
+              size={120}
+            />
+          </div>
+        </section>
+
+        {/* ═══ HOJA BLANCA CURVADA DEBAJO (FOTO 2) ═══ */}
+        <main className="duo-profile-white-sheet">
+          {/* Meta Handle y Miembro Desde */}
+          <div className="duo-profile-handle-tag">
+            <span>@{user.studentCode ? user.studentCode.toUpperCase() : 'DEV'}</span>
+            <span>•</span>
+            <span>UNIDO EN 2024</span>
+            {user.group && (
+              <>
+                <span>•</span>
+                <span>{user.group.toUpperCase()}</span>
+              </>
+            )}
+          </div>
+
+          {/* Fila de Insignias y Datos */}
+          <div className="duo-profile-tags-row">
+            <div className="duo-profile-tag-pill path">
+              {selectedPath === 'kotlin' ? (
+                <>
+                  <Code2 size={14} color="#7C3AED" strokeWidth={2.6} />
+                  <span>Kotlin</span>
+                </>
+              ) : (
+                <>
+                  <Database size={14} color="#0284C7" strokeWidth={2.6} />
+                  <span>SQL</span>
+                </>
+              )}
             </div>
 
-            {/* Nombre y Título del Dev */}
-            <h1 className="profile-hero-name">{displayName}</h1>
-
-            <div className="profile-hero-rank">
-              <Star size={15} fill="#FDE047" color="#FDE047" />
+            <div className="duo-profile-tag-pill rank">
+              <Star size={14} fill="#EAB308" color="#EAB308" />
               <span>Nivel {currentLevel} · {getRankTitle(currentLevel)}</span>
             </div>
 
             {user.idNumber && (
-              <div style={{ fontSize: '0.82rem', color: '#64748B', fontWeight: 700, marginTop: 4 }}>
-                Cédula: <span style={{ color: '#1E293B' }}>{user.idNumber}</span> {user.studentCode ? `• Código: ${user.studentCode}` : ''}
+              <div className="duo-profile-tag-pill id">
+                <span>Cédula: {user.idNumber}</span>
               </div>
             )}
+          </div>
 
-            {/* Barra de Progreso de Nivel (XP) 3D */}
-            <div className="profile-hero-xp-box">
-              <div className="profile-xp-labels">
-                <span>XP Nivel {currentLevel}</span>
-                <span>{xpInCurrentLevel} / 100 XP</span>
-              </div>
-              <div className="profile-xp-track">
-                <div
-                  className="profile-xp-fill"
-                  style={{ width: `${Math.min(100, Math.max(5, (xpInCurrentLevel / 100) * 100))}%` }}
-                />
-              </div>
-            </div>
+          {/* BOTÓN DUOLINGO BLANCO: + COMPARTIR PERFIL (Estilo "+ ADD FRIENDS" de Foto 2) */}
+          <div className="duo-profile-cta-group">
+            <button
+              type="button"
+              className="duo-profile-white-btn"
+              onClick={handleShare}
+            >
+              <Share2 size={16} strokeWidth={2.6} />
+              <span>{copied ? '¡ENLACE COPIADO!' : '+ COMPARTIR PERFIL'}</span>
+            </button>
 
-            {/* Botón 3D de Acceso al Vestidor de Byte */}
             {onOpenLocker && (
               <button
                 type="button"
-                className="btn-3d btn-cyan"
+                className="duo-profile-white-btn locker"
                 onClick={() => {
                   soundService.playToken();
                   onOpenLocker();
                 }}
-                style={{
-                  marginTop: 14,
-                  maxWidth: 320,
-                  width: '100%',
-                  padding: '12px 18px',
-                  fontSize: '0.88rem'
-                }}
               >
-                <Shirt size={18} strokeWidth={2.4} /> ABRIR VESTIDOR 3D (SKINS)
+                <Shirt size={16} strokeWidth={2.6} />
+                <span>VESTIDOR 3D (SKINS)</span>
               </button>
             )}
-          </section>
+          </div>
 
-          {/* ─── CUADRÍCULA DE ESTADÍSTICAS 2X2 ESTILO DUOLINGO ─── */}
-          <div className="profile-section-title">Estadísticas</div>
-          <section className="profile-stats-grid">
-            {[
-              {
-                icon: <Flame size={32} color="#FF9500" fill="#FF9500" strokeWidth={2} />,
-                value: streakCount,
-                label: 'Racha de días'
-              },
-              {
-                icon: <Zap size={32} color="#0284C7" fill="#0284C7" strokeWidth={2} />,
-                value: totalXp,
-                label: 'Total de EXP'
-              },
-              {
-                icon: <PackageOpen size={32} color="#D97706" strokeWidth={2.4} />,
-                value: chestsCount,
-                label: 'Cofres abiertos'
-              },
-              {
-                icon: <Swords size={32} color="#DC2626" strokeWidth={2.4} />,
-                value: bossesCount,
-                label: 'Jefes derrotados'
-              }
-            ].map((stat, idx) => (
-              <div
-                key={idx}
-                style={{
-                  background: '#FFFFFF',
-                  border: '2px solid #E2E8F0',
-                  boxShadow: '0 4px 0 #CBD5E1',
-                  borderRadius: 18,
-                  padding: '16px 14px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: 12
-                }}
-              >
-                <div style={{ flexShrink: 0 }}>{stat.icon}</div>
-                <div>
-                  <div style={{ fontSize: '1.55rem', fontWeight: 900, color: '#1E293B', lineHeight: 1 }}>
-                    {stat.value}
-                  </div>
-                  <div
-                    style={{
-                      fontSize: '0.74rem',
-                      fontWeight: 800,
-                      color: '#64748B',
-                      textTransform: 'uppercase',
-                      letterSpacing: '0.04em',
-                      marginTop: 4
-                    }}
-                  >
-                    {stat.label}
-                  </div>
-                </div>
+          {/* ─── SECCIÓN: OVERVIEW (FOTO 2) ─── */}
+          <div className="duo-profile-section-title">OVERVIEW</div>
+          <div className="duo-profile-overview-box">
+            {/* Racha */}
+            <div className="duo-overview-item">
+              <Flame size={24} color="#FF9500" fill="#FF9500" />
+              <div className="duo-overview-item-text">
+                <span className="duo-overview-item-val">{streakCount} días</span>
+                <span className="duo-overview-item-lbl">Racha</span>
               </div>
-            ))}
-          </section>
+            </div>
 
-          {/* ─── SELECTOR DE PESTAÑAS 3D ─── */}
+            {/* Total XP */}
+            <div className="duo-overview-item">
+              <Zap size={24} color="#0284C7" fill="#0284C7" />
+              <div className="duo-overview-item-text">
+                <span className="duo-overview-item-val">{totalXp.toLocaleString()} XP</span>
+                <span className="duo-overview-item-lbl">Total Exp</span>
+              </div>
+            </div>
+
+            {/* Rango */}
+            <div className="duo-overview-item">
+              <Award size={24} color="#EAB308" />
+              <div className="duo-overview-item-text">
+                <span className="duo-overview-item-val">{getRankTitle(currentLevel)}</span>
+                <span className="duo-overview-item-lbl">Rango</span>
+              </div>
+            </div>
+
+            {/* Retos y Jefes */}
+            <div className="duo-overview-item">
+              <Trophy size={24} color="#8B5CF6" />
+              <div className="duo-overview-item-text">
+                <span className="duo-overview-item-val">{bossesCount + chestsCount}</span>
+                <span className="duo-overview-item-lbl">Jefes & Cofres</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Barra de Progreso XP de Nivel */}
+          <div className="duo-profile-xp-meter">
+            <div className="duo-profile-xp-meter-labels">
+              <span>Nivel {currentLevel}</span>
+              <span>{xpInCurrentLevel} / 100 XP</span>
+            </div>
+            <div className="duo-profile-xp-meter-track">
+              <div
+                className="duo-profile-xp-meter-fill"
+                style={{ width: `${Math.min(100, Math.max(6, (xpInCurrentLevel / 100) * 100))}%` }}
+              />
+            </div>
+          </div>
+
+          {/* ─── SELECTOR DE PESTAÑAS SECUNDARIAS ─── */}
           <nav className="profile-tabs-dock" aria-label="Secciones del perfil">
             {[
               { key: 'stats' as const, icon: <Trophy size={16} strokeWidth={2.4} />, label: 'Logros' },
@@ -423,6 +452,7 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({
                   setActiveTab(tab.key);
                 }}
                 className={`profile-tab-pill ${activeTab === tab.key ? 'active' : ''}`}
+                type="button"
               >
                 {tab.icon}
                 <span>{tab.label}</span>
