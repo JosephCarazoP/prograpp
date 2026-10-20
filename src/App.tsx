@@ -6,7 +6,8 @@ import {
   XCircle,
   RotateCcw,
   Gamepad2,
-  GraduationCap
+  GraduationCap,
+  Sparkles
 } from 'lucide-react';
 
 import { UserProfile, LearningPath as PathType, UserPowerUps } from './types/user';
@@ -250,7 +251,19 @@ export default function App() {
   // Estados de comodines en lección
   const [teacherHintText, setTeacherHintText] = useState<string | null>(null);
   const [eliminatedOptionIndices, setEliminatedOptionIndices] = useState<number[]>([]);
+  const [eliminatedBugLines, setEliminatedBugLines] = useState<number[]>([]);
+  const [eliminatedTokenIndices, setEliminatedTokenIndices] = useState<number[]>([]);
   const [isCodePeekActive, setIsCodePeekActive] = useState(false);
+  const [codePeekHighlightedPair, setCodePeekHighlightedPair] = useState<{ left: string; right: string } | null>(null);
+  const [codePeekTokenIndex, setCodePeekTokenIndex] = useState<number | null>(null);
+  const [codePeekBugLineIndex, setCodePeekBugLineIndex] = useState<number | null>(null);
+  const [codePeekClueText, setCodePeekClueText] = useState<string | null>(null);
+  const [levelSuccessAlert, setLevelSuccessAlert] = useState<{
+    isOpen: boolean;
+    stars: number;
+    xp: number;
+    nextLesson?: Lesson | null;
+  } | null>(null);
 
   // Estados interactivos por tipo de ejercicio
   const [selectedTokenIndices, setSelectedTokenIndices] = useState<number[]>([]);
@@ -686,6 +699,16 @@ export default function App() {
     setTraceInputsReady(false);
     setTraceUserValues({});
     setParsonsOrder([]);
+    // Limpiar comodines por ejercicio
+    setTeacherHintText(null);
+    setEliminatedOptionIndices([]);
+    setEliminatedBugLines([]);
+    setEliminatedTokenIndices([]);
+    setIsCodePeekActive(false);
+    setCodePeekHighlightedPair(null);
+    setCodePeekTokenIndex(null);
+    setCodePeekBugLineIndex(null);
+    setCodePeekClueText(null);
   };
 
   const currentExercise: Exercise | undefined = lessonQueue[currentQueueIndex];
@@ -854,23 +877,90 @@ export default function App() {
           .map((_, i) => i)
           .filter(i => i !== currentExercise.correctOptionIndex);
         setEliminatedOptionIndices(wrongIndices.slice(0, 2));
+        setCodePeekClueText('¡50 / 50 Activado! Se descartaron 2 opciones incorrectas.');
       } else if (currentExercise?.type === 'code_cloze') {
         const wrongIndices = currentExercise.options
           .map((_, i) => i)
           .filter(i => currentExercise.options[i] !== currentExercise.correctOption);
         setEliminatedOptionIndices(wrongIndices.slice(0, 2));
-      } else {
-        setGameAlert({
-          isOpen: true,
-          type: 'success',
-          title: '50 / 50 Activado',
-          message: 'En este ejercicio práctico, enfócate en la estructura principal del código.',
-          primaryButtonText: 'Entendido',
-          onPrimaryClick: () => setGameAlert(null)
+        setCodePeekClueText('¡50 / 50 Activado! Se descartaron 2 opciones incorrectas.');
+      } else if (currentExercise?.type === 'matching_pairs') {
+        // Resolver y emparejar automáticamente el 50% de las parejas restantes
+        const unmatched = currentExercise.pairs.filter(p => !matchedPairs.includes(p.left));
+        if (unmatched.length > 0) {
+          const count = Math.max(1, Math.floor(unmatched.length / 2));
+          const autoMatched = unmatched.slice(0, count);
+          const pairsToAdd: string[] = [];
+          autoMatched.forEach(p => pairsToAdd.push(p.left, p.right));
+          setMatchedPairs(prev => [...prev, ...pairsToAdd]);
+          confetti({ particleCount: 35, spread: 60, origin: { y: 0.6 } });
+          setCodePeekClueText(`¡50 / 50 Activado! Se resolvieron ${count} pareja(s) automáticamente.`);
+        }
+      } else if (currentExercise?.type === 'code_builder') {
+        // 1. Descartar fichas distractoras que no pertenezcan a la solución
+        const solCopy = [...currentExercise.solution];
+        const distractorIndices: number[] = [];
+        currentExercise.tokens.forEach((tok, idx) => {
+          const solIdx = solCopy.indexOf(tok);
+          if (solIdx === -1) {
+            distractorIndices.push(idx);
+          } else {
+            solCopy.splice(solIdx, 1);
+          }
         });
+        setEliminatedTokenIndices(distractorIndices);
+
+        // 2. Colocar automáticamente el primer 50% de las fichas de la solución
+        const half = Math.max(1, Math.floor(currentExercise.solution.length / 2));
+        const firstHalfTokens = currentExercise.solution.slice(0, half);
+        const autoIndices: number[] = [];
+        const used = new Set<number>();
+        firstHalfTokens.forEach(st => {
+          const found = currentExercise.tokens.findIndex((t, idx) => t === st && !used.has(idx) && !distractorIndices.includes(idx));
+          if (found !== -1) {
+            used.add(found);
+            autoIndices.push(found);
+          }
+        });
+        setSelectedTokenIndices(autoIndices);
+        confetti({ particleCount: 35, spread: 60, origin: { y: 0.6 } });
+        setCodePeekClueText('¡50 / 50 Activado! Distractores eliminados y primeras fichas colocadas.');
+      } else if (currentExercise?.type === 'spot_the_bug') {
+        // Descartar el 50% de las líneas correctas
+        const total = currentExercise.codeSnippet.length;
+        const nonBug = Array.from({ length: total }, (_, i) => i).filter(i => i !== currentExercise.bugLineIndex);
+        const discardCount = Math.max(1, Math.floor(nonBug.length / 2));
+        setEliminatedBugLines(nonBug.slice(0, discardCount));
+        setCodePeekClueText(`¡50 / 50 Activado! Se descartaron ${discardCount} línea(s) correctas.`);
+      } else if (currentExercise?.type === 'parsons_puzzle') {
+        const count = Math.max(1, Math.floor(currentExercise.correctOrder.length / 2));
+        setParsonsOrder(currentExercise.correctOrder.slice(0, count));
+        setCodePeekClueText('¡50 / 50 Activado! Se ordenaron las primeras líneas.');
       }
     } else if (key === 'codePeek') {
       setIsCodePeekActive(true);
+      if (currentExercise?.type === 'matching_pairs') {
+        const firstUnmatched = currentExercise.pairs.find(p => !matchedPairs.includes(p.left));
+        if (firstUnmatched) {
+          setCodePeekHighlightedPair(firstUnmatched);
+          setCodePeekClueText(`Pista de Pareja: "${firstUnmatched.left}" conecta directamente con "${firstUnmatched.right}"`);
+        }
+      } else if (currentExercise?.type === 'code_builder') {
+        const currentPos = selectedTokenIndices.length;
+        const nextSolToken = currentExercise.solution[currentPos] || currentExercise.solution[0];
+        const tokenIdx = currentExercise.tokens.findIndex((t, idx) => t === nextSolToken && !selectedTokenIndices.includes(idx));
+        if (tokenIdx !== -1) {
+          setCodePeekTokenIndex(tokenIdx);
+          setCodePeekClueText(`Pista: La siguiente ficha requerida es "${nextSolToken}"`);
+        }
+      } else if (currentExercise?.type === 'spot_the_bug') {
+        setCodePeekBugLineIndex(currentExercise.bugLineIndex);
+        setCodePeekClueText(`¡Pista de Código! El error reside en la Línea ${currentExercise.bugLineIndex + 1}`);
+      } else if (currentExercise?.type === 'code_cloze') {
+        setCodePeekClueText(`Pista de Sintaxis: La palabra clave para el espacio en blanco es "${currentExercise.correctOption}"`);
+      } else if (currentExercise?.type === 'predict_output') {
+        setCodePeekClueText('Observa atentamente la lógica en el editor para predecir la salida.');
+      }
     }
   };
 
@@ -883,10 +973,6 @@ export default function App() {
       setCurrentQueueIndex(prev => prev + 1);
       resetExerciseState();
       setFeedbackState('idle');
-      // Limpiar estados temporales de comodines por pregunta
-      setTeacherHintText(null);
-      setEliminatedOptionIndices([]);
-      setIsCodePeekActive(false);
     } else {
       // Detener conteo de tiempo activo
       timeTrackingService.stopLessonTracking();
@@ -937,12 +1023,44 @@ export default function App() {
       setActiveLesson(null);
       setLessonQueue([]);
 
-      // Abrir celebración fluida 3D de racha estilo Duolingo con el avatar
-      setIsJustFinishedStreak(true);
-      setIsStreakModalOpen(true);
+      // ═══ GESTIÓN DE RACHA: SOLAMENTE 1 VEZ AL DÍA (REQUERIMIENTO DEL USUARIO) ═══
+      const now = new Date();
+      const todayYear = now.getFullYear();
+      const todayMonth = String(now.getMonth() + 1).padStart(2, '0');
+      const todayDay = String(now.getDate()).padStart(2, '0');
+      const todayStr = `${todayYear}-${todayMonth}-${todayDay}`;
 
-      // Abrir breve encuesta de opinión pedagógica tras entregar la práctica
-      setOpinionActivityId(finishedLessonId);
+      const streakKey = `streak_seen_${user.uid}`;
+      const alreadyCelebratedToday = storageService.getItem<string>(streakKey, '') === todayStr;
+
+      if (!alreadyCelebratedToday) {
+        // Primera lección completada hoy: mostrar la celebración oficial de racha
+        setIsJustFinishedStreak(true);
+        setIsStreakModalOpen(true);
+        storageService.setItem(streakKey, todayStr);
+      } else {
+        // Lecciones posteriores el mismo día: NO mostrar el modal de racha molesto.
+        // En su lugar, mostrar el resumen de victoria con botón directo de siguiente nivel
+        setLevelSuccessAlert({
+          isOpen: true,
+          stars,
+          xp: finalXp,
+          nextLesson
+        });
+      }
+
+      // ═══ FORMULARIO DE OPINIÓN: SÓLO ESPORÁDICO (CADA 5 NIVELES Y MÁXIMO CADA 4 DÍAS) ═══
+      const opinionPromptKey = `last_opinion_prompt_${user.uid}`;
+      const lastPromptTime = Number(storageService.getItem<string>(opinionPromptKey, '0'));
+      const fourDays = 4 * 24 * 60 * 60 * 1000;
+      const isMilestone = (activeLesson.level || 1) % 5 === 0;
+
+      if (isMilestone && (Date.now() - lastPromptTime > fourDays)) {
+        setOpinionActivityId(finishedLessonId);
+        storageService.setItem(opinionPromptKey, String(Date.now()));
+      } else {
+        setOpinionActivityId(null);
+      }
     }
   };
 
@@ -1181,6 +1299,21 @@ export default function App() {
             <TheoryViewer
               theory={activeTheory}
               onBack={() => setActiveTheory(null)}
+              onCompleteTheory={async (lessonId) => {
+                const l = getLessonById(lessonId);
+                if (l) {
+                  const updatedProgress = await progressService.saveTheoryCompleted(
+                    user.uid,
+                    l.id,
+                    l.path,
+                    l.unit,
+                    l.level
+                  );
+                  const updatedUser = await userService.rewardUser(user, 25, 10);
+                  setUser(updatedUser);
+                  setProgress(updatedProgress);
+                }
+              }}
               onStartPractice={async (lessonId) => {
                 const l = getLessonById(lessonId);
                 if (l) {
@@ -1496,6 +1629,29 @@ export default function App() {
             </div>
           )}
 
+          {/* Banner de Pista de Código / Comodín Activo */}
+          {codePeekClueText && (
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '10px',
+                background: '#FAF5FF',
+                border: '2px solid #C084FC',
+                borderLeft: '5px solid #7E22CE',
+                borderRadius: '14px',
+                padding: '10px 14px',
+                marginBottom: '12px',
+                boxShadow: '0 2px 0 #E9D5FF'
+              }}
+            >
+              <Sparkles size={18} color="#7E22CE" style={{ flexShrink: 0 }} />
+              <span style={{ fontSize: '0.86rem', color: '#6B21A8', fontWeight: 800 }}>
+                {codePeekClueText}
+              </span>
+            </div>
+          )}
+
           {/* Diálogo Duolingo 3D con Mascota Dev y Burbuja de Pregunta */}
           <div className="duo-speech-container">
             <div className="duo-mascot-wrapper">
@@ -1538,17 +1694,25 @@ export default function App() {
               <div className="token-bank">
                 {currentExercise.tokens.map((tok, idx) => {
                   const isSelected = selectedTokenIndices.includes(idx);
+                  const isEliminated = eliminatedTokenIndices.includes(idx);
+                  const isPeekToken = codePeekTokenIndex === idx && !isSelected;
                   return (
                     <button
                       key={idx}
-                      disabled={isSelected}
-                      className={`token-chip ${isSelected ? 'selected' : ''}`}
+                      disabled={isSelected || isEliminated}
+                      className={`token-chip ${isSelected ? 'selected' : ''} ${
+                        isEliminated ? 'eliminated-token' : ''
+                      } ${isPeekToken ? 'peek-token-highlight' : ''}`}
                       onClick={() => {
                         soundService.playToken();
                         setSelectedTokenIndices(prev => [...prev, idx]);
+                        if (codePeekTokenIndex === idx) setCodePeekTokenIndex(null);
                       }}
                     >
                       {tok}
+                      {isPeekToken && (
+                        <span className="token-peek-tag">Siguiente</span>
+                      )}
                     </button>
                   );
                 })}
@@ -1592,34 +1756,78 @@ export default function App() {
                 </div>
 
                 <div style={{ padding: '8px 0', maxHeight: '360px', overflowY: 'auto' }}>
-                  {currentExercise.codeSnippet.map((line, idx) => (
-                    <div
-                      key={idx}
-                      className={`bug-line ${selectedBugLine === idx ? 'selected' : ''}`}
-                      onClick={() => {
-                        soundService.playToken();
-                        setSelectedBugLine(idx);
-                      }}
-                      style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        padding: '9px 14px',
-                        cursor: 'pointer',
-                        fontFamily: 'JetBrains Mono, monospace',
-                        fontSize: '0.92rem',
-                        background: selectedBugLine === idx ? 'rgba(239, 68, 68, 0.25)' : 'transparent',
-                        borderLeft: selectedBugLine === idx ? '4px solid #EF4444' : '4px solid transparent',
-                        transition: 'all 0.15s ease'
-                      }}
-                    >
-                      <span style={{ width: '28px', color: '#64748B', userSelect: 'none', fontSize: '0.82rem', fontWeight: 700 }}>
-                        {idx + 1}
-                      </span>
-                      <code style={{ color: selectedBugLine === idx ? '#FCA5A5' : '#F8FAFC', flex: 1, whiteSpace: 'pre-wrap' }}>
-                        {line}
-                      </code>
-                    </div>
-                  ))}
+                  {currentExercise.codeSnippet.map((line, idx) => {
+                    const isEliminated = eliminatedBugLines.includes(idx);
+                    const isPeekBug = codePeekBugLineIndex === idx;
+                    const isSelected = selectedBugLine === idx;
+                    return (
+                      <div
+                        key={idx}
+                        className={`bug-line ${isSelected ? 'selected' : ''} ${
+                          isEliminated ? 'bug-line-safe' : ''
+                        } ${isPeekBug ? 'bug-line-peek' : ''}`}
+                        onClick={() => {
+                          if (isEliminated) return;
+                          soundService.playToken();
+                          setSelectedBugLine(idx);
+                        }}
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          padding: '9px 14px',
+                          cursor: isEliminated ? 'not-allowed' : 'pointer',
+                          fontFamily: 'JetBrains Mono, monospace',
+                          fontSize: '0.92rem',
+                          background: isSelected
+                            ? 'rgba(239, 68, 68, 0.25)'
+                            : isPeekBug
+                            ? 'rgba(168, 85, 247, 0.25)'
+                            : isEliminated
+                            ? 'rgba(100, 116, 139, 0.12)'
+                            : 'transparent',
+                          borderLeft: isSelected
+                            ? '4px solid #EF4444'
+                            : isPeekBug
+                            ? '4px solid #A855F7'
+                            : isEliminated
+                            ? '4px solid #10B981'
+                            : '4px solid transparent',
+                          opacity: isEliminated ? 0.45 : 1,
+                          transition: 'all 0.15s ease'
+                        }}
+                      >
+                        <span style={{ width: '28px', color: '#64748B', userSelect: 'none', fontSize: '0.82rem', fontWeight: 700 }}>
+                          {idx + 1}
+                        </span>
+                        <code
+                          style={{
+                            color: isSelected
+                              ? '#FCA5A5'
+                              : isPeekBug
+                              ? '#D8B4FE'
+                              : isEliminated
+                              ? '#94A3B8'
+                              : '#F8FAFC',
+                            flex: 1,
+                            whiteSpace: 'pre-wrap',
+                            textDecoration: isEliminated ? 'line-through' : 'none'
+                          }}
+                        >
+                          {line}
+                        </code>
+                        {isEliminated && (
+                          <span style={{ fontSize: '0.7rem', color: '#10B981', fontWeight: 800, padding: '2px 6px', background: 'rgba(16, 185, 129, 0.1)', borderRadius: '4px' }}>
+                            ✓ Correcta
+                          </span>
+                        )}
+                        {isPeekBug && !isSelected && (
+                          <span style={{ fontSize: '0.7rem', color: '#C084FC', fontWeight: 800, padding: '2px 6px', background: 'rgba(168, 85, 247, 0.15)', borderRadius: '4px' }}>
+                            ¡Error aquí!
+                          </span>
+                        )}
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
             </div>
@@ -1666,17 +1874,25 @@ export default function App() {
           {currentExercise.type === 'matching_pairs' && (
             <div className="pairs-grid">
               <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                {currentExercise.pairs.map((p, idx) => (
-                  <button
-                    key={`l-${idx}`}
-                    className={`pair-card ${matchedPairs.includes(p.left) ? 'matched' : ''} ${
-                      activeLeftPair === p.left ? 'active-select' : ''
-                    }`}
-                    onClick={() => handlePairClick('left', p.left)}
-                  >
-                    {p.left}
-                  </button>
-                ))}
+                {currentExercise.pairs.map((p, idx) => {
+                  const isMatched = matchedPairs.includes(p.left);
+                  const isHighlighted = codePeekHighlightedPair?.left === p.left;
+                  return (
+                    <button
+                      key={`l-${idx}`}
+                      disabled={isMatched}
+                      className={`pair-card ${isMatched ? 'matched' : ''} ${
+                        activeLeftPair === p.left ? 'active-select' : ''
+                      } ${isHighlighted ? 'pair-peek-highlight' : ''}`}
+                      onClick={() => handlePairClick('left', p.left)}
+                    >
+                      {p.left}
+                      {isHighlighted && !isMatched && (
+                        <span className="pair-peek-badge">Pista</span>
+                      )}
+                    </button>
+                  );
+                })}
               </div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
                 {(shuffledRightIndices.length === currentExercise.pairs.length
@@ -1685,15 +1901,21 @@ export default function App() {
                 ).map((origIdx) => {
                   const p = currentExercise.pairs[origIdx];
                   if (!p) return null;
+                  const isMatched = matchedPairs.includes(p.right);
+                  const isHighlighted = codePeekHighlightedPair?.right === p.right;
                   return (
                     <button
                       key={`r-${origIdx}`}
-                      className={`pair-card ${matchedPairs.includes(p.right) ? 'matched' : ''} ${
+                      disabled={isMatched}
+                      className={`pair-card ${isMatched ? 'matched' : ''} ${
                         activeRightPair === p.right ? 'active-select' : ''
-                      }`}
+                      } ${isHighlighted ? 'pair-peek-highlight' : ''}`}
                       onClick={() => handlePairClick('right', p.right)}
                     >
                       {p.right}
+                      {isHighlighted && !isMatched && (
+                        <span className="pair-peek-badge">Pista</span>
+                      )}
                     </button>
                   );
                 })}
@@ -2009,7 +2231,7 @@ export default function App() {
         }}
       />
 
-      {/* MODAL 3D DE RACHA ESTILO DUOLINGO CON AVATAR */}
+      {/* MODAL 3D DE RACHA ESTILO DUOLINGO CON AVATAR (SOLO 1 VEZ AL DÍA) */}
       <StreakCelebrationModal
         isOpen={isStreakModalOpen}
         onClose={() => {
@@ -2027,6 +2249,91 @@ export default function App() {
           }
         }}
       />
+
+      {/* ALERTA RÁPIDA DE NIVEL COMPLETADO (CUANDO LA RACHA YA SE MOSTRÓ HOY) */}
+      {levelSuccessAlert && levelSuccessAlert.isOpen && (
+        <div
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            background: 'rgba(15, 23, 42, 0.75)',
+            backdropFilter: 'blur(8px)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: '20px',
+            zIndex: 12000
+          }}
+        >
+          <div
+            style={{
+              background: '#FFFFFF',
+              border: '3px solid #22C55E',
+              borderRadius: '24px',
+              boxShadow: '0 8px 0 #16A34A, 0 20px 40px rgba(0, 0, 0, 0.25)',
+              maxWidth: '440px',
+              width: '100%',
+              padding: '28px 24px',
+              textAlign: 'center',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              gap: '14px',
+              animation: 'bounce-in 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)'
+            }}
+          >
+            <div style={{ fontSize: '2.5rem' }}>🎯</div>
+            <h3 style={{ fontSize: '1.45rem', fontWeight: 900, color: '#0F172A', margin: 0 }}>
+              ¡Nivel Completado con Éxito!
+            </h3>
+            <p style={{ fontSize: '0.96rem', color: '#475569', margin: 0, fontWeight: 700, lineHeight: 1.5 }}>
+              Has ganado <strong style={{ color: '#16A34A' }}>+{levelSuccessAlert.xp} XP</strong> y tus estrellas ya están guardadas. ¡Tu progreso avanza firme!
+            </p>
+
+            <div style={{ display: 'flex', gap: '8px', margin: '4px 0' }}>
+              {Array.from({ length: 3 }).map((_, i) => (
+                <span
+                  key={i}
+                  style={{
+                    fontSize: '2rem',
+                    filter: i < levelSuccessAlert.stars ? 'none' : 'grayscale(1) opacity(0.28)'
+                  }}
+                >
+                  ⭐
+                </span>
+              ))}
+            </div>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', width: '100%', marginTop: '8px' }}>
+              {levelSuccessAlert.nextLesson && (
+                <button
+                  className="btn-3d btn-green"
+                  style={{ width: '100%', padding: '15px', borderRadius: '16px', fontSize: '1.05rem', fontWeight: 900 }}
+                  onClick={() => {
+                    const next = levelSuccessAlert.nextLesson;
+                    setLevelSuccessAlert(null);
+                    if (next) {
+                      handleStartLesson(next, false, progress, user);
+                    }
+                  }}
+                >
+                  ¡AVANZAR AL SIGUIENTE NIVEL!
+                </button>
+              )}
+              <button
+                className="btn-3d btn-blue"
+                style={{ width: '100%', padding: '12px', borderRadius: '16px', fontSize: '0.92rem', fontWeight: 800 }}
+                onClick={() => setLevelSuccessAlert(null)}
+              >
+                Volver al Mapa de Ruta
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* MODAL DE USUARIOS EN LÍNEA EN TIEMPO REAL (DOCENTE josephcarazo56@gmail.com) */}
       <LiveUsersModal

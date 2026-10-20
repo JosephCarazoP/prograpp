@@ -398,6 +398,22 @@ export const CoursesView: React.FC<CoursesViewProps> = ({
                           <Play size={10} fill="#DC2626" /> Video
                         </span>
                       )}
+                      <span
+                        style={{
+                          background: '#ECFDF5',
+                          border: '1px solid #A7F3D0',
+                          color: '#047857',
+                          fontSize: '0.72rem',
+                          fontWeight: 900,
+                          padding: '1px 7px',
+                          borderRadius: '6px',
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: '3px'
+                        }}
+                      >
+                        ⚡ Quiz Exprés (3 min)
+                      </span>
                     </div>
                     <p style={{ color: '#1E293B', fontSize: '0.9rem', margin: 0, lineHeight: 1.45, fontWeight: 600 }}>
                       {th?.subtitle || 'Fundamentos explicados paso a paso con código de ejemplo.'}
