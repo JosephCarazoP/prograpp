@@ -137,6 +137,7 @@ export const VSCodeSnippet: React.FC<VSCodeSnippetProps> = ({
 
   return (
     <div
+      className="vscode-snippet"
       style={{
         borderRadius: '16px',
         overflow: 'hidden',

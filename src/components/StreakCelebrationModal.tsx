@@ -15,10 +15,143 @@ interface StreakCelebrationModalProps {
 const TODAY_STREAK_SEEN_KEY = 'prograpp_streak_seen_';
 
 /**
- * 1. Chispa / Fueguito Dormido 3D para Racha 0 (0% IA / 100% Vector Duolingo 3D).
- * Descansa plácidamente roncando con burbujas zZz sobre leños de fogata 3D, esperando la primera lección para encenderse.
+ * 1. Fueguito Duolingo 3D Oficial (100% Duolingo 3D / 0% IA).
+ * Personaje de llama volumétrica con brillo plástico/vinilo, capas 3D,
+ * ojos grandes expresivos con animación de parpadeo y mejillas sonrientes.
  */
-const DormantSleepingFlameSVG: React.FC = () => (
+const DuolingoFlame3D: React.FC<{ isIgniting?: boolean }> = ({ isIgniting = false }) => (
+  <div className={`duo-flame-container ${isIgniting ? 'igniting-pop' : ''}`}>
+    <svg
+      viewBox="0 0 160 190"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      className="duo-flame-3d-character"
+    >
+      <defs>
+        {/* Capa Exterior 3D: Naranja fuego vibrante Duolingo con bevel inferior */}
+        <linearGradient id="duoFlameOuter" x1="80" y1="12" x2="80" y2="175" gradientUnits="userSpaceOnUse">
+          <stop stopColor="#FF9600" />
+          <stop offset="35%" stopColor="#FF7A00" />
+          <stop offset="70%" stopColor="#EA580C" />
+          <stop offset="100%" stopColor="#C2410C" />
+        </linearGradient>
+
+        {/* Capa Media 3D: Ámbar dorado brillante */}
+        <linearGradient id="duoFlameMid" x1="80" y1="45" x2="80" y2="160" gradientUnits="userSpaceOnUse">
+          <stop stopColor="#FFDE59" />
+          <stop offset="45%" stopColor="#FFB703" />
+          <stop offset="100%" stopColor="#FB8500" />
+        </linearGradient>
+
+        {/* Núcleo de Energía 3D: Amarillo canario cálido a blanco perlado */}
+        <linearGradient id="duoFlameCore" x1="80" y1="85" x2="80" y2="152" gradientUnits="userSpaceOnUse">
+          <stop stopColor="#FFFFFF" />
+          <stop offset="60%" stopColor="#FFF275" />
+          <stop offset="100%" stopColor="#FFD124" />
+        </linearGradient>
+
+        {/* Reflejo Glossy Curvo 3D (Efecto vinilo / muñeco 3D Duolingo) */}
+        <linearGradient id="duoFlameGloss" x1="38" y1="35" x2="75" y2="105" gradientUnits="userSpaceOnUse">
+          <stop stopColor="#FFFFFF" stopOpacity="0.8" />
+          <stop offset="40%" stopColor="#FFFFFF" stopOpacity="0.4" />
+          <stop offset="100%" stopColor="#FFFFFF" stopOpacity="0" />
+        </linearGradient>
+
+        {/* Sombra 3D en la base del personaje */}
+        <radialGradient id="duoFlameGroundShadow" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stopColor="#0B1317" stopOpacity="0.75" />
+          <stop offset="70%" stopColor="#0B1317" stopOpacity="0.3" />
+          <stop offset="100%" stopColor="#0B1317" stopOpacity="0" />
+        </radialGradient>
+      </defs>
+
+      {/* 1. Sombra de contacto en el piso 3D (se aplasta y estira al compás de la respiración) */}
+      <ellipse cx="80" cy="180" rx="55" ry="9" fill="url(#duoFlameGroundShadow)" className="flame-ground-shadow" />
+
+      {/* 2. Bisel 3D inferior (Base gruesa sólida con relieve Duolingo) */}
+      <path
+        d="M80 14 C83 40 102 56 116 72 C132 90 140 110 140 132 C140 162 113 176 80 176 C47 176 20 162 20 132 C20 110 28 90 44 72 C58 56 77 40 80 14 Z"
+        fill="#9A3412"
+      />
+
+      {/* 3. Cuerpo de la llama principal (Forma curva de gota 3D oficial) */}
+      <path
+        d="M80 14 C83 40 102 56 116 72 C132 90 140 110 140 130 C140 158 113 172 80 172 C47 172 20 158 20 130 C20 110 28 90 44 72 C58 56 77 40 80 14 Z"
+        fill="url(#duoFlameOuter)"
+        stroke="#C2410C"
+        strokeWidth="3.5"
+        strokeLinejoin="round"
+      />
+
+      {/* 4. Reflejo plástico glossy en la curva superior izquierda (Efecto vinilo 3D) */}
+      <path
+        d="M74 24 C70 42 55 58 45 74 C34 91 30 108 32 124 C28 112 30 96 39 80 C48 64 64 48 74 24 Z"
+        fill="url(#duoFlameGloss)"
+      />
+
+      {/* 5. Destello de brillo adicional en la punta superior */}
+      <ellipse cx="78" cy="30" rx="3.5" ry="8" transform="rotate(-15 78 30)" fill="#FFFFFF" fillOpacity="0.65" />
+
+      {/* 6. Capa media dorada (Volumen 3D interior) */}
+      <path
+        d="M80 48 C84 66 98 78 108 90 C118 103 122 118 120 135 C116 153 100 162 80 162 C60 162 44 153 40 135 C38 118 42 103 52 90 C62 78 76 66 80 48 Z"
+        fill="url(#duoFlameMid)"
+        stroke="#EA580C"
+        strokeWidth="2.5"
+      />
+
+      {/* 7. Núcleo amarillo cálido de alta energía */}
+      <path
+        d="M80 88 C83 98 92 106 97 114 C102 122 103 131 99 141 C94 150 87 153 80 153 C73 153 66 150 61 141 C57 131 58 122 63 114 C68 106 77 98 80 88 Z"
+        fill="url(#duoFlameCore)"
+      />
+
+      {/* 8. CARITA DUOLINGO 3D TIERNA Y EXPRESIVA */}
+      {/* Ojo Izquierdo 3D */}
+      <g className="duo-eye duo-eye-left">
+        <ellipse cx="66" cy="118" rx="6.5" ry="9" fill="#431407" />
+        {/* Brillo ocular especular superior (Pupila) */}
+        <circle cx="68.5" cy="115" r="2.8" fill="#FFFFFF" />
+        {/* Micro-brillo inferior */}
+        <circle cx="64" cy="122" r="1.3" fill="#FFFFFF" fillOpacity="0.8" />
+      </g>
+
+      {/* Ojo Derecho 3D */}
+      <g className="duo-eye duo-eye-right">
+        <ellipse cx="94" cy="118" rx="6.5" ry="9" fill="#431407" />
+        {/* Brillo ocular especular superior (Pupila) */}
+        <circle cx="96.5" cy="115" r="2.8" fill="#FFFFFF" />
+        {/* Micro-brillo inferior */}
+        <circle cx="92" cy="122" r="1.3" fill="#FFFFFF" fillOpacity="0.8" />
+      </g>
+
+      {/* Mejillas Sonrosadas 3D (Rosy Cheeks) */}
+      <ellipse cx="54" cy="126" rx="5.5" ry="3.5" fill="#FB7185" fillOpacity="0.85" />
+      <ellipse cx="106" cy="126" rx="5.5" ry="3.5" fill="#FB7185" fillOpacity="0.85" />
+
+      {/* Sonrisa alegre abierta estilo Duolingo */}
+      <path
+        d="M72 128 Q80 138 88 128"
+        stroke="#431407"
+        strokeWidth="3.6"
+        strokeLinecap="round"
+        fill="none"
+      />
+      {/* Detalle interno de lengüita sonriente */}
+      <path
+        d="M75 130 C76 134 84 134 85 130 Z"
+        fill="#F43F5E"
+      />
+    </svg>
+  </div>
+);
+
+/**
+ * 2. Fueguito Dormilón 3D para Racha 0 (100% Duolingo 3D / 0% IA).
+ * Descansa sobre leños de fogata con relieve 3D, ojos curvados soñando,
+ * burbujas flotantes de zZz y mejillas tiernas, listo para encenderse hoy.
+ */
+const DormantSleepingFlame3D: React.FC = () => (
   <div className="dormant-flame-wrapper">
     {/* Burbujas zZz animadas flotando al cielo */}
     <div className="zzz-bubble zzz-1">z</div>
@@ -26,302 +159,83 @@ const DormantSleepingFlameSVG: React.FC = () => (
     <div className="zzz-bubble zzz-3">Z</div>
 
     <svg
-      viewBox="0 0 130 150"
+      viewBox="0 0 160 190"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
-      className="dormant-flame-svg"
+      className="dormant-flame-3d-svg"
     >
       <defs>
-        <linearGradient id="sleepyFlameOuter" x1="65" y1="20" x2="65" y2="135" gradientUnits="userSpaceOnUse">
+        {/* Degradado gris azulado frío de la llama dormida */}
+        <linearGradient id="sleepyFlameOuter3D" x1="80" y1="20" x2="80" y2="155" gradientUnits="userSpaceOnUse">
           <stop stopColor="#64748B" />
           <stop offset="60%" stopColor="#475569" />
           <stop offset="100%" stopColor="#334155" />
         </linearGradient>
-        <linearGradient id="sleepyFlameInner" x1="65" y1="50" x2="65" y2="125" gradientUnits="userSpaceOnUse">
+
+        <linearGradient id="sleepyFlameInner3D" x1="80" y1="55" x2="80" y2="145" gradientUnits="userSpaceOnUse">
           <stop stopColor="#94A3B8" />
           <stop offset="60%" stopColor="#64748B" />
           <stop offset="100%" stopColor="#475569" />
         </linearGradient>
-        <linearGradient id="logWoodGradient" x1="0" y1="0" x2="1" y2="1">
-          <stop stopColor="#451A03" />
-          <stop offset="50%" stopColor="#78350F" />
-          <stop offset="100%" stopColor="#291104" />
+
+        {/* Leños de madera en relieve 3D */}
+        <linearGradient id="logWood3D" x1="20" y1="150" x2="140" y2="175" gradientUnits="userSpaceOnUse">
+          <stop stopColor="#78350F" />
+          <stop offset="50%" stopColor="#92400E" />
+          <stop offset="100%" stopColor="#451A03" />
         </linearGradient>
       </defs>
 
       {/* Sombra base en el suelo */}
-      <ellipse cx="65" cy="140" rx="44" ry="8" fill="#090D16" fillOpacity="0.6" />
+      <ellipse cx="80" cy="180" rx="55" ry="8" fill="#0B1317" fillOpacity="0.6" />
 
-      {/* Leños de fogata 3D en la base */}
-      <g className="campfire-logs">
-        <rect x="22" y="130" width="86" height="12" rx="6" fill="url(#logWoodGradient)" stroke="#1C0A00" strokeWidth="2" />
-        <ellipse cx="26" cy="136" rx="4" ry="5" fill="#92400E" />
-        <ellipse cx="104" cy="136" rx="4" ry="5" fill="#78350F" />
+      {/* Leños de fogata 3D con corte transversal */}
+      <g className="campfire-logs-3d">
+        <rect x="24" y="152" width="112" height="18" rx="9" fill="url(#logWood3D)" stroke="#270F03" strokeWidth="2.5" />
+        {/* Anillo de madera izquierdo */}
+        <ellipse cx="32" cy="161" rx="6" ry="7" fill="#B45309" stroke="#451A03" strokeWidth="1.5" />
+        <circle cx="32" cy="161" r="2.5" fill="#78350F" />
+        {/* Anillo de madera derecho */}
+        <ellipse cx="128" cy="161" rx="6" ry="7" fill="#B45309" stroke="#451A03" strokeWidth="1.5" />
       </g>
 
-      {/* Cuerpo de llama dormida gris/azulada suave */}
+      {/* Bisel 3D inferior de la llama */}
       <path
-        d="M65 20 C67 36 79 48 87 58 C97 72 103 86 103 102 C103 122 85 134 65 134 C45 134 27 122 27 102 C27 82 35 68 49 52 C55 46 61 34 65 20 Z"
-        fill="url(#sleepyFlameOuter)"
+        d="M80 25 C83 48 100 62 112 76 C126 94 132 112 132 132 C132 154 110 164 80 164 C50 164 28 154 28 132 C28 112 34 94 48 76 C60 62 77 48 80 25 Z"
+        fill="#1E293B"
+      />
+
+      {/* Cuerpo principal dormido */}
+      <path
+        d="M80 25 C83 48 100 62 112 76 C126 94 132 112 132 130 C132 150 110 160 80 160 C50 160 28 150 28 130 C28 112 34 94 48 76 C60 62 77 48 80 25 Z"
+        fill="url(#sleepyFlameOuter3D)"
         stroke="#1E293B"
         strokeWidth="3.2"
+        strokeLinejoin="round"
       />
 
       {/* Capa interior tenue */}
       <path
-        d="M65 50 C68 62 77 70 83 78 C89 86 91 96 89 108 C85 120 75 126 65 126 C55 126 45 120 41 108 C39 96 41 86 47 78 C53 70 62 62 65 50 Z"
-        fill="url(#sleepyFlameInner)"
+        d="M80 60 C83 74 95 84 103 94 C110 104 112 115 110 128 C106 142 94 148 80 148 C66 148 54 142 50 128 C48 115 50 104 57 94 C65 84 77 74 80 60 Z"
+        fill="url(#sleepyFlameInner3D)"
         stroke="#334155"
-        strokeWidth="1.8"
+        strokeWidth="2"
       />
 
       {/* Ojos cerrados durmiendo plácidamente (- . -) */}
-      <path d="M49 97 Q55 102 61 97" stroke="#94A3B8" strokeWidth="3" strokeLinecap="round" fill="none" />
-      <path d="M69 97 Q75 102 81 97" stroke="#94A3B8" strokeWidth="3" strokeLinecap="round" fill="none" />
+      <path d="M58 118 Q66 125 74 118" stroke="#CBD5E1" strokeWidth="3.8" strokeLinecap="round" fill="none" />
+      <path d="M86 118 Q94 125 102 118" stroke="#CBD5E1" strokeWidth="3.8" strokeLinecap="round" fill="none" />
 
-      {/* Mejillas sonrosadas tenues */}
-      <circle cx="44" cy="100" r="3.2" fill="#F472B6" fillOpacity="0.5" />
-      <circle cx="86" cy="100" r="3.2" fill="#F472B6" fillOpacity="0.5" />
+      {/* Mejillas sonrosadas tiernas */}
+      <circle cx="52" cy="124" r="5" fill="#F472B6" fillOpacity="0.6" />
+      <circle cx="108" cy="124" r="5" fill="#F472B6" fillOpacity="0.6" />
 
-      {/* Boquita tranquila roncando */}
-      <ellipse cx="65" cy="108" rx="3.5" ry="4.5" fill="#1E293B" />
+      {/* Boquita tranquila roncando suave */}
+      <ellipse cx="80" cy="132" rx="4" ry="5.5" fill="#0F172A" />
     </svg>
   </div>
 );
 
-/**
- * 2. Avatar Byte Completo Calentando para Racha 0 ("con pies y todo").
- * Haciendo ejercicios de estiramiento y calentamiento listo para su primera lección.
- */
-const FullBodyWarmingByte: React.FC = () => (
-  <div className="fullbody-byte-container warming-anim">
-    <svg
-      viewBox="0 0 180 225"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      className="fullbody-byte-svg"
-    >
-      <defs>
-        <linearGradient id="warm-chassis" x1="40" y1="20" x2="140" y2="120" gradientUnits="userSpaceOnUse">
-          <stop stopColor="#38BDF8" />
-          <stop offset="45%" stopColor="#0EA5E9" />
-          <stop offset="100%" stopColor="#0284C7" />
-        </linearGradient>
-        <linearGradient id="warm-chassis-dark" x1="40" y1="50" x2="140" y2="150" gradientUnits="userSpaceOnUse">
-          <stop stopColor="#0284C7" />
-          <stop offset="100%" stopColor="#0369A1" />
-        </linearGradient>
-        <linearGradient id="warm-boot" x1="0" y1="0" x2="0" y2="1">
-          <stop stopColor="#38BDF8" />
-          <stop offset="60%" stopColor="#0284C7" />
-          <stop offset="100%" stopColor="#0369A1" />
-        </linearGradient>
-      </defs>
-
-      {/* Brazos en jarras / estirando */}
-      <g className="warm-arms">
-        <path d="M48 108 C30 112 24 130 30 144 C36 150 48 136 52 124 Z" fill="url(#warm-chassis-dark)" stroke="#0369A1" strokeWidth="2.5" />
-        <circle cx="28" cy="142" r="9" fill="#E0F2FE" stroke="#0284C7" strokeWidth="2.2" />
-
-        <path d="M132 108 C150 112 156 130 150 144 C144 150 132 136 128 124 Z" fill="url(#warm-chassis-dark)" stroke="#0369A1" strokeWidth="2.5" />
-        <circle cx="152" cy="142" r="9" fill="#E0F2FE" stroke="#0284C7" strokeWidth="2.2" />
-      </g>
-
-      {/* Piernas y Botas 3D con pies firmes en el piso */}
-      <g className="warm-legs">
-        <rect x="58" y="148" width="16" height="32" rx="4" fill="url(#warm-chassis-dark)" stroke="#0369A1" strokeWidth="2.5" />
-        <rect x="56" y="168" width="20" height="7" rx="3.5" fill="#38BDF8" stroke="#0284C7" strokeWidth="1.5" />
-        <path d="M46 182 C46 175 78 175 78 182 L80 198 L44 198 Z" fill="url(#warm-boot)" stroke="#0369A1" strokeWidth="2.5" />
-        <rect x="40" y="198" width="44" height="8" rx="4" fill="#1E293B" stroke="#0284C7" strokeWidth="1.5" />
-
-        <rect x="106" y="148" width="16" height="32" rx="4" fill="url(#warm-chassis-dark)" stroke="#0369A1" strokeWidth="2.5" />
-        <rect x="104" y="168" width="20" height="7" rx="3.5" fill="#38BDF8" stroke="#0284C7" strokeWidth="1.5" />
-        <path d="M102 182 C102 175 134 175 134 182 L136 198 L100 198 Z" fill="url(#warm-boot)" stroke="#0369A1" strokeWidth="2.5" />
-        <rect x="96" y="198" width="44" height="8" rx="4" fill="#1E293B" stroke="#0284C7" strokeWidth="1.5" />
-      </g>
-
-      {/* Torso */}
-      <path d="M48 94 C48 94 42 136 50 142 C58 146 122 146 130 142 C138 136 132 94 132 94 Z" fill="url(#warm-chassis)" stroke="#0284C7" strokeWidth="2.8" />
-      <rect x="62" y="104" width="56" height="26" rx="8" fill="#0284C7" stroke="#0369A1" strokeWidth="1.8" />
-      <circle cx="90" cy="117" r="7" fill="#F59E0B" stroke="#B45309" strokeWidth="1.5" />
-      <circle cx="92" cy="115" r="2.5" fill="#FFFFFF" />
-
-      {/* Cabeza con ojos curiosos y decididos */}
-      <rect x="87" y="12" width="6" height="16" rx="3" fill="#94A3B8" stroke="#475569" strokeWidth="1" />
-      <circle cx="90" cy="10" r="8" fill="#FBBF24" stroke="#B45309" strokeWidth="1.5" />
-      <rect x="42" y="24" width="96" height="66" rx="28" fill="url(#warm-chassis)" stroke="#0284C7" strokeWidth="3" />
-
-      {/* Cinta deportiva de entrenamiento 3D */}
-      <rect x="42" y="34" width="96" height="13" rx="4" fill="#0284C7" />
-      <rect x="42" y="39" width="96" height="4" fill="#FFFFFF" />
-
-      <rect x="52" y="44" width="76" height="34" rx="14" fill="#0F172A" stroke="#0369A1" strokeWidth="2" />
-      
-      {/* Ojos bien abiertos con determinación */}
-      <circle cx="73" cy="58" r="6" fill="#38BDF8" />
-      <circle cx="75" cy="56" r="2.2" fill="#FFFFFF" />
-      <circle cx="107" cy="58" r="6" fill="#38BDF8" />
-      <circle cx="109" cy="56" r="2.2" fill="#FFFFFF" />
-
-      <circle cx="62" cy="68" r="3.5" fill="#F472B6" fillOpacity="0.7" />
-      <circle cx="118" cy="68" r="3.5" fill="#F472B6" fillOpacity="0.7" />
-      <path d="M82 68 Q90 74 98 68" stroke="#38BDF8" strokeWidth="3" strokeLinecap="round" fill="none" />
-    </svg>
-  </div>
-);
-
-/**
- * 3. Avatar Byte Completo Orgulloso para "Ya reclamaste tu racha" ("con pies y todo").
- * De pie sonriendo junto al fuego dando el pulgar arriba (Thumbs up).
- */
-const FullBodyProudByte: React.FC = () => (
-  <div className="fullbody-byte-container proud-anim">
-    <svg
-      viewBox="0 0 180 225"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      className="fullbody-byte-svg"
-    >
-      <defs>
-        <linearGradient id="prd-chassis" x1="40" y1="20" x2="140" y2="120" gradientUnits="userSpaceOnUse">
-          <stop stopColor="#38BDF8" />
-          <stop offset="45%" stopColor="#0EA5E9" />
-          <stop offset="100%" stopColor="#0284C7" />
-        </linearGradient>
-        <linearGradient id="prd-chassis-dark" x1="40" y1="50" x2="140" y2="150" gradientUnits="userSpaceOnUse">
-          <stop stopColor="#0284C7" />
-          <stop offset="100%" stopColor="#0369A1" />
-        </linearGradient>
-        <linearGradient id="prd-boot" x1="0" y1="0" x2="0" y2="1">
-          <stop stopColor="#38BDF8" />
-          <stop offset="60%" stopColor="#0284C7" />
-          <stop offset="100%" stopColor="#0369A1" />
-        </linearGradient>
-      </defs>
-
-      {/* Brazo Izquierdo apoyado en la cadera */}
-      <path d="M48 108 C30 114 26 130 32 144 C38 150 48 138 52 124 Z" fill="url(#prd-chassis-dark)" stroke="#0369A1" strokeWidth="2.5" />
-      <circle cx="30" cy="142" r="9" fill="#E0F2FE" stroke="#0284C7" strokeWidth="2.2" />
-
-      {/* Brazo Derecho dando el Pulgar Arriba (Thumbs Up 👍) */}
-      <path d="M130 106 C144 110 152 116 156 126 C158 136 148 142 136 134 C132 126 128 120 126 112 Z" fill="url(#prd-chassis)" stroke="#0284C7" strokeWidth="2.5" />
-      {/* Guante y pulgar alzado */}
-      <circle cx="154" cy="128" r="10" fill="#E0F2FE" stroke="#0284C7" strokeWidth="2.2" />
-      <rect x="151" y="114" width="6" height="12" rx="3" fill="#BAE6FD" stroke="#0284C7" strokeWidth="1.5" />
-
-      {/* Piernas y Botas 3D firmes */}
-      <g className="prd-legs">
-        <rect x="58" y="148" width="16" height="32" rx="4" fill="url(#prd-chassis-dark)" stroke="#0369A1" strokeWidth="2.5" />
-        <rect x="56" y="168" width="20" height="7" rx="3.5" fill="#38BDF8" stroke="#0284C7" strokeWidth="1.5" />
-        <path d="M46 182 C46 175 78 175 78 182 L80 198 L44 198 Z" fill="url(#prd-boot)" stroke="#0369A1" strokeWidth="2.5" />
-        <rect x="40" y="198" width="44" height="8" rx="4" fill="#1E293B" stroke="#0284C7" strokeWidth="1.5" />
-
-        <rect x="106" y="148" width="16" height="32" rx="4" fill="url(#prd-chassis-dark)" stroke="#0369A1" strokeWidth="2.5" />
-        <rect x="104" y="168" width="20" height="7" rx="3.5" fill="#38BDF8" stroke="#0284C7" strokeWidth="1.5" />
-        <path d="M102 182 C102 175 134 175 134 182 L136 198 L100 198 Z" fill="url(#prd-boot)" stroke="#0369A1" strokeWidth="2.5" />
-        <rect x="96" y="198" width="44" height="8" rx="4" fill="#1E293B" stroke="#0284C7" strokeWidth="1.5" />
-      </g>
-
-      {/* Torso con energía al 100% */}
-      <path d="M48 94 C48 94 42 136 50 142 C58 146 122 146 130 142 C138 136 132 94 132 94 Z" fill="url(#prd-chassis)" stroke="#0284C7" strokeWidth="2.8" />
-      <rect x="62" y="104" width="56" height="26" rx="8" fill="#0284C7" stroke="#0369A1" strokeWidth="1.8" />
-      <circle cx="90" cy="117" r="7" fill="#22C55E" stroke="#15803D" strokeWidth="1.5" />
-      <circle cx="92" cy="115" r="2.5" fill="#FFFFFF" />
-
-      {/* Cabeza sonriente con guiño de complicidad */}
-      <rect x="87" y="12" width="6" height="16" rx="3" fill="#94A3B8" stroke="#475569" strokeWidth="1" />
-      <circle cx="90" cy="10" r="8" fill="#FBBF24" stroke="#B45309" strokeWidth="1.5" />
-      <rect x="42" y="24" width="96" height="66" rx="28" fill="url(#prd-chassis)" stroke="#0284C7" strokeWidth="3" />
-      <rect x="52" y="38" width="76" height="38" rx="16" fill="#0F172A" stroke="#0369A1" strokeWidth="2" />
-      
-      {/* Ojo izquierdo en arco alegre ^, ojo derecho guiñando */}
-      <path d="M68 59 C68 51, 78 51, 78 59" stroke="#38BDF8" strokeWidth="4.2" strokeLinecap="round" fill="none" />
-      <line x1="102" y1="56" x2="114" y2="56" stroke="#38BDF8" strokeWidth="4" strokeLinecap="round" />
-
-      <circle cx="62" cy="65" r="3.5" fill="#F472B6" fillOpacity="0.75" />
-      <circle cx="118" cy="65" r="3.5" fill="#F472B6" fillOpacity="0.75" />
-      <path d="M82 65 Q90 73 98 65" stroke="#38BDF8" strokeWidth="3.2" strokeLinecap="round" fill="none" />
-    </svg>
-  </div>
-);
-
-/**
- * 4. Avatar Byte Completo Saltando y Girando 360 ("¡Yujuuu!").
- */
-const FullBodyJumpingByte: React.FC = () => (
-  <div className="fullbody-byte-container jumping-anim">
-    <svg
-      viewBox="0 0 180 225"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      className="fullbody-byte-svg"
-    >
-      <defs>
-        <linearGradient id="jmp-chassis" x1="40" y1="20" x2="140" y2="120" gradientUnits="userSpaceOnUse">
-          <stop stopColor="#38BDF8" />
-          <stop offset="45%" stopColor="#0EA5E9" />
-          <stop offset="100%" stopColor="#0284C7" />
-        </linearGradient>
-        <linearGradient id="jmp-chassis-dark" x1="40" y1="50" x2="140" y2="150" gradientUnits="userSpaceOnUse">
-          <stop stopColor="#0284C7" />
-          <stop offset="100%" stopColor="#0369A1" />
-        </linearGradient>
-        <linearGradient id="jmp-boot" x1="0" y1="0" x2="0" y2="1">
-          <stop stopColor="#38BDF8" />
-          <stop offset="60%" stopColor="#0284C7" />
-          <stop offset="100%" stopColor="#0369A1" />
-        </linearGradient>
-      </defs>
-
-      {/* Brazo Izquierdo de equilibrio */}
-      <path d="M48 108 C32 112 20 125 18 138 C16 148 24 154 32 148 C38 144 46 128 52 118 Z" fill="url(#jmp-chassis-dark)" stroke="#0369A1" strokeWidth="2.5" />
-      <circle cx="22" cy="144" r="10" fill="#E0F2FE" stroke="#0284C7" strokeWidth="2.5" />
-
-      {/* Piernas flexionadas en pleno salto enérgico */}
-      <path d="M60 148 L56 178 L72 178 L74 148 Z" fill="url(#jmp-chassis-dark)" stroke="#0369A1" strokeWidth="2.5" />
-      <rect x="54" y="166" width="20" height="7" rx="3.5" fill="#38BDF8" stroke="#0284C7" strokeWidth="1.5" />
-      <path d="M44 182 C44 175 76 175 78 182 L80 198 L42 198 Z" fill="url(#jmp-boot)" stroke="#0369A1" strokeWidth="2.5" />
-      <rect x="38" y="200" width="44" height="8" rx="4" fill="#1E293B" stroke="#0284C7" strokeWidth="1.5" />
-
-      <path d="M106 148 L108 178 L124 178 L120 148 Z" fill="url(#jmp-chassis-dark)" stroke="#0369A1" strokeWidth="2.5" />
-      <rect x="106" y="166" width="20" height="7" rx="3.5" fill="#38BDF8" stroke="#0284C7" strokeWidth="1.5" />
-      <path d="M102 182 C104 175 136 175 136 182 L138 196 L100 198 Z" fill="url(#jmp-boot)" stroke="#0369A1" strokeWidth="2.5" />
-      <rect x="98" y="200" width="44" height="8" rx="4" fill="#1E293B" stroke="#0284C7" strokeWidth="1.5" />
-
-      {/* Torso */}
-      <path d="M48 94 C48 94 42 136 50 142 C58 146 122 146 130 142 C138 136 132 94 132 94 Z" fill="url(#jmp-chassis)" stroke="#0284C7" strokeWidth="2.8" />
-      <rect x="62" y="104" width="56" height="26" rx="8" fill="#0284C7" stroke="#0369A1" strokeWidth="1.8" />
-      <circle cx="90" cy="117" r="7" fill="#22C55E" stroke="#15803D" strokeWidth="1.5" />
-      <circle cx="92" cy="115" r="2.5" fill="#FFFFFF" />
-
-      {/* Brazo Derecho levantado en alto hacia las estrellas */}
-      <path d="M130 102 C142 92 152 70 156 50 C160 38 150 32 142 40 C136 48 128 78 124 96 Z" fill="url(#jmp-chassis)" stroke="#0284C7" strokeWidth="2.5" />
-      <ellipse cx="157" cy="40" rx="12" ry="11" fill="#E0F2FE" stroke="#0284C7" strokeWidth="2.5" />
-      <rect x="150" y="27" width="6" height="11" rx="3" fill="#BAE6FD" stroke="#0284C7" strokeWidth="1.2" />
-      <rect x="157" y="26" width="6" height="12" rx="3" fill="#BAE6FD" stroke="#0284C7" strokeWidth="1.2" />
-      <circle cx="154" cy="38" r="3" fill="#FFFFFF" />
-
-      {/* Cabeza riendo a carcajadas de felicidad */}
-      <rect x="87" y="12" width="6" height="16" rx="3" fill="#94A3B8" stroke="#475569" strokeWidth="1" />
-      <circle cx="90" cy="10" r="8" fill="#FBBF24" stroke="#B45309" strokeWidth="1.5" />
-      <rect x="42" y="24" width="96" height="66" rx="28" fill="url(#jmp-chassis)" stroke="#0284C7" strokeWidth="3" />
-      <rect x="52" y="38" width="76" height="38" rx="16" fill="#0F172A" stroke="#0369A1" strokeWidth="2" />
-      <path d="M68 59 C68 51, 78 51, 78 59" stroke="#38BDF8" strokeWidth="4.2" strokeLinecap="round" fill="none" />
-      <path d="M102 59 C102 51, 112 51, 112 59" stroke="#38BDF8" strokeWidth="4.2" strokeLinecap="round" fill="none" />
-      <circle cx="62" cy="64" r="3.5" fill="#F472B6" fillOpacity="0.75" />
-      <circle cx="118" cy="64" r="3.5" fill="#F472B6" fillOpacity="0.75" />
-      <path d="M82 65 Q90 73 98 65" stroke="#38BDF8" strokeWidth="3.2" strokeLinecap="round" fill="none" />
-    </svg>
-  </div>
-);
-
-/**
- * Componente Principal de Celebración de Racha en Pantalla Completa.
- * Gestiona los 3 Modos solicitados:
- *  - Modo A (Racha 0): Llama dormida con zZz, avatar calentando, mensaje para comenzar hoy.
- *  - Modo B (Celebración en Vivo): Salto, giro 360, "¡Yujuuu!", ignición de fuego y conteo de día en vivo.
- *  - Modo C (Ya reclamada hoy): Fuego encendido y aviso "Ya reclamaste tu racha de hoy".
- */
 export const StreakCelebrationModal: React.FC<StreakCelebrationModalProps> = ({
   user,
   isOpen,
@@ -339,12 +253,11 @@ export const StreakCelebrationModal: React.FC<StreakCelebrationModalProps> = ({
   // Si ya tiene racha > 0, ya la vio hoy y NO viene de terminar una lección en este instante:
   const isAlreadyClaimedMode = !isZeroStreak && hasAlreadySeenToday && !isJustCompleted;
 
-  // Secuencia de animación: si ya está reclamada va directo a 'ignite', si es día 0 a 'ready'
+  // Secuencia de animación en vivo
   const [animationPhase, setAnimationPhase] = useState<'jump' | 'ignite' | 'ready'>(
     isAlreadyClaimedMode ? 'ignite' : isZeroStreak ? 'ready' : 'jump'
   );
 
-  // El contador visual: si es en vivo arranca en streakCount - 1 (por ejemplo 0) y sube
   const initialDisplay = isJustCompleted
     ? Math.max(0, streakCount - 1)
     : isZeroStreak
@@ -353,7 +266,7 @@ export const StreakCelebrationModal: React.FC<StreakCelebrationModalProps> = ({
   const [displayCount, setDisplayCount] = useState<number>(initialDisplay);
   const [copied, setCopied] = useState<boolean>(false);
 
-  // Días de la semana para el track semanal
+  // Días de la semana para el track semanal Duolingo
   const daysOfWeek = [
     { label: 'L', name: 'Lun', dayIndex: 1 },
     { label: 'M', name: 'Mar', dayIndex: 2 },
@@ -374,7 +287,6 @@ export const StreakCelebrationModal: React.FC<StreakCelebrationModalProps> = ({
     }
 
     if (isZeroStreak) {
-      // Modo Racha 0: Suave sonido de sueño / descanso y esperar
       setDisplayCount(0);
       setAnimationPhase('ready');
       soundService.playDormant();
@@ -382,14 +294,13 @@ export const StreakCelebrationModal: React.FC<StreakCelebrationModalProps> = ({
     }
 
     if (isAlreadyClaimedMode) {
-      // Modo Ya Reclamado Hoy: Fuego directamente encendido
       setDisplayCount(streakCount);
       setAnimationPhase('ignite');
       soundService.playToken();
       return;
     }
 
-    // Modo Celebración Activa (Primera vez que se activa hoy o tras completar lección)
+    // Modo Celebración Activa (primera vez hoy o fin de lección)
     const targetStreak = streakCount;
     const startCount = isJustCompleted ? Math.max(0, targetStreak - 1) : targetStreak;
 
@@ -400,12 +311,12 @@ export const StreakCelebrationModal: React.FC<StreakCelebrationModalProps> = ({
     const timerYujuu = setTimeout(() => {
       soundService.playYujuu();
       confetti({
-        particleCount: 50,
-        spread: 65,
+        particleCount: 60,
+        spread: 70,
         origin: { y: 0.35 },
-        colors: ['#38BDF8', '#FDE047', '#F97316', '#22C55E']
+        colors: ['#FF9600', '#FDE047', '#58CC02', '#38BDF8']
       });
-    }, 400);
+    }, 350);
 
     // Ignición del fuego y conteo de la racha
     const timerIgnite = setTimeout(() => {
@@ -413,21 +324,19 @@ export const StreakCelebrationModal: React.FC<StreakCelebrationModalProps> = ({
       soundService.playStreak();
 
       confetti({
-        particleCount: 90,
-        spread: 90,
-        origin: { y: 0.45 },
-        colors: ['#F97316', '#EA580C', '#FDE047', '#FF7A00', '#FFFFFF']
+        particleCount: 100,
+        spread: 95,
+        origin: { y: 0.42 },
+        colors: ['#FF7A00', '#FF9600', '#FDE047', '#FFA800', '#FFFFFF']
       });
 
-      // El contador rueda hacia el nuevo valor
       setDisplayCount(targetStreak);
-      // Guardar que ya se vio la animación de hoy
       storageService.setItem(seenKey, todayStr);
-    }, 1300);
+    }, 1100);
 
     const timerReady = setTimeout(() => {
       setAnimationPhase('ready');
-    }, 1900);
+    }, 1700);
 
     return () => {
       clearTimeout(timerYujuu);
@@ -459,6 +368,7 @@ export const StreakCelebrationModal: React.FC<StreakCelebrationModalProps> = ({
         .streak-fullscreen-screen,
         .streak-fullscreen-screen * {
           font-family: 'Nunito', sans-serif !important;
+          box-sizing: border-box;
         }
 
         .streak-fullscreen-screen {
@@ -469,78 +379,84 @@ export const StreakCelebrationModal: React.FC<StreakCelebrationModalProps> = ({
           height: 100dvh;
           max-height: 100dvh;
           z-index: 999999;
-          background: radial-gradient(circle at 50% 30%, #1E293B 0%, #0F172A 60%, #090D16 100%);
+          background: #131F24;
           display: flex;
           flex-direction: column;
           align-items: center;
           justify-content: space-between;
-          padding: clamp(8px, 1.6vh, 18px) 14px clamp(10px, 2vh, 20px);
-          box-sizing: border-box;
+          padding: clamp(12px, 2vh, 22px) 16px clamp(14px, 2.4vh, 24px);
           color: #FFFFFF;
           overflow-y: auto;
           overflow-x: hidden;
-          animation: streakScreenFadeIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+          animation: streakScreenFadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
 
         @keyframes streakScreenFadeIn {
-          from { opacity: 0; transform: scale(1.02); }
+          from { opacity: 0; transform: scale(0.98); }
           to { opacity: 1; transform: scale(1); }
         }
 
+        /* Botón de cierre superior 3D */
         .streak-top-close-btn {
           position: absolute;
-          top: clamp(8px, 1.8vh, 16px);
-          right: clamp(10px, 2.5vw, 16px);
-          background: rgba(255, 255, 255, 0.1);
-          border: 1.5px solid rgba(255, 255, 255, 0.2);
-          border-radius: 50%;
-          width: 34px;
-          height: 34px;
+          top: clamp(12px, 2vh, 18px);
+          right: clamp(14px, 2.5vw, 20px);
+          background: #202F36;
+          border: 2px solid #37464F;
+          border-bottom: 3.5px solid #182329;
+          border-radius: 14px;
+          width: 38px;
+          height: 38px;
           display: flex;
           align-items: center;
           justify-content: center;
-          color: #E2E8F0;
+          color: #AFAFAF;
           cursor: pointer;
           z-index: 100;
-          transition: transform 0.2s ease, background 0.2s ease;
+          transition: transform 0.1s ease, color 0.1s ease;
         }
-
         .streak-top-close-btn:hover {
-          transform: scale(1.08);
-          background: rgba(255, 255, 255, 0.18);
+          color: #FFFFFF;
+          transform: translateY(-1px);
+        }
+        .streak-top-close-btn:active {
+          transform: translateY(2px);
+          border-bottom-width: 2px;
         }
 
+        /* Resplandor ambiental de fuego cálido */
         .streak-fire-ambient-glow {
           position: absolute;
-          top: 10%;
+          top: 15%;
           left: 50%;
           transform: translateX(-50%);
-          width: min(340px, 85vw);
-          height: min(340px, 85vw);
-          background: radial-gradient(circle, rgba(249, 115, 22, 0.36) 0%, rgba(234, 88, 12, 0.16) 40%, transparent 70%);
+          width: min(380px, 90vw);
+          height: min(380px, 90vw);
+          background: radial-gradient(circle, rgba(255, 122, 0, 0.28) 0%, rgba(234, 88, 12, 0.12) 45%, transparent 70%);
           border-radius: 50%;
           pointer-events: none;
           z-index: 0;
           transition: opacity 0.8s ease, transform 0.8s ease;
         }
 
+        /* Chispas flotantes que suben suavemente */
         .streak-ambient-spark {
           position: absolute;
-          width: 6px;
-          height: 6px;
-          background: #FDE047;
+          width: 7px;
+          height: 7px;
+          background: #FFD23F;
           border-radius: 50%;
-          box-shadow: 0 0 10px #F97316;
+          box-shadow: 0 0 10px #FF7A00;
           pointer-events: none;
-          animation: sparkFloatUp 2.4s ease-in infinite;
+          animation: sparkFloatUp 2.8s ease-in infinite;
         }
-
         @keyframes sparkFloatUp {
           0% { transform: translateY(0) scale(0.6); opacity: 0; }
-          25% { opacity: 1; }
-          100% { transform: translateY(-130px) scale(1.2); opacity: 0; }
+          20% { opacity: 1; }
+          100% { transform: translateY(-140px) scale(1.3); opacity: 0; }
         }
 
+        /* Contenedor central del escenario */
         .streak-stage-center {
           position: relative;
           display: flex;
@@ -548,132 +464,98 @@ export const StreakCelebrationModal: React.FC<StreakCelebrationModalProps> = ({
           align-items: center;
           justify-content: center;
           width: 100%;
-          max-width: 400px;
+          max-width: 420px;
           flex: 1;
           min-height: 0;
           margin: 0 auto;
           z-index: 10;
         }
 
-        /* ─── ESCENARIO HERO COMPACTO (AVATAR + FUEGO LADO A LADO) ─── */
-        .streak-hero-duo {
+        /* ─── ESCENARIO HERO DEL FUEGUITO DUOLINGO 3D ─── */
+        .streak-flame-hero-stage {
           position: relative;
-          display: flex;
-          align-items: flex-end;
-          justify-content: center;
-          gap: clamp(6px, 2.5vw, 14px);
-          width: 100%;
-          max-width: 340px;
-          height: clamp(118px, 21vh, 155px);
-          margin: 0 auto 2px;
-        }
-
-        .hero-mascot-box {
-          position: relative;
-          width: clamp(100px, 28vw, 135px);
-          height: 100%;
           display: flex;
           flex-direction: column;
           align-items: center;
-          justify-content: flex-end;
-        }
-
-        .hero-flame-box {
-          position: relative;
-          width: clamp(90px, 26vw, 125px);
-          height: 100%;
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          justify-content: flex-end;
-        }
-
-        .fullbody-byte-container {
-          position: relative;
+          justify-content: center;
           width: 100%;
+          height: clamp(140px, 24vh, 185px);
+          margin-bottom: 6px;
+        }
+
+        .duo-flame-container {
+          position: relative;
+          width: clamp(130px, 32vw, 160px);
           height: 100%;
           display: flex;
-          align-items: flex-end;
+          align-items: center;
           justify-content: center;
         }
 
-        .fullbody-byte-svg {
-          width: auto;
+        .duo-flame-3d-character {
+          width: 100%;
           height: 100%;
-          max-height: 100%;
-          max-width: 100%;
           object-fit: contain;
-          display: block;
+          filter: drop-shadow(0 12px 24px rgba(255, 122, 0, 0.45));
+          animation: flameIdleBounce 2s ease-in-out infinite alternate;
+          transform-origin: 50% 90%;
         }
 
-        /* ─── ANIMACIÓN SALTO Y GIRO 360 COMPACTA ─── */
-        .jumping-anim {
-          animation: avatarJumpAndSpin 1.4s cubic-bezier(0.28, 0, 0.2, 1) forwards;
+        @keyframes flameIdleBounce {
+          0% { transform: scale(1) translateY(0); }
+          50% { transform: scale(1.04, 0.97) translateY(-6px); }
+          100% { transform: scale(0.98, 1.02) translateY(0); }
         }
 
-        @keyframes avatarJumpAndSpin {
-          0% { transform: translateY(0) scale(1, 1) rotate(0deg); }
-          15% { transform: translateY(8px) scale(1.12, 0.88) rotate(0deg); }
-          40% { transform: translateY(-38px) scale(0.94, 1.08) rotate(-3deg); }
-          60% { transform: translateY(-38px) scale(0.94, 1.08) rotateY(360deg); }
-          80% { transform: translateY(6px) scale(1.08, 0.94); }
-          100% { transform: translateY(0) scale(1, 1); }
+        /* Animación de Parpadeo de Ojos Duolingo */
+        .duo-eye {
+          animation: duoBlink 3.8s infinite;
+          transform-origin: 50% 118px;
+        }
+        @keyframes duoBlink {
+          0%, 46%, 50%, 100% { transform: scaleY(1); }
+          48% { transform: scaleY(0.08); }
         }
 
-        /* ─── ANIMACIÓN CALENTAMIENTO (RACHA 0) ─── */
-        .warming-anim {
-          animation: warmUpBob 2s ease-in-out infinite alternate;
+        /* Explosión de Ignición */
+        .igniting-pop {
+          animation: flameIgnitePop 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        }
+        @keyframes flameIgnitePop {
+          0% { transform: scale(0.4); opacity: 0; }
+          70% { transform: scale(1.18); opacity: 1; }
+          100% { transform: scale(1); opacity: 1; }
         }
 
-        @keyframes warmUpBob {
-          0% { transform: translateY(0) rotate(-1deg); }
-          50% { transform: translateY(-6px) scale(1.02, 0.98) rotate(1deg); }
-          100% { transform: translateY(0) rotate(-1deg); }
+        /* Sombra de suelo que responde al rebote */
+        .flame-ground-shadow {
+          animation: shadowPulse 2s ease-in-out infinite alternate;
+          transform-origin: 80px 180px;
+        }
+        @keyframes shadowPulse {
+          0% { transform: scale(1); opacity: 0.8; }
+          50% { transform: scale(0.85); opacity: 0.5; }
+          100% { transform: scale(1); opacity: 0.8; }
         }
 
-        /* ─── ANIMACIÓN ORGULLOSO (YA RECLAMADO) ─── */
-        .proud-anim {
-          animation: proudBreathe 2.4s ease-in-out infinite alternate;
-        }
-
-        @keyframes proudBreathe {
-          0% { transform: translateY(0) scale(1); }
-          100% { transform: translateY(-4px) scale(1.02); }
-        }
-
-        .avatar-ground-shadow {
-          position: absolute;
-          bottom: 0px;
-          left: 50%;
-          transform: translateX(-50%);
-          width: 75%;
-          height: 8px;
-          background: rgba(9, 13, 22, 0.65);
-          border-radius: 50%;
-          filter: blur(3px);
-          z-index: 1;
-        }
-
-        /* ─── LLAMA DORMIDA ZZZ ─── */
+        /* ─── DORMANT FLAME (DÍA 0) ─── */
         .dormant-flame-wrapper {
           position: relative;
-          width: 100%;
+          width: clamp(125px, 30vw, 150px);
           height: 100%;
           display: flex;
-          align-items: flex-end;
+          align-items: center;
           justify-content: center;
         }
 
-        .dormant-flame-svg {
-          width: auto;
-          height: clamp(75px, 14vh, 105px);
-          max-height: 100%;
-          max-width: 100%;
+        .dormant-flame-3d-svg {
+          width: 100%;
+          height: 100%;
           object-fit: contain;
-          animation: dormantBreathe 3s ease-in-out infinite alternate;
+          animation: dormantGentleBreathe 3s ease-in-out infinite alternate;
+          transform-origin: 50% 85%;
         }
-
-        @keyframes dormantBreathe {
+        @keyframes dormantGentleBreathe {
           0% { transform: scale(1); }
           100% { transform: scale(1.03, 0.97); }
         }
@@ -681,410 +563,258 @@ export const StreakCelebrationModal: React.FC<StreakCelebrationModalProps> = ({
         .zzz-bubble {
           position: absolute;
           color: #94A3B8;
-          font-weight: 800;
-          font-family: 'Nunito', sans-serif !important;
+          font-weight: 900;
           pointer-events: none;
-          animation: zFloat 2.4s ease-in-out infinite;
+          animation: zFloatUp 2.5s ease-in-out infinite;
         }
+        .zzz-1 { top: 22px; right: 18px; font-size: 0.95rem; animation-delay: 0s; }
+        .zzz-2 { top: 6px; right: 8px; font-size: 1.15rem; animation-delay: 0.8s; }
+        .zzz-3 { top: -10px; right: -2px; font-size: 1.4rem; animation-delay: 1.6s; }
 
-        .zzz-1 { top: 12px; right: 12px; font-size: 0.9rem; animation-delay: 0s; }
-        .zzz-2 { top: 0px; right: 4px; font-size: 1.1rem; animation-delay: 0.8s; }
-        .zzz-3 { top: -12px; right: -4px; font-size: 1.3rem; animation-delay: 1.6s; }
-
-        @keyframes zFloat {
+        @keyframes zFloatUp {
           0% { transform: translate(0, 0) scale(0.6); opacity: 0; }
-          40% { opacity: 0.8; }
-          100% { transform: translate(14px, -18px) scale(1.15); opacity: 0; }
+          40% { opacity: 0.85; }
+          100% { transform: translate(16px, -22px) scale(1.15); opacity: 0; }
         }
 
-        /* ─── BURBUJA DE DIÁLOGO "¡YUJUUU!" ─── */
-        .yujuu-speech-bubble {
-          position: absolute;
-          top: -10px;
-          right: -6px;
-          background: linear-gradient(180deg, #FFFFFF 0%, #F8FAFC 100%);
-          color: #0F172A;
-          border: 2.5px solid #0EA5E9;
-          border-bottom: 4.5px solid #0284C7;
-          border-radius: 18px;
-          padding: 3px 10px;
-          font-size: clamp(0.92rem, 3vw, 1.15rem);
-          font-weight: 800;
-          letter-spacing: -0.01em;
-          box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
-          display: flex;
-          align-items: center;
-          gap: 4px;
-          z-index: 30;
-          animation: yujuuBubblePop 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-          transform-origin: bottom left;
-          white-space: nowrap;
-        }
-
-        @keyframes yujuuBubblePop {
-          0% { transform: scale(0) rotate(-15deg); opacity: 0; }
-          70% { transform: scale(1.12) rotate(3deg); opacity: 1; }
-          100% { transform: scale(1) rotate(0deg); opacity: 1; }
-        }
-
-        .yujuu-speech-bubble::after {
-          content: '';
-          position: absolute;
-          bottom: -8px;
-          left: 14px;
-          width: 0;
-          height: 0;
-          border-left: 6px solid transparent;
-          border-right: 6px solid transparent;
-          border-top: 8px solid #0284C7;
-        }
-
-        /* ─── BURBUJA GENÉRICA DE AVATAR (RACHA 0 Y YA RECLAMADA) ─── */
-        .streak-avatar-static-bubble {
-          position: absolute;
-          top: -10px;
-          left: 50%;
-          transform: translateX(-50%);
-          background: #FFFFFF;
-          color: #0F172A;
-          border: 2px solid #CBD5E1;
-          border-bottom: 3.5px solid #94A3B8;
-          border-radius: 14px;
-          padding: 3px 8px;
-          font-size: clamp(0.66rem, 2vw, 0.74rem);
-          font-weight: 800;
-          letter-spacing: -0.01em;
-          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
-          z-index: 30;
-          white-space: nowrap;
-        }
-
-        .streak-avatar-static-bubble::after {
-          content: '';
-          position: absolute;
-          bottom: -7px;
-          left: 50%;
-          transform: translateX(-50%);
-          width: 0;
-          height: 0;
-          border-left: 5px solid transparent;
-          border-right: 5px solid transparent;
-          border-top: 7px solid #94A3B8;
-        }
-
-        /* ─── LLAMA 3D ENCENDIDA ─── */
-        .streak-flame-zone {
-          position: relative;
+        /* ─── CONTEO GIGANTE Y TÍTULOS 100% DUOLINGO ─── */
+        .streak-giant-count-box {
           display: flex;
           flex-direction: column;
           align-items: center;
-          justify-content: flex-end;
-          height: 100%;
-          width: 100%;
-          z-index: 20;
-          transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+          justify-content: center;
+          margin-bottom: 4px;
         }
 
-        .flame-burst-in {
-          animation: flameIgnite 0.65s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-        }
-
-        @keyframes flameIgnite {
-          0% { transform: scale(0.3) translateY(16px); opacity: 0; }
-          70% { transform: scale(1.15) translateY(-4px); opacity: 1; }
-          100% { transform: scale(1) translateY(0); opacity: 1; }
-        }
-
-        .duo-flame-3d-svg {
-          width: auto;
-          height: clamp(80px, 15vh, 115px);
-          max-height: 100%;
-          max-width: 100%;
-          object-fit: contain;
-          filter: drop-shadow(0 10px 18px rgba(234, 88, 12, 0.7));
-          transform-origin: 50% 90%;
-          animation: fluidFlameDance 1.8s ease-in-out infinite alternate;
-        }
-
-        @keyframes fluidFlameDance {
-          0% { transform: scale(1) rotate(-1.5deg); }
-          50% { transform: scale(1.05, 0.96) rotate(1.5deg); }
-          100% { transform: scale(0.98, 1.04) rotate(-0.8deg); }
-        }
-
-        .streak-counter-pill-3d {
-          margin-top: -10px;
-          background: linear-gradient(180deg, #FFFFFF 0%, #F1F5F9 100%);
-          color: #EA580C;
-          border: 2.5px solid #C2410C;
-          border-bottom: 4.5px solid #9A3412;
-          border-radius: 9999px;
-          padding: 2px 14px;
-          font-size: clamp(1.15rem, 3.6vw, 1.5rem);
-          font-weight: 800;
-          letter-spacing: -0.02em;
-          line-height: 1.1;
-          box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
-          display: inline-flex;
-          align-items: center;
-          gap: 5px;
-          z-index: 25;
-          animation: counterBounce 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-        }
-
-        .streak-counter-pill-zero {
-          color: #64748B;
-          border-color: #64748B;
-          border-bottom-color: #475569;
-        }
-
-        @keyframes counterBounce {
-          0% { transform: scale(0.7); }
-          70% { transform: scale(1.2); }
-          100% { transform: scale(1); }
-        }
-
-        .streak-hero-title {
-          font-size: clamp(1.25rem, 3.8vw, 1.7rem);
-          font-weight: 800;
-          margin: 3px 0 2px;
-          letter-spacing: -0.01em;
-          text-align: center;
-          line-height: 1.15;
-          color: #FFFFFF;
-        }
-
-        .streak-hero-title.day0 {
-          color: #38BDF8;
-        }
-
-        .streak-hero-title.claimed {
-          color: #FDE047;
-        }
-
-        .streak-hero-desc {
-          font-size: clamp(0.72rem, 2.2vw, 0.84rem);
-          color: #CBD5E1;
-          font-weight: 600;
-          margin: 0 0 5px;
-          text-align: center;
-          max-width: 340px;
-          line-height: 1.3;
-        }
-
-        .streak-weekly-board {
-          width: 100%;
-          max-width: 360px;
-          background: rgba(15, 23, 42, 0.88);
-          border: 1.5px solid #334155;
-          border-bottom: 3.5px solid #1E293B;
-          border-radius: 16px;
-          padding: 6px 8px;
-          margin: 2px 0 4px;
+        .streak-giant-number {
+          font-size: clamp(3.2rem, 9.5vw, 4.2rem);
+          font-weight: 900;
+          line-height: 0.95;
+          letter-spacing: -0.03em;
+          color: #FF9600;
+          text-shadow: 0 4.5px 0 #C2410C;
+          margin: 0;
           display: flex;
-          align-items: center;
-          justify-content: space-between;
-          z-index: 10;
-          box-sizing: border-box;
+          align-items: baseline;
+          gap: 6px;
         }
 
-        .streak-day-box {
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          gap: 3px;
-          flex: 1;
+        .streak-giant-number.zero {
+          color: #94A3B8;
+          text-shadow: 0 4.5px 0 #475569;
         }
 
-        .streak-day-label {
-          font-size: clamp(0.62rem, 1.8vw, 0.7rem);
-          font-weight: 800;
+        .streak-giant-title {
+          font-size: clamp(1.2rem, 3.8vw, 1.45rem);
+          font-weight: 900;
           letter-spacing: 0.04em;
           text-transform: uppercase;
-          white-space: nowrap;
-        }
-
-        .streak-day-badge-circle {
-          width: clamp(26px, 7.2vw, 32px);
-          height: clamp(26px, 7.2vw, 32px);
-          border-radius: 50%;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          font-size: clamp(0.7rem, 2vw, 0.8rem);
-          font-weight: 800;
-          transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-        }
-
-        .day-ignited-today {
-          background: linear-gradient(180deg, #FDE047 0%, #F97316 100%);
-          border: 2px solid #FFFBEB;
-          box-shadow: 0 3px 0 #C2410C, 0 0 16px rgba(253, 224, 71, 0.9);
-          color: #7C2D12;
-          transform: scale(1.12);
-        }
-
-        .day-active-past {
-          background: linear-gradient(180deg, #F97316 0%, #EA580C 100%);
-          border: 1.5px solid #FDBA74;
-          box-shadow: 0 2.5px 0 #C2410C, 0 0 10px rgba(249, 115, 22, 0.5);
           color: #FFFFFF;
+          margin: 4px 0 2px;
+          text-align: center;
         }
 
-        .day-today-pending {
-          background: #1E293B;
-          border: 2px dashed #F59E0B;
-          color: #F59E0B;
-          animation: pendingDayPulse 1.8s ease-in-out infinite;
+        .streak-subtitle-desc {
+          font-size: clamp(0.78rem, 2.4vw, 0.88rem);
+          color: #AFAFAF;
+          font-weight: 700;
+          text-align: center;
+          max-width: 330px;
+          line-height: 1.35;
+          margin: 0 0 10px;
         }
 
-        @keyframes pendingDayPulse {
-          0%, 100% { transform: scale(1); box-shadow: 0 0 0 rgba(245, 158, 11, 0); }
-          50% { transform: scale(1.06); box-shadow: 0 0 10px rgba(245, 158, 11, 0.4); }
-        }
-
-        .day-inactive {
-          background: #1E293B;
-          border: 1.5px solid #334155;
-          color: #64748B;
-        }
-
-        /* ─── ESTILOS DÍA 0: TARJETA 3D HORIZONTAL COMPACTA ─── */
-        .day0-steps-card {
+        /* ─── TARJETA DUOLINGO 3D: RASTREADOR SEMANAL (7 DÍAS) ─── */
+        .duo-weekly-card-3d {
           width: 100%;
-          max-width: 350px;
-          background: rgba(15, 23, 42, 0.88);
-          border: 1.5px solid #334155;
-          border-bottom: 3.5px solid #1E293B;
-          border-radius: 14px;
-          padding: 5px 10px;
-          margin: 2px 0 5px;
+          max-width: 380px;
+          background: #182830;
+          border: 2px solid #2B3D47;
+          border-bottom: 4.5px solid #142027;
+          border-radius: 20px;
+          padding: 12px 10px 10px;
+          margin-bottom: 10px;
           display: flex;
           align-items: center;
           justify-content: space-between;
-          gap: 6px;
-          box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
-          box-sizing: border-box;
+          gap: 4px;
         }
 
-        .day0-step-col {
+        .duo-day-col {
           display: flex;
+          flex-direction: column;
           align-items: center;
-          gap: 7px;
+          gap: 6px;
           flex: 1;
         }
 
-        .day0-step-pill {
-          width: 22px;
-          height: 22px;
-          min-width: 22px;
+        .duo-day-label {
+          font-size: clamp(0.68rem, 2vw, 0.76rem);
+          font-weight: 900;
+          letter-spacing: 0.04em;
+          text-transform: uppercase;
+          color: #AFAFAF;
+        }
+        .duo-day-label.today {
+          color: #FF9600;
+        }
+
+        .duo-day-coin-3d {
+          width: clamp(32px, 8.8vw, 38px);
+          height: clamp(32px, 8.8vw, 38px);
           border-radius: 50%;
-          background: #334155;
-          color: #94A3B8;
-          font-size: 0.74rem;
-          font-weight: 800;
           display: flex;
           align-items: center;
           justify-content: center;
-          border: 1.5px solid #475569;
+          font-size: 0.82rem;
+          font-weight: 900;
+          transition: transform 0.2s ease;
         }
 
-        .day0-step-pill.highlight {
-          background: #0284C7;
+        /* Moneda de Racha Activa Hoy (Celebración dorada pulsante) */
+        .coin-ignited-today {
+          background: linear-gradient(180deg, #FFC800 0%, #FF8200 100%);
+          border: 2px solid #FFF7ED;
+          box-shadow: 0 3.5px 0 #C2410C, 0 0 16px rgba(255, 150, 0, 0.7);
           color: #FFFFFF;
-          border-color: #38BDF8;
-          box-shadow: 0 0 8px rgba(56, 189, 248, 0.5);
+          transform: scale(1.1);
         }
 
-        .day0-step-info {
-          display: flex;
-          flex-direction: column;
-          text-align: left;
-          line-height: 1.15;
+        /* Moneda de Racha Pasada Activa */
+        .coin-active-past {
+          background: linear-gradient(180deg, #FF9600 0%, #EA580C 100%);
+          border: 2px solid #FED7AA;
+          box-shadow: 0 3px 0 #9A3412;
+          color: #FFFFFF;
         }
 
-        .day0-step-header {
-          font-size: 0.74rem;
-          font-weight: 800;
-          color: #F8FAFC;
-          white-space: nowrap;
+        /* Moneda Hoy Pendiente (Día 0 o lección aún no completada) */
+        .coin-today-pending {
+          background: #202F36;
+          border: 2px dashed #FF9600;
+          box-shadow: 0 3px 0 #182329;
+          color: #FF9600;
+          animation: coinPulse 1.8s ease-in-out infinite;
+        }
+        @keyframes coinPulse {
+          0%, 100% { transform: scale(1); }
+          50% { transform: scale(1.08); box-shadow: 0 0 12px rgba(255, 150, 0, 0.5); }
         }
 
-        .day0-step-desc {
-          font-size: 0.64rem;
-          color: #94A3B8;
-          font-weight: 600;
-          white-space: nowrap;
-        }
-
-        .day0-step-arrow {
+        /* Moneda Inactiva / Días Futuros */
+        .coin-inactive {
+          background: #202F36;
+          border: 2px solid #2F3E46;
+          box-shadow: 0 2.5px 0 #182329;
           color: #64748B;
-          font-weight: 800;
-          font-size: 0.88rem;
+        }
+
+        /* ─── TARJETA PROTECTOR DE RACHA / STREAK FREEZE DUOLINGO 3D ─── */
+        .duo-freeze-pill-3d {
+          width: 100%;
+          max-width: 380px;
+          background: #182830;
+          border: 2px solid #2B3D47;
+          border-bottom: 4px solid #142027;
+          border-radius: 16px;
+          padding: 8px 12px;
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          margin-bottom: 8px;
+        }
+
+        .duo-freeze-icon-box {
+          width: 32px;
+          height: 32px;
+          border-radius: 10px;
+          background: #1CB0F6;
+          border: 1.5px solid #70CFF8;
+          box-shadow: 0 2.5px 0 #1899D6;
+          display: flex;
+          align-items: center;
+          justify-content: center;
           flex-shrink: 0;
         }
 
-        .day-today-target {
-          border: 2px dashed #38BDF8 !important;
-          color: #38BDF8 !important;
-          animation: targetDayPulse 1.6s ease-in-out infinite alternate !important;
+        .duo-freeze-info {
+          display: flex;
+          flex-direction: column;
+          text-align: left;
+          line-height: 1.25;
         }
 
-        @keyframes targetDayPulse {
-          0% { transform: scale(1); box-shadow: 0 0 0 rgba(56, 189, 248, 0); }
-          100% { transform: scale(1.1); box-shadow: 0 0 12px rgba(56, 189, 248, 0.6); }
-        }
-
-        .streak-tip-pill {
-          display: inline-flex;
-          align-items: center;
-          justify-content: center;
-          gap: 6px;
-          background: rgba(30, 41, 59, 0.9);
-          border: 1.5px solid #475569;
-          border-radius: 9999px;
-          padding: 3px 10px;
-          font-size: clamp(0.66rem, 1.9vw, 0.73rem);
+        .duo-freeze-title {
+          font-size: 0.8rem;
+          font-weight: 900;
           color: #E2E8F0;
-          font-weight: 700;
-          max-width: 360px;
-          text-align: center;
-          line-height: 1.2;
-          box-sizing: border-box;
-          margin: 2px 0;
         }
 
+        .duo-freeze-sub {
+          font-size: 0.68rem;
+          font-weight: 700;
+          color: #8E8E93;
+        }
+
+        /* ─── BOTONES DUOLINGO 3D AUTÉNTICOS ─── */
         .streak-bottom-actions {
           width: 100%;
-          max-width: 360px;
+          max-width: 380px;
           display: flex;
           gap: 10px;
           z-index: 10;
           margin-top: 4px;
-          box-sizing: border-box;
         }
 
-        .streak-share-btn {
-          padding: clamp(9px, 1.6vh, 13px) clamp(14px, 3.5vw, 18px) !important;
-          font-size: 0.9rem !important;
-          min-width: auto !important;
-          color: #F97316 !important;
+        .btn-duo-share-3d {
+          width: 52px;
+          height: 52px;
+          background: #202F36;
+          border: 2px solid #37464F;
+          border-bottom: 4.5px solid #182329;
+          border-radius: 16px;
+          color: #FF9600;
           display: flex;
           align-items: center;
           justify-content: center;
+          cursor: pointer;
+          flex-shrink: 0;
+          transition: transform 0.08s ease, border-bottom-width 0.08s ease;
+        }
+        .btn-duo-share-3d:active {
+          transform: translateY(2.5px);
+          border-bottom-width: 2px;
         }
 
-        .streak-continue-btn {
+        .btn-duo-green-3d {
           flex: 1;
-          padding: clamp(9px, 1.6vh, 13px) 18px !important;
-          font-size: clamp(0.92rem, 3.2vw, 1.02rem) !important;
-          font-weight: 800 !important;
-          letter-spacing: 0.04em !important;
-          text-transform: uppercase !important;
+          height: 52px;
+          background: #58CC02;
+          border: 2px solid #58CC02;
+          border-bottom: 5px solid #46A302;
+          border-radius: 16px;
+          color: #FFFFFF;
+          font-size: clamp(0.95rem, 3.2vw, 1.05rem);
+          font-weight: 900;
+          letter-spacing: 0.05em;
+          text-transform: uppercase;
+          cursor: pointer;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 8px;
+          transition: transform 0.08s ease, border-bottom-width 0.08s ease;
+        }
+        .btn-duo-green-3d:hover {
+          filter: brightness(1.04);
+        }
+        .btn-duo-green-3d:active {
+          transform: translateY(3px);
+          border-bottom-width: 2px;
         }
       `}</style>
 
-      {/* Botón X superior para cerrar */}
+      {/* Botón X superior derecho para cerrar */}
       <button
         onClick={() => {
           soundService.playToken();
@@ -1095,197 +825,64 @@ export const StreakCelebrationModal: React.FC<StreakCelebrationModalProps> = ({
         type="button"
         aria-label="Cerrar pantalla de racha"
       >
-        <X size={18} strokeWidth={2.8} />
+        <X size={20} strokeWidth={2.8} />
       </button>
 
-      {/* Resplandor ambiental cálido (solo si hay fuego encendido) */}
+      {/* Resplandor ambiental cálido de fueguito encendido */}
       {!isZeroStreak && (
         <>
           <div
             className="streak-fire-ambient-glow"
             style={{
-              opacity: animationPhase !== 'jump' ? 1 : 0.4,
-              transform: `translateX(-50%) scale(${animationPhase !== 'jump' ? '1.08' : '0.85'})`
+              opacity: animationPhase !== 'jump' ? 1 : 0.45,
+              transform: `translateX(-50%) scale(${animationPhase !== 'jump' ? '1.08' : '0.88'})`
             }}
           />
-          <div className="streak-ambient-spark" style={{ left: '20%', bottom: '35%', animationDelay: '0s' }} />
-          <div className="streak-ambient-spark" style={{ left: '78%', bottom: '40%', animationDelay: '0.8s' }} />
-          <div className="streak-ambient-spark" style={{ left: '50%', bottom: '30%', animationDelay: '1.5s' }} />
+          <div className="streak-ambient-spark" style={{ left: '22%', bottom: '38%', animationDelay: '0s' }} />
+          <div className="streak-ambient-spark" style={{ left: '76%', bottom: '42%', animationDelay: '0.9s' }} />
+          <div className="streak-ambient-spark" style={{ left: '50%', bottom: '32%', animationDelay: '1.7s' }} />
         </>
       )}
 
-      {/* ════ ESCENARIO CENTRAL SEGÚN EL MODO ════ */}
+      {/* ════ ESCENARIO CENTRAL DUOLINGO 3D ════ */}
       <div className="streak-stage-center">
-        {/* ESCENARIO HERO COMPACTO (AVATAR + FUEGO LADO A LADO) */}
-        <div className="streak-hero-duo">
-          {/* COLUMNA AVATAR BYTE */}
-          <div className="hero-mascot-box">
-            {/* MODO A: Racha 0 (El avatar estirando listo para empezar) */}
-            {isZeroStreak && (
-              <>
-                <div className="streak-avatar-static-bubble">
-                  <span>¡A calentar! 💤</span>
-                </div>
-                <div className="avatar-ground-shadow" />
-                <FullBodyWarmingByte />
-              </>
-            )}
-
-            {/* MODO C: Ya reclamada hoy (Avatar orgulloso con pulgar arriba) */}
-            {isAlreadyClaimedMode && (
-              <>
-                <div className="streak-avatar-static-bubble">
-                  <span>¡Racha al día! 🔥</span>
-                </div>
-                <div className="avatar-ground-shadow" />
-                <FullBodyProudByte />
-              </>
-            )}
-
-            {/* MODO B: Celebración en vivo (Salto 360 y "¡Yujuuu!") */}
-            {!isZeroStreak && !isAlreadyClaimedMode && (
-              <>
-                {animationPhase === 'jump' && (
-                  <div className="yujuu-speech-bubble">
-                    <span>¡Yujuuu!</span>
-                    <span>🎉</span>
-                  </div>
-                )}
-                <div className="avatar-ground-shadow" />
-                <FullBodyJumpingByte />
-              </>
-            )}
-          </div>
-
-          {/* COLUMNA FUEGO / CHISPA 3D */}
-          <div className="hero-flame-box">
-            {isZeroStreak ? (
-              /* En Racha 0: Llama dormida con zZz */
-              <div className="streak-flame-zone">
-                <DormantSleepingFlameSVG />
-                <div className="streak-counter-pill-3d streak-counter-pill-zero">
-                  <Flame size={17} fill="#64748B" color="#64748B" />
-                  <span>0</span>
-                </div>
-              </div>
-            ) : (
-              /* En Racha > 0: Llama 3D encendida vibrante */
-              <div className={`streak-flame-zone ${animationPhase !== 'jump' ? 'flame-burst-in' : ''}`}>
-                <svg
-                  className="duo-flame-3d-svg"
-                  viewBox="0 0 120 140"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <defs>
-                    <linearGradient id="fullDuoFlameOuter" x1="60" y1="10" x2="60" y2="135" gradientUnits="userSpaceOnUse">
-                      <stop stopColor="#FF7A00" />
-                      <stop offset="60%" stopColor="#EA580C" />
-                      <stop offset="100%" stopColor="#9A3412" />
-                    </linearGradient>
-                    <linearGradient id="fullDuoFlameMid" x1="60" y1="35" x2="60" y2="125" gradientUnits="userSpaceOnUse">
-                      <stop stopColor="#FACC15" />
-                      <stop offset="50%" stopColor="#FB923C" />
-                      <stop offset="100%" stopColor="#EA580C" />
-                    </linearGradient>
-                    <linearGradient id="fullDuoFlameInner" x1="60" y1="65" x2="60" y2="120" gradientUnits="userSpaceOnUse">
-                      <stop stopColor="#FFFFFF" />
-                      <stop offset="60%" stopColor="#FEF08A" />
-                      <stop offset="100%" stopColor="#FBBF24" />
-                    </linearGradient>
-                  </defs>
-
-                  <ellipse cx="60" cy="132" rx="38" ry="7" fill="#090D16" fillOpacity="0.4" />
-                  <path
-                    d="M60 10 C62 30 76 42 86 54 C98 68 104 84 104 100 C104 122 84 134 60 134 C36 134 16 122 16 100 C16 78 26 62 42 46 C48 40 54 28 60 10 Z"
-                    fill="url(#fullDuoFlameOuter)"
-                    stroke="#C2410C"
-                    strokeWidth="3.2"
-                  />
-                  <path
-                    d="M74 48 C88 64 96 82 88 102 C84 112 76 118 68 122 C84 116 94 98 88 80 C84 70 78 60 74 48 Z"
-                    fill="#F97316"
-                    fillOpacity="0.8"
-                  />
-                  <path
-                    d="M60 38 C64 52 74 62 82 72 C90 82 92 94 90 108 C86 122 74 128 60 128 C46 128 34 122 30 108 C28 94 30 82 38 72 C46 62 56 52 60 38 Z"
-                    fill="url(#fullDuoFlameMid)"
-                    stroke="#EA580C"
-                    strokeWidth="2.2"
-                  />
-                  <path
-                    d="M60 68 C63 76 70 82 74 88 C78 96 78 104 74 112 C70 120 64 122 60 122 C56 122 50 120 46 112 C42 104 42 96 46 88 C50 82 57 76 60 68 Z"
-                    fill="url(#fullDuoFlameInner)"
-                  />
-                  <ellipse cx="50" cy="95" rx="3.5" ry="5" fill="#7C2D12" />
-                  <ellipse cx="70" cy="95" rx="3.5" ry="5" fill="#7C2D12" />
-                  <circle cx="51.5" cy="93.5" r="1.5" fill="#FFFFFF" />
-                  <circle cx="71.5" cy="93.5" r="1.5" fill="#FFFFFF" />
-                  <path d="M54 104 Q60 110 66 104" stroke="#7C2D12" strokeWidth="2.8" strokeLinecap="round" fill="none" />
-                </svg>
-
-                <div className="streak-counter-pill-3d">
-                  <Flame size={17} fill="#EA580C" color="#EA580C" />
-                  <span>{displayCount}</span>
-                </div>
-              </div>
-            )}
-          </div>
+        {/* ESCENARIO HERO DEL FUEGUITO 3D */}
+        <div className="streak-flame-hero-stage">
+          {isZeroStreak ? (
+            <DormantSleepingFlame3D />
+          ) : (
+            <DuolingoFlame3D isIgniting={animationPhase === 'ignite'} />
+          )}
         </div>
 
-        {/* ═══ TÍTULO Y TEXTOS SEGÚN EL MODO ═══ */}
-        {isZeroStreak ? (
-          <>
-            <h1 className="streak-hero-title day0">
-              ¡Día 0 de Racha!
-            </h1>
-            <p className="streak-hero-desc">
-              Tu fuego aún duerme. Completa 1 lección hoy para encender la chispa y vuelve mañana para activar tu racha.
-            </p>
+        {/* ═══ CONTEO GIGANTE Y TÍTULOS ═══ */}
+        <div className="streak-giant-count-box">
+          <div className={`streak-giant-number ${isZeroStreak ? 'zero' : ''}`}>
+            <span>{displayCount}</span>
+            <span style={{ fontSize: '0.45em', opacity: 0.9 }}>🔥</span>
+          </div>
 
-            {/* Tarjeta 3D Horizontal de 2 Pasos para Activar la Racha */}
-            <div className="day0-steps-card">
-              <div className="day0-step-col">
-                <div className="day0-step-pill">1</div>
-                <div className="day0-step-info">
-                  <span className="day0-step-header">Completa 1 lección</span>
-                  <span className="day0-step-desc">Enciende tu chispa hoy</span>
-                </div>
-              </div>
-              <div className="day0-step-arrow">➔</div>
-              <div className="day0-step-col">
-                <div className="day0-step-pill highlight">2</div>
-                <div className="day0-step-info">
-                  <span className="day0-step-header">Vuelve mañana</span>
-                  <span className="day0-step-desc">¡Activa tu racha!</span>
-                </div>
-              </div>
-            </div>
-          </>
-        ) : isAlreadyClaimedMode ? (
-          <>
-            <h1 className="streak-hero-title claimed">
-              ¡Ya reclamaste tu racha!
-            </h1>
-            <p className="streak-hero-desc">
-              ¡Llevas {streakCount} {streakCount === 1 ? 'día consecutivo' : 'días consecutivos'}! Vuelve mañana para sumar tu día {streakCount + 1}.
-            </p>
-          </>
-        ) : (
-          <>
-            <h1 className="streak-hero-title">
-              {displayCount === 1 ? '¡1 Día de Racha!' : `¡${displayCount} Días de Racha!`}
-            </h1>
-            <p className="streak-hero-desc">
-              {displayCount > 1
-                ? '¡La llama sigue viva! Tu constancia diaria fortalece tu lógica.'
-                : '¡Has encendido tu primera chispa! Vuelve mañana para alcanzar 2 días.'}
-            </p>
-          </>
-        )}
+          <h1 className="streak-giant-title">
+            {isZeroStreak
+              ? 'Día 0 de Racha'
+              : displayCount === 1
+              ? '1 Día de Racha'
+              : `${displayCount} Días de Racha`}
+          </h1>
 
-        {/* ═══ TRACK SEMANAL DE DÍAS (L a D) ═══ */}
-        <div className="streak-weekly-board">
+          <p className="streak-subtitle-desc">
+            {isZeroStreak
+              ? 'Tu chispa aún duerme. Completa 1 lección hoy para encenderla y vuelve mañana para activar tu racha.'
+              : isAlreadyClaimedMode
+              ? `¡Ya practicaste hoy! Vuelve mañana para sumar tu día ${streakCount + 1}.`
+              : displayCount === 1
+              ? '¡Excelente inicio! La constancia es el secreto para convertirte en gran programador.'
+              : '¡La llama sigue viva! Cada día que programas refuerzas tu lógica y confianza.'}
+          </p>
+        </div>
+
+        {/* ═══ TARJETA 3D: RASTREADOR SEMANAL (L a D) ═══ */}
+        <div className="duo-weekly-card-3d">
           {daysOfWeek.map((day, idx) => {
             const isToday = idx === currentDayIndex;
             const isPast = idx < currentDayIndex;
@@ -1294,32 +891,27 @@ export const StreakCelebrationModal: React.FC<StreakCelebrationModalProps> = ({
             const isPastActive = isPast && streakCount > (currentDayIndex - idx);
             const isActive = isPastActive || isTodayIgnited;
 
-            let circleClass = 'day-inactive';
+            let coinClass = 'coin-inactive';
             if (isZeroStreak && isToday) {
-              circleClass = 'day-today-target';
+              coinClass = 'coin-today-pending';
             } else if (isTodayIgnited) {
-              circleClass = 'day-ignited-today';
+              coinClass = 'coin-ignited-today';
             } else if (isToday && !isTodayIgnited) {
-              circleClass = 'day-today-pending';
+              coinClass = 'coin-today-pending';
             } else if (isActive) {
-              circleClass = 'day-active-past';
+              coinClass = 'coin-active-past';
             }
 
             return (
-              <div key={day.name} className="streak-day-box">
-                <span
-                  className="streak-day-label"
-                  style={{
-                    color: isToday ? (isZeroStreak ? '#38BDF8' : '#F59E0B') : '#94A3B8'
-                  }}
-                >
+              <div key={day.name} className="duo-day-col">
+                <span className={`duo-day-label ${isToday ? 'today' : ''}`}>
                   {isToday ? 'Hoy' : day.label}
                 </span>
-                <div className={`streak-day-badge-circle ${circleClass}`}>
+                <div className={`duo-day-coin-3d ${coinClass}`}>
                   {isActive ? (
-                    <Flame size={15} fill="#FFFFFF" color="#FFFFFF" />
+                    <Flame size={18} fill="#FFFFFF" color="#FFFFFF" />
                   ) : isZeroStreak && isToday ? (
-                    <Sparkles size={15} color="#38BDF8" />
+                    <Sparkles size={16} color="#FF9600" />
                   ) : (
                     <span>{day.label}</span>
                   )}
@@ -1329,34 +921,40 @@ export const StreakCelebrationModal: React.FC<StreakCelebrationModalProps> = ({
           })}
         </div>
 
-        {/* Estado de Protector de Racha */}
-        <div className="streak-tip-pill">
-          <ShieldCheck size={15} color={user.streak?.freezeEquipped ? '#22C55E' : '#94A3B8'} strokeWidth={2.5} style={{ flexShrink: 0 }} />
-          <span>
-            {isZeroStreak
-              ? 'Consejo: Vuelve mañana tras jugar para no perder tu racha.'
-              : user.streak?.freezeEquipped
-              ? 'Protector de racha equipado (te salvará 1 día de falta)'
-              : 'Consejo: Si faltas 1 día sin protector, tu racha se reiniciará.'}
-          </span>
+        {/* ═══ TARJETA 3D: PROTECTOR DE RACHA (STREAK FREEZE) ═══ */}
+        <div className="duo-freeze-pill-3d">
+          <div className="duo-freeze-icon-box">
+            <ShieldCheck size={18} color="#FFFFFF" strokeWidth={2.8} />
+          </div>
+          <div className="duo-freeze-info">
+            <span className="duo-freeze-title">
+              {user.streak?.freezeEquipped ? 'Protector de Racha Activo' : 'Sin Protector Equipado'}
+            </span>
+            <span className="duo-freeze-sub">
+              {user.streak?.freezeEquipped
+                ? 'Te salvará 1 día si olvidas practicar sin perder tu racha.'
+                : 'Disponible en la Tienda con tus Bytes acumulados.'}
+            </span>
+          </div>
         </div>
       </div>
 
-      {/* ═══ BOTONES INFERIORES DUOLINGO 3D ═══ */}
+      {/* ═══ BOTONES INFERIORES 100% DUOLINGO 3D ═══ */}
       <div className="streak-bottom-actions">
         {!isZeroStreak && (
           <button
-            className="btn-3d btn-outline streak-share-btn"
+            className="btn-duo-share-3d"
             onClick={handleShare}
             title="Compartir Racha"
             type="button"
+            aria-label="Compartir Racha"
           >
-            {copied ? <Check size={18} color="#22C55E" /> : <Share2 size={18} />}
+            {copied ? <Check size={20} color="#22C55E" strokeWidth={3} /> : <Share2 size={20} strokeWidth={2.6} />}
           </button>
         )}
 
         <button
-          className="btn-3d btn-green streak-continue-btn"
+          className="btn-duo-green-3d"
           onClick={() => {
             soundService.playToken();
             onClose();
@@ -1364,9 +962,10 @@ export const StreakCelebrationModal: React.FC<StreakCelebrationModalProps> = ({
           type="button"
         >
           {isZeroStreak ? (
-            <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
-              ¡A JUGAR AHORA! <ArrowRight size={18} strokeWidth={3} />
-            </span>
+            <>
+              <span>¡A JUGAR AHORA!</span>
+              <ArrowRight size={20} strokeWidth={3} />
+            </>
           ) : isAlreadyClaimedMode ? (
             '¡ENTENDIDO!'
           ) : (

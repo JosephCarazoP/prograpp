@@ -24,7 +24,8 @@ import {
   RotateCcw,
   BookOpen,
   Award,
-  Shirt
+  Shirt,
+  AlertTriangle
 } from 'lucide-react';
 import { UserProfile, LearningPath as PathType } from '../types/user';
 import { LessonProgress } from '../types/progress';
@@ -71,6 +72,7 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({
   const [activeTab, setActiveTab] = useState<'stats' | 'powerups' | 'settings'>('stats');
   const [copied, setCopied] = useState(false);
   const [showResetConfirm, setShowResetConfirm] = useState(false);
+  const [resetInputText, setResetInputText] = useState('');
   const [saveSuccess, setSaveSuccess] = useState(false);
   const [evaluationAlert, setEvaluationAlert] = useState<string | null>(null);
 
@@ -187,6 +189,7 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({
     await userService.updateProfile(resetUser);
     onUpdate(resetUser);
     setShowResetConfirm(false);
+    setResetInputText('');
     onBack();
   };
 
@@ -734,24 +737,6 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({
                 </div>
               </div>
 
-              {/* Tema Visual Oficial */}
-              <div className="profile-card-duo">
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
-                  <span className="profile-card-label" style={{ margin: 0 }}>Tema Visual Oficial</span>
-                  <span style={{ fontSize: '0.72rem', fontWeight: 800, color: '#16A34A' }}>
-                    Predeterminado
-                  </span>
-                </div>
-                <div className="profile-theme-grid-duo">
-                  <div
-                    className="profile-theme-btn selected"
-                    style={{ background: '#121D28', cursor: 'default' }}
-                  >
-                    Paint Studio
-                  </div>
-                </div>
-              </div>
-
               {/* Ajustes de Audio y Sonido */}
               <div className="profile-card-duo">
                 <span className="profile-card-label">Audio y Efectos de Juego</span>
@@ -822,50 +807,6 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({
                 <CheckCircle2 size={20} strokeWidth={2.5} />
                 {saveSuccess ? '¡Cambios Guardados!' : 'Guardar Cambios'}
               </button>
-
-              {/* Zona de Reinicio de Progreso */}
-              <div
-                style={{
-                  background: 'rgba(239, 68, 68, 0.08)',
-                  border: '2px solid rgba(239, 68, 68, 0.3)',
-                  borderRadius: 18,
-                  padding: 16,
-                  marginTop: 6
-                }}
-              >
-                <span style={{ fontSize: '0.74rem', fontWeight: 800, color: '#F87171', textTransform: 'uppercase', letterSpacing: '0.08em', display: 'block', marginBottom: 8 }}>
-                  Zona de Reinicio
-                </span>
-                <p style={{ fontSize: '0.78rem', color: 'var(--text-dim)', marginBottom: 12, lineHeight: 1.35 }}>
-                  ¿Deseas empezar tu aventura desde el nivel 1? Esto borrará tus niveles completados y reiniciará tu EXP.
-                </p>
-                {showResetConfirm ? (
-                  <div style={{ display: 'flex', gap: 8 }}>
-                    <button
-                      className="btn-3d btn-red"
-                      style={{ flex: 1, padding: 11, fontSize: '0.84rem' }}
-                      onClick={handleResetProgress}
-                    >
-                      Sí, Reiniciar Aventura
-                    </button>
-                    <button
-                      className="btn-3d btn-outline"
-                      style={{ flex: 1, padding: 11, fontSize: '0.84rem' }}
-                      onClick={() => setShowResetConfirm(false)}
-                    >
-                      Cancelar
-                    </button>
-                  </div>
-                ) : (
-                  <button
-                    className="btn-3d btn-outline"
-                    style={{ width: '100%', padding: 11, fontSize: '0.84rem', color: '#F87171' }}
-                    onClick={() => setShowResetConfirm(true)}
-                  >
-                    <RotateCcw size={15} strokeWidth={2.4} /> Reiniciar Progreso de Aventura
-                  </button>
-                )}
-              </div>
             </section>
           )}
 
@@ -999,6 +940,136 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({
               <LogOut size={16} strokeWidth={2.4} />
               Cerrar Sesión
             </button>
+          </div>
+
+          {/* ─── ZONA DE RIESGO (100% ABAJO DEL TODO - REQUIERE ESCRIBIR) ─── */}
+          <div
+            style={{
+              marginTop: 26,
+              marginBottom: 16,
+              background: '#FFF5F5',
+              border: '2px solid #FCA5A5',
+              borderBottom: '4.5px solid #EF4444',
+              borderRadius: 20,
+              padding: '16px 18px',
+              textAlign: 'left'
+            }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
+              <div
+                style={{
+                  width: 28,
+                  height: 28,
+                  borderRadius: 8,
+                  background: '#FEE2E2',
+                  border: '1.5px solid #F87171',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  color: '#DC2626'
+                }}
+              >
+                <AlertTriangle size={16} strokeWidth={2.8} />
+              </div>
+              <span
+                style={{
+                  fontSize: '0.86rem',
+                  fontWeight: 900,
+                  color: '#991B1B',
+                  letterSpacing: '0.04em',
+                  textTransform: 'uppercase'
+                }}
+              >
+                Zona de Riesgo
+              </span>
+            </div>
+
+            <p style={{ fontSize: '0.82rem', color: '#7F1D1D', margin: '0 0 12px 0', lineHeight: 1.45, fontWeight: 600 }}>
+              Esta acción es destructiva e irreversible. Borrará todo tu progreso de niveles completados, devolverá tu cuenta al Nivel 1 y reiniciará tu experiencia (EXP).
+            </p>
+
+            {showResetConfirm ? (
+              <div
+                style={{
+                  background: '#FFFFFF',
+                  border: '1.5px solid #FECACA',
+                  borderRadius: 14,
+                  padding: 14,
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: 10
+                }}
+              >
+                <label style={{ fontSize: '0.78rem', fontWeight: 800, color: '#991B1B' }}>
+                  Escribe <strong style={{ color: '#DC2626', textDecoration: 'underline' }}>REINICIAR</strong> para confirmar:
+                </label>
+                <input
+                  type="text"
+                  value={resetInputText}
+                  onChange={(e) => setResetInputText(e.target.value)}
+                  placeholder='Escribe "REINICIAR"'
+                  autoFocus
+                  style={{
+                    padding: '10px 14px',
+                    borderRadius: 12,
+                    border: '2px solid',
+                    borderColor: resetInputText.trim().toUpperCase() === 'REINICIAR' ? '#DC2626' : '#CBD5E1',
+                    fontSize: '0.9rem',
+                    fontWeight: 800,
+                    fontFamily: 'JetBrains Mono, monospace',
+                    letterSpacing: '1px',
+                    outline: 'none',
+                    boxSizing: 'border-box'
+                  }}
+                />
+
+                <div style={{ display: 'flex', gap: 8, marginTop: 4 }}>
+                  <button
+                    className="btn-3d btn-red"
+                    disabled={resetInputText.trim().toUpperCase() !== 'REINICIAR'}
+                    style={{
+                      flex: 1,
+                      padding: '11px',
+                      fontSize: '0.84rem',
+                      opacity: resetInputText.trim().toUpperCase() === 'REINICIAR' ? 1 : 0.45,
+                      cursor: resetInputText.trim().toUpperCase() === 'REINICIAR' ? 'pointer' : 'not-allowed'
+                    }}
+                    onClick={handleResetProgress}
+                  >
+                    Sí, Reiniciar Aventura
+                  </button>
+                  <button
+                    className="btn-3d btn-outline"
+                    style={{ flex: 1, padding: '11px', fontSize: '0.84rem' }}
+                    onClick={() => {
+                      setShowResetConfirm(false);
+                      setResetInputText('');
+                    }}
+                  >
+                    Cancelar
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <button
+                className="btn-3d btn-outline"
+                style={{
+                  width: '100%',
+                  padding: 12,
+                  fontSize: '0.86rem',
+                  color: '#DC2626',
+                  borderColor: '#FCA5A5',
+                  boxShadow: '0 3px 0 #F87171'
+                }}
+                onClick={() => {
+                  soundService.playToken();
+                  setShowResetConfirm(true);
+                  setResetInputText('');
+                }}
+              >
+                <RotateCcw size={15} strokeWidth={2.4} /> Reiniciar Progreso de Aventura
+              </button>
+            )}
           </div>
 
           {/* Toast de Perfil Copiado */}

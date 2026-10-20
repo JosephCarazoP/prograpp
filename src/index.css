@@ -82,11 +82,41 @@ html, body, #root {
 }
 
 button, input, select, textarea, optgroup, a, p, span, div, h1, h2, h3, h4, h5, h6, label, strong, b, em, i {
-  font-family: 'Nunito', sans-serif !important;
+  font-family: 'Nunito', sans-serif;
 }
 
-code, pre, .code-editor, .syntax-line, .terminal-output, .font-code {
-  font-family: 'JetBrains Mono', monospace !important;
+/* === TIPOGRAFÍA DE CÓDIGO MONOSPACE DE ALTA ESPECIFICIDAD PARA CONSOLAS Y SNIPPETS === */
+code,
+code *,
+pre,
+pre *,
+.vscode-snippet,
+.vscode-snippet *,
+.code-editor,
+.code-editor *,
+.syntax-line,
+.syntax-line *,
+.terminal-output,
+.terminal-output *,
+.terminal-box,
+.terminal-box *,
+.font-code,
+.font-code *,
+.font-mono,
+.font-mono *,
+.token-chip,
+.bug-line,
+.bug-line *,
+.trace-table,
+.trace-table *,
+.parsons-item,
+.parsons-item *,
+.code-stream-line,
+.console-code-scroll,
+.console-code-scroll *,
+[data-font-mono],
+[data-font-mono] * {
+  font-family: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', Consolas, 'Courier New', monospace !important;
 }
 
 /* === FONDO BLANCO CON CÍRCULOS PINTADOS ANIMADOS (ESTILO DUOLINGO DOODLE) === */
@@ -6637,19 +6667,19 @@ button, a, input, select, .path-node, .token-chip, .pair-card {
 
 /* Contenido con scroll suave optimizado para touch en mobile */
 .duo-settings-scroll {
-  flex: 1 1 0%;
+  flex: 1 1 auto;
   min-height: 0 !important;
-  max-height: 100% !important;
-  height: 0;
-  overflow-y: scroll !important;
+  max-height: none !important;
+  height: auto;
+  overflow-y: auto !important;
   overflow-x: hidden !important;
   -webkit-overflow-scrolling: touch !important;
   touch-action: pan-y !important;
   overscroll-behavior-y: contain !important;
-  padding: 16px 16px max(50px, env(safe-area-inset-bottom, 32px)) 16px;
+  padding: 16px 16px max(70px, env(safe-area-inset-bottom, 40px)) 16px;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 12px;
   box-sizing: border-box;
 }
 
@@ -6662,6 +6692,7 @@ button, a, input, select, .path-node, .token-chip, .pair-card {
   letter-spacing: -0.01em;
   user-select: none;
   -webkit-user-select: none;
+  flex-shrink: 0 !important;
 }
 
 /* Tabla Agrupada estilo Duolingo / iOS */
@@ -6675,6 +6706,9 @@ button, a, input, select, .path-node, .token-chip, .pair-card {
   width: 100%;
   box-sizing: border-box;
   touch-action: pan-y !important;
+  flex-shrink: 0 !important;
+  height: auto !important;
+  min-height: fit-content !important;
 }
 
 /* Fila individual de la tabla */
@@ -6685,6 +6719,8 @@ button, a, input, select, .path-node, .token-chip, .pair-card {
   justify-content: space-between;
   padding: 14px 16px;
   min-height: 52px;
+  height: auto !important;
+  flex-shrink: 0 !important;
   background: #FFFFFF;
   border: none;
   border-bottom: 1.5px solid #E5E5E5;

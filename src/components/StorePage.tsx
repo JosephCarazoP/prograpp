@@ -406,36 +406,15 @@ export const StorePage: React.FC<StorePageProps> = ({
                 onPointerCancel={handlePointerUp}
                 title="Arrastra con el dedo o mouse para girar el avatar 360°"
               >
-                {selectedAvatarId === 'robot_byte' ? (
-                  <ByteFullBody3D
-                    skinId={previewSkinId}
-                    pose={currentPose}
-                    rotation={rotationAngle}
-                    size={isMobile ? 105 : 155}
-                    showPedestal={true}
-                    isDragging={isDragging}
-                  />
-                ) : (
-                  <div
-                    className="duo-stage-custom-avatar-wrap"
-                    style={{
-                      display: 'flex',
-                      flexDirection: 'column',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      height: '100%',
-                      transform: `rotateY(${rotationAngle}deg)`,
-                      transition: isDragging ? 'none' : 'transform 0.15s ease'
-                    }}
-                  >
-                    <DevAvatar
-                      avatarId={selectedAvatarId}
-                      skinId={previewSkinId}
-                      size={isMobile ? 115 : 150}
-                    />
-                    <div className="duo-custom-pedestal-disc" />
-                  </div>
-                )}
+                <ByteFullBody3D
+                  avatarId={selectedAvatarId}
+                  skinId={previewSkinId}
+                  pose={currentPose}
+                  rotation={rotationAngle}
+                  size={isMobile ? 105 : 155}
+                  showPedestal={true}
+                  isDragging={isDragging}
+                />
               </div>
 
             {/* Botones de Control de Giro y Poses Duolingo 3D */}

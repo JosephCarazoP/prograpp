@@ -1612,7 +1612,7 @@ export default function App() {
                       }}
                     >
                       <div className="duo-option-badge">{letterBadge}</div>
-                      <span className="duo-option-text" style={{ fontFamily: 'JetBrains Mono, monospace' }}>
+                      <span className="duo-option-text font-mono">
                         {opt}
                       </span>
                     </button>
@@ -1684,7 +1684,7 @@ export default function App() {
                       }}
                     >
                       <div className="duo-option-badge">{letterBadge}</div>
-                      <span className="duo-option-text" style={{ fontFamily: 'JetBrains Mono, monospace' }}>
+                      <span className="duo-option-text font-mono">
                         {opt}
                       </span>
                     </button>

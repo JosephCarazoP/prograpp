@@ -836,42 +836,7 @@ export const ProfileModal: React.FC<ProfileModalProps> = ({
                 </div>
               </div>
 
-              {/* Selector de Tema Visual */}
-              <div
-                style={{
-                  background: '#FFFFFF',
-                  border: '2px solid #E2E8F0',
-                  boxShadow: '0 3px 0 #CBD5E1',
-                  borderRadius: 18,
-                  padding: '14px 16px'
-                }}
-              >
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
-                  <span style={{ fontSize: '0.76rem', fontWeight: 900, color: '#64748B', textTransform: 'uppercase' }}>
-                    Tema Visual
-                  </span>
-                  <span style={{ fontSize: '0.72rem', color: '#15803D', fontWeight: 800 }}>
-                    Cambio en vivo
-                  </span>
-                </div>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: 8 }}>
-                  <div
-                    style={{
-                      background: '#121D28',
-                      border: '2.5px solid #0284C7',
-                      boxShadow: '0 3px 0 #0369A1',
-                      borderRadius: 12,
-                      padding: '10px 14px',
-                      color: '#FFFFFF',
-                      fontSize: '0.8rem',
-                      fontWeight: 900,
-                      textAlign: 'center'
-                    }}
-                  >
-                    Paint Studio (Predeterminado)
-                  </div>
-                </div>
-              </div>
+
             </div>
           )}
         </div>

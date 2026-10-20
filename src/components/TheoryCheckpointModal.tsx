@@ -623,7 +623,7 @@ export const TheoryCheckpointModal: React.FC<TheoryCheckpointModalProps> = ({
                         transition: 'all 0.12s ease'
                       }}
                     >
-                      <span>{opt}</span>
+                      <span className={currentQuestion.codeSnippet ? "font-mono" : ""}>{opt}</span>
                       {isAnswerChecked && isThisCorrect && (
                         <CheckCircle2 size={20} color="#16A34A" strokeWidth={2.8} />
                       )}
