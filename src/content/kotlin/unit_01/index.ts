@@ -455,11 +455,11 @@ const KOTLIN_TOPIC_BANKS: Record<number, { title: string; desc: string; exercise
       {
         id: 'kt-u01-l04-e10',
         type: 'predict_output',
-        prompt: 'Si tenemos código fuera de main() sin función, ¿qué sucede?',
+        prompt: 'Al ejecutar este archivo Kotlin con una línea comentada antes de main(), ¿qué se imprime en la consola?',
         code: '// println("Afuera")\nfun main() {\n    println("Dentro")\n}',
-        options: ['Error si no está en función', 'Solo se imprime "Dentro"', 'Se imprime ambos', 'Se ignora main'],
-        correctOptionIndex: 1,
-        explanation: 'Las sentencias ejecutables en Kotlin deben residir dentro de funciones como main().',
+        options: ['Solo se imprime "Dentro"', 'Se imprime "Afuera" y "Dentro"', 'Error de compilación', 'No se imprime nada'],
+        correctOptionIndex: 0,
+        explanation: 'Las líneas que inician con // son comentarios ignorados por el compilador, por lo que solo se ejecuta println("Dentro").',
         xpReward: 10
       }
     ]
@@ -484,11 +484,11 @@ const KOTLIN_TOPIC_BANKS: Record<number, { title: string; desc: string; exercise
       {
         id: 'kt-u01-l05-e02',
         type: 'predict_output',
-        prompt: 'En un rombo de decisión que evalúa "¿edad >= 18?", ¿cuántos caminos de salida surgen?',
-        code: '// Rombo de decisión:\n// ¿edad >= 18?',
-        options: ['Exactamente 2 caminos: Verdadero (Sí) y Falso (No)', '1 solo camino', '4 caminos', 'Ninguno'],
+        prompt: 'En este bloque condicional que representa un rombo de decisión, ¿cuántos caminos de salida posibles existen?',
+        code: 'val edad = 20\nif (edad >= 18) {\n    println("Mayor de edad")\n} else {\n    println("Menor de edad")\n}',
+        options: ['Exactamente 2 caminos: Verdadero (Sí) y Falso (No)', '1 solo camino continuo', '4 caminos independientes', 'Ninguno'],
         correctOptionIndex: 0,
-        explanation: 'Una condición booleana bifurca el flujo en dos caminos mutuamente excluyentes: Verdadero o Falso.',
+        explanation: 'Una condición booleana bifurca el flujo en dos caminos mutuamente excluyentes: Verdadero (true) o Falso (false).',
         xpReward: 10
       },
       {
@@ -526,16 +526,16 @@ const KOTLIN_TOPIC_BANKS: Record<number, { title: string; desc: string; exercise
       {
         id: 'kt-u01-l05-e06',
         type: 'predict_output',
-        prompt: 'Si un diagrama de flujo no tiene un óvalo de "Fin", ¿qué problema presenta?',
-        code: '// Algoritmo sin nodo final\n// ¿Qué ocurre?',
+        prompt: 'Si un algoritmo se implementa en un bucle sin una condición u óvalo de "Fin", ¿qué problema presenta en su ejecución?',
+        code: 'var contador = 1\nwhile (true) {\n    println("Paso: $contador")\n    contador++\n}',
         options: [
-          'Es un bucle infinito que no garantiza terminar (rompe la finitud)',
-          'Funciona más rápido',
-          'No se puede convertir a código',
-          'Se apaga la computadora'
+          'Cae en un bucle infinito que no garantiza terminar (rompe el principio de finitud)',
+          'Funciona más rápido en el procesador',
+          'No se puede convertir a código ejecutable',
+          'El sistema operativo se apaga inmediatamente'
         ],
         correctOptionIndex: 0,
-        explanation: 'Un algoritmo debe ser finito. Sin un estado terminal, el flujo podría no detenerse nunca.',
+        explanation: 'Un algoritmo debe ser finito. Sin un estado terminal o condición de parada, el flujo no se detiene nunca.',
         xpReward: 10
       },
       {
@@ -564,13 +564,13 @@ const KOTLIN_TOPIC_BANKS: Record<number, { title: string; desc: string; exercise
       {
         id: 'kt-u01-l05-e09',
         type: 'predict_output',
-        prompt: '¿Por qué los ingenieros de software diseñan diagramas de flujo antes de escribir código complejo?',
-        code: '// Planificación visual previa\n// ¿Cuál es el beneficio?',
+        prompt: 'Al analizar este algoritmo de autenticación, ¿por qué los ingenieros diseñan diagramas de flujo antes de codificar?',
+        code: 'fun autenticar(usuario: String, clave: String): Boolean {\n    if (usuario.isEmpty() || clave.isEmpty()) return false\n    return usuario == "admin" && clave == "1234"\n}',
         options: [
-          'Para detectar errores de lógica antes de invertir tiempo en sintaxis',
-          'Porque la computadora no entiende texto',
-          'Para que el código ocupe más gigabytes',
-          'Es un requisito obligatorio para instalar Kotlin'
+          'Para detectar errores de lógica y validar bifurcaciones antes de invertir tiempo en sintaxis',
+          'Porque la computadora no entiende texto directamente',
+          'Para que el archivo ejecutable final ocupe más espacio en disco',
+          'Es un requisito obligatorio para poder instalar Kotlin'
         ],
         correctOptionIndex: 0,
         explanation: 'Visualizar la lógica permite validar los caminos y casos extremos antes de codificar.',
@@ -2206,7 +2206,7 @@ const KOTLIN_TOPIC_BANKS: Record<number, { title: string; desc: string; exercise
         id: 'kt-u01-l19-e09',
         type: 'predict_output',
         prompt: '¿Afectan los comentarios el tamaño final del archivo ejecutable o la velocidad del programa?',
-        code: '// 1000 lineas de comentarios aquí\nval x = 1',
+        code: '// Comentario explicativo del módulo de cálculo\n// Este bloque no genera bytecode ejecutable\nval total = 100\nprintln(total)',
         options: [
           'No, el compilador los elimina por completo durante la fase léxica',
           'Sí, hacen que el programa corra más lento',
@@ -2214,7 +2214,7 @@ const KOTLIN_TOPIC_BANKS: Record<number, { title: string; desc: string; exercise
           'Solo si tienen caracteres especiales'
         ],
         correctOptionIndex: 0,
-        explanation: 'Los comentarios tienen cero impacto en el rendimiento: el bytecode final no los incluye.',
+        explanation: 'Los comentarios tienen cero impacto en el rendimiento: el compilador los descarta totalmente y el bytecode final no los incluye.',
         xpReward: 10
       },
       {

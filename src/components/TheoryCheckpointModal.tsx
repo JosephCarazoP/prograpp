@@ -214,7 +214,8 @@ export const TheoryCheckpointModal: React.FC<TheoryCheckpointModalProps> = ({
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
-            color: '#FFFFFF'
+            color: '#FFFFFF',
+            flexShrink: 0
           }}
         >
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
@@ -286,7 +287,7 @@ export const TheoryCheckpointModal: React.FC<TheoryCheckpointModalProps> = ({
         </div>
 
         {/* ═══ BARRA DE PROGRESO DE FASE ═══ */}
-        <div style={{ height: '6px', background: '#E2E8F0', width: '100%' }}>
+        <div style={{ height: '6px', background: '#E2E8F0', width: '100%', flexShrink: 0 }}>
           <div
             style={{
               height: '100%',
@@ -308,6 +309,7 @@ export const TheoryCheckpointModal: React.FC<TheoryCheckpointModalProps> = ({
             padding: '20px 22px',
             overflowY: 'auto',
             flex: 1,
+            minHeight: 0,
             display: 'flex',
             flexDirection: 'column',
             gap: '16px'
@@ -395,7 +397,7 @@ export const TheoryCheckpointModal: React.FC<TheoryCheckpointModalProps> = ({
 
                 {/* Código de Ejemplo Sintético */}
                 {primarySection?.codeSnippet && (
-                  <div style={{ marginTop: '12px' }}>
+                  <div style={{ marginTop: '12px', flexShrink: 0 }}>
                     <div
                       style={{
                         fontSize: '0.75rem',
@@ -411,9 +413,10 @@ export const TheoryCheckpointModal: React.FC<TheoryCheckpointModalProps> = ({
                       <span>Código Conceptual:</span>
                     </div>
                     <VSCodeSnippet
-                      code={primarySection.codeSnippet.split('\n').slice(0, 6).join('\n')}
+                      code={primarySection.codeSnippet}
                       language={isKotlin ? 'kotlin' : 'sql'}
                       showLineNumbers={false}
+                      maxHeight="220px"
                     />
                   </div>
                 )}
@@ -564,11 +567,14 @@ export const TheoryCheckpointModal: React.FC<TheoryCheckpointModalProps> = ({
 
               {/* Snippet si la pregunta incluye código */}
               {currentQuestion.codeSnippet && (
-                <VSCodeSnippet
-                  code={currentQuestion.codeSnippet}
-                  language={currentQuestion.codeLanguage || (isKotlin ? 'kotlin' : 'sql')}
-                  showLineNumbers={false}
-                />
+                <div style={{ flexShrink: 0, width: '100%' }}>
+                  <VSCodeSnippet
+                    code={currentQuestion.codeSnippet}
+                    language={currentQuestion.codeLanguage || (isKotlin ? 'kotlin' : 'sql')}
+                    showLineNumbers={false}
+                    maxHeight="260px"
+                  />
+                </div>
               )}
 
               {/* Lista de Opciones */}
@@ -757,7 +763,8 @@ export const TheoryCheckpointModal: React.FC<TheoryCheckpointModalProps> = ({
             borderTop: '2px solid #E2E8F0',
             background: '#F8FAFC',
             display: 'flex',
-            gap: '12px'
+            gap: '12px',
+            flexShrink: 0
           }}
         >
           {step === 'read' && (

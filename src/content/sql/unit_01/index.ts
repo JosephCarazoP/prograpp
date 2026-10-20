@@ -23,13 +23,13 @@ const SQL_TOPIC_BANKS: Record<number, { title: string; desc: string; exercises: 
       {
         id: 'sql-u01-l01-e02',
         type: 'predict_output',
-        prompt: '¿Por qué las empresas usan un RDBMS en lugar de guardar datos en un archivo de texto .txt?',
-        code: '-- Archivo vs RDBMS\n-- ¿Qué ventaja ofrece un RDBMS?',
+        prompt: 'Frente a guardar registros en un archivo .txt plano, ¿qué ventaja ofrece almacenar datos en un RDBMS con tablas?',
+        code: 'CREATE TABLE clientes (\n  id SERIAL PRIMARY KEY,\n  nombre VARCHAR(100),\n  saldo NUMERIC(10, 2)\n);',
         options: [
-          'Es más lento pero usa menos disco',
-          'Garantiza integridad, concurrencia de miles de usuarios y búsquedas instantáneas',
-          'Solo funciona en computadoras sin internet',
-          'No permite guardar números'
+          'Es más lento pero usa menos espacio en disco',
+          'Garantiza integridad transaccional ACID, concurrencia multiusuario y búsquedas indexadas',
+          'Solo funciona en computadoras locales sin conexión a internet',
+          'No permite guardar números con decimales'
         ],
         correctOptionIndex: 1,
         explanation: 'Los RDBMS manejan transacciones ACID, evitando pérdidas de datos y bloqueos cuando muchos usuarios acceden a la vez.',
@@ -70,16 +70,16 @@ const SQL_TOPIC_BANKS: Record<number, { title: string; desc: string; exercises: 
       {
         id: 'sql-u01-l01-e06',
         type: 'predict_output',
-        prompt: '¿Qué significa que SQL sea un lenguaje "declarativo"?',
+        prompt: 'Observa la consulta SQL. ¿Por qué este código ejemplifica que SQL es un lenguaje "declarativo"?',
         code: 'SELECT * FROM clientes WHERE pais = \'Chile\';',
         options: [
-          'Debes programar el algoritmo de búsqueda con bucles for',
-          'Solo funciona si declaras variables globales',
-          'Indicas qué datos quieres obtener, y el motor decide cómo buscarlos eficientemente',
-          'Requiere compilar un archivo binario .exe'
+          'Debes programar manualmente los bucles for para recorrer cada fila del disco',
+          'Solo funciona si declaras variables globales antes de ejecutar',
+          'Indicas qué datos quieres obtener y el motor optimiza internamente cómo buscarlos',
+          'Requiere compilar la consulta en un archivo binario .exe ejecutable'
         ],
         correctOptionIndex: 2,
-        explanation: 'En lenguajes declarativos especificas el resultado deseado; el optimizador de consultas del motor planea el algoritmo interno.',
+        explanation: 'En SQL especificas el resultado deseado ("qué datos quieres"); el optimizador de consultas del motor planea el algoritmo interno de búsqueda.',
         xpReward: 10
       },
       {
@@ -108,8 +108,8 @@ const SQL_TOPIC_BANKS: Record<number, { title: string; desc: string; exercises: 
       {
         id: 'sql-u01-l01-e09',
         type: 'predict_output',
-        prompt: '¿Qué signo ortográfico se utiliza convencionalmente para terminar una sentencia SQL?',
-        code: 'SELECT 1 + 1___',
+        prompt: '¿Qué signo ortográfico se utiliza convencionalmente al final para terminar y delimitar una sentencia SQL estándar?',
+        code: 'SELECT 1 + 1;',
         options: [':', '.', ';', '//'],
         correctOptionIndex: 2,
         explanation: 'El punto y coma (;) es el delimitador oficial de sentencias en el estándar SQL.',
@@ -150,9 +150,9 @@ const SQL_TOPIC_BANKS: Record<number, { title: string; desc: string; exercises: 
       {
         id: 'sql-u01-l02-e02',
         type: 'predict_output',
-        prompt: 'Si una tabla de \'usuarios\' tiene 50 personas registradas, ¿cuántas filas (tuplas) contiene?',
-        code: '-- Tabla: usuarios\n-- 50 personas registradas',
-        options: ['1 fila', '50 filas', '500 filas', 'Depende de las columnas'],
+        prompt: 'Si una tabla de usuarios almacena los datos de 50 personas registradas, ¿cuántas filas (tuplas) contiene físicamente la tabla?',
+        code: 'SELECT * FROM usuarios;\n-- Cada usuario registrado ocupa una fila completa',
+        options: ['1 sola fila', '50 filas (una tupla por persona)', '500 filas', 'Depende del número de columnas'],
         correctOptionIndex: 1,
         explanation: 'Cada persona individual registrada ocupa exactamente una fila o tupla en la tabla.',
         xpReward: 10
@@ -192,16 +192,16 @@ const SQL_TOPIC_BANKS: Record<number, { title: string; desc: string; exercises: 
       {
         id: 'sql-u01-l02-e06',
         type: 'predict_output',
-        prompt: 'Si agregamos una columna nueva llamada "telefono" a una tabla con 100 filas existentes, ¿qué pasa?',
-        code: '-- ALTER TABLE clientes ADD COLUMN telefono TEXT;\n-- ¿Qué ocurre con las 100 filas?',
+        prompt: 'Observa la sentencia DDL. Si ejecutas esta alteración en una tabla con 100 clientes ya registrados, ¿qué ocurre con esos registros?',
+        code: 'ALTER TABLE clientes ADD COLUMN telefono VARCHAR(20);',
         options: [
-          'Se borran las 100 filas',
-          'Las 100 filas ahora tienen el campo telefono (inicialmente NULL o por defecto)',
-          'Produce error irrecuperable',
-          'Se crean 100 tablas nuevas'
+          'Se borran las 100 filas existentes',
+          'Las 100 filas ahora tienen el campo telefono (inicialmente con valor NULL)',
+          'Produce un error irrecuperable en la base de datos',
+          'Se crean 100 tablas nuevas separadas'
         ],
         correctOptionIndex: 1,
-        explanation: 'La columna se añade a todas las filas de la tabla, con valor nulo si no se definió otro por defecto.',
+        explanation: 'La columna se añade a todas las filas existentes de la tabla, con valor nulo (NULL) si no se definió otro por defecto.',
         xpReward: 10
       },
       {
@@ -230,16 +230,16 @@ const SQL_TOPIC_BANKS: Record<number, { title: string; desc: string; exercises: 
       {
         id: 'sql-u01-l02-e09',
         type: 'predict_output',
-        prompt: '¿Pueden dos columnas de la misma tabla tener el mismo nombre exacto?',
-        code: '-- Tabla empleados:\n-- ¿Puede haber dos columnas llamadas "salario"?',
+        prompt: '¿Qué responderá el motor SQL si intentas ejecutar esta creación de tabla con dos columnas con el mismo nombre?',
+        code: 'CREATE TABLE empleados (\n  id INTEGER PRIMARY KEY,\n  salario NUMERIC(10, 2),\n  salario NUMERIC(10, 2)\n);',
         options: [
-          'Sí, SQL las diferencia con índices',
-          'No, los nombres de columna deben ser únicos dentro de cada tabla',
-          'Solo si una es texto y la otra número',
-          'Depende del sistema operativo'
+          'Acepta la consulta sin problemas',
+          'Lanza un error: los nombres de columna deben ser únicos dentro de cada tabla',
+          'Suma los dos salarios automáticamente en uno solo',
+          'Crea la tabla en blanco sin columnas'
         ],
         correctOptionIndex: 1,
-        explanation: 'Dentro de una misma tabla, cada columna debe tener un identificador unívoco.',
+        explanation: 'Dentro de una misma tabla, cada columna debe tener un identificador único en su esquema.',
         xpReward: 10
       },
       {
@@ -277,9 +277,9 @@ const SQL_TOPIC_BANKS: Record<number, { title: string; desc: string; exercises: 
       {
         id: 'sql-u01-l03-e02',
         type: 'predict_output',
-        prompt: 'Si guardas el número de teléfono con ceros iniciales como "+01800", ¿qué tipo de dato conviene?',
-        code: '-- Telefono: "+01-800-123"\n-- ¿Qué tipo usar?',
-        options: ['INTEGER', 'TEXT / VARCHAR', 'BOOLEAN', 'REAL'],
+        prompt: 'Si necesitas almacenar números de teléfono internacionales con prefijo y ceros como "+01-800-123", ¿qué tipo de columna debes elegir?',
+        code: 'CREATE TABLE contactos (\n  id INTEGER PRIMARY KEY,\n  telefono VARCHAR(25)\n);',
+        options: ['INTEGER (tipo numérico entero)', 'VARCHAR / TEXT (tipo texto)', 'BOOLEAN (tipo lógico)', 'REAL (tipo flotante)'],
         correctOptionIndex: 1,
         explanation: 'Los números de teléfono tienen símbolos (+, -) y ceros a la izquierda que se perderían si fueran números matemáticos.',
         xpReward: 10
@@ -319,16 +319,16 @@ const SQL_TOPIC_BANKS: Record<number, { title: string; desc: string; exercises: 
       {
         id: 'sql-u01-l03-e06',
         type: 'predict_output',
-        prompt: '¿Qué sucede si intentas insertar la palabra \'cien\' en una columna de tipo INTEGER en un RDBMS estricto?',
-        code: '-- Columna: edad INTEGER\nINSERT INTO usuarios (edad) VALUES (\'cien\');',
+        prompt: '¿Qué sucede si intentas insertar el texto \'cien\' en una columna definida como tipo INTEGER?',
+        code: 'CREATE TABLE usuarios (\n  id INTEGER PRIMARY KEY,\n  edad INTEGER\n);\n\nINSERT INTO usuarios (id, edad) VALUES (1, \'cien\');',
         options: [
-          'La convierte automáticamente a 100',
+          'La convierte automáticamente al número 100',
           'Lanza un error de incompatibilidad de tipos (Type Mismatch)',
-          'Guarda 0 sin avisar',
+          'Guarda 0 de forma silenciosa',
           'Se apaga el servidor'
         ],
         correctOptionIndex: 1,
-        explanation: 'Los RDBMS estrictos como PostgreSQL rechazan la inserción si el valor no coincide con el tipo de la columna.',
+        explanation: 'Los RDBMS estrictos rechazan la inserción de texto en columnas numéricas para garantizar la integridad de los datos.',
         xpReward: 10
       },
       {
@@ -446,8 +446,8 @@ const SQL_TOPIC_BANKS: Record<number, { title: string; desc: string; exercises: 
       {
         id: 'sql-u01-l04-e06',
         type: 'predict_output',
-        prompt: '¿Por qué no es recomendable usar el nombre de una persona como clave primaria?',
-        code: '-- PRIMARY KEY (nombre_completo)\n-- ¿Por qué es una mala práctica?',
+        prompt: 'Observa la definición de tabla. ¿Por qué es una mala práctica definir el nombre de una persona como PRIMARY KEY?',
+        code: 'CREATE TABLE clientes (\n  nombre_completo VARCHAR(100) PRIMARY KEY\n);',
         options: [
           'Porque SQL no soporta letras en claves primarias',
           'Porque puede haber personas con el mismo nombre (homónimos) o cambiar su apellido',
@@ -608,10 +608,10 @@ const SQL_TOPIC_BANKS: Record<number, { title: string; desc: string; exercises: 
       {
         id: 'sql-u01-l05-e09',
         type: 'predict_output',
-        prompt: '¿Por qué en aplicaciones en producción se desaconseja usar SELECT * indiscriminadamente?',
-        code: '-- SELECT * FROM tabla_con_50_columnas_y_millones_de_filas;',
+        prompt: 'En sistemas en producción con millones de registros, ¿por qué se desaconseja ejecutar consultas con SELECT * indiscriminadamente?',
+        code: 'SELECT * FROM ventas_historicas;',
         options: [
-          'Porque trae columnas innecesarias saturando ancho de banda y memoria',
+          'Porque transfiere columnas innecesarias saturando ancho de banda y memoria',
           'Porque SQL borra los datos si usas asterisco',
           'Porque no funciona si hay más de 5 registros',
           'Porque el asterisco solo funciona en bases de datos de prueba'
@@ -730,10 +730,10 @@ const SQL_TOPIC_BANKS: Record<number, { title: string; desc: string; exercises: 
       {
         id: 'sql-u01-l06-e09',
         type: 'predict_output',
-        prompt: '¿Qué ventaja tiene proyectar columnas concretas frente a SELECT *?',
-        code: '-- SELECT id, nombre FROM usuarios;',
+        prompt: 'Observa la consulta con proyección específica. ¿Qué ventaja tiene solicitar columnas concretas frente a SELECT *?',
+        code: 'SELECT id, nombre FROM usuarios;',
         options: [
-          'Aumenta el uso de red',
+          'Aumenta el uso innecesario de red',
           'Permite al motor aprovechar índices de solo índice y enviar menos bytes por la red',
           'Desactiva los filtros WHERE',
           'Obliga a reiniciar el servidor'

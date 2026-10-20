@@ -7,7 +7,7 @@ import { storageService } from './storageService';
 export const progressService = {
   // Obtener todo el progreso del usuario
   async getAllProgress(uid: string = 'guest_user_1'): Promise<Record<string, LessonProgress>> {
-    const local = storageService.getItem<Record<string, LessonProgress>>('user_progress', {});
+    const local = storageService.getItem<Record<string, LessonProgress>>('user_progress', {}) || {};
 
     if (!isLocalMockMode && db) {
       try {
@@ -16,15 +16,31 @@ export const progressService = {
           getDocs(progressCol),
           new Promise<null>((_, reject) => setTimeout(() => reject(new Error('Firestore timeout')), 1800))
         ]);
-        if (snapshot) {
+        if (snapshot && !snapshot.empty) {
           const remote: Record<string, LessonProgress> = {};
           snapshot.forEach(docSnap => {
             remote[docSnap.id] = docSnap.data() as LessonProgress;
           });
-          if (Object.keys(remote).length > 0) {
-            storageService.setItem('user_progress', remote);
-            return remote;
+
+          // Fusión bidireccional: preservar el progreso local más reciente y no sobrescribir con snapshot desactualizado
+          const merged: Record<string, LessonProgress> = { ...local };
+          for (const [id, rProg] of Object.entries(remote)) {
+            const lProg = merged[id];
+            if (!lProg) {
+              merged[id] = rProg;
+            } else {
+              merged[id] = {
+                ...lProg,
+                ...rProg,
+                starsEarned: Math.max(lProg.starsEarned || 0, rProg.starsEarned || 0) as 1 | 2 | 3,
+                completedAt: Math.max(lProg.completedAt || 0, rProg.completedAt || 0),
+                theoryCompleted: Boolean(lProg.theoryCompleted || rProg.theoryCompleted),
+                theoryCompletedAt: Math.max(lProg.theoryCompletedAt || 0, rProg.theoryCompletedAt || 0)
+              };
+            }
           }
+          storageService.setItem('user_progress', merged);
+          return merged;
         }
       } catch (err) {
         console.warn('[progressService] Usando progreso local:', err);
@@ -34,17 +50,19 @@ export const progressService = {
     return local;
   },
 
-  // Guardar lección completada con sus estrellas
-  async saveLessonProgress(uid: string, progress: LessonProgress): Promise<void> {
-    const current = await this.getAllProgress(uid);
+  // Guardar lección completada con sus estrellas y retornar progreso actualizado inmediatamente
+  async saveLessonProgress(uid: string, progress: LessonProgress): Promise<Record<string, LessonProgress>> {
+    const current = storageService.getItem<Record<string, LessonProgress>>('user_progress', {}) || {};
     const existing = current[progress.lessonId];
 
     // Mantener la mejor cantidad de estrellas logradas
-    const starsEarned = existing ? Math.max(existing.starsEarned, progress.starsEarned) as 1 | 2 | 3 : progress.starsEarned;
+    const starsEarned = existing ? Math.max(existing.starsEarned || 0, progress.starsEarned || 1) as 1 | 2 | 3 : progress.starsEarned;
 
     const merged: LessonProgress = {
+      ...(existing || {}),
       ...progress,
       starsEarned,
+      completedAt: progress.completedAt || Date.now(),
       lastReviewedAt: Date.now()
     };
 
@@ -59,6 +77,8 @@ export const progressService = {
         console.warn('[progressService] Guardado en cola local:', err);
       }
     }
+
+    return current;
   },
 
   // Registrar materia teórica/micro-quiz completado para habilitar la práctica del nivel
@@ -69,10 +89,11 @@ export const progressService = {
     unitId: number,
     levelId: number
   ): Promise<Record<string, LessonProgress>> {
-    const current = await this.getAllProgress(uid);
+    const current = storageService.getItem<Record<string, LessonProgress>>('user_progress', {}) || {};
     const existing = current[lessonId];
 
     const updated: LessonProgress = {
+      ...(existing || {}),
       lessonId,
       pathId,
       unitId,

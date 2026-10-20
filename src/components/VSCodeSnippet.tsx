@@ -8,6 +8,8 @@ interface VSCodeSnippetProps {
   filename?: string;
   highlightLine?: number; // 0-indexed para resaltar
   showLineNumbers?: boolean;
+  maxHeight?: string | number;
+  style?: React.CSSProperties;
 }
 
 export const VSCodeSnippet: React.FC<VSCodeSnippetProps> = ({
@@ -15,21 +17,24 @@ export const VSCodeSnippet: React.FC<VSCodeSnippetProps> = ({
   language = 'kotlin',
   filename,
   highlightLine,
-  showLineNumbers = true
+  showLineNumbers = true,
+  maxHeight,
+  style
 }) => {
   const [copied, setCopied] = useState(false);
 
   const defaultFilename =
     filename || (language === 'sql' ? 'query.sql' : language === 'kotlin' ? 'main.kt' : 'code.txt');
 
+  const normalizedCode = (code || '').replace(/\r\n/g, '\n').replace(/\r/g, '\n');
+  const lines = normalizedCode.length > 0 ? normalizedCode.split('\n') : [''];
+
   const handleCopy = () => {
     soundService.playToken();
-    navigator.clipboard.writeText(code);
+    navigator.clipboard.writeText(normalizedCode);
     setCopied(true);
     setTimeout(() => setCopied(false), 1800);
   };
-
-  const lines = code.split('\n');
 
   // Tokenizador de sintaxis de alto contraste para interfaz clara
   const renderHighlightedLine = (lineText: string) => {
@@ -146,7 +151,13 @@ export const VSCodeSnippet: React.FC<VSCodeSnippetProps> = ({
         boxShadow: '0 5px 0 #CBD5E1',
         margin: '14px 0',
         maxWidth: '100%',
-        boxSizing: 'border-box'
+        width: '100%',
+        boxSizing: 'border-box',
+        flexShrink: 0,
+        minHeight: 'fit-content',
+        display: 'flex',
+        flexDirection: 'column',
+        ...style
       }}
     >
       {/* Barra de Título / Pestaña VS Code */}
@@ -158,7 +169,8 @@ export const VSCodeSnippet: React.FC<VSCodeSnippetProps> = ({
           background: '#1E293B',
           padding: '8px 14px',
           borderBottom: '2px solid #0F172A',
-          userSelect: 'none'
+          userSelect: 'none',
+          flexShrink: 0
         }}
       >
         {/* Controles y pestaña */}
@@ -224,17 +236,23 @@ export const VSCodeSnippet: React.FC<VSCodeSnippetProps> = ({
         </button>
       </div>
 
-      {/* Cuerpo del Editor con Números de Línea y Código */}
+      {/* Cuerpo del Editor con Números de Línea y Código (autoexpandible en altura y con scroll vertical si excede maxHeight) */}
       <div
+        className="vscode-snippet-body"
         style={{
           display: 'flex',
           overflowX: 'auto',
-          padding: '14px 0',
+          overflowY: 'auto',
+          maxHeight: maxHeight !== undefined ? maxHeight : '340px',
+          minHeight: '44px',
+          padding: '12px 0',
           fontFamily: 'JetBrains Mono, Fira Code, Consolas, monospace',
           fontSize: '0.92rem',
           lineHeight: 1.6,
           color: '#F8FAFC',
-          WebkitOverflowScrolling: 'touch'
+          WebkitOverflowScrolling: 'touch',
+          scrollbarWidth: 'thin',
+          scrollbarColor: '#475569 #0F172A'
         }}
       >
         {/* Columna de números de línea */}
@@ -253,9 +271,13 @@ export const VSCodeSnippet: React.FC<VSCodeSnippetProps> = ({
               <div
                 key={i}
                 style={{
-                  height: '24px',
+                  minHeight: '24px',
+                  lineHeight: '24px',
                   color: highlightLine === i ? '#F59E0B' : '#64748B',
-                  fontWeight: highlightLine === i ? 900 : 500
+                  fontWeight: highlightLine === i ? 900 : 500,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'flex-end'
                 }}
               >
                 {i + 1}
@@ -270,11 +292,14 @@ export const VSCodeSnippet: React.FC<VSCodeSnippetProps> = ({
             <div
               key={i}
               style={{
-                height: '24px',
+                minHeight: '24px',
+                lineHeight: '24px',
                 whiteSpace: 'pre',
                 background: highlightLine === i ? 'rgba(245, 158, 11, 0.15)' : 'transparent',
                 borderRadius: '6px',
-                padding: highlightLine === i ? '0 6px' : '0'
+                padding: highlightLine === i ? '0 6px' : '0',
+                display: 'flex',
+                alignItems: 'center'
               }}
             >
               {renderHighlightedLine(line)}

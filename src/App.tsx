@@ -97,8 +97,23 @@ function getExerciseInstruction(exercise: Exercise): string {
       return 'Observa cada operación del código y anota en la tabla el valor que toma la variable en cada paso.';
     case 'spot_the_bug':
       return 'Examina la sintaxis del programa y pulsa directamente sobre el renglón defectuoso.';
-    case 'predict_output':
+    case 'predict_output': {
+      const p = exercise.prompt.toLowerCase();
+      if (
+        p.includes('qué significa') ||
+        p.includes('por qué') ||
+        p.includes('cuál de') ||
+        p.includes('qué ocurre') ||
+        p.includes('qué pasa') ||
+        p.includes('qué ventaja') ||
+        p.includes('ejemplifica')
+      ) {
+        return exercise.code
+          ? 'Examina la consulta o código y selecciona la opción conceptual correcta.'
+          : 'Lee atentamente la pregunta y selecciona la opción correcta.';
+      }
       return 'Analiza la lógica del código y selecciona el resultado exacto que se mostrará en pantalla.';
+    }
     case 'code_builder':
       return 'Toca las fichas inferiores en el orden correcto para ensamblar la instrucción de código.';
     case 'matching_pairs':
@@ -121,11 +136,6 @@ export default function App() {
   });
   const [progress, setProgress] = useState<Record<string, LessonProgress>>(() => {
     const raw = storageService.getItem<Record<string, LessonProgress>>('user_progress', {});
-    // Si solo existía el progreso mock inicial de prueba, lo limpiamos para arrancar solo con nivel 1
-    if (raw && Object.keys(raw).length === 1 && raw['kotlin-u01-l01']?.completedAt && (Date.now() - raw['kotlin-u01-l01'].completedAt > 3600000)) {
-      storageService.setItem('user_progress', {});
-      return {};
-    }
     return raw && typeof raw === 'object' ? raw : {};
   });
 
@@ -191,6 +201,7 @@ export default function App() {
   // Modal 3D de Celebración de Racha (estilo Duolingo con Avatar)
   const [isStreakModalOpen, setIsStreakModalOpen] = useState(false);
   const [isJustFinishedStreak, setIsJustFinishedStreak] = useState(false);
+  const [nextLessonAvailable, setNextLessonAvailable] = useState<Lesson | null>(null);
 
   // Modal de Usuarios en Línea en Tiempo Real (Exclusivo Docente josephcarazo56@gmail.com)
   const [isLiveUsersOpen, setIsLiveUsersOpen] = useState(false);
@@ -560,22 +571,32 @@ export default function App() {
     setProgress(updatedProgress);
 
     // Iniciar la sesión de lección inmediatamente con bypassCheckpoint = true
-    handleStartLesson(lesson, true);
+    handleStartLesson(lesson, true, updatedProgress, updatedUser);
   };
 
   // Iniciar lección o prueba: Control del Sistema + Banco de preguntas + Seguimiento de Tiempo
-  const handleStartLesson = (lesson: Lesson, bypassCheckpoint: boolean = false) => {
+  const handleStartLesson = (
+    lesson: Lesson,
+    bypassCheckpoint: boolean = false,
+    overrideProgress?: Record<string, LessonProgress>,
+    overrideUser?: UserProfile
+  ) => {
+    const activeProg = overrideProgress || progress;
+    const activeUser = overrideUser || user;
+
     // 0. Comprobación obligatoria de autenticación (No permitir invitados)
-    if (!isAuthenticated || !user.uid || user.uid === 'guest_user_1') {
+    if (!isAuthenticated || !activeUser.uid || activeUser.uid === 'guest_user_1') {
       soundService.playError();
       setIsAuthOpen(true);
       return;
     }
 
     // 1. Control de Progresión Secuencial Estricta a Nivel de Sistema (Requisitos 1 y 4)
-    const unitObj = units.find(u => u.id === lesson.unit);
+    const lessonPath = lesson.path || currentPath;
+    const targetUnits = getUnitsByPath(lessonPath);
+    const unitObj = targetUnits.find(u => u.id === lesson.unit);
     if (unitObj) {
-      const check = progressionEngine.canAccessNode(lesson.id, unitObj, user, progress);
+      const check = progressionEngine.canAccessNode(lesson.id, unitObj, activeUser, activeProg);
       if (!check.allowed) {
         soundService.playError();
         setGameAlert({
@@ -592,8 +613,8 @@ export default function App() {
 
     // 2. Control de Lectura y Micro-Quiz Teórico Obligatorio (Flujo Integrado)
     // Si el usuario no ha completado el nivel previamente ni ha pasado el checkpoint de teoría:
-    const isAlreadyCompleted = (progress[lesson.id]?.starsEarned || 0) > 0;
-    const isTheoryCompleted = Boolean(progress[lesson.id]?.theoryCompleted);
+    const isAlreadyCompleted = (activeProg[lesson.id]?.starsEarned || 0) > 0;
+    const isTheoryCompleted = Boolean(activeProg[lesson.id]?.theoryCompleted);
 
     if (!bypassCheckpoint && !isAlreadyCompleted && !isTheoryCompleted) {
       const th = getTheoryByLessonId(lesson.id);
@@ -890,9 +911,25 @@ export default function App() {
         lastReviewedAt: Date.now()
       };
 
-      await progressService.saveLessonProgress(user.uid, lessonProgress);
+      const updatedProgress = await progressService.saveLessonProgress(user.uid, lessonProgress);
       const updatedUser = await userService.rewardUser(user, finalXp, 15);
-      const updatedProgress = await progressService.getAllProgress(user.uid);
+
+      // Encontrar la siguiente lección en la unidad para habilitar avance fluido directo
+      const lessonPath = activeLesson.path || currentPath;
+      const targetUnits = getUnitsByPath(lessonPath);
+      const currentUnit = targetUnits.find(u => u.id === activeLesson.unit);
+      let nextLesson: Lesson | null = null;
+      if (currentUnit) {
+        const track = progressionEngine.getUnitTrack(currentUnit, lessonPath);
+        const currentIdx = track.findIndex(n => n.id === activeLesson.id);
+        if (currentIdx >= 0) {
+          const nextLessonNode = track.slice(currentIdx + 1).find(n => n.type === 'lesson');
+          if (nextLessonNode && nextLessonNode.lesson) {
+            nextLesson = nextLessonNode.lesson;
+          }
+        }
+      }
+      setNextLessonAvailable(nextLesson);
 
       setUser(updatedUser);
       setProgress(updatedProgress);
@@ -1554,7 +1591,7 @@ export default function App() {
                   </span>
                 </div>
 
-                <div style={{ padding: '8px 0' }}>
+                <div style={{ padding: '8px 0', maxHeight: '360px', overflowY: 'auto' }}>
                   {currentExercise.codeSnippet.map((line, idx) => (
                     <div
                       key={idx}
@@ -1591,11 +1628,14 @@ export default function App() {
           {/* EJERCICIO 3: PREDICCIÓN DE CONSOLA (VS Code Snippet - Requisito 11) */}
           {currentExercise.type === 'predict_output' && (
             <div>
-              <VSCodeSnippet
-                code={currentExercise.code}
-                filename="main.kt"
-                highlightLine={isCodePeekActive ? 2 : undefined}
-              />
+              {currentExercise.code && currentExercise.code.trim() && (
+                <VSCodeSnippet
+                  code={currentExercise.code}
+                  filename={activeLesson?.path === 'sql' ? 'consulta.sql' : 'main.kt'}
+                  language={activeLesson?.path === 'sql' ? 'sql' : 'kotlin'}
+                  highlightLine={isCodePeekActive ? 2 : undefined}
+                />
+              )}
               <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginTop: '16px' }}>
                 {currentExercise.options.map((opt, idx) => {
                   const isEliminated = eliminatedOptionIndices.includes(idx);
@@ -1972,9 +2012,20 @@ export default function App() {
       {/* MODAL 3D DE RACHA ESTILO DUOLINGO CON AVATAR */}
       <StreakCelebrationModal
         isOpen={isStreakModalOpen}
-        onClose={() => setIsStreakModalOpen(false)}
+        onClose={() => {
+          setIsStreakModalOpen(false);
+          setIsJustFinishedStreak(false);
+        }}
         user={user}
         isJustCompleted={isJustFinishedStreak}
+        nextLesson={nextLessonAvailable}
+        onAdvanceNextLesson={() => {
+          setIsStreakModalOpen(false);
+          setIsJustFinishedStreak(false);
+          if (nextLessonAvailable) {
+            handleStartLesson(nextLessonAvailable, false, progress, user);
+          }
+        }}
       />
 
       {/* MODAL DE USUARIOS EN LÍNEA EN TIEMPO REAL (DOCENTE josephcarazo56@gmail.com) */}

@@ -103,7 +103,7 @@ export const progressionEngine = {
   isNodeCompleted(node: TrackNode, user: UserProfile, progress: Record<string, LessonProgress>): boolean {
     if (node.type === 'lesson') {
       const p = progress[node.id];
-      return !!p && (p.starsEarned || 0) > 0;
+      return !!p && ((p.starsEarned || 0) > 0 || (p.completedAt || 0) > 0);
     }
     if (node.type === 'chest') {
       return (user.openedChests || []).includes(node.id);
@@ -137,7 +137,13 @@ export const progressionEngine = {
     user: UserProfile,
     progress: Record<string, LessonProgress>
   ): boolean {
-    if (!this.isUnitUnlocked(node.unitId, user.currentPath, user)) {
+    const pathId =
+      (node.lesson?.path as 'kotlin' | 'sql') ||
+      (track[0]?.lesson?.path as 'kotlin' | 'sql') ||
+      user.currentPath ||
+      'kotlin';
+
+    if (!this.isUnitUnlocked(node.unitId, pathId, user)) {
       return false;
     }
 
@@ -150,7 +156,7 @@ export const progressionEngine = {
 
       // Si es la primera lección de la unidad
       if (!prevLesson) {
-        return this.isUnitUnlocked(node.unitId, user.currentPath, user);
+        return this.isUnitUnlocked(node.unitId, pathId, user);
       }
 
       return this.isNodeCompleted(prevLesson, user, progress);
@@ -188,14 +194,15 @@ export const progressionEngine = {
     user: UserProfile,
     progress: Record<string, LessonProgress>
   ): { allowed: boolean; reason?: string; previousNodeTitle?: string } {
-    const track = this.getUnitTrack(unit, user.currentPath);
+    const pathId = (unit.lessons?.[0]?.path as 'kotlin' | 'sql') || user.currentPath || 'kotlin';
+    const track = this.getUnitTrack(unit, pathId);
     const node = track.find(n => n.id === nodeId);
 
     if (!node) {
       return { allowed: false, reason: 'El elemento solicitado no existe en la ruta de aprendizaje.' };
     }
 
-    if (!this.isUnitUnlocked(node.unitId, user.currentPath, user)) {
+    if (!this.isUnitUnlocked(node.unitId, pathId, user)) {
       return {
         allowed: false,
         reason: `Debes vencer al Jefe de la Unidad ${node.unitId - 1} antes de ingresar a los contenidos de la Unidad ${node.unitId}.`

@@ -119,6 +119,35 @@ pre *,
   font-family: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', Consolas, 'Courier New', monospace !important;
 }
 
+/* === ESTILOS Y SCROLLBAR PERSONALIZADO PARA SNIPPETS Y TERMINAL VS CODE === */
+.vscode-snippet {
+  flex-shrink: 0 !important;
+}
+
+.vscode-snippet-body::-webkit-scrollbar,
+.vscode-snippet ::-webkit-scrollbar {
+  width: 7px;
+  height: 7px;
+}
+
+.vscode-snippet-body::-webkit-scrollbar-track,
+.vscode-snippet ::-webkit-scrollbar-track {
+  background: #0F172A;
+  border-radius: 8px;
+}
+
+.vscode-snippet-body::-webkit-scrollbar-thumb,
+.vscode-snippet ::-webkit-scrollbar-thumb {
+  background: #334155;
+  border-radius: 8px;
+  border: 1px solid #1E293B;
+}
+
+.vscode-snippet-body::-webkit-scrollbar-thumb:hover,
+.vscode-snippet ::-webkit-scrollbar-thumb:hover {
+  background: #475569;
+}
+
 /* === FONDO BLANCO CON CÍRCULOS PINTADOS ANIMADOS (ESTILO DUOLINGO DOODLE) === */
 .animated-doodle-bg {
   position: fixed;
