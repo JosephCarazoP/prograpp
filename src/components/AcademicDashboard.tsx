@@ -275,9 +275,15 @@ export const AcademicDashboard: React.FC<AcademicDashboardProps> = ({
       });
     });
 
+    // 2c. Suscripción en tiempo real a notificaciones para que aparezcan al instante sin recargar
+    const unsubscribeNotifs = notificationService.subscribeToAllNotifications((liveNotifs) => {
+      setTeacherNotifications(liveNotifs);
+    });
+
     return () => {
       clearInterval(ticker);
       unsubscribe();
+      unsubscribeNotifs();
     };
   }, [isUnlocked]);
 
@@ -3059,25 +3065,30 @@ export const AcademicDashboard: React.FC<AcademicDashboardProps> = ({
                               <strong style={{ fontSize: '0.92rem', color: '#0F172A' }}>{notif.title}</strong>
                             </div>
 
-                            <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
                               <span style={{ fontSize: '0.78rem', color: '#64748B' }}>
                                 {new Date(notif.createdAt).toLocaleString('es-ES', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' })}
                               </span>
                               <button
                                 type="button"
                                 onClick={() => handleDeleteNotification(notif.id)}
-                                title="Eliminar este aviso"
+                                title="Eliminar este aviso de forma permanente de la base de datos"
                                 style={{
-                                  background: 'transparent',
-                                  border: 'none',
-                                  color: '#EF4444',
+                                  background: '#FEF2F2',
+                                  border: '1px solid #FECACA',
+                                  borderRadius: 8,
+                                  color: '#DC2626',
                                   cursor: 'pointer',
-                                  padding: 4,
-                                  display: 'flex',
-                                  alignItems: 'center'
+                                  padding: '5px 10px',
+                                  display: 'inline-flex',
+                                  alignItems: 'center',
+                                  gap: 5,
+                                  fontSize: '0.75rem',
+                                  fontWeight: 800
                                 }}
                               >
-                                <Trash2 size={16} />
+                                <Trash2 size={13} />
+                                <span>Eliminar definitivamente</span>
                               </button>
                             </div>
                           </div>

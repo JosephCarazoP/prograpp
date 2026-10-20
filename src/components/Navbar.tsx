@@ -13,7 +13,8 @@ import {
   Bell,
   Menu,
   ShoppingBag,
-  ChevronRight
+  ChevronRight,
+  Trophy
 } from 'lucide-react';
 import { UserProfile } from '../types/user';
 import { soundService } from '../services/soundService';
@@ -33,6 +34,7 @@ interface NavbarProps {
   onOpenLiveUsers?: () => void;
   onOpenLocker?: () => void;
   onOpenNotifications?: () => void;
+  onOpenLeague?: () => void;
   onSignOut?: () => void;
   onLogoClick?: () => void;
 }
@@ -50,6 +52,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   onOpenLiveUsers,
   onOpenLocker,
   onOpenNotifications,
+  onOpenLeague,
   onSignOut,
   onLogoClick: _onLogoClick
 }) => {
@@ -164,6 +167,23 @@ export const Navbar: React.FC<NavbarProps> = ({
             >
               <Target size={18} color="#F59E0B" strokeWidth={2.5} />
             </button>
+
+            {/* Liga y Ranking Semanal */}
+            {onOpenLeague && (
+              <button
+                className="nav-icon-btn"
+                onClick={() => {
+                  soundService.playToken();
+                  onOpenLeague();
+                }}
+                title="Liga y Torneo Semanal"
+                type="button"
+                aria-label="Abrir Liga Semanal"
+                style={{ color: '#D97706' }}
+              >
+                <Trophy size={18} color="#F59E0B" strokeWidth={2.5} />
+              </button>
+            )}
 
             {/* Tienda y Vestidor de Byte */}
             {onOpenLocker && (
@@ -381,6 +401,27 @@ export const Navbar: React.FC<NavbarProps> = ({
                     <ChevronRight size={18} color="#AFAFAF" strokeWidth={2.5} />
                   </div>
                 </button>
+
+                {/* Liga Semanal */}
+                {onOpenLeague && (
+                  <button
+                    type="button"
+                    className="duo-settings-row"
+                    onClick={() => {
+                      soundService.playToken();
+                      setIsDrawerOpen(false);
+                      onOpenLeague();
+                    }}
+                  >
+                    <span className="duo-settings-row-label">Liga Semanal</span>
+                    <div className="duo-settings-row-right">
+                      <span className="duo-settings-pill-tag orange">
+                        TORNEO
+                      </span>
+                      <ChevronRight size={18} color="#AFAFAF" strokeWidth={2.5} />
+                    </div>
+                  </button>
+                )}
 
                 {/* Tienda y Vestidor 3D */}
                 {onOpenLocker && (

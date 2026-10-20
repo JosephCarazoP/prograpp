@@ -11,6 +11,7 @@ export interface AppNotification {
   sender: string;
   createdAt: number;
   readBy: string[];
+  dismissedBy?: string[]; // UIDs de usuarios que limpiaron esta notificación de su bandeja personal
 }
 
 export interface NotificationTemplate {

@@ -17,7 +17,9 @@ import {
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { TheoryLesson } from '../types/theory';
+import { UserProfile } from '../types/user';
 import { soundService } from '../services/soundService';
+import { leagueService } from '../services/leagueService';
 import { VSCodeSnippet } from './VSCodeSnippet';
 import { ConsoleDevAvatar } from './ConsoleAvatar';
 import { getLessonById } from '../content';
@@ -33,6 +35,7 @@ interface QuickQuizItem {
 
 interface TheoryViewerProps {
   theory: TheoryLesson;
+  user?: UserProfile;
   onBack: () => void;
   onStartPractice: (lessonId: string) => void;
   onCompleteTheory?: (lessonId: string) => Promise<void> | void;
@@ -40,13 +43,17 @@ interface TheoryViewerProps {
 
 export const TheoryViewer: React.FC<TheoryViewerProps> = ({
   theory,
+  user,
   onBack,
   onStartPractice,
   onCompleteTheory
 }) => {
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'instant' });
-  }, [theory.lessonId]);
+    if (user?.uid) {
+      leagueService.recordTheoryRead(user.uid, theory.lessonId);
+    }
+  }, [theory.lessonId, user?.uid]);
 
   const isKotlin = theory.pathId === 'kotlin';
   const accentColor = isKotlin ? '#0284C7' : '#4F46E5';
@@ -153,6 +160,9 @@ export const TheoryViewer: React.FC<TheoryViewerProps> = ({
       soundService.playWin();
       confetti({ particleCount: 90, spread: 80, origin: { y: 0.55 } });
       setIsQuizCompleted(true);
+      if (user?.uid) {
+        leagueService.recordQuizCompleted(user.uid, theory.lessonId);
+      }
 
       if (onCompleteTheory) {
         await onCompleteTheory(theory.lessonId);

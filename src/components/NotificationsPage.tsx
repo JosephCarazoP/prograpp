@@ -7,7 +7,9 @@ import {
   MessageSquare,
   Clock,
   Target,
-  Award
+  Award,
+  Trash2,
+  ShieldCheck
 } from 'lucide-react';
 import { AppNotification, NotificationType } from '../types/notification';
 import { UserProfile } from '../types/user';
@@ -19,6 +21,8 @@ interface NotificationsPageProps {
   onBack: () => void;
   onMarkAsRead: (id: string) => void;
   onMarkAllAsRead: () => void;
+  onDismissNotification: (id: string) => void;
+  onDismissAllRead?: () => void;
 }
 
 export const NotificationsPage: React.FC<NotificationsPageProps> = ({
@@ -26,7 +30,9 @@ export const NotificationsPage: React.FC<NotificationsPageProps> = ({
   notifications,
   onBack,
   onMarkAsRead,
-  onMarkAllAsRead
+  onMarkAllAsRead,
+  onDismissNotification,
+  onDismissAllRead
 }) => {
   const [filterType, setFilterType] = useState<'all' | 'unread' | NotificationType>('all');
 
@@ -142,20 +148,59 @@ export const NotificationsPage: React.FC<NotificationsPageProps> = ({
           </div>
         </div>
 
-        {unreadCount > 0 && (
-          <button
-            type="button"
-            className="duo-3d-btn green sm"
-            onClick={() => {
-              soundService.playToken();
-              onMarkAllAsRead();
-            }}
-            title="Marcar todas las notificaciones como leídas"
-          >
-            <CheckCheck size={16} strokeWidth={2.8} />
-            <span className="notif-mark-all-text">MARCAR LEÍDAS</span>
-          </button>
-        )}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+          {unreadCount > 0 && (
+            <button
+              type="button"
+              className="duo-3d-btn green sm"
+              onClick={() => {
+                soundService.playToken();
+                onMarkAllAsRead();
+              }}
+              title="Marcar todas las notificaciones como leídas"
+            >
+              <CheckCheck size={16} strokeWidth={2.8} />
+              <span className="notif-mark-all-text">MARCAR LEÍDAS</span>
+            </button>
+          )}
+
+          {notifications.length > 0 && onDismissAllRead && (
+            <button
+              type="button"
+              className="duo-3d-btn gray sm"
+              onClick={() => {
+                soundService.playToken();
+                onDismissAllRead();
+              }}
+              title="Limpiar los avisos leídos de mi bandeja"
+            >
+              <Trash2 size={15} />
+              <span className="notif-mark-all-text">LIMPIAR BANDEJA</span>
+            </button>
+          )}
+        </div>
+      </div>
+
+      {/* BANNER INFORMATIVO SOBRE LIMPIEZA PERSONAL */}
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: '8px',
+          background: '#F0F9FF',
+          border: '1.5px solid #BAE6FD',
+          borderRadius: '12px',
+          padding: '8px 12px',
+          marginBottom: '14px',
+          fontSize: '0.8rem',
+          color: '#0369A1',
+          fontWeight: 600
+        }}
+      >
+        <ShieldCheck size={16} color="#0284C7" style={{ flexShrink: 0 }} />
+        <span>
+          Eliminar un aviso lo retira de tu bandeja personal para mantenerla limpia. El registro oficial se conserva de forma permanente en Seguimiento para tu profesor.
+        </span>
       </div>
 
       {/* ═══ FILTROS DUOLINGO 3D ═══ */}
@@ -229,7 +274,7 @@ export const NotificationsPage: React.FC<NotificationsPageProps> = ({
             <p className="duo-empty-desc">
               {filterType === 'unread'
                 ? 'Has leído todos tus avisos y comunicados pendientes.'
-                : 'Cuando haya novedades o notas de tu profesor las verás aquí.'}
+                : 'Tu bandeja personal está limpia. Cuando el docente o el sistema emita un aviso, aparecerá aquí inmediatamente en tiempo real.'}
             </p>
             <button
               type="button"
@@ -284,6 +329,21 @@ export const NotificationsPage: React.FC<NotificationsPageProps> = ({
                       {formatRelativeTime(notif.createdAt)}
                     </span>
                     {isUnread && <span className="duo-unread-glow-dot" title="Aviso sin leer" />}
+
+                    {/* BOTÓN INDIVIDUAL PARA ELIMINAR DE MI BANDEJA */}
+                    <button
+                      type="button"
+                      className="duo-notif-dismiss-btn"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        soundService.playToken();
+                        onDismissNotification(notif.id);
+                      }}
+                      title="Eliminar de mi bandeja personal (Se conserva en el registro de Seguimiento del profesor)"
+                      aria-label="Eliminar de mi bandeja"
+                    >
+                      <Trash2 size={15} />
+                    </button>
                   </div>
                 </div>
 
@@ -292,11 +352,33 @@ export const NotificationsPage: React.FC<NotificationsPageProps> = ({
                 <p className="notif-card-message duo-card-p">{notif.message}</p>
 
                 {/* Footer de acción táctil */}
-                {isUnread && (
-                  <div className="notif-card-footer">
+                <div className="notif-card-footer" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  {isUnread ? (
                     <span className="duo-tap-read-hint">TOCA PARA MARCAR COMO LEÍDO</span>
-                  </div>
-                )}
+                  ) : (
+                    <span style={{ fontSize: '0.74rem', color: '#94A3B8', fontWeight: 700 }}>
+                      ✓ Leído
+                    </span>
+                  )}
+                  <span
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      soundService.playToken();
+                      onDismissNotification(notif.id);
+                    }}
+                    style={{
+                      fontSize: '0.74rem',
+                      color: '#EF4444',
+                      fontWeight: 800,
+                      cursor: 'pointer',
+                      padding: '2px 6px',
+                      borderRadius: '6px'
+                    }}
+                    title="Eliminar este aviso de tu bandeja personal"
+                  >
+                    Eliminar de mi bandeja
+                  </span>
+                </div>
               </article>
             );
           })

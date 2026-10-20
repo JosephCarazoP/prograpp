@@ -7,7 +7,8 @@ import {
   orderBy,
   deleteDoc,
   arrayUnion,
-  updateDoc
+  updateDoc,
+  onSnapshot
 } from 'firebase/firestore';
 import { db, isLocalMockMode } from '../config/firebase';
 import { AppNotification, NotificationTemplate, NotificationType } from '../types/notification';
@@ -59,6 +60,14 @@ export const PRELOADED_NOTIFICATION_TEMPLATES: NotificationTemplate[] = [
   }
 ];
 
+// Disparador de eventos en tiempo real para sincronización entre componentes
+const NOTIF_EVENT_NAME = 'prograpp_notif_changed';
+const emitNotifChange = () => {
+  if (typeof window !== 'undefined') {
+    window.dispatchEvent(new CustomEvent(NOTIF_EVENT_NAME));
+  }
+};
+
 export const notificationService = {
   // Obtener plantillas precargadas
   getPreloadedTemplates(): NotificationTemplate[] {
@@ -66,6 +75,7 @@ export const notificationService = {
   },
 
   // Enviar una nueva notificación (Docente / Sistema)
+  // Aparece INMEDIATAMENTE en tiempo real para los alumnos sin recargar
   async sendNotification(
     data: {
       title: string;
@@ -88,7 +98,8 @@ export const notificationService = {
       targetGroup: data.targetGroup || '',
       sender: data.sender || 'Profesor',
       createdAt: Date.now(),
-      readBy: []
+      readBy: [],
+      dismissedBy: []
     };
 
     // Guardar en caché local
@@ -96,7 +107,7 @@ export const notificationService = {
     local.unshift(newNotif);
     storageService.setItem('app_notifications_all', local);
 
-    // Guardar en Firestore
+    // Guardar en Firestore para distribución global
     if (!isLocalMockMode && db) {
       try {
         const notifRef = doc(db, 'notifications', notifId);
@@ -106,10 +117,12 @@ export const notificationService = {
       }
     }
 
+    emitNotifChange();
     return newNotif;
   },
 
   // Obtener todas las notificaciones recibidas para un estudiante
+  // Excluye las que el usuario haya eliminado de su propia bandeja personal
   async getNotificationsForUser(user: UserProfile): Promise<AppNotification[]> {
     let allNotifications: AppNotification[] = [];
 
@@ -142,9 +155,18 @@ export const notificationService = {
       allNotifications = storageService.getItem<AppNotification[]>('app_notifications_all', []);
     }
 
-    // Filtrar para el usuario:
-    // targetType === 'all' O targetUid === user.uid O (targetType === 'group' && targetGroup === user.group)
-    const userNotifs = allNotifications.filter(n => {
+    return this.filterForUser(allNotifications, user);
+  },
+
+  // Filtra notificaciones destinadas al usuario que no hayan sido descartadas de su bandeja
+  filterForUser(all: AppNotification[], user: UserProfile): AppNotification[] {
+    const dismissedLocal = storageService.getItem<string[]>('dismissed_notifs_' + user.uid, []);
+
+    const userNotifs = all.filter(n => {
+      // Si el alumno la eliminó de su bandeja personal, no se le muestra
+      if (n.dismissedBy?.includes(user.uid) || dismissedLocal.includes(n.id)) {
+        return false;
+      }
       if (n.targetType === 'all') return true;
       if (n.targetType === 'specific' && n.targetUid === user.uid) return true;
       if (n.targetType === 'group' && n.targetGroup && n.targetGroup === (user.group || 'Grupo A')) return true;
@@ -154,7 +176,113 @@ export const notificationService = {
     return userNotifs.sort((a, b) => b.createdAt - a.createdAt);
   },
 
-  // Obtener todas las notificaciones del sistema (Solo Administrador)
+  // Suscripción en Tiempo Real para el estudiante (Aparecen INMEDIATAMENTE sin recargar)
+  subscribeToUserNotifications(
+    user: UserProfile,
+    onUpdate: (notifs: AppNotification[]) => void
+  ): () => void {
+    // 1. Enviar estado inicial inmediato desde caché
+    const initialLocal = storageService.getItem<AppNotification[]>('app_notifications_all', []);
+    onUpdate(this.filterForUser(initialLocal, user));
+
+    // 2. Escuchar evento local entre ventanas/componentes
+    const handleLocalEvent = () => {
+      const currentLocal = storageService.getItem<AppNotification[]>('app_notifications_all', []);
+      onUpdate(this.filterForUser(currentLocal, user));
+    };
+    if (typeof window !== 'undefined') {
+      window.addEventListener(NOTIF_EVENT_NAME, handleLocalEvent);
+      window.addEventListener('storage', handleLocalEvent);
+    }
+
+    // 3. Suscripción remota en tiempo real con Firestore onSnapshot
+    let unsubscribeFirestore: (() => void) | null = null;
+    if (!isLocalMockMode && db) {
+      try {
+        const col = collection(db, 'notifications');
+        const q = query(col, orderBy('createdAt', 'desc'));
+        unsubscribeFirestore = onSnapshot(
+          q,
+          (snapshot) => {
+            const remote: AppNotification[] = [];
+            snapshot.forEach((d) => {
+              const item = d.data() as AppNotification;
+              remote.push({ ...item, id: d.id });
+            });
+            storageService.setItem('app_notifications_all', remote);
+            onUpdate(this.filterForUser(remote, user));
+          },
+          (err) => {
+            console.warn('[notificationService] Error en snapshot de notificaciones:', err);
+          }
+        );
+      } catch (err) {
+        console.warn('[notificationService] No se pudo conectar listener en tiempo real:', err);
+      }
+    }
+
+    return () => {
+      if (typeof window !== 'undefined') {
+        window.removeEventListener(NOTIF_EVENT_NAME, handleLocalEvent);
+        window.removeEventListener('storage', handleLocalEvent);
+      }
+      if (unsubscribeFirestore) {
+        unsubscribeFirestore();
+      }
+    };
+  },
+
+  // Suscripción en Tiempo Real a TODAS las notificaciones (Para Docente en Seguimiento)
+  subscribeToAllNotifications(onUpdate: (notifs: AppNotification[]) => void): () => void {
+    const initialLocal = storageService.getItem<AppNotification[]>('app_notifications_all', []);
+    onUpdate(initialLocal);
+
+    const handleLocalEvent = () => {
+      const currentLocal = storageService.getItem<AppNotification[]>('app_notifications_all', []);
+      onUpdate(currentLocal);
+    };
+    if (typeof window !== 'undefined') {
+      window.addEventListener(NOTIF_EVENT_NAME, handleLocalEvent);
+      window.addEventListener('storage', handleLocalEvent);
+    }
+
+    let unsubscribeFirestore: (() => void) | null = null;
+    if (!isLocalMockMode && db) {
+      try {
+        const col = collection(db, 'notifications');
+        const q = query(col, orderBy('createdAt', 'desc'));
+        unsubscribeFirestore = onSnapshot(
+          q,
+          (snapshot) => {
+            const remote: AppNotification[] = [];
+            snapshot.forEach((d) => {
+              const item = d.data() as AppNotification;
+              remote.push({ ...item, id: d.id });
+            });
+            storageService.setItem('app_notifications_all', remote);
+            onUpdate(remote);
+          },
+          (err) => {
+            console.warn('[notificationService] Error snapshot profesor:', err);
+          }
+        );
+      } catch (err) {
+        console.warn('[notificationService] Error configurando snapshot profesor:', err);
+      }
+    }
+
+    return () => {
+      if (typeof window !== 'undefined') {
+        window.removeEventListener(NOTIF_EVENT_NAME, handleLocalEvent);
+        window.removeEventListener('storage', handleLocalEvent);
+      }
+      if (unsubscribeFirestore) {
+        unsubscribeFirestore();
+      }
+    };
+  },
+
+  // Obtener todas las notificaciones del sistema (Solo Administrador / Docente)
   async getAllNotifications(): Promise<AppNotification[]> {
     if (!isLocalMockMode && db) {
       try {
@@ -195,6 +323,7 @@ export const notificationService = {
         console.warn('[notificationService] Error al actualizar estado de lectura:', err);
       }
     }
+    emitNotifChange();
   },
 
   // Marcar todas como leídas
@@ -219,8 +348,53 @@ export const notificationService = {
     );
   },
 
-  // Eliminar una notificación
-  async deleteNotification(notificationId: string): Promise<void> {
+  // ════════════════════════════════════════════════════════════════════════════
+  // LIMPIEZA PERSONAL DEL ALUMNO (Descarta de su bandeja sin borrarla de la BD)
+  // ════════════════════════════════════════════════════════════════════════════
+  async dismissNotificationForUser(notificationId: string, uid: string): Promise<void> {
+    // 1. Guardar en lista de descartadas personal
+    const dismissed = storageService.getItem<string[]>('dismissed_notifs_' + uid, []);
+    if (!dismissed.includes(notificationId)) {
+      dismissed.push(notificationId);
+      storageService.setItem('dismissed_notifs_' + uid, dismissed);
+    }
+
+    // 2. Actualizar caché local
+    const local = storageService.getItem<AppNotification[]>('app_notifications_all', []);
+    const idx = local.findIndex(n => n.id === notificationId);
+    if (idx >= 0) {
+      local[idx].dismissedBy = local[idx].dismissedBy || [];
+      if (!local[idx].dismissedBy!.includes(uid)) {
+        local[idx].dismissedBy!.push(uid);
+        storageService.setItem('app_notifications_all', local);
+      }
+    }
+
+    // 3. Sincronizar en Firestore para persistencia multidivice
+    if (!isLocalMockMode && db) {
+      try {
+        const notifRef = doc(db, 'notifications', notificationId);
+        await updateDoc(notifRef, {
+          dismissedBy: arrayUnion(uid)
+        });
+      } catch (err) {
+        console.warn('[notificationService] Error al descartar notificación para usuario:', err);
+      }
+    }
+
+    emitNotifChange();
+  },
+
+  // Descartar todas las notificaciones activas para el alumno
+  async dismissAllNotificationsForUser(uid: string, notifs: AppNotification[]): Promise<void> {
+    await Promise.all(notifs.map(n => this.dismissNotificationForUser(n.id, uid)));
+  },
+
+  // ════════════════════════════════════════════════════════════════════════════
+  // ELIMINACIÓN PERMANENTE (Exclusiva del Profesor desde Seguimiento)
+  // Borra el documento definitivamente de la base de datos
+  // ════════════════════════════════════════════════════════════════════════════
+  async deleteNotificationPermanently(notificationId: string): Promise<void> {
     const local = storageService.getItem<AppNotification[]>('app_notifications_all', []);
     const updated = local.filter(n => n.id !== notificationId);
     storageService.setItem('app_notifications_all', updated);
@@ -230,8 +404,15 @@ export const notificationService = {
         const notifRef = doc(db, 'notifications', notificationId);
         await deleteDoc(notifRef);
       } catch (err) {
-        console.warn('[notificationService] Error al eliminar notificación:', err);
+        console.warn('[notificationService] Error al eliminar permanentemente:', err);
       }
     }
+
+    emitNotifChange();
+  },
+
+  // Alias para retrocompatibilidad
+  async deleteNotification(notificationId: string): Promise<void> {
+    return this.deleteNotificationPermanently(notificationId);
   }
 };

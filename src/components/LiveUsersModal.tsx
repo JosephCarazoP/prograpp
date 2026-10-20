@@ -338,8 +338,9 @@ export const LiveUsersModal: React.FC<LiveUsersModalProps> = ({
                 type="button"
                 className="live-users-search-clear"
                 onClick={() => setSearchTerm('')}
+                title="Limpiar búsqueda"
               >
-                ✕
+                <X size={13} />
               </button>
             )}
           </div>
@@ -347,12 +348,36 @@ export const LiveUsersModal: React.FC<LiveUsersModalProps> = ({
           {/* Chips de filtro */}
           <div className="live-users-chips-row">
             {[
-              { key: 'online' as const, label: `🟢 En Línea (${onlineStudents.length})` },
-              { key: 'all' as const, label: `Todos (${students.length})` },
-              { key: 'lesson' as const, label: `📖 Lección (${lessonCount})` },
-              { key: 'theory' as const, label: `📚 Materia (${theoryCount})` },
-              { key: 'playing' as const, label: `🎮 Jugando (${playingCount})` },
-              { key: 'offline' as const, label: `⚪ Desconectados (${students.length - onlineStudents.length})` }
+              {
+                key: 'online' as const,
+                label: `En Línea (${onlineStudents.length})`,
+                icon: <span className="live-pulsing-dot-small" />
+              },
+              {
+                key: 'all' as const,
+                label: `Todos (${students.length})`,
+                icon: <Users size={12} />
+              },
+              {
+                key: 'lesson' as const,
+                label: `Lección (${lessonCount})`,
+                icon: <Code2 size={12} />
+              },
+              {
+                key: 'theory' as const,
+                label: `Materia (${theoryCount})`,
+                icon: <BookOpen size={12} />
+              },
+              {
+                key: 'playing' as const,
+                label: `Jugando (${playingCount})`,
+                icon: <Gamepad2 size={12} />
+              },
+              {
+                key: 'offline' as const,
+                label: `Desconectados (${students.length - onlineStudents.length})`,
+                icon: <span style={{ width: 7, height: 7, borderRadius: '50%', background: '#94A3B8', display: 'inline-block' }} />
+              }
             ].map((chip) => (
               <button
                 key={chip.key}
@@ -362,8 +387,10 @@ export const LiveUsersModal: React.FC<LiveUsersModalProps> = ({
                   soundService.playToken();
                   setFilterType(chip.key);
                 }}
+                style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}
               >
-                {chip.label}
+                {chip.icon}
+                <span>{chip.label}</span>
               </button>
             ))}
           </div>
@@ -378,7 +405,11 @@ export const LiveUsersModal: React.FC<LiveUsersModalProps> = ({
             </div>
           ) : filteredList.length === 0 ? (
             <div className="live-users-empty-state">
-              <div className="live-empty-icon">👥</div>
+              <div className="live-empty-icon" style={{ display: 'flex', justifyContent: 'center', marginBottom: 10 }}>
+                <div style={{ width: 60, height: 60, borderRadius: 18, background: '#F1F5F9', border: '2px solid #E2E8F0', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <Users size={30} color="#64748B" />
+                </div>
+              </div>
               <h3>
                 {filterType === 'online'
                   ? 'No hay otros estudiantes en línea en este momento'

@@ -7761,6 +7761,36 @@ button, a, input, select, .path-node, .token-chip, .pair-card {
   font-weight: 600;
 }
 
+.duo-notif-dismiss-btn {
+  background: #F8FAFC;
+  border: 1.5px solid #E2E8F0;
+  border-radius: 8px;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #94A3B8;
+  cursor: pointer;
+  transition: all 0.12s ease;
+  flex-shrink: 0;
+}
+.duo-notif-dismiss-btn:hover {
+  background: #FEF2F2;
+  border-color: #FECACA;
+  color: #EF4444;
+  transform: scale(1.05);
+}
+.duo-notif-dismiss-btn:active {
+  transform: scale(0.95);
+}
+
+.duo-settings-pill-tag.orange {
+  background: #FEF3C7;
+  color: #B45309;
+  border: 1px solid #FDE68A;
+}
+
 /* ═══════════════════════════════════════════════════════════════════
    8. DUOLINGO 3D: TIENDA COMPLETA Y VESTIDOR DE BYTE (STORE PAGE)
    ═══════════════════════════════════════════════════════════════════ */

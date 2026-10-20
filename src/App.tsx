@@ -7,7 +7,8 @@ import {
   RotateCcw,
   Gamepad2,
   GraduationCap,
-  Sparkles
+  Sparkles,
+  Trophy
 } from 'lucide-react';
 
 import { UserProfile, LearningPath as PathType, UserPowerUps } from './types/user';
@@ -18,6 +19,7 @@ import { progressService } from './services/progressService';
 import { authService, ADMIN_AUTHORIZED_EMAIL } from './services/authService';
 import { soundService } from './services/soundService';
 import { storageService } from './services/storageService';
+import { notificationService } from './services/notificationService';
 import { progressionEngine, ProgressionChestRewards } from './services/progressionEngine';
 import { getUnitsByPath, getLessonById } from './content';
 import { TheoryLesson } from './types/theory';
@@ -27,6 +29,7 @@ import { getTheoryByLessonId, getTheoriesByPath } from './content/theoryIndex';
 import { Navbar } from './components/Navbar';
 import { LearningPath } from './components/LearningPath';
 import { CoursesView } from './components/CoursesView';
+import { LeagueView } from './components/LeagueView';
 import { TheoryViewer } from './components/TheoryViewer';
 import { TheoryCheckpointModal } from './components/TheoryCheckpointModal';
 import { AuthModal } from './components/AuthModal';
@@ -52,7 +55,6 @@ import { NotificationsPage } from './components/NotificationsPage';
 import { academicService } from './services/academicService';
 import { timeTrackingService } from './services/timeTrackingService';
 import { presenceService } from './services/presenceService';
-import { notificationService } from './services/notificationService';
 import { AppNotification } from './types/notification';
 import {
   getInstrument,
@@ -160,10 +162,11 @@ export default function App() {
   const [activeEvaluationInstrument, setActiveEvaluationInstrument] = useState<EvaluationInstrument | null>(null);
   const [opinionActivityId, setOpinionActivityId] = useState<string | null>(null);
 
-  const [mainTab, setMainTab] = useState<'play' | 'courses'>(() => {
+  const [mainTab, setMainTab] = useState<'play' | 'courses' | 'league'>(() => {
     if (typeof window !== 'undefined') {
       const params = new URLSearchParams(window.location.search);
       if (params.get('tab') === 'courses') return 'courses';
+      if (params.get('tab') === 'league') return 'league';
     }
     return 'play';
   });
@@ -502,21 +505,13 @@ export default function App() {
     };
   }, [user?.uid, isAuthenticated]);
 
-  // Cargar notificaciones para el estudiante / usuario activo
+  // Suscripción en tiempo real a notificaciones para el estudiante (Aparecen al instante sin recargar)
   useEffect(() => {
     if (!user || !user.uid || user.uid === 'guest_user_1') return;
-    async function loadNotifications() {
-      try {
-        const notifs = await notificationService.getNotificationsForUser(user);
-        setNotifications(notifs);
-      } catch (err) {
-        console.warn('Error al sincronizar notificaciones:', err);
-      }
-    }
-    loadNotifications();
-
-    const notifTimer = setInterval(loadNotifications, 45000);
-    return () => clearInterval(notifTimer);
+    const unsubscribe = notificationService.subscribeToUserNotifications(user, (notifs) => {
+      setNotifications(notifs);
+    });
+    return () => unsubscribe();
   }, [user?.uid, user?.group]);
 
   const handleMarkNotificationAsRead = async (id: string) => {
@@ -541,6 +536,21 @@ export default function App() {
           : n
       )
     );
+  };
+
+  // Limpiar/descartar una notificación de la bandeja personal del alumno
+  const handleDismissNotification = async (id: string) => {
+    if (!user?.uid) return;
+    await notificationService.dismissNotificationForUser(id, user.uid);
+    setNotifications((prev) => prev.filter((n) => n.id !== id));
+  };
+
+  // Limpiar todas las notificaciones leídas de la bandeja personal
+  const handleDismissAllRead = async () => {
+    if (!user?.uid) return;
+    const readOnes = notifications.filter((n) => n.readBy.includes(user.uid));
+    await notificationService.dismissAllNotificationsForUser(user.uid, readOnes);
+    setNotifications((prev) => prev.filter((n) => !n.readBy.includes(user.uid)));
   };
 
   const unreadNotificationsCount = user?.uid
@@ -1277,6 +1287,12 @@ export default function App() {
             soundService.playToken();
             setView('store');
           }}
+          onOpenLeague={() => {
+            soundService.playToken();
+            setView('path');
+            setMainTab('league');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          }}
           onSignOut={handleSignOut}
         />
       )}
@@ -1298,6 +1314,7 @@ export default function App() {
           {activeTheory ? (
             <TheoryViewer
               theory={activeTheory}
+              user={user}
               onBack={() => setActiveTheory(null)}
               onCompleteTheory={async (lessonId) => {
                 const l = getLessonById(lessonId);
@@ -1331,7 +1348,7 @@ export default function App() {
             />
           ) : (
             <>
-              {/* Barra de Cambio de Modo Dual: Jugar vs Cursos */}
+              {/* Barra de Cambio de Modo Triple: Jugar vs Cursos vs Liga Semanal */}
               <div
                 style={{
                   display: 'flex',
@@ -1341,7 +1358,7 @@ export default function App() {
                   border: '2px solid #E2E8F0',
                   marginBottom: '16px',
                   gap: '6px',
-                  maxWidth: '460px',
+                  maxWidth: '520px',
                   width: '100%',
                   boxSizing: 'border-box',
                   boxShadow: '0 3px 0 #CBD5E1'
@@ -1400,6 +1417,33 @@ export default function App() {
                   <GraduationCap size={18} />
                   <span>Cursos</span>
                 </button>
+
+                <button
+                  onClick={() => {
+                    soundService.playToken();
+                    setMainTab('league');
+                  }}
+                  style={{
+                    flex: 1,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '6px',
+                    padding: '8px 12px',
+                    borderRadius: '10px',
+                    fontSize: '0.9rem',
+                    fontWeight: 800,
+                    cursor: 'pointer',
+                    transition: 'all 0.2s ease',
+                    background: mainTab === 'league' ? '#D97706' : 'transparent',
+                    color: mainTab === 'league' ? '#FFFFFF' : '#64748B',
+                    border: 'none',
+                    boxShadow: mainTab === 'league' ? '0 3px 0 #B45309' : 'none'
+                  }}
+                >
+                  <Trophy size={17} />
+                  <span>Liga</span>
+                </button>
               </div>
 
               {mainTab === 'courses' ? (
@@ -1429,6 +1473,18 @@ export default function App() {
                   onSelectPractice={(lessonId) => {
                     const l = getLessonById(lessonId);
                     if (l) handleStartLesson(l);
+                  }}
+                />
+              ) : mainTab === 'league' ? (
+                <LeagueView
+                  user={user}
+                  onNavigateToPlay={() => {
+                    setMainTab('play');
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                  }}
+                  onNavigateToCourses={() => {
+                    setMainTab('courses');
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
                   }}
                 />
               ) : (
@@ -2177,6 +2233,8 @@ export default function App() {
           onBack={() => setView('path')}
           onMarkAsRead={handleMarkNotificationAsRead}
           onMarkAllAsRead={handleMarkAllNotificationsAsRead}
+          onDismissNotification={handleDismissNotification}
+          onDismissAllRead={handleDismissAllRead}
         />
       )}
 
