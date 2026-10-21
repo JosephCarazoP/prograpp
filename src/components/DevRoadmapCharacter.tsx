@@ -128,7 +128,6 @@ export const DevRoadmapCharacter: React.FC<DevRoadmapCharacterProps> = ({
   }, []);
 
   const accent = isGuide ? '#58CC02' : buddy.accent;
-  const accentDark = isGuide ? '#46A302' : buddy.accentDark;
   const avatarId = isGuide ? userAvatarId : buddy.avatarId;
   // Proporciones armoniosas Duolingo 3D: avatares compactos y no invasivos
   const tokenSize = isGuide ? 52 : 44;
@@ -170,7 +169,6 @@ export const DevRoadmapCharacter: React.FC<DevRoadmapCharacterProps> = ({
         <div
           key={bubble}
           className="roadmap-buddy__bubble"
-          style={{ color: accentDark, borderColor: isGuide ? '#B8F28B' : '#E5E5E5' }}
         >
           {bubble}
         </div>
@@ -186,8 +184,8 @@ export const DevRoadmapCharacter: React.FC<DevRoadmapCharacterProps> = ({
         style={{
           width: tokenSize,
           height: tokenSize,
-          borderColor: accent,
-          boxShadow: `0 4px 0 ${accentDark}`
+          borderColor: '#000000',
+          boxShadow: '3px 3px 0px #000000'
         }}
       >
         <span className="roadmap-buddy__avatar">
@@ -200,11 +198,11 @@ export const DevRoadmapCharacter: React.FC<DevRoadmapCharacterProps> = ({
 
         {/* Insignia: "TÚ" para el estudiante, accesorio temático para compañeros */}
         {isGuide ? (
-          <span className="roadmap-buddy__you" style={{ background: accent, boxShadow: `0 2px 0 ${accentDark}` }}>
+          <span className="roadmap-buddy__you" style={{ background: '#FFE600', color: '#000000' }}>
             <Flag size={9} strokeWidth={3} /> TÚ
           </span>
         ) : (
-          <span className="roadmap-buddy__badge" style={{ background: accent, boxShadow: `0 2px 0 ${accentDark}` }}>
+          <span className="roadmap-buddy__badge" style={{ background: accent, color: '#000000' }}>
             {React.isValidElement(buddy.icon)
               ? React.cloneElement(buddy.icon as React.ReactElement<{ size?: number; strokeWidth?: number }>, {
                   size: 11,

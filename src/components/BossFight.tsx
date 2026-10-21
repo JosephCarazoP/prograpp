@@ -14,6 +14,7 @@ import { UserProfile, UserPowerUps } from '../types/user';
 import { DevAvatar } from './Avatars';
 import { PowerUpsBar } from './PowerUpsBar';
 import { VSCodeSnippet } from './VSCodeSnippet';
+import { FormattedText } from './FormattedText';
 
 interface BossStage {
   id: string;
@@ -746,7 +747,7 @@ export const BossFightArena: React.FC<BossFightProps> = ({
 
               {/* Pregunta del Jefe */}
               <div style={{ fontSize: '0.96rem', fontWeight: 800, color: '#FFFFFF' }}>
-                {currentStage.prompt}
+                <FormattedText text={currentStage.prompt} inline dark />
               </div>
 
               {/* Bloque de Código estilo VS Code */}
@@ -804,7 +805,7 @@ export const BossFightArena: React.FC<BossFightProps> = ({
                       >
                         ACCIÓN {idx + 1}
                       </span>
-                      {opt}
+                      <FormattedText text={opt} inline dark />
                     </button>
                   );
                 })}

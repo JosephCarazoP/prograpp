@@ -18,6 +18,7 @@ import { academicService } from '../services/academicService';
 import { soundService } from '../services/soundService';
 import { VSCodeSnippet } from './VSCodeSnippet';
 import { ConsoleDevAvatar } from './ConsoleAvatar';
+import { FormattedText } from './FormattedText';
 
 interface EvaluationPageProps {
   instrument: EvaluationInstrument;
@@ -122,37 +123,10 @@ function parsePromptSegments(prompt: string, defaultPath: 'kotlin' | 'sql'): Par
 }
 
 /**
- * Renderiza texto con soporte para `código inline` estilo Duolingo
+ * Renderiza texto con soporte completo para negrita (**texto**), cursiva (*texto*) y `código inline`
  */
 const FormattedInlineText: React.FC<{ text: string }> = ({ text }) => {
-  const parts = text.split(/(`[^`]+`)/g);
-  return (
-    <>
-      {parts.map((p, i) => {
-        if (p.startsWith('`') && p.endsWith('`')) {
-          return (
-            <code
-              key={i}
-              style={{
-                backgroundColor: '#F1F5F9',
-                border: '1.5px solid #CBD5E1',
-                borderRadius: '6px',
-                padding: '2px 7px',
-                fontFamily: "'JetBrains Mono', Consolas, monospace",
-                fontSize: '0.92em',
-                fontWeight: 800,
-                color: '#0284C7',
-                margin: '0 2px'
-              }}
-            >
-              {p.slice(1, -1)}
-            </code>
-          );
-        }
-        return <span key={i}>{p}</span>;
-      })}
-    </>
-  );
+  return <FormattedText text={text} inline />;
 };
 
 export const EvaluationPage: React.FC<EvaluationPageProps> = ({

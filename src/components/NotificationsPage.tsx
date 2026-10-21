@@ -9,7 +9,7 @@ import {
   Target,
   Award,
   Trash2,
-  ShieldCheck
+  Check
 } from 'lucide-react';
 import { AppNotification, NotificationType } from '../types/notification';
 import { UserProfile } from '../types/user';
@@ -181,28 +181,6 @@ export const NotificationsPage: React.FC<NotificationsPageProps> = ({
         </div>
       </div>
 
-      {/* BANNER INFORMATIVO SOBRE LIMPIEZA PERSONAL */}
-      <div
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: '8px',
-          background: '#F0F9FF',
-          border: '1.5px solid #BAE6FD',
-          borderRadius: '12px',
-          padding: '8px 12px',
-          marginBottom: '14px',
-          fontSize: '0.8rem',
-          color: '#0369A1',
-          fontWeight: 600
-        }}
-      >
-        <ShieldCheck size={16} color="#0284C7" style={{ flexShrink: 0 }} />
-        <span>
-          Eliminar un aviso lo retira de tu bandeja personal para mantenerla limpia. El registro oficial se conserva de forma permanente en Seguimiento para tu profesor.
-        </span>
-      </div>
-
       {/* ═══ FILTROS DUOLINGO 3D ═══ */}
       <div className="notif-filter-bar duo-filter-row">
         <button
@@ -356,8 +334,8 @@ export const NotificationsPage: React.FC<NotificationsPageProps> = ({
                   {isUnread ? (
                     <span className="duo-tap-read-hint">TOCA PARA MARCAR COMO LEÍDO</span>
                   ) : (
-                    <span style={{ fontSize: '0.74rem', color: '#94A3B8', fontWeight: 700 }}>
-                      ✓ Leído
+                    <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4, fontSize: '0.74rem', color: '#64748B', fontWeight: 800 }}>
+                      <Check size={13} strokeWidth={3} /> Leído
                     </span>
                   )}
                   <span

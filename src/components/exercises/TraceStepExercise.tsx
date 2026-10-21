@@ -43,14 +43,14 @@ export const TraceStepComponent: React.FC<TraceStepProps> = ({
         style={{
           background: '#0F172A',
           padding: '16px 18px',
-          borderRadius: '18px',
+          borderRadius: '16px',
           fontFamily: 'JetBrains Mono, monospace',
           color: '#F8FAFC',
           fontSize: '0.94rem',
           lineHeight: 1.6,
           marginBottom: '18px',
-          border: '2px solid #E2E8F0',
-          boxShadow: '0 5px 0 #CBD5E1',
+          border: '2.5px solid #000000',
+          boxShadow: '4px 4px 0px #000000',
           overflowX: 'auto'
         }}
       >
@@ -60,11 +60,10 @@ export const TraceStepComponent: React.FC<TraceStepProps> = ({
       <div
         style={{
           background: '#FFFFFF',
-          borderRadius: '20px',
+          borderRadius: '16px',
           padding: '16px 18px',
-          border: '2.5px solid #E2E8F0',
-          borderBottom: '5px solid #CBD5E1',
-          boxShadow: '0 4px 12px rgba(0, 0, 0, 0.04)'
+          border: '2.5px solid #000000',
+          boxShadow: '4px 4px 0px #000000'
         }}
       >
         <div
@@ -86,7 +85,7 @@ export const TraceStepComponent: React.FC<TraceStepProps> = ({
         <div style={{ overflowX: 'auto' }}>
           <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'center', minWidth: '280px' }}>
             <thead>
-              <tr style={{ borderBottom: '2px solid #E2E8F0', color: '#0F172A', fontSize: '0.88rem' }}>
+              <tr style={{ borderBottom: '2px solid #000000', color: '#000000', fontSize: '0.88rem' }}>
                 <th style={{ padding: '10px 12px', fontWeight: 900, textAlign: 'left' }}>Paso</th>
                 {Object.keys(exercise.iterations[0].expectedVariables).map(v => (
                   <th key={v} style={{ padding: '10px 12px', fontWeight: 900, fontFamily: 'JetBrains Mono, monospace' }}>
@@ -97,16 +96,16 @@ export const TraceStepComponent: React.FC<TraceStepProps> = ({
             </thead>
             <tbody>
               {exercise.iterations.map(iter => (
-                <tr key={iter.iteration} style={{ borderBottom: '1px solid #F1F5F9' }}>
+                <tr key={iter.iteration} style={{ borderBottom: '1.5px solid #000000' }}>
                   <td style={{ padding: '12px 10px', textAlign: 'left' }}>
                     <span
                       style={{
                         background: '#FFF7ED',
-                        border: '1.5px solid #FED7AA',
-                        borderBottom: '3px solid #F97316',
-                        color: '#C2410C',
+                        border: '1.5px solid #000000',
+                        boxShadow: '1.5px 1.5px 0px #000000',
+                        color: '#EA580C',
                         padding: '4px 10px',
-                        borderRadius: '10px',
+                        borderRadius: '8px',
                         fontSize: '0.82rem',
                         fontWeight: 900,
                         display: 'inline-block'
@@ -126,11 +125,11 @@ export const TraceStepComponent: React.FC<TraceStepProps> = ({
                           width: '90px',
                           textAlign: 'center',
                           background: '#FFFFFF',
-                          border: '2.5px solid #CBD5E1',
-                          borderBottom: '4.5px solid #94A3B8',
-                          borderRadius: '14px',
+                          border: '2px solid #000000',
+                          boxShadow: '2px 2px 0px #000000',
+                          borderRadius: '10px',
                           padding: '8px 10px',
-                          color: '#0F172A',
+                          color: '#000000',
                           fontWeight: 900,
                           fontSize: '1rem',
                           fontFamily: 'JetBrains Mono, monospace',

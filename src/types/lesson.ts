@@ -117,4 +117,5 @@ export interface Unit {
   color: string;
   lessons: Lesson[];
   bossLesson?: Lesson;
+  stage?: string;
 }

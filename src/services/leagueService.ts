@@ -114,23 +114,58 @@ export const leagueService = {
     };
   },
 
+  // Obtener datos cacheados instantáneos (0ms de espera al entrar a la Liga)
+  getCachedLeaderboard(currentUser: UserProfile): LeagueLeaderboardData | null {
+    const cacheKey = `league_leaderboard_cache_${currentUser.uid}`;
+    const cached = storageService.getItem<{ data: LeagueLeaderboardData; timestamp: number } | null>(cacheKey, null);
+    return cached?.data || null;
+  },
+
   // Calcular la tabla completa de la Liga Semanal
   async getLeaderboard(currentUser: UserProfile): Promise<LeagueLeaderboardData> {
+    const cacheKey = `league_leaderboard_cache_${currentUser.uid}`;
+    const cached = storageService.getItem<{ data: LeagueLeaderboardData; timestamp: number } | null>(cacheKey, null);
+    const now = Date.now();
+
+    // 1. Si los datos cacheados tienen menos de 25 segundos, responder de inmediato
+    if (cached && (now - cached.timestamp < 25000)) {
+      return cached.data;
+    }
+
     const weekNumber = this.getCurrentWeekNumber();
     const year = new Date().getFullYear();
     const { days, hours } = this.getTimeRemaining();
 
-    // 1. Obtener lista de todos los estudiantes registrados
-    let students = await userService.getAllStudents();
+    // Promesa de timeout (máximo 2.2 segundos de red para no congelar la app)
+    const timeoutPromise = new Promise<null>((resolve) => setTimeout(() => resolve(null), 2200));
+
+    // 2. Obtener lista de todos los estudiantes registrados
+    let students: UserProfile[] = [];
+    try {
+      const studentsRes = await Promise.race([userService.getAllStudents(), timeoutPromise]);
+      if (studentsRes) {
+        students = studentsRes;
+      }
+    } catch {
+      // Usar perfil actual si falla la red
+    }
+
     if (!students || students.length === 0) {
       students = [currentUser];
     } else if (!students.some(s => s.uid === currentUser.uid)) {
       students.unshift(currentUser);
     }
 
-    // 2. Obtener intentos académicos para calcular la precisión (quien falla menos)
-    let attempts = await academicService.getAllAttempts(students);
-    if (!attempts) attempts = [];
+    // 3. Obtener intentos académicos para calcular la precisión (quien falla menos)
+    let attempts: any[] = [];
+    try {
+      const attemptsRes = await Promise.race([academicService.getAllAttempts(students), timeoutPromise]);
+      if (attemptsRes) {
+        attempts = attemptsRes;
+      }
+    } catch {
+      attempts = [];
+    }
 
     // Mapear estadísticas por estudiante
     const attemptsByStudent = new Map<string, { total: number; correct: number }>();
@@ -270,7 +305,7 @@ export const leagueService = {
     const tierMeta = LEAGUE_TIER_META[tier] || LEAGUE_TIER_META.bronze;
     const currentUserEntry = entries.find(e => e.uid === currentUser.uid);
 
-    return {
+    const result: LeagueLeaderboardData = {
       tier,
       tierName: tierMeta.name,
       tierColor: tierMeta.color,
@@ -283,5 +318,9 @@ export const leagueService = {
       currentUserEntry,
       totalParticipants: entries.length
     };
+
+    storageService.setItem(cacheKey, { data: result, timestamp: Date.now() });
+
+    return result;
   }
 };

@@ -99,9 +99,9 @@ export const PowerUpsBar: React.FC<PowerUpsBarProps> = ({
         gap: compact ? '6px' : '8px',
         padding: compact ? '6px 8px' : '8px 12px',
         background: '#FFFFFF',
-        border: '2px solid var(--border-color)',
-        boxShadow: '0 4px 0 var(--border-shadow)',
-        borderRadius: '18px',
+        border: '2.5px solid #000000',
+        boxShadow: '3.5px 3.5px 0px #000000',
+        borderRadius: '16px',
         margin: '6px 0 14px 0',
         width: '100%',
         boxSizing: 'border-box'
@@ -111,7 +111,7 @@ export const PowerUpsBar: React.FC<PowerUpsBarProps> = ({
         style={{
           fontSize: '0.72rem',
           fontWeight: 900,
-          color: '#64748B',
+          color: '#000000',
           textTransform: 'uppercase',
           letterSpacing: '0.6px',
           marginRight: '2px',
@@ -146,35 +146,30 @@ export const PowerUpsBar: React.FC<PowerUpsBarProps> = ({
               padding: compact ? '6px 6px' : '8px 10px',
               borderRadius: '12px',
               background: isActive
-                ? '#ECFDF5'
+                ? '#DCFCE7'
                 : hasStock
                 ? '#FFFFFF'
                 : '#F8FAFC',
-              border: '2px solid',
-              borderColor: isActive
-                ? '#10B981'
-                : hasStock
-                ? item.tokenBorder
-                : '#E2E8F0',
+              border: '2px solid #000000',
               boxShadow: isActive
-                ? '0 3px 0 #059669'
+                ? '2px 2px 0px #000000'
                 : hasStock
-                ? `0 3px 0 ${item.tokenShadow}`
-                : '0 2px 0 #CBD5E1',
-              color: hasStock || isActive ? '#1E293B' : '#94A3B8',
+                ? '2px 2px 0px #000000'
+                : 'none',
+              color: hasStock || isActive ? '#000000' : '#94A3B8',
               cursor: disabled || (!hasStock && !isActive) ? 'not-allowed' : 'pointer',
-              transition: 'all 0.12s ease',
+              transition: 'all 0.1s ease',
               opacity: disabled ? 0.6 : hasStock || isActive ? 1 : 0.55
             }}
           >
-            {/* Token de Icono 3D Mini Duolingo */}
+            {/* Token de Icono Mini Neo-Brutal */}
             <div
               style={{
                 width: '26px',
                 height: '24px',
                 borderRadius: '8px',
-                background: isActive ? '#10B981' : hasStock ? item.tokenBg : '#CBD5E1',
-                boxShadow: `0 2px 0 ${isActive ? '#059669' : hasStock ? item.tokenShadow : '#94A3B8'}`,
+                background: isActive ? '#15803D' : hasStock ? item.tokenBg : '#CBD5E1',
+                border: '1.5px solid #000000',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
@@ -187,7 +182,7 @@ export const PowerUpsBar: React.FC<PowerUpsBarProps> = ({
             <span
               style={{
                 fontSize: '0.75rem',
-                fontWeight: 800,
+                fontWeight: 900,
                 whiteSpace: 'nowrap',
                 display: compact ? 'none' : 'block'
               }}
@@ -195,25 +190,24 @@ export const PowerUpsBar: React.FC<PowerUpsBarProps> = ({
               {item.name}
             </span>
 
-            {/* Contador de Stock estilo Pill Duolingo */}
+            {/* Contador de Stock estilo Pill Neo-Brutal */}
             <span
               style={{
                 fontSize: '0.72rem',
                 fontWeight: 900,
                 background: isActive
-                  ? '#10B981'
+                  ? '#15803D'
                   : hasStock
                   ? '#F1F5F9'
                   : '#E2E8F0',
                 color: isActive
                   ? '#FFFFFF'
                   : hasStock
-                  ? '#1E293B'
+                  ? '#000000'
                   : '#94A3B8',
                 padding: '2px 6px',
                 borderRadius: '999px',
-                border: '1px solid',
-                borderColor: isActive ? '#059669' : hasStock ? '#CBD5E1' : '#E2E8F0',
+                border: '1.5px solid #000000',
                 flexShrink: 0
               }}
             >

@@ -5,17 +5,24 @@ import {
   CheckCircle2,
   Play,
   BookOpen,
-  Sparkles,
   ArrowUp,
   Lightbulb,
   Terminal,
-  AlertTriangle,
-  Info,
-  ChevronDown,
-  ChevronUp,
-  Zap
+  Zap,
+  Trophy,
+  Database,
+  Edit3,
+  RotateCcw,
+  AlertTriangle
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
+import {
+  executeKotlin,
+  executeSql,
+  KotlinExecutionResult,
+  SqlExecutionResult,
+  CodeErrorDetail
+} from '../utils/codeRunner';
 import { TheoryLesson } from '../types/theory';
 import { UserProfile } from '../types/user';
 import { soundService } from '../services/soundService';
@@ -23,6 +30,31 @@ import { leagueService } from '../services/leagueService';
 import { VSCodeSnippet } from './VSCodeSnippet';
 import { ConsoleDevAvatar } from './ConsoleAvatar';
 import { getLessonById } from '../content';
+import { FormattedText } from './FormattedText';
+
+/* ═══ LOGOS VECTORIALES OFICIALES ═══ */
+const KotlinLogo: React.FC<{ size?: number }> = ({ size = 20 }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+    <defs>
+      <linearGradient id="ktOfficialGrad" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0%" stopColor="#7F52FF" />
+        <stop offset="50%" stopColor="#C711E1" />
+        <stop offset="100%" stopColor="#E4485D" />
+      </linearGradient>
+    </defs>
+    <path d="M 2 2 L 22 2 L 12 12 L 22 22 L 2 22 Z" fill="url(#ktOfficialGrad)" />
+  </svg>
+);
+
+const SqlDatabaseLogo: React.FC<{ size?: number }> = ({ size = 20 }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+    <ellipse cx="12" cy="6" rx="9" ry="3" fill="#60A5FA" stroke="#2563EB" strokeWidth="1.5" />
+    <path d="M 3 6 V 12 C 3 13.66 7.03 15 12 15 C 16.97 15 21 13.66 21 12 V 6" stroke="#2563EB" strokeWidth="1.5" fill="#3B82F6" fillOpacity="0.2" />
+    <path d="M 3 12 V 18 C 3 19.66 7.03 21 12 21 C 16.97 21 21 19.66 21 18 V 12" stroke="#2563EB" strokeWidth="1.5" fill="#2563EB" fillOpacity="0.3" />
+  </svg>
+);
+
+
 
 interface QuickQuizItem {
   id: string;
@@ -56,16 +88,17 @@ export const TheoryViewer: React.FC<TheoryViewerProps> = ({
   }, [theory.lessonId, user?.uid]);
 
   const isKotlin = theory.pathId === 'kotlin';
-  const accentColor = isKotlin ? '#0284C7' : '#4F46E5';
-  const accentDark = isKotlin ? '#0369A1' : '#3730A3';
-  const badgeBg = isKotlin ? '#E0F2FE' : '#EEF2FF';
 
-  // Estados interactivos del Simulador de Código en Vivo
+  // Estados interactivos del Simulador de Código en Vivo Real
   const [runningSection, setRunningSection] = useState<number | null>(null);
   const [executedSections, setExecutedSections] = useState<Record<number, boolean>>({});
+  const [customCode, setCustomCode] = useState<Record<number, string>>({});
+  const [isEditingSection, setIsEditingSection] = useState<Record<number, boolean>>({});
+  const [kotlinResults, setKotlinResults] = useState<Record<number, KotlinExecutionResult>>({});
+  const [sqlResults, setSqlResults] = useState<Record<number, SqlExecutionResult>>({});
 
-  // Tarjetas de revelación "Bajo el capó"
-  const [expandedSecrets, setExpandedSecrets] = useState<Record<number, boolean>>({});
+  // Toggle entre vista de tabla visual y consola pura para SQL
+  const [viewModeTable, setViewModeTable] = useState<Record<number, boolean>>({ 0: true });
 
   // ═══ ESTADOS DEL MICRO-QUIZ EXPRÉS (3 PREGUNTAS MÁXIMO) ═══
   const [isQuizMode, setIsQuizMode] = useState(false);
@@ -115,21 +148,51 @@ export const TheoryViewer: React.FC<TheoryViewerProps> = ({
     return items;
   }, [theory.lessonId]);
 
-  // Manejador del Simulador en Vivo
-  const handleRunCode = (idx: number) => {
+  // Manejador del Simulador en Vivo Real
+  const handleRunCode = (idx: number, fallbackCode: string) => {
     soundService.playToken();
     setRunningSection(idx);
+
+    const codeToRun = customCode[idx] ?? fallbackCode;
 
     setTimeout(() => {
       setRunningSection(null);
       setExecutedSections((prev) => ({ ...prev, [idx]: true }));
-      soundService.playCorrect();
-      confetti({
-        particleCount: 25,
-        spread: 45,
-        origin: { y: 0.6 }
-      });
-    }, 450);
+
+      if (theory.pathId === 'sql') {
+        const res = executeSql(codeToRun);
+        setSqlResults((prev) => ({ ...prev, [idx]: res }));
+        if (res.success) {
+          soundService.playCorrect();
+          confetti({
+            particleCount: 25,
+            spread: 45,
+            origin: { y: 0.6 }
+          });
+        } else {
+          soundService.playError();
+        }
+      } else {
+        const res = executeKotlin(codeToRun);
+        setKotlinResults((prev) => ({ ...prev, [idx]: res }));
+        if (res.success) {
+          soundService.playCorrect();
+          confetti({
+            particleCount: 25,
+            spread: 45,
+            origin: { y: 0.6 }
+          });
+        } else {
+          soundService.playError();
+        }
+      }
+    }, 180);
+  };
+
+  const handleResetCode = (idx: number, defaultCode: string) => {
+    soundService.playToken();
+    setCustomCode((prev) => ({ ...prev, [idx]: defaultCode }));
+    setIsEditingSection((prev) => ({ ...prev, [idx]: false }));
   };
 
   // Manejo del Micro-Quiz Exprés
@@ -156,7 +219,6 @@ export const TheoryViewer: React.FC<TheoryViewerProps> = ({
       setSelectedQuizOption(null);
       setIsQuizAnswerChecked(false);
     } else {
-      // Quiz finalizado con éxito
       soundService.playWin();
       confetti({ particleCount: 90, spread: 80, origin: { y: 0.55 } });
       setIsQuizCompleted(true);
@@ -171,15 +233,14 @@ export const TheoryViewer: React.FC<TheoryViewerProps> = ({
   };
 
   return (
-    <div style={{ padding: '4px 12px 70px 12px', maxWidth: '740px', margin: '0 auto', width: '100%', boxSizing: 'border-box' }}>
-      {/* ═══ BARRA SUPERIOR DE NAVEGACIÓN DEDICADA ═══ */}
+    <div style={{ padding: '4px 10px 70px 10px', maxWidth: '760px', margin: '0 auto', width: '100%', boxSizing: 'border-box' }}>
+      {/* ═══ BARRA SUPERIOR DE NAVEGACIÓN Y ACCIÓN RÁPIDA ═══ */}
       <div
         style={{
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
           marginBottom: '16px',
-          padding: '6px 0',
           gap: '10px',
           flexWrap: 'wrap'
         }}
@@ -192,157 +253,150 @@ export const TheoryViewer: React.FC<TheoryViewerProps> = ({
           style={{
             display: 'inline-flex',
             alignItems: 'center',
-            gap: '8px',
-            color: '#0F172A',
-            fontSize: '0.92rem',
-            fontWeight: 800,
+            gap: '6px',
+            color: '#000000',
+            fontSize: '0.86rem',
+            fontWeight: 900,
             cursor: 'pointer',
-            padding: '10px 18px',
-            borderRadius: '14px',
+            padding: '8px 16px',
+            borderRadius: '12px',
             background: '#FFFFFF',
-            border: `2px solid ${isKotlin ? '#38BDF8' : '#818CF8'}`,
-            boxShadow: `0 3px 0 ${isKotlin ? '#0284C7' : '#4F46E5'}`,
-            transition: 'all 0.15s ease'
+            border: '2.5px solid #000000',
+            boxShadow: '3px 3px 0px #000000',
+            transition: 'all 0.1s ease'
           }}
-          title="Regresar a la biblioteca de cursos"
+          title="Regresar al catálogo de cursos"
         >
-          <ArrowLeft size={18} strokeWidth={2.8} color={accentColor} />
+          <ArrowLeft size={16} color="#000000" strokeWidth={2.8} />
           <span>Volver a Cursos</span>
         </button>
 
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <div
+        {/* Pestañas de modo estilo Neo-Brutalism */}
+        <div
+          style={{
+            display: 'inline-flex',
+            background: '#FFFFFF',
+            border: '2.5px solid #000000',
+            borderRadius: '14px',
+            padding: '3px',
+            gap: '4px',
+            boxShadow: '3px 3px 0px #000000'
+          }}
+        >
+          <button
+            onClick={() => {
+              soundService.playToken();
+              setIsQuizMode(false);
+            }}
             style={{
               display: 'inline-flex',
               alignItems: 'center',
               gap: '6px',
-              background: badgeBg,
-              color: accentColor,
-              border: `2px solid ${isKotlin ? '#38BDF8' : '#818CF8'}`,
-              boxShadow: `0 2px 0 ${isKotlin ? '#0284C7' : '#4F46E5'}`,
-              padding: '8px 14px',
-              borderRadius: '14px',
-              fontSize: '0.84rem',
-              fontWeight: 900
+              padding: '6px 14px',
+              borderRadius: '10px',
+              background: !isQuizMode ? '#FFE600' : 'transparent',
+              color: '#000000',
+              border: !isQuizMode ? '1.5px solid #000000' : 'none',
+              boxShadow: !isQuizMode ? '1.5px 1.5px 0px #000000' : 'none',
+              fontSize: '0.82rem',
+              fontWeight: 900,
+              cursor: 'pointer',
+              transition: 'all 0.1s ease'
             }}
           >
-            <Clock size={15} strokeWidth={2.5} />
-            <span>{theory.estimatedMinutes} min interactivos</span>
-          </div>
+            <BookOpen size={14} color="#000000" strokeWidth={2.5} />
+            <span>Materia Interactiva</span>
+          </button>
+
+          <button
+            onClick={() => {
+              soundService.playToken();
+              setIsQuizMode(true);
+            }}
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '6px',
+              padding: '6px 14px',
+              borderRadius: '10px',
+              background: isQuizMode ? '#4ADE80' : 'transparent',
+              color: '#000000',
+              border: isQuizMode ? '1.5px solid #000000' : 'none',
+              boxShadow: isQuizMode ? '1.5px 1.5px 0px #000000' : 'none',
+              fontSize: '0.82rem',
+              fontWeight: 900,
+              cursor: 'pointer',
+              transition: 'all 0.1s ease'
+            }}
+          >
+            <Zap size={14} fill="#000000" color="#000000" />
+            <span>Quiz Exprés (3 Preguntas)</span>
+          </button>
+        </div>
+
+        <div
+          style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '5px',
+            background: '#FFFFFF',
+            color: '#000000',
+            border: '2.5px solid #000000',
+            boxShadow: '3px 3px 0px #000000',
+            padding: '6px 12px',
+            borderRadius: '12px',
+            fontSize: '0.78rem',
+            fontWeight: 900
+          }}
+        >
+          <Clock size={13} color="#000000" strokeWidth={2.5} />
+          <span>{theory.estimatedMinutes} min</span>
         </div>
       </div>
 
-      {/* ═══ PESTAÑAS DE MODO RÁPIDO: LEER MATERIA VS QUIZ EXPRÉS (3 PREGUNTAS) ═══ */}
-      <div
-        style={{
-          display: 'flex',
-          background: '#FFFFFF',
-          border: '2px solid #CBD5E1',
-          borderRadius: '18px',
-          padding: '5px',
-          gap: '8px',
-          marginBottom: '20px',
-          boxShadow: '0 4px 0 #94A3B8'
-        }}
-      >
-        <button
-          onClick={() => {
-            soundService.playToken();
-            setIsQuizMode(false);
-          }}
-          style={{
-            flex: 1,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: '8px',
-            padding: '11px 14px',
-            borderRadius: '14px',
-            background: !isQuizMode ? accentColor : 'transparent',
-            color: !isQuizMode ? '#FFFFFF' : '#475569',
-            border: 'none',
-            fontSize: '0.94rem',
-            fontWeight: 900,
-            cursor: 'pointer',
-            boxShadow: !isQuizMode ? `0 3px 0 ${accentDark}` : 'none',
-            transition: 'all 0.15s ease'
-          }}
-        >
-          <BookOpen size={18} />
-          <span>Materia Interactiva</span>
-        </button>
-
-        <button
-          onClick={() => {
-            soundService.playToken();
-            setIsQuizMode(true);
-          }}
-          style={{
-            flex: 1,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: '8px',
-            padding: '11px 14px',
-            borderRadius: '14px',
-            background: isQuizMode ? '#10B981' : 'transparent',
-            color: isQuizMode ? '#FFFFFF' : '#475569',
-            border: 'none',
-            fontSize: '0.94rem',
-            fontWeight: 900,
-            cursor: 'pointer',
-            boxShadow: isQuizMode ? '0 3px 0 #059669' : 'none',
-            transition: 'all 0.15s ease'
-          }}
-        >
-          <Zap size={18} fill={isQuizMode ? '#FFFFFF' : 'none'} />
-          <span>Quiz Exprés (3 Preguntas)</span>
-        </button>
-      </div>
-
       {/* ══════════════════════════════════════════════════════════════════════════
-          VISTA 1: QUIZ EXPRÉS DE LA MATERIA (3 PREGUNTAS RÁPIDAS Y CORTAS)
+          VISTA 1: QUIZ EXPRÉS DE LA MATERIA (ESTILO NEO-BRUTALISM)
          ══════════════════════════════════════════════════════════════════════════ */}
       {isQuizMode ? (
         <div
           style={{
             background: '#FFFFFF',
-            border: '3px solid #10B981',
-            borderRadius: '24px',
+            border: '3px solid #000000',
+            boxShadow: '6px 6px 0px #000000',
+            borderRadius: '20px',
             padding: '24px 22px',
-            boxShadow: '0 8px 0 #059669, 0 12px 28px rgba(16, 185, 129, 0.12)',
             marginBottom: '30px'
           }}
         >
           {!isQuizCompleted ? (
             <div>
-              {/* Encabezado del Quiz */}
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <span
-                    style={{
-                      background: '#ECFDF5',
-                      border: '1.5px solid #A7F3D0',
-                      color: '#047857',
-                      fontSize: '0.78rem',
-                      fontWeight: 900,
-                      padding: '4px 10px',
-                      borderRadius: '8px',
-                      textTransform: 'uppercase'
-                    }}
-                  >
-                    Quiz de Validación • Pregunta {quizIndex + 1} de {quickQuizQuestions.length}
-                  </span>
-                </div>
+                <span
+                  style={{
+                    background: '#4ADE80',
+                    border: '2px solid #000000',
+                    boxShadow: '2px 2px 0px #000000',
+                    color: '#000000',
+                    fontSize: '0.74rem',
+                    fontWeight: 900,
+                    padding: '3px 10px',
+                    borderRadius: '8px',
+                    textTransform: 'uppercase'
+                  }}
+                >
+                  Quiz de Validación • Pregunta {quizIndex + 1} de {quickQuizQuestions.length}
+                </span>
+
                 <div style={{ display: 'flex', gap: '5px' }}>
                   {quickQuizQuestions.map((_, i) => (
                     <div
                       key={i}
                       style={{
-                        width: '28px',
-                        height: '7px',
+                        width: '26px',
+                        height: '8px',
                         borderRadius: '4px',
-                        background: i < quizIndex ? '#10B981' : i === quizIndex ? '#F59E0B' : '#E2E8F0',
+                        border: '1.5px solid #000000',
+                        background: i < quizIndex ? '#4ADE80' : i === quizIndex ? '#FFE600' : '#FFFFFF',
                         transition: 'background-color 0.2s ease'
                       }}
                     />
@@ -352,11 +406,10 @@ export const TheoryViewer: React.FC<TheoryViewerProps> = ({
 
               {currentQuizExercise ? (
                 <div>
-                  <h3 style={{ fontSize: '1.25rem', fontWeight: 900, color: '#0F172A', margin: '0 0 14px 0', lineHeight: 1.35 }}>
-                    {currentQuizExercise.prompt}
+                  <h3 style={{ fontSize: '1.2rem', fontWeight: 900, color: '#000000', margin: '0 0 14px 0', lineHeight: 1.35 }}>
+                    <FormattedText text={currentQuizExercise.prompt} inline />
                   </h3>
 
-                  {/* Snippet si la pregunta tiene código */}
                   {currentQuizExercise.codeSnippet && (
                     <div style={{ margin: '14px 0' }}>
                       <VSCodeSnippet
@@ -367,36 +420,23 @@ export const TheoryViewer: React.FC<TheoryViewerProps> = ({
                     </div>
                   )}
 
-                  {/* Opciones interactivas */}
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginTop: '16px' }}>
                     {currentQuizExercise.options?.map((opt, optIdx) => {
                       const isSelected = selectedQuizOption === optIdx;
                       const letter = String.fromCharCode(65 + optIdx);
 
-                      let border = '#CBD5E1';
                       let bg = '#FFFFFF';
-                      let color = '#0F172A';
-                      let shadow = '#94A3B8';
+                      let shadow = '3px 3px 0px #000000';
 
                       if (isQuizAnswerChecked) {
                         const isCorrectOpt = optIdx === currentQuizExercise.correctIndex;
-
                         if (isCorrectOpt) {
-                          border = '#22C55E';
-                          bg = '#ECFDF5';
-                          color = '#15803D';
-                          shadow = '#16A34A';
+                          bg = '#8DE342';
                         } else if (isSelected) {
-                          border = '#EF4444';
-                          bg = '#FEF2F2';
-                          color = '#991B1B';
-                          shadow = '#DC2626';
+                          bg = '#FF6584';
                         }
                       } else if (isSelected) {
-                        border = '#0284C7';
-                        bg = '#F0F9FF';
-                        color = '#0369A1';
-                        shadow = '#0284C7';
+                        bg = '#FFE600';
                       }
 
                       return (
@@ -411,91 +451,99 @@ export const TheoryViewer: React.FC<TheoryViewerProps> = ({
                             display: 'flex',
                             alignItems: 'center',
                             gap: '12px',
-                            padding: '14px 16px',
-                            borderRadius: '16px',
-                            border: `2px solid ${border}`,
+                            padding: '12px 16px',
+                            borderRadius: '12px',
                             background: bg,
-                            color,
-                            boxShadow: `0 4px 0 ${shadow}`,
+                            border: '2.5px solid #000000',
+                            boxShadow: shadow,
+                            color: '#000000',
                             cursor: isQuizAnswerChecked ? 'default' : 'pointer',
                             textAlign: 'left',
-                            fontSize: '0.96rem',
+                            fontSize: '0.9rem',
                             fontWeight: 800,
-                            transition: 'all 0.12s ease'
+                            transition: 'all 0.1s ease'
                           }}
                         >
                           <div
                             style={{
-                              width: '32px',
-                              height: '32px',
-                              borderRadius: '10px',
-                              background: isSelected ? accentColor : '#F1F5F9',
-                              color: isSelected ? '#FFFFFF' : '#475569',
-                              border: `1.5px solid ${isSelected ? accentDark : '#CBD5E1'}`,
+                              width: '28px',
+                              height: '28px',
+                              borderRadius: '8px',
+                              background: '#FFFFFF',
+                              border: '1.5px solid #000000',
+                              color: '#000000',
                               display: 'flex',
                               alignItems: 'center',
                               justifyContent: 'center',
                               fontWeight: 900,
-                              fontSize: '0.86rem',
+                              fontSize: '0.82rem',
                               flexShrink: 0
                             }}
                           >
                             {letter}
                           </div>
-                          <span style={{ flex: 1, fontFamily: 'inherit' }}>{opt}</span>
+                          <span style={{ flex: 1 }}><FormattedText text={opt} inline /></span>
                         </button>
                       );
                     })}
                   </div>
 
-                  {/* Explicación pedagógica tras comprobar */}
                   {isQuizAnswerChecked && (
                     <div
                       style={{
-                        background: '#F8FAFC',
-                        border: '2px solid #CBD5E1',
-                        borderRadius: '16px',
-                        padding: '14px 16px',
                         marginTop: '16px',
-                        boxShadow: '0 2px 0 #94A3B8'
+                        padding: '12px 16px',
+                        borderRadius: '12px',
+                        background: selectedQuizOption === currentQuizExercise.correctIndex ? '#DCFCE7' : '#FEE2E2',
+                        border: '2px solid #000000',
+                        boxShadow: '3px 3px 0px #000000',
+                        color: '#000000',
+                        fontSize: '0.86rem',
+                        lineHeight: 1.55,
+                        fontWeight: 600
                       }}
                     >
-                      <strong style={{ color: '#0F172A', display: 'block', marginBottom: '4px' }}>
-                        Explicación:
-                      </strong>
-                      <span style={{ color: '#334155', fontSize: '0.92rem', lineHeight: 1.5, fontWeight: 600 }}>
-                        {currentQuizExercise.explanation}
-                      </span>
+                      <strong>Explicación: </strong>
+                      <FormattedText text={currentQuizExercise.explanation} inline />
                     </div>
                   )}
 
-                  {/* Botón de Comprobar / Avanzar */}
-                  <div style={{ marginTop: '22px' }}>
+                  <div style={{ marginTop: '20px' }}>
                     {!isQuizAnswerChecked ? (
                       <button
-                        className="btn-3d btn-green"
                         disabled={selectedQuizOption === null}
                         onClick={handleCheckQuizAnswer}
                         style={{
                           width: '100%',
-                          padding: '15px',
-                          borderRadius: '16px',
-                          fontSize: '1.05rem',
-                          fontWeight: 900
+                          padding: '13px',
+                          borderRadius: '12px',
+                          fontSize: '0.94rem',
+                          fontWeight: 900,
+                          background: selectedQuizOption !== null ? '#4ADE80' : '#E2E8F0',
+                          color: '#000000',
+                          border: '2.5px solid #000000',
+                          boxShadow: selectedQuizOption !== null ? '4px 4px 0px #000000' : 'none',
+                          cursor: selectedQuizOption !== null ? 'pointer' : 'default',
+                          transition: 'all 0.1s ease'
                         }}
                       >
                         COMPROBAR RESPUESTA
                       </button>
                     ) : (
                       <button
-                        className="btn-3d btn-blue"
                         onClick={handleNextQuizQuestion}
                         style={{
                           width: '100%',
-                          padding: '15px',
-                          borderRadius: '16px',
-                          fontSize: '1.05rem',
-                          fontWeight: 900
+                          padding: '13px',
+                          borderRadius: '12px',
+                          fontSize: '0.94rem',
+                          fontWeight: 900,
+                          background: '#FFE600',
+                          color: '#000000',
+                          border: '2.5px solid #000000',
+                          boxShadow: '4px 4px 0px #000000',
+                          cursor: 'pointer',
+                          transition: 'all 0.1s ease'
                         }}
                       >
                         {quizIndex < quickQuizQuestions.length - 1 ? 'SIGUIENTE PREGUNTA' : 'FINALIZAR QUIZ EXPRÉS'}
@@ -506,30 +554,56 @@ export const TheoryViewer: React.FC<TheoryViewerProps> = ({
               ) : null}
             </div>
           ) : (
-            /* ═══ CELEBRACIÓN DE QUIZ COMPLETADO ═══ */
             <div style={{ textAlign: 'center', padding: '16px 0' }}>
-              <div style={{ fontSize: '3rem', marginBottom: '10px' }}>🏆</div>
-              <h3 style={{ fontSize: '1.6rem', fontWeight: 900, color: '#0F172A', margin: '0 0 8px 0' }}>
+              <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '10px' }}>
+                <Trophy size={48} color="#000000" strokeWidth={2.5} />
+              </div>
+              <h3 style={{ fontSize: '1.45rem', fontWeight: 900, color: '#000000', margin: '0 0 6px 0' }}>
                 ¡Materia Dominada con Éxito!
               </h3>
-              <p style={{ color: '#475569', fontSize: '1rem', fontWeight: 700, margin: '0 0 20px 0', lineHeight: 1.5 }}>
+              <p style={{ color: '#334155', fontSize: '0.92rem', fontWeight: 600, margin: '0 0 18px 0', lineHeight: 1.5 }}>
                 Has validado tu comprensión conceptual de <strong>{theory.title}</strong> en solo 3 preguntas ágiles.
-                ¡Se ha guardado tu insignia teórica y ganado <strong style={{ color: '#16A34A' }}>+25 XP</strong>!
+                ¡Ganaste <strong style={{ color: '#16A34A' }}>+25 XP</strong> y puntos de Liga!
               </p>
 
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', maxWidth: '420px', margin: '0 auto' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', maxWidth: '380px', margin: '0 auto' }}>
                 <button
-                  className="btn-3d btn-green"
                   onClick={() => onStartPractice(theory.lessonId)}
-                  style={{ width: '100%', padding: '15px', borderRadius: '16px', fontSize: '1rem', fontWeight: 900 }}
+                  style={{
+                    width: '100%',
+                    padding: '13px',
+                    borderRadius: '12px',
+                    fontSize: '0.92rem',
+                    fontWeight: 900,
+                    background: '#4ADE80',
+                    color: '#000000',
+                    border: '2.5px solid #000000',
+                    boxShadow: '4px 4px 0px #000000',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '8px',
+                    cursor: 'pointer'
+                  }}
                 >
-                  🎮 IR A LA PRÁCTICA COMPLETA (10 RETOS)
+                  <Play size={16} fill="#000000" color="#000000" />
+                  <span>IR A LA PRÁCTICA COMPLETA</span>
                 </button>
 
                 <button
-                  className="btn-3d btn-blue"
                   onClick={onBack}
-                  style={{ width: '100%', padding: '13px', borderRadius: '16px', fontSize: '0.94rem', fontWeight: 800 }}
+                  style={{
+                    width: '100%',
+                    padding: '11px',
+                    borderRadius: '12px',
+                    fontSize: '0.88rem',
+                    fontWeight: 900,
+                    background: '#FFE600',
+                    color: '#000000',
+                    border: '2.5px solid #000000',
+                    boxShadow: '4px 4px 0px #000000',
+                    cursor: 'pointer'
+                  }}
                 >
                   Volver al Catálogo de Cursos
                 </button>
@@ -539,54 +613,54 @@ export const TheoryViewer: React.FC<TheoryViewerProps> = ({
         </div>
       ) : (
         /* ══════════════════════════════════════════════════════════════════════════
-            VISTA 2: CONTENIDO ENRIQUECIDO E INTERACTIVO DE LA MATERIA
+            VISTA 2: MATERIA EN FORMATO NEO-BRUTALISM PURO (A COMO SE ADJUNTÓ EN FOTO)
            ══════════════════════════════════════════════════════════════════════════ */
-        <>
-          {/* ═══ TARJETA HERO DE LA MATERIA ═══ */}
-          <div
-            style={{
-              background: '#FFFFFF',
-              border: `2.5px solid ${accentColor}`,
-              borderRadius: '24px',
-              padding: '24px 22px',
-              marginBottom: '22px',
-              boxShadow: `0 6px 0 ${accentDark}, 0 10px 24px rgba(15, 23, 42, 0.08)`,
-              position: 'relative',
-              overflow: 'hidden'
-            }}
-          >
+        <article
+          style={{
+            background: '#FFFFFF',
+            border: '3px solid #000000',
+            boxShadow: '6px 6px 0px #000000',
+            borderRadius: '20px',
+            padding: '26px 24px',
+            boxSizing: 'border-box'
+          }}
+        >
+          {/* ═══ ENCABEZADO DE LA LECCIÓN (ESTILO NEO-BRUTALISM) ═══ */}
+          <div style={{ paddingBottom: '18px', borderBottom: '2.5px solid #000000', marginBottom: '22px' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '14px' }}>
               <div style={{ flex: 1 }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: '10px', flexWrap: 'wrap' }}>
+                {/* Pestaña / Badge de Categoría Neo-Brutalism */}
+                <div style={{ marginBottom: '10px' }}>
                   <span
                     style={{
-                      background: isKotlin ? '#E0F2FE' : '#EEF2FF',
-                      color: accentColor,
-                      border: `1.5px solid ${isKotlin ? '#BAE6FD' : '#C7D2FE'}`,
-                      fontSize: '0.78rem',
+                      background: isKotlin ? '#38BDF8' : '#A78BFA',
+                      color: '#000000',
+                      border: '2px solid #000000',
+                      boxShadow: '2.5px 2.5px 0px #000000',
+                      fontSize: '0.76rem',
                       fontWeight: 900,
                       textTransform: 'uppercase',
-                      letterSpacing: '0.6px',
+                      letterSpacing: '0.5px',
                       padding: '4px 12px',
-                      borderRadius: '10px',
+                      borderRadius: '8px',
                       display: 'inline-flex',
                       alignItems: 'center',
-                      gap: 6
+                      gap: '6px'
                     }}
                   >
-                    <BookOpen size={14} strokeWidth={2.5} />
-                    Materia Interactiva • Unidad {theory.unitId} • Nivel {theory.levelId}
+                    {isKotlin ? <KotlinLogo size={14} /> : <SqlDatabaseLogo size={14} />}
+                    <span>{isKotlin ? 'Kotlin' : 'SQL Relacional'} • Unidad {theory.unitId} • Nivel {theory.levelId}</span>
                   </span>
                 </div>
 
                 <h1
                   style={{
-                    fontSize: '1.75rem',
+                    fontSize: '1.65rem',
                     fontWeight: 900,
-                    margin: '8px 0 10px 0',
+                    margin: '0 0 8px 0',
                     lineHeight: 1.25,
-                    color: '#0F172A',
-                    letterSpacing: '-0.3px'
+                    color: '#000000',
+                    letterSpacing: '-0.02em'
                   }}
                 >
                   {theory.title}
@@ -594,558 +668,1025 @@ export const TheoryViewer: React.FC<TheoryViewerProps> = ({
 
                 <p
                   style={{
-                    color: '#1E293B',
-                    fontSize: '1.04rem',
-                    lineHeight: 1.6,
+                    color: '#334155',
+                    fontSize: '0.94rem',
+                    lineHeight: 1.55,
                     margin: 0,
                     fontWeight: 600
                   }}
                 >
-                  {theory.subtitle}
+                  <FormattedText text={theory.subtitle} inline />
                 </p>
               </div>
 
-              <div style={{ flexShrink: 0 }}>
-                <ConsoleDevAvatar size={68} mood="happy" />
+              {/* Avatar Dev en marco Neo-Brutalist */}
+              <div
+                style={{
+                  border: '2.5px solid #000000',
+                  boxShadow: '3.5px 3.5px 0px #000000',
+                  borderRadius: '16px',
+                  background: '#FFFDF0',
+                  padding: '4px',
+                  flexShrink: 0
+                }}
+              >
+                <ConsoleDevAvatar size={54} mood="happy" />
               </div>
             </div>
           </div>
 
-          {/* ═══ ANALOGÍA INTUITIVA DEL MUNDO REAL ═══ */}
+          {/* ═══ ANALOGÍA: TARJETA CARPETA ESTILO NEO-BRUTALISM (COMO EN LA CAPTURA) ═══ */}
           {theory.analogy && (
-            <div
-              style={{
-                background: '#FFFBEB',
-                border: '2.5px solid #F59E0B',
-                borderRadius: '20px',
-                padding: '20px 22px',
-                marginBottom: '26px',
-                boxShadow: '0 5px 0 #D97706, 0 8px 20px rgba(245, 158, 11, 0.1)'
-              }}
-            >
+            <div style={{ margin: '0 0 24px 0' }}>
+              {/* Pestaña de carpeta saliente */}
               <div
                 style={{
-                  display: 'flex',
+                  display: 'inline-flex',
                   alignItems: 'center',
-                  gap: '8px',
-                  color: '#B45309',
+                  gap: '6px',
+                  background: '#FFD233',
+                  border: '2px solid #000000',
+                  borderBottom: 'none',
+                  borderRadius: '8px 8px 0 0',
+                  padding: '4px 12px',
                   fontWeight: 900,
-                  fontSize: '0.86rem',
-                  textTransform: 'uppercase',
-                  letterSpacing: '0.5px',
-                  marginBottom: '8px'
+                  fontSize: '0.74rem',
+                  color: '#000000',
+                  textTransform: 'uppercase'
                 }}
               >
-                <Lightbulb size={20} strokeWidth={2.8} />
-                <span>Analogía para Aprender a la Primera</span>
+                <Lightbulb size={13} color="#000000" strokeWidth={2.8} />
+                <span>Analogía Intuitiva</span>
               </div>
-              <p
+
+              {/* Cuerpo de la tarjeta con sombra dura */}
+              <div
                 style={{
-                  margin: 0,
-                  color: '#78350F',
-                  fontSize: '1.02rem',
-                  lineHeight: 1.65,
-                  fontWeight: 700
+                  background: '#FFFDF0',
+                  border: '2px solid #000000',
+                  boxShadow: '4px 4px 0px #000000',
+                  borderRadius: '0 14px 14px 14px',
+                  padding: '14px 18px',
+                  color: '#000000',
+                  fontSize: '0.9rem',
+                  lineHeight: 1.6,
+                  fontWeight: 600
                 }}
               >
-                {theory.analogy}
-              </p>
-            </div>
-          )}
-
-          {/* ═══ VIDEO RECOMENDADO EMBEBIDO (SI EXISTE) ═══ */}
-          {theory.video && (
-            <div
-              style={{
-                background: '#FFFFFF',
-                border: '2.5px solid #EF4444',
-                borderTop: '6px solid #DC2626',
-                borderRadius: '22px',
-                padding: '22px',
-                marginBottom: '26px',
-                boxShadow: '0 6px 0 #991B1B, 0 10px 22px rgba(220, 38, 38, 0.08)'
-              }}
-            >
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '10px', marginBottom: '12px' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                  <div
-                    style={{
-                      width: '38px',
-                      height: '38px',
-                      borderRadius: '12px',
-                      background: '#FEE2E2',
-                      border: '1.5px solid #FECACA',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      flexShrink: 0
-                    }}
-                  >
-                    <svg width="22" height="22" viewBox="0 0 24 24" fill="#DC2626">
-                      <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z" />
-                    </svg>
-                  </div>
-                  <div>
-                    <span style={{ fontSize: '0.72rem', fontWeight: 900, color: '#DC2626', textTransform: 'uppercase', letterSpacing: '0.6px', display: 'block' }}>
-                      Video Explicativo Recomendado
-                    </span>
-                    <h3 style={{ margin: 0, fontSize: '1.08rem', fontWeight: 900, color: '#0F172A', lineHeight: 1.3 }}>
-                      {theory.video.title}
-                    </h3>
-                  </div>
-                </div>
+                <FormattedText text={theory.analogy} />
               </div>
-
-              {(() => {
-                const ytMatch = theory.video.url.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))([\w-]{11})/);
-                const videoId = ytMatch ? ytMatch[1] : null;
-
-                return videoId ? (
-                  <div
-                    style={{
-                      position: 'relative',
-                      width: '100%',
-                      paddingTop: '56.25%',
-                      borderRadius: '16px',
-                      overflow: 'hidden',
-                      marginBottom: '14px',
-                      border: '2px solid #E2E8F0',
-                      boxShadow: '0 4px 12px rgba(0,0,0,0.08)',
-                      background: '#0F172A'
-                    }}
-                  >
-                    <iframe
-                      src={`https://www.youtube-nocookie.com/embed/${videoId}?rel=0&modestbranding=1`}
-                      title={theory.video.title}
-                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                      allowFullScreen
-                      style={{
-                        position: 'absolute',
-                        top: 0,
-                        left: 0,
-                        width: '100%',
-                        height: '100%',
-                        border: 'none'
-                      }}
-                    />
-                  </div>
-                ) : null;
-              })()}
             </div>
           )}
 
-          {/* ═══ SECCIONES DE CONTENIDO INTERACTIVO ═══ */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '26px', marginBottom: '30px' }}>
-            {theory.sections.map((section, idx) => {
-              const isSimulating = runningSection === idx;
-              const hasExecuted = executedSections[idx];
-              const isSecretOpen = expandedSecrets[idx];
+          {/* ═══ VIDEO (SI APLICA) EN MARCO NEO-BRUTALIST ═══ */}
+          {theory.video && (() => {
+            const ytMatch = theory.video.url.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))([\w-]{11})/);
+            const videoId = ytMatch ? ytMatch[1] : null;
 
-              return (
+            return videoId ? (
+              <div style={{ marginBottom: '24px' }}>
                 <div
-                  key={idx}
                   style={{
-                    background: '#FFFFFF',
-                    border: `2.5px solid ${isKotlin ? '#38BDF8' : '#818CF8'}`,
-                    borderTop: `6px solid ${accentColor}`,
-                    borderRadius: '22px',
-                    padding: '24px 22px',
-                    boxShadow: `0 6px 0 ${accentDark}, 0 8px 20px rgba(15, 23, 42, 0.05)`,
-                    boxSizing: 'border-box'
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '6px',
+                    background: '#FF5B89',
+                    border: '2px solid #000000',
+                    borderBottom: 'none',
+                    borderRadius: '8px 8px 0 0',
+                    padding: '4px 12px',
+                    color: '#000000',
+                    fontSize: '0.74rem',
+                    fontWeight: 900,
+                    textTransform: 'uppercase'
                   }}
                 >
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
-                    <span
-                      style={{
-                        background: badgeBg,
-                        color: accentColor,
-                        border: `1.5px solid ${isKotlin ? '#BAE6FD' : '#C7D2FE'}`,
-                        fontSize: '0.74rem',
-                        fontWeight: 900,
-                        textTransform: 'uppercase',
-                        letterSpacing: '0.6px',
-                        padding: '3px 10px',
-                        borderRadius: '8px'
-                      }}
-                    >
-                      Módulo {idx + 1}
-                    </span>
+                  <Play size={11} fill="#000000" color="#000000" />
+                  <span>Video: {theory.video.title}</span>
+                </div>
+                <div
+                  style={{
+                    position: 'relative',
+                    width: '100%',
+                    paddingTop: '56.25%',
+                    borderRadius: '0 14px 14px 14px',
+                    overflow: 'hidden',
+                    background: '#0F172A',
+                    border: '2.5px solid #000000',
+                    boxShadow: '4px 4px 0px #000000'
+                  }}
+                >
+                  <iframe
+                    src={`https://www.youtube-nocookie.com/embed/${videoId}?rel=0&modestbranding=1`}
+                    title={theory.video.title}
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    allowFullScreen
+                    style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', border: 'none' }}
+                  />
+                </div>
+              </div>
+            ) : null;
+          })()}
+
+          {/* ═══ SECCIONES DE CONTENIDO NEO-BRUTALISM ═══ */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '26px' }}>
+            {theory.sections.map((section, idx) => {
+              // Colores de carpetas estilo captura: verde lima, fucsia, morado, azul, amarillo
+              const SECTION_TAB_COLORS = ['#8DE342', '#FF6584', '#A78BFA', '#38BDF8', '#FFD233'];
+              const tabColor = SECTION_TAB_COLORS[idx % SECTION_TAB_COLORS.length];
+
+              return (
+                <div key={idx}>
+                  {/* Pestaña de Módulo Neo-Brutalism */}
+                  <div
+                    style={{
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '6px',
+                      background: tabColor,
+                      border: '2px solid #000000',
+                      boxShadow: '2px 2px 0px #000000',
+                      borderRadius: '8px',
+                      padding: '3px 10px',
+                      fontWeight: 900,
+                      color: '#000000',
+                      fontSize: '0.78rem',
+                      marginBottom: '8px'
+                    }}
+                  >
+                    <span>Módulo {idx + 1}</span>
                   </div>
 
+                  {/* Título de la sección */}
                   <h2
                     style={{
-                      fontSize: '1.3rem',
+                      fontSize: '1.25rem',
                       fontWeight: 900,
-                      color: '#0F172A',
-                      marginBottom: '14px',
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '10px',
+                      color: '#000000',
+                      margin: '0 0 10px 0',
                       lineHeight: 1.3
                     }}
                   >
-                    <span
-                      style={{
-                        width: '10px',
-                        height: '10px',
-                        borderRadius: '50%',
-                        background: accentColor,
-                        flexShrink: 0
-                      }}
-                    />
-                    <span>{section.title}</span>
+                    <FormattedText text={section.title} inline />
                   </h2>
 
-                  {/* Texto de explicación con alto contraste */}
-                  <p
-                    style={{
-                      color: '#0F172A',
-                      fontSize: '1.02rem',
-                      lineHeight: 1.8,
-                      marginBottom: '18px',
-                      whiteSpace: 'pre-line',
-                      fontWeight: 600
-                    }}
-                  >
-                    {section.explanation}
-                  </p>
-
-                  {/* ═══ SIMULADOR INTERACTIVO DE CÓDIGO (EN VIVO) ═══ */}
-                  {section.codeSnippet && (
-                    <div
-                      style={{
-                        margin: '18px 0 14px 0',
-                        background: '#0F172A',
-                        borderRadius: '18px',
-                        border: '2px solid #334155',
-                        overflow: 'hidden',
-                        boxShadow: '0 5px 0 #020617'
-                      }}
-                    >
-                      {/* Barra de herramientas del simulador */}
-                      <div
-                        style={{
-                          background: '#1E293B',
-                          padding: '10px 14px',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'space-between',
-                          borderBottom: '2px solid #0F172A',
-                          flexWrap: 'wrap',
-                          gap: '8px'
-                        }}
-                      >
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                          <div style={{ width: '10px', height: '10px', borderRadius: '50%', background: '#EF4444' }} />
-                          <div style={{ width: '10px', height: '10px', borderRadius: '50%', background: '#F59E0B' }} />
-                          <div style={{ width: '10px', height: '10px', borderRadius: '50%', background: '#10B981' }} />
-                          <span style={{ fontSize: '0.78rem', color: '#94A3B8', fontFamily: 'JetBrains Mono', fontWeight: 800, marginLeft: '6px' }}>
-                            {theory.pathId === 'sql' ? 'playground.sql' : 'playground.kt'}
-                          </span>
-                        </div>
-
-                        {/* Botón interactivo de Ejecución en Vivo */}
-                        <button
-                          onClick={() => handleRunCode(idx)}
-                          disabled={isSimulating}
-                          style={{
-                            display: 'inline-flex',
-                            alignItems: 'center',
-                            gap: '6px',
-                            background: '#10B981',
-                            color: '#FFFFFF',
-                            border: '1.5px solid #059669',
-                            boxShadow: '0 3px 0 #047857',
-                            padding: '6px 14px',
-                            borderRadius: '10px',
-                            fontSize: '0.8rem',
-                            fontWeight: 900,
-                            cursor: 'pointer',
-                            transition: 'all 0.1s ease'
-                          }}
-                        >
-                          <Play size={13} fill="#FFFFFF" />
-                          <span>{isSimulating ? 'Compilando...' : hasExecuted ? 'Re-Ejecutar Código' : '▶ Ejecutar Código'}</span>
-                        </button>
-                      </div>
-
-                      {/* Código fuente */}
-                      <div style={{ padding: '4px' }}>
-                        <VSCodeSnippet
-                          code={section.codeSnippet}
-                          language={(section.codeLanguage || theory.pathId) as 'kotlin' | 'sql'}
-                          filename={theory.pathId === 'sql' ? 'consulta.sql' : 'main.kt'}
-                        />
-                      </div>
-
-                      {/* Terminal de Salida Simulada Reactiva */}
-                      <div
-                        style={{
-                          background: '#020617',
-                          borderTop: '2px solid #1E293B',
-                          padding: '14px 16px',
-                          fontFamily: 'var(--font-code, monospace)'
-                        }}
-                      >
-                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
-                          <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: '#94A3B8', fontSize: '0.75rem', fontWeight: 900 }}>
-                            <Terminal size={14} color="#38BDF8" />
-                            <span>{theory.pathId === 'sql' ? 'Resultado del Motor RDBMS' : 'Salida en Consola Terminal'}</span>
-                          </div>
-
-                          {hasExecuted && (
-                            <span style={{ fontSize: '0.72rem', color: '#34D399', fontWeight: 900, background: 'rgba(52, 211, 153, 0.12)', padding: '2px 8px', borderRadius: '6px' }}>
-                              ✓ Ejecutado con éxito en 0.04s
-                            </span>
-                          )}
-                        </div>
-
-                        <pre
-                          style={{
-                            margin: 0,
-                            color: hasExecuted ? '#38BDF8' : '#64748B',
-                            fontSize: '0.88rem',
-                            whiteSpace: 'pre-wrap',
-                            lineHeight: 1.55,
-                            fontWeight: 700,
-                            filter: isSimulating ? 'blur(2px)' : 'none',
-                            transition: 'all 0.2s ease'
-                          }}
-                        >
-                          {isSimulating
-                            ? '⏳ Enviando al compilador en tiempo real...'
-                            : section.outputSnippet || 'Sin salida directa a terminal.'}
-                        </pre>
-                      </div>
-                    </div>
-                  )}
-
-                  {/* ═══ TARJETA INTERACTIVA: "¿QUÉ PASA BAJO EL CAPÓ?" ═══ */}
+                  {/* Texto de explicación con lenguaje accesible y formato enriquecido */}
                   <div
                     style={{
-                      background: '#F8FAFC',
-                      border: '2px solid #CBD5E1',
-                      borderRadius: '16px',
-                      overflow: 'hidden',
-                      marginTop: '16px'
+                      color: '#0F172A',
+                      fontSize: '0.92rem',
+                      lineHeight: 1.7,
+                      marginBottom: '16px',
+                      fontWeight: 500
                     }}
                   >
-                    <button
-                      onClick={() => {
-                        soundService.playToken();
-                        setExpandedSecrets((prev) => ({ ...prev, [idx]: !prev[idx] }));
-                      }}
-                      style={{
-                        width: '100%',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'space-between',
-                        padding: '12px 16px',
-                        background: 'transparent',
-                        border: 'none',
-                        cursor: 'pointer',
-                        textAlign: 'left',
-                        fontWeight: 900,
-                        fontSize: '0.88rem',
-                        color: '#334155'
-                      }}
-                    >
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                        <Sparkles size={16} color={accentColor} />
-                        <span>💡 Secreto de Arquitectura: ¿Cómo funciona internamente?</span>
-                      </div>
-                      {isSecretOpen ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
-                    </button>
-
-                    {isSecretOpen && (
-                      <div style={{ padding: '0 16px 14px 16px', color: '#475569', fontSize: '0.92rem', lineHeight: 1.6, fontWeight: 600 }}>
-                        {theory.pathId === 'sql'
-                          ? 'El motor SQL traduce la consulta declarativa en un árbol de operaciones algebraicas (Query Execution Plan). El optimizador de costos elige el algoritmo más veloz según los índices en memoria RAM.'
-                          : 'El compilador de Kotlin (`kotlinc`) convierte tus instrucciones de alto nivel a bytecode de Java (`.class`). La Máquina Virtual (JVM) las ejecuta y optimiza mediante el compilador JIT (Just-In-Time) a código máquina de la CPU.'}
-                      </div>
-                    )}
+                    <FormattedText text={section.explanation} />
                   </div>
 
-                  {/* Tip Pro de Byte */}
-                  {section.byteTip && (
-                    <div
-                      style={{
-                        background: '#F0F9FF',
-                        border: '2px solid #BAE6FD',
-                        borderLeft: '5px solid #0284C7',
-                        borderRadius: '14px',
-                        padding: '14px 16px',
-                        marginTop: '16px',
-                        boxShadow: '0 2px 0 #7DD3FC'
-                      }}
-                    >
+                  {/* ═══ CONSOLA / SIMULADOR NEO-BRUTALIST (EJECUCIÓN REAL EN VIVO) ═══ */}
+                  {section.codeSnippet && (() => {
+                    const activeCode = customCode[idx] ?? section.codeSnippet ?? '';
+                    const isEditing = Boolean(isEditingSection[idx]);
+                    const hasExecuted = Boolean(executedSections[idx]);
+                    const isSimulating = runningSection === idx;
+                    const isTableMode = viewModeTable[idx] !== false;
+                    const sqlRes = sqlResults[idx];
+                    const ktRes = kotlinResults[idx];
+                    const isCustomized = customCode[idx] !== undefined && customCode[idx] !== section.codeSnippet;
+                    const currentErrDetail: CodeErrorDetail | undefined =
+                      theory.pathId === 'sql' ? sqlRes?.errorDetail : ktRes?.errorDetail;
+                    const hasError = hasExecuted && !isSimulating && (theory.pathId === 'sql' ? !sqlRes?.success : !ktRes?.success);
+
+                    return (
                       <div
                         style={{
-                          display: 'flex',
-                          alignItems: 'center',
-                          gap: '6px',
-                          color: '#0369A1',
-                          fontWeight: 900,
-                          fontSize: '0.82rem',
-                          textTransform: 'uppercase',
-                          marginBottom: '4px',
-                          letterSpacing: '0.5px'
+                          margin: '14px 0 20px 0',
+                          background: '#0F172A',
+                          border: hasError ? '2.5px solid #EF4444' : '2.5px solid #000000',
+                          boxShadow: hasError ? '4.5px 4.5px 0px #DC2626' : '4.5px 4.5px 0px #000000',
+                          borderRadius: '14px',
+                          overflow: 'hidden',
+                          transition: 'border 0.2s ease, box-shadow 0.2s ease'
                         }}
                       >
-                        <Info size={16} strokeWidth={2.8} />
-                        <span>Tip de Ingeniero</span>
+                        {/* ÚNICA BARRA DE VENTANA ESTILO MAC NEO-BRUTALIST */}
+                        <div
+                          style={{
+                            background: hasError ? '#FEE2E2' : '#FFE600',
+                            padding: '8px 14px',
+                            borderBottom: '2.5px solid #000000',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'space-between',
+                            flexWrap: 'wrap',
+                            gap: '8px',
+                            transition: 'background-color 0.2s ease'
+                          }}
+                        >
+                          {/* 3 puntos estilo Mac con borde negro + etiqueta de archivo + indicador de error */}
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+                            <div style={{ display: 'flex', gap: '5px' }}>
+                              <div style={{ width: '9px', height: '9px', borderRadius: '50%', background: '#EF4444', border: '1px solid #000000' }} />
+                              <div style={{ width: '9px', height: '9px', borderRadius: '50%', background: '#F59E0B', border: '1px solid #000000' }} />
+                              <div style={{ width: '9px', height: '9px', borderRadius: '50%', background: '#10B981', border: '1px solid #000000' }} />
+                            </div>
+                            <span
+                              style={{
+                                background: '#FFFFFF',
+                                border: '1.5px solid #000000',
+                                boxShadow: '1.5px 1.5px 0px #000000',
+                                borderRadius: '6px',
+                                padding: '2px 8px',
+                                fontSize: '0.74rem',
+                                fontFamily: 'JetBrains Mono, monospace',
+                                fontWeight: 900,
+                                color: '#000000'
+                              }}
+                            >
+                              {theory.pathId === 'sql' ? 'consulta.sql' : 'main.kt'}
+                            </span>
+                            {isCustomized && (
+                              <span
+                                style={{
+                                  background: '#FEF08A',
+                                  border: '1px solid #000000',
+                                  borderRadius: '4px',
+                                  padding: '1px 6px',
+                                  fontSize: '0.68rem',
+                                  fontWeight: 800,
+                                  color: '#854D0E'
+                                }}
+                              >
+                                Modificado
+                              </span>
+                            )}
+                            {hasError && currentErrDetail && (
+                              <span
+                                style={{
+                                  background: '#EF4444',
+                                  border: '1.5px solid #000000',
+                                  boxShadow: '1.5px 1.5px 0px #000000',
+                                  borderRadius: '6px',
+                                  padding: '1px 7px',
+                                  fontSize: '0.68rem',
+                                  fontWeight: 900,
+                                  color: '#FFFFFF',
+                                  display: 'inline-flex',
+                                  alignItems: 'center',
+                                  gap: '4px'
+                                }}
+                              >
+                                <AlertTriangle size={11} color="#FFFFFF" strokeWidth={3} />
+                                Error en L.{currentErrDetail.line}
+                              </span>
+                            )}
+                          </div>
+
+                          {/* Botones de Acción: Editar, Resetear y Ejecutar */}
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                            {isCustomized && (
+                              <button
+                                onClick={() => handleResetCode(idx, section.codeSnippet || '')}
+                                title="Restaurar código original de la lección"
+                                style={{
+                                  display: 'inline-flex',
+                                  alignItems: 'center',
+                                  gap: '4px',
+                                  background: '#FFFFFF',
+                                  color: '#000000',
+                                  border: '1.5px solid #000000',
+                                  borderRadius: '6px',
+                                  padding: '3px 8px',
+                                  fontSize: '0.7rem',
+                                  fontWeight: 800,
+                                  cursor: 'pointer'
+                                }}
+                              >
+                                <RotateCcw size={11} strokeWidth={2.5} />
+                                <span>Restaurar</span>
+                              </button>
+                            )}
+
+                            <button
+                              onClick={() => {
+                                soundService.playToken();
+                                setIsEditingSection((prev) => ({ ...prev, [idx]: !prev[idx] }));
+                              }}
+                              style={{
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                gap: '4px',
+                                background: isEditing ? '#BAE6FD' : '#FFFFFF',
+                                color: '#000000',
+                                border: '1.5px solid #000000',
+                                boxShadow: isEditing ? '1.5px 1.5px 0px #000000' : 'none',
+                                borderRadius: '6px',
+                                padding: '3px 8px',
+                                fontSize: '0.7rem',
+                                fontWeight: 800,
+                                cursor: 'pointer'
+                              }}
+                            >
+                              <Edit3 size={11} strokeWidth={2.5} />
+                              <span>{isEditing ? 'Ver Resaltado' : 'Modificar'}</span>
+                            </button>
+
+                            <button
+                              onClick={() => handleRunCode(idx, section.codeSnippet || '')}
+                              disabled={isSimulating}
+                              style={{
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                gap: '5px',
+                                background: isSimulating ? '#FCD34D' : '#4ADE80',
+                                color: '#000000',
+                                border: '2px solid #000000',
+                                boxShadow: '2px 2px 0px #000000',
+                                borderRadius: '8px',
+                                padding: '4px 12px',
+                                fontSize: '0.76rem',
+                                fontWeight: 900,
+                                cursor: isSimulating ? 'wait' : 'pointer',
+                                transition: 'all 0.1s ease'
+                              }}
+                            >
+                              <Play size={11} fill="#000000" color="#000000" strokeWidth={0} />
+                              <span>{isSimulating ? 'Ejecutando...' : hasExecuted ? 'Re-Ejecutar' : 'Ejecutar'}</span>
+                            </button>
+                          </div>
+                        </div>
+
+                        {/* Editor Interactivo o Visualizador Resaltado */}
+                        {isEditing ? (
+                          <div style={{ background: '#020617', padding: '12px 14px' }}>
+                            {/* Alerta de error clara y contextual al editar código */}
+                            {hasError && currentErrDetail && (
+                              <div
+                                style={{
+                                  marginBottom: '10px',
+                                  padding: '10px 14px',
+                                  background: '#450A0A',
+                                  border: '2px solid #EF4444',
+                                  boxShadow: '3px 3px 0px #000000',
+                                  borderRadius: '8px',
+                                  color: '#FEE2E2',
+                                  display: 'flex',
+                                  flexDirection: 'column',
+                                  gap: '6px'
+                                }}
+                              >
+                                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px', flexWrap: 'wrap' }}>
+                                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                    <div style={{ width: '22px', height: '22px', borderRadius: '6px', background: '#EF4444', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                                      <AlertTriangle size={13} color="#FFFFFF" strokeWidth={2.8} />
+                                    </div>
+                                    <span style={{ fontWeight: 900, color: '#FCA5A5', fontSize: '0.8rem', fontFamily: 'JetBrains Mono, monospace' }}>
+                                      ERROR EN LÍNEA {currentErrDetail.line}, COLUMNA {currentErrDetail.column}
+                                    </span>
+                                  </div>
+                                  <button
+                                    onClick={() => {
+                                      soundService.playToken();
+                                      setIsEditingSection((prev) => ({ ...prev, [idx]: false }));
+                                    }}
+                                    style={{
+                                      background: '#EF4444',
+                                      color: '#FFFFFF',
+                                      border: '1.5px solid #000000',
+                                      borderRadius: '6px',
+                                      padding: '2px 8px',
+                                      fontSize: '0.68rem',
+                                      fontWeight: 900,
+                                      cursor: 'pointer'
+                                    }}
+                                  >
+                                    Ver línea marcada
+                                  </button>
+                                </div>
+
+                                <div style={{ fontSize: '0.8rem', fontWeight: 700, color: '#FFFFFF', lineHeight: 1.4 }}>
+                                  {currentErrDetail.message}
+                                </div>
+
+                                {currentErrDetail.lineContent && (
+                                  <div
+                                    style={{
+                                      background: '#1F0505',
+                                      border: '1px solid #7F1D1D',
+                                      borderRadius: '5px',
+                                      padding: '4px 8px',
+                                      fontFamily: 'JetBrains Mono, monospace',
+                                      fontSize: '0.76rem',
+                                      color: '#F87171'
+                                    }}
+                                  >
+                                    <span style={{ color: '#9CA3AF' }}>L.{currentErrDetail.line} | </span>
+                                    <span>{currentErrDetail.lineContent}</span>
+                                  </div>
+                                )}
+
+                                {currentErrDetail.suggestion && (
+                                  <div
+                                    style={{
+                                      background: 'rgba(239, 68, 68, 0.2)',
+                                      padding: '6px 10px',
+                                      borderRadius: '6px',
+                                      borderLeft: '3px solid #FDE047',
+                                      color: '#FEF08A',
+                                      fontSize: '0.74rem',
+                                      fontWeight: 700
+                                    }}
+                                  >
+                                    <span style={{ color: '#FDE047', fontWeight: 900 }}>Sugerencia: </span>
+                                    {currentErrDetail.suggestion}
+                                  </div>
+                                )}
+                              </div>
+                            )}
+
+                            <div style={{ color: '#94A3B8', fontSize: '0.68rem', fontWeight: 700, marginBottom: '6px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                              <span>Editor editable en vivo: cambia valores y pulsa "Ejecutar"</span>
+                              <span>{activeCode.split('\n').length} líneas</span>
+                            </div>
+                            <textarea
+                              value={activeCode}
+                              onChange={(e) => {
+                                const val = e.target.value;
+                                setCustomCode((prev) => ({ ...prev, [idx]: val }));
+                              }}
+                              spellCheck={false}
+                              rows={Math.max(4, Math.min(14, activeCode.split('\n').length + 1))}
+                              style={{
+                                width: '100%',
+                                background: '#0B132B',
+                                color: '#38BDF8',
+                                border: hasError ? '2px solid #EF4444' : '1.5px solid #334155',
+                                borderRadius: '8px',
+                                padding: '10px 12px',
+                                fontFamily: 'JetBrains Mono, Fira Code, Consolas, monospace',
+                                fontSize: '0.84rem',
+                                lineHeight: 1.5,
+                                outline: 'none',
+                                resize: 'vertical',
+                                boxSizing: 'border-box'
+                              }}
+                            />
+                          </div>
+                        ) : (
+                          <div>
+                            {hasError && currentErrDetail && (
+                              <div
+                                style={{
+                                  background: '#450A0A',
+                                  borderBottom: '2px solid #EF4444',
+                                  padding: '7px 14px',
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  justifyContent: 'space-between',
+                                  color: '#FEE2E2',
+                                  fontSize: '0.76rem',
+                                  fontWeight: 800
+                                }}
+                              >
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '7px' }}>
+                                  <AlertTriangle size={13} color="#EF4444" strokeWidth={2.8} />
+                                  <span>Línea {currentErrDetail.line} marcada en rojo con error.</span>
+                                </div>
+                                <button
+                                  onClick={() => {
+                                    soundService.playToken();
+                                    setIsEditingSection((prev) => ({ ...prev, [idx]: true }));
+                                  }}
+                                  style={{
+                                    background: '#FFE600',
+                                    color: '#000000',
+                                    border: '1.5px solid #000000',
+                                    borderRadius: '6px',
+                                    padding: '2px 8px',
+                                    fontSize: '0.68rem',
+                                    fontWeight: 900,
+                                    cursor: 'pointer'
+                                  }}
+                                >
+                                  Corregir en editor
+                                </button>
+                              </div>
+                            )}
+                            <VSCodeSnippet
+                              code={activeCode}
+                              language={(section.codeLanguage || theory.pathId) as 'kotlin' | 'sql'}
+                              filename={theory.pathId === 'sql' ? 'consulta.sql' : 'main.kt'}
+                              errorLine={hasError && currentErrDetail?.line ? currentErrDetail.line - 1 : undefined}
+                              hideHeader={true}
+                              style={{ border: 'none', boxShadow: 'none', margin: 0, borderRadius: 0 }}
+                            />
+                          </div>
+                        )}
+
+                        {/* ═══ ESTADO DE CARGA / COMPILACIÓN ═══ */}
+                        {isSimulating && (
+                          <div
+                            style={{
+                              background: '#0B132B',
+                              borderTop: '2.5px solid #000000',
+                              padding: '12px 16px',
+                              display: 'flex',
+                              alignItems: 'center',
+                              gap: '10px',
+                              color: '#FDE047'
+                            }}
+                          >
+                            <div style={{ width: '12px', height: '12px', borderRadius: '50%', background: '#FDE047', border: '1.5px solid #000000' }} />
+                            <span style={{ fontSize: '0.78rem', fontFamily: 'monospace', fontWeight: 800 }}>
+                              {theory.pathId === 'sql' ? 'Ejecutando consulta en motor relacional...' : 'Compilando y ejecutando bytecode Kotlin...'}
+                            </span>
+                          </div>
+                        )}
+
+                        {/* ═══ ESTADO INICIAL ANTES DE EJECUTAR ═══ */}
+                        {!hasExecuted && !isSimulating && (
+                          <div
+                            style={{
+                              background: '#090D1A',
+                              borderTop: '2.5px solid #000000',
+                              padding: '12px 16px',
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'space-between',
+                              gap: '10px'
+                            }}
+                          >
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#94A3B8' }}>
+                              <Terminal size={14} color="#64748B" />
+                              <span style={{ fontSize: '0.76rem', fontWeight: 700 }}>
+                                Pulsa el botón verde <strong style={{ color: '#4ADE80' }}>Ejecutar</strong> para compilar el código y ver el resultado real en pantalla.
+                              </span>
+                            </div>
+                            <button
+                              onClick={() => handleRunCode(idx, section.codeSnippet || '')}
+                              style={{
+                                background: '#4ADE80',
+                                border: '1.5px solid #000000',
+                                borderRadius: '6px',
+                                padding: '3px 10px',
+                                fontSize: '0.72rem',
+                                fontWeight: 900,
+                                color: '#000000',
+                                cursor: 'pointer',
+                                flexShrink: 0
+                              }}
+                            >
+                              Ejecutar
+                            </button>
+                          </div>
+                        )}
+
+                        {/* ═══ RESULTADO REAL DE SQL ═══ */}
+                        {hasExecuted && !isSimulating && theory.pathId === 'sql' && (
+                          <div style={{ background: '#FFFFFF', borderTop: '2.5px solid #000000' }}>
+                            {/* Cabecera del resultado SQL */}
+                            <div
+                              style={{
+                                background: sqlRes?.success ? '#F8FAFC' : '#FEF2F2',
+                                padding: '7px 14px',
+                                borderBottom: '2px solid #000000',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'space-between',
+                                flexWrap: 'wrap',
+                                gap: '8px'
+                              }}
+                            >
+                              <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: '#000000', fontSize: '0.76rem', fontWeight: 900 }}>
+                                <Database size={13} color="#000000" strokeWidth={2.5} />
+                                <span>{sqlRes?.success ? 'Resultado en Base de Datos' : 'Fallo en la consulta SQL'}</span>
+                                {sqlRes && (
+                                  <span
+                                    style={{
+                                      fontSize: '0.68rem',
+                                      background: sqlRes.success ? '#DCFCE7' : '#FEE2E2',
+                                      color: sqlRes.success ? '#15803D' : '#DC2626',
+                                      border: '1px solid #000000',
+                                      borderRadius: '4px',
+                                      padding: '1px 6px',
+                                      fontWeight: 800
+                                    }}
+                                  >
+                                    {sqlRes.success
+                                      ? `${sqlRes.executionTimeMs} ms • ${sqlRes.rowCount} ${sqlRes.rowCount === 1 ? 'fila' : 'filas'}`
+                                      : `Error L.${sqlRes.errorDetail?.line || 1} • ${sqlRes.executionTimeMs} ms`}
+                                  </span>
+                                )}
+                              </div>
+
+                              {sqlRes?.success && (
+                                <div style={{ display: 'flex', gap: '4px' }}>
+                                  <button
+                                    onClick={() => setViewModeTable((prev) => ({ ...prev, [idx]: true }))}
+                                    style={{
+                                      background: isTableMode ? '#FFE600' : '#FFFFFF',
+                                      color: '#000000',
+                                      border: '1.5px solid #000000',
+                                      boxShadow: isTableMode ? '1.5px 1.5px 0px #000000' : 'none',
+                                      borderRadius: '6px',
+                                      padding: '2px 8px',
+                                      fontSize: '0.7rem',
+                                      fontWeight: 900,
+                                      cursor: 'pointer'
+                                    }}
+                                  >
+                                    Tabla
+                                  </button>
+                                  <button
+                                    onClick={() => setViewModeTable((prev) => ({ ...prev, [idx]: false }))}
+                                    style={{
+                                      background: !isTableMode ? '#FFE600' : '#FFFFFF',
+                                      color: '#000000',
+                                      border: '1.5px solid #000000',
+                                      boxShadow: !isTableMode ? '1.5px 1.5px 0px #000000' : 'none',
+                                      borderRadius: '6px',
+                                      padding: '2px 8px',
+                                      fontSize: '0.7rem',
+                                      fontWeight: 900,
+                                      cursor: 'pointer'
+                                    }}
+                                  >
+                                    Consola Raw
+                                  </button>
+                                </div>
+                              )}
+                            </div>
+
+                            {/* Contenido SQL: Tabla o Consola o Error */}
+                            {!sqlRes?.success ? (
+                              <div style={{ background: '#090D1A', color: '#FCA5A5', padding: '12px 14px', fontFamily: 'JetBrains Mono, Fira Code, Consolas, monospace', fontSize: '0.8rem' }}>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '8px', color: '#EF4444', fontWeight: 900 }}>
+                                  <AlertTriangle size={15} color="#EF4444" strokeWidth={2.6} />
+                                  <span>Diagnóstico de consola SQL (MySQL / PostgreSQL):</span>
+                                </div>
+                                <pre
+                                  style={{
+                                    margin: 0,
+                                    whiteSpace: 'pre-wrap',
+                                    lineHeight: 1.5,
+                                    background: '#020617',
+                                    padding: '10px 12px',
+                                    borderRadius: '6px',
+                                    border: '1.5px solid #7F1D1D',
+                                    color: '#F87171',
+                                    fontSize: '0.82rem'
+                                  }}
+                                >
+                                  {sqlRes?.errorDetail?.formattedOutput || sqlRes?.rawOutput || sqlRes?.error || 'Error al ejecutar SQL'}
+                                </pre>
+                                {sqlRes?.errorDetail?.suggestion && (
+                                  <div
+                                    style={{
+                                      marginTop: '10px',
+                                      background: 'rgba(245, 158, 11, 0.15)',
+                                      border: '1.5px solid #F59E0B',
+                                      borderRadius: '6px',
+                                      padding: '8px 12px',
+                                      color: '#FEF08A',
+                                      fontSize: '0.76rem',
+                                      fontWeight: 700
+                                    }}
+                                  >
+                                    <span style={{ color: '#FDE047', fontWeight: 900 }}>Sugerencia del motor: </span>
+                                    {sqlRes.errorDetail.suggestion}
+                                  </div>
+                                )}
+                              </div>
+                            ) : isTableMode ? (
+                              <div style={{ overflowX: 'auto' }}>
+                                <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.82rem' }}>
+                                  <thead>
+                                    <tr style={{ background: '#FEF08A', color: '#000000' }}>
+                                      {sqlRes.headers.map((h, hIdx) => (
+                                        <th
+                                          key={hIdx}
+                                          style={{
+                                            padding: '8px 14px',
+                                            fontWeight: 900,
+                                            fontSize: '0.74rem',
+                                            letterSpacing: '0.5px',
+                                            borderBottom: '2px solid #000000',
+                                            borderRight: hIdx < sqlRes.headers.length - 1 ? '1.5px solid #000000' : 'none'
+                                          }}
+                                        >
+                                          {h}
+                                        </th>
+                                      ))}
+                                    </tr>
+                                  </thead>
+                                  <tbody>
+                                    {sqlRes.rows.map((row, rIdx) => (
+                                      <tr
+                                        key={rIdx}
+                                        style={{
+                                          background: rIdx % 2 === 0 ? '#FFFFFF' : '#F8FAFC',
+                                          borderBottom: '1px solid #CBD5E1'
+                                        }}
+                                      >
+                                        {row.map((cell, cIdx) => (
+                                          <td
+                                            key={cIdx}
+                                            style={{
+                                              padding: '8px 14px',
+                                              color: '#000000',
+                                              fontWeight: 600,
+                                              borderRight: cIdx < row.length - 1 ? '1px solid #E2E8F0' : 'none'
+                                            }}
+                                          >
+                                            {sqlRes.headers[cIdx]?.toLowerCase() === 'id' ? (
+                                              <span style={{ background: '#A7F3D0', border: '1.5px solid #000000', color: '#000000', padding: '1px 6px', borderRadius: '4px', fontWeight: 900, fontSize: '0.72rem' }}>
+                                                #{cell}
+                                              </span>
+                                            ) : cell?.toLowerCase() === 'true' || cell?.toLowerCase() === 'false' ? (
+                                              <span style={{ background: cell.toLowerCase() === 'true' ? '#8DE342' : '#F1F5F9', border: '1.5px solid #000000', color: '#000000', padding: '1px 6px', borderRadius: '4px', fontWeight: 900, fontSize: '0.72rem' }}>
+                                                {cell}
+                                              </span>
+                                            ) : (
+                                              cell
+                                            )}
+                                          </td>
+                                        ))}
+                                      </tr>
+                                    ))}
+                                  </tbody>
+                                </table>
+                                <div style={{ padding: '6px 14px', background: '#F1F5F9', borderTop: '2px solid #000000', color: '#000000', fontSize: '0.74rem', fontWeight: 800 }}>
+                                  {sqlRes.rowCount} {sqlRes.rowCount === 1 ? 'fila devuelta' : 'filas devueltas'}
+                                </div>
+                              </div>
+                            ) : (
+                              <div style={{ background: '#020617', padding: '12px 14px', fontFamily: 'monospace' }}>
+                                <pre style={{ margin: 0, color: '#38BDF8', fontSize: '0.8rem', whiteSpace: 'pre-wrap', lineHeight: 1.45 }}>
+                                  {sqlRes.rawOutput}
+                                </pre>
+                              </div>
+                            )}
+                          </div>
+                        )}
+
+                        {/* ═══ RESULTADO REAL DE KOTLIN ═══ */}
+                        {hasExecuted && !isSimulating && theory.pathId === 'kotlin' && (
+                          <div
+                            style={{
+                              background: '#020617',
+                              borderTop: '2.5px solid #000000',
+                              padding: '10px 14px',
+                              fontFamily: 'JetBrains Mono, Fira Code, Consolas, monospace'
+                            }}
+                          >
+                            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
+                              <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: '#94A3B8', fontSize: '0.72rem', fontWeight: 800 }}>
+                                <Terminal size={12} color="#38BDF8" />
+                                <span>{ktRes?.success ? 'Salida Terminal (stdout)' : 'Diagnóstico del Compilador (kotlinc)'}</span>
+                              </div>
+
+                              <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                                {ktRes && (
+                                  <span
+                                    style={{
+                                      fontSize: '0.68rem',
+                                      background: ktRes.success ? '#064E3B' : '#7F1D1D',
+                                      color: ktRes.success ? '#6EE7B7' : '#FCA5A5',
+                                      border: `1px solid ${ktRes.success ? '#059669' : '#EF4444'}`,
+                                      borderRadius: '4px',
+                                      padding: '1px 6px',
+                                      fontWeight: 800
+                                    }}
+                                  >
+                                    {ktRes.success ? '✓ 0 errores' : `Error en L.${ktRes.errorDetail?.line || 1}`} • {ktRes.executionTimeMs} ms
+                                  </span>
+                                )}
+                                <span style={{ fontSize: '0.7rem', color: ktRes?.success ? '#4ADE80' : '#EF4444', fontWeight: 900, display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                                  {ktRes?.success ? <CheckCircle2 size={11} color="#4ADE80" /> : <AlertTriangle size={11} color="#EF4444" />}
+                                  <span>{ktRes?.success ? 'Ejecutado' : 'Fallo de compilación'}</span>
+                                </span>
+                              </div>
+                            </div>
+
+                            <pre
+                              style={{
+                                margin: 0,
+                                color: ktRes?.success ? '#38BDF8' : '#F87171',
+                                fontSize: '0.82rem',
+                                whiteSpace: 'pre-wrap',
+                                lineHeight: 1.45,
+                                fontWeight: 600,
+                                background: '#090D1A',
+                                padding: '10px 12px',
+                                borderRadius: '6px',
+                                border: ktRes?.success ? '1px solid #1E293B' : '1.5px solid #7F1D1D'
+                              }}
+                            >
+                              {ktRes?.success
+                                ? (ktRes?.stdout || '(Sin salida a consola)')
+                                : (ktRes?.errorDetail?.formattedOutput || ktRes?.error || 'Error al ejecutar código')}
+                            </pre>
+
+                            {!ktRes?.success && ktRes?.errorDetail?.suggestion && (
+                              <div
+                                style={{
+                                  marginTop: '8px',
+                                  background: 'rgba(245, 158, 11, 0.15)',
+                                  border: '1.5px solid #F59E0B',
+                                  borderRadius: '6px',
+                                  padding: '8px 12px',
+                                  color: '#FEF08A',
+                                  fontSize: '0.76rem',
+                                  fontWeight: 700
+                                }}
+                              >
+                                <span style={{ color: '#FDE047', fontWeight: 900 }}>Sugerencia del compilador: </span>
+                                {ktRes.errorDetail.suggestion}
+                              </div>
+                            )}
+                          </div>
+                        )}
                       </div>
-                      <p style={{ margin: 0, color: '#0C4A6E', fontSize: '0.94rem', lineHeight: 1.6, fontWeight: 700 }}>
-                        {section.byteTip}
-                      </p>
+                    );
+                  })()}
+
+                  {/* ═══ TIPS Y ADVERTENCIAS (TARJETA NEO-BRUTALIST LIMPIA) ═══ */}
+                  {(section.byteTip || section.pitfallTip) && (
+                    <div
+                      style={{
+                        margin: '14px 0',
+                        padding: '12px 16px',
+                        background: '#FFFFFF',
+                        border: '2px solid #000000',
+                        boxShadow: '3.5px 3.5px 0px #000000',
+                        borderRadius: '12px',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: '8px'
+                      }}
+                    >
+                      {section.byteTip && (
+                        <div style={{ display: 'flex', alignItems: 'flex-start', gap: '8px', fontSize: '0.86rem', color: '#0F172A', lineHeight: 1.5 }}>
+                          <span
+                            style={{
+                              background: '#38BDF8',
+                              border: '1.5px solid #000000',
+                              boxShadow: '1.5px 1.5px 0px #000000',
+                              borderRadius: '6px',
+                              padding: '1px 7px',
+                              fontSize: '0.72rem',
+                              fontWeight: 900,
+                              color: '#000000',
+                              flexShrink: 0
+                            }}
+                          >
+                            TIP PRO
+                          </span>
+                          <span style={{ fontWeight: 600 }}><FormattedText text={section.byteTip} inline /></span>
+                        </div>
+                      )}
+                      {section.pitfallTip && (
+                        <div style={{ display: 'flex', alignItems: 'flex-start', gap: '8px', fontSize: '0.86rem', color: '#0F172A', lineHeight: 1.5 }}>
+                          <span
+                            style={{
+                              background: '#FF5B89',
+                              border: '1.5px solid #000000',
+                              boxShadow: '1.5px 1.5px 0px #000000',
+                              borderRadius: '6px',
+                              padding: '1px 7px',
+                              fontSize: '0.72rem',
+                              fontWeight: 900,
+                              color: '#000000',
+                              flexShrink: 0
+                            }}
+                          >
+                            CUIDADO
+                          </span>
+                          <span style={{ fontWeight: 600 }}><FormattedText text={section.pitfallTip} inline /></span>
+                        </div>
+                      )}
                     </div>
                   )}
 
-                  {/* Trampa Común a Evitar */}
-                  {section.pitfallTip && (
-                    <div
-                      style={{
-                        background: '#FEF2F2',
-                        border: '2px solid #FECACA',
-                        borderLeft: '5px solid #EF4444',
-                        borderRadius: '14px',
-                        padding: '14px 16px',
-                        marginTop: '14px',
-                        boxShadow: '0 2px 0 #F87171'
-                      }}
-                    >
-                      <div
-                        style={{
-                          display: 'flex',
-                          alignItems: 'center',
-                          gap: '6px',
-                          color: '#B91C1C',
-                          fontWeight: 900,
-                          fontSize: '0.82rem',
-                          textTransform: 'uppercase',
-                          marginBottom: '4px',
-                          letterSpacing: '0.5px'
-                        }}
-                      >
-                        <AlertTriangle size={16} strokeWidth={2.8} />
-                        <span>¡Cuidado! Error Común de Principiante</span>
-                      </div>
-                      <p style={{ margin: 0, color: '#991B1B', fontSize: '0.94rem', lineHeight: 1.6, fontWeight: 700 }}>
-                        {section.pitfallTip}
-                      </p>
-                    </div>
-                  )}
-
-                  {/* Puntos Clave para Memorizar */}
+                  {/* ═══ PUNTOS CLAVE (ESTILO NEO-BRUTALIST) ═══ */}
                   {section.keyPoints && section.keyPoints.length > 0 && (
-                    <div
-                      style={{
-                        background: '#F0FDF4',
-                        border: '2px solid #22C55E',
-                        boxShadow: '0 3px 0 #16A34A',
-                        borderRadius: '16px',
-                        padding: '16px 18px',
-                        marginTop: '20px'
-                      }}
-                    >
+                    <div style={{ margin: '14px 0 18px 0' }}>
                       <div
                         style={{
-                          fontSize: '0.84rem',
+                          fontSize: '0.76rem',
                           fontWeight: 900,
-                          color: '#15803D',
+                          color: '#000000',
                           textTransform: 'uppercase',
-                          marginBottom: '10px',
-                          letterSpacing: '0.6px',
+                          marginBottom: '8px',
                           display: 'flex',
                           alignItems: 'center',
                           gap: '6px'
                         }}
                       >
-                        <CheckCircle2 size={18} color="#16A34A" strokeWidth={2.5} />
-                        <span>Conceptos Fundamentales Clave</span>
+                        <CheckCircle2 size={14} color="#000000" strokeWidth={2.5} />
+                        <span>Puntos clave para recordar</span>
                       </div>
-                      <div style={{ display: 'flex', flexDirection: 'column', gap: '9px' }}>
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
                         {section.keyPoints.map((point, pIdx) => (
-                          <div key={pIdx} style={{ display: 'flex', alignItems: 'flex-start', gap: '10px' }}>
-                            <span style={{ color: '#16A34A', fontWeight: 900, fontSize: '1.1rem', lineHeight: 1.2 }}>•</span>
-                            <span style={{ fontSize: '0.96rem', color: '#14532D', fontWeight: 700, lineHeight: 1.55 }}>
-                              {point}
-                            </span>
+                          <div key={pIdx} style={{ display: 'flex', alignItems: 'flex-start', gap: '8px', fontSize: '0.86rem', color: '#0F172A', lineHeight: 1.5 }}>
+                            <div
+                              style={{
+                                width: '16px',
+                                height: '16px',
+                                background: '#8DE342',
+                                border: '1.5px solid #000000',
+                                borderRadius: '4px',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                flexShrink: 0,
+                                marginTop: '2px'
+                              }}
+                            >
+                              <CheckCircle2 size={11} color="#000000" strokeWidth={3} />
+                            </div>
+                            <span style={{ fontWeight: 600 }}><FormattedText text={point} inline /></span>
                           </div>
                         ))}
                       </div>
                     </div>
+                  )}
+
+                  {/* Separador entre módulos */}
+                  {idx < theory.sections.length - 1 && (
+                    <hr style={{ border: 'none', borderTop: '2px solid #000000', margin: '26px 0' }} />
                   )}
                 </div>
               );
             })}
           </div>
 
-          {/* ═══ TARJETA FINAL DE VALIDACIÓN Y ACCIÓN ═══ */}
+          {/* ═══ PIE DEL ARTÍCULO: ACCIONES DIRECTAS NEO-BRUTALIST ═══ */}
           <div
             style={{
-              background: '#FFFFFF',
-              border: '2.5px solid #22C55E',
-              borderRadius: '24px',
-              padding: '26px 22px',
-              boxShadow: '0 6px 0 #16A34A, 0 10px 24px rgba(22, 163, 74, 0.1)',
-              display: 'flex',
-              flexDirection: 'column',
-              gap: '14px',
-              alignItems: 'center',
+              marginTop: '32px',
+              paddingTop: '22px',
+              borderTop: '2.5px solid #000000',
               textAlign: 'center'
             }}
           >
-            <div style={{ fontSize: '2.2rem' }}>⚡</div>
-            <div style={{ fontSize: '1.25rem', fontWeight: 900, color: '#0F172A' }}>
+            <h3 style={{ fontSize: '1.2rem', fontWeight: 900, color: '#000000', margin: '0 0 6px 0' }}>
               ¿Listo para validar tu comprensión?
-            </div>
-            <div style={{ fontSize: '0.96rem', color: '#475569', fontWeight: 600, maxWidth: '520px', lineHeight: 1.5 }}>
-              Elige cómo poner a prueba lo aprendido: con un <strong>Quiz Exprés de solo 3 preguntas</strong> para aprobar la teoría rápido, o con los <strong>10 retos prácticos de código</strong>.
-            </div>
+            </h3>
+            <p style={{ color: '#475569', fontSize: '0.86rem', margin: '0 0 18px 0', fontWeight: 600 }}>
+              Aprueba la teoría con un Quiz Exprés de 3 preguntas o pasa directo a los retos prácticos de código.
+            </p>
 
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', width: '100%', maxWidth: '460px', marginTop: '6px' }}>
+            <div style={{ display: 'flex', gap: '10px', justifyContent: 'center', flexWrap: 'wrap' }}>
               <button
-                className="btn-3d btn-green"
                 onClick={() => {
                   soundService.playToken();
                   setIsQuizMode(true);
-                  window.scrollTo({ top: 120, behavior: 'smooth' });
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
                 }}
                 style={{
-                  width: '100%',
-                  fontSize: '1.05rem',
-                  padding: '16px 24px',
-                  display: 'flex',
-                  justifyContent: 'center',
+                  background: '#4ADE80',
+                  color: '#000000',
+                  border: '2.5px solid #000000',
+                  boxShadow: '4px 4px 0px #000000',
+                  borderRadius: '12px',
+                  padding: '12px 20px',
+                  fontSize: '0.88rem',
+                  fontWeight: 900,
+                  display: 'inline-flex',
                   alignItems: 'center',
-                  gap: '10px',
-                  borderRadius: '16px'
+                  gap: '6px',
+                  cursor: 'pointer',
+                  transition: 'all 0.1s ease'
                 }}
               >
-                <Zap size={22} fill="#FFFFFF" />
-                <span>HACER QUIZ EXPRÉS (3 PREGUNTAS)</span>
+                <Zap size={15} fill="#000000" color="#000000" />
+                <span>QUIZ EXPRÉS (3 PREGUNTAS)</span>
               </button>
 
               <button
-                className="btn-3d btn-blue"
                 onClick={() => {
                   soundService.playToken();
                   onStartPractice(theory.lessonId);
                 }}
                 style={{
-                  width: '100%',
-                  fontSize: '0.96rem',
-                  padding: '14px 20px',
-                  display: 'flex',
-                  justifyContent: 'center',
+                  background: '#FFE600',
+                  color: '#000000',
+                  border: '2.5px solid #000000',
+                  boxShadow: '4px 4px 0px #000000',
+                  borderRadius: '12px',
+                  padding: '12px 20px',
+                  fontSize: '0.88rem',
+                  fontWeight: 900,
+                  display: 'inline-flex',
                   alignItems: 'center',
-                  gap: '8px',
-                  borderRadius: '16px'
+                  gap: '6px',
+                  cursor: 'pointer',
+                  transition: 'all 0.1s ease'
                 }}
               >
-                <Play size={18} fill="#FFFFFF" />
-                <span>Práctica Completa (10 Retos de Código)</span>
+                <Play size={15} fill="#000000" color="#000000" />
+                <span>PRÁCTICA (10 RETOS)</span>
               </button>
             </div>
 
@@ -1158,21 +1699,20 @@ export const TheoryViewer: React.FC<TheoryViewerProps> = ({
                 background: 'none',
                 border: 'none',
                 color: '#64748B',
-                fontSize: '0.85rem',
-                fontWeight: 800,
+                fontSize: '0.8rem',
+                fontWeight: 900,
                 cursor: 'pointer',
                 display: 'inline-flex',
                 alignItems: 'center',
-                gap: '6px',
-                padding: '6px 12px',
-                marginTop: '6px'
+                gap: '4px',
+                marginTop: '16px'
               }}
             >
-              <ArrowUp size={16} />
-              <span>Volver al inicio de la lección</span>
+              <ArrowUp size={13} color="#000000" strokeWidth={2.5} />
+              <span>Volver arriba</span>
             </button>
           </div>
-        </>
+        </article>
       )}
     </div>
   );

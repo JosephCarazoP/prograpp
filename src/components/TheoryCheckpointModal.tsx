@@ -10,13 +10,15 @@ import {
   ArrowRight,
   ExternalLink,
   Sparkles,
-  Info
+  Info,
+  Zap
 } from 'lucide-react';
 import { Lesson } from '../types/lesson';
 import { TheoryLesson } from '../types/theory';
 import { soundService } from '../services/soundService';
 import { VSCodeSnippet } from './VSCodeSnippet';
 import { ConsoleDevAvatar } from './ConsoleAvatar';
+import { FormattedText } from './FormattedText';
 
 interface TheoryCheckpointModalProps {
   lesson: Lesson;
@@ -372,9 +374,9 @@ export const TheoryCheckpointModal: React.FC<TheoryCheckpointModalProps> = ({
                     <Lightbulb size={16} strokeWidth={2.8} />
                     <span>Analogía para Entender a la Primera</span>
                   </div>
-                  <p style={{ margin: 0, fontSize: '0.92rem', color: '#713F12', fontWeight: 600, lineHeight: 1.45 }}>
-                    {theory.analogy}
-                  </p>
+                  <div style={{ margin: 0, fontSize: '0.92rem', color: '#713F12', fontWeight: 600, lineHeight: 1.45 }}>
+                    <FormattedText text={theory.analogy} />
+                  </div>
                 </div>
               )}
 
@@ -391,9 +393,9 @@ export const TheoryCheckpointModal: React.FC<TheoryCheckpointModalProps> = ({
                 <h4 style={{ margin: '0 0 8px 0', fontSize: '1rem', fontWeight: 900, color: '#0F172A' }}>
                   {primarySection?.title || 'Concepto Fundamental'}
                 </h4>
-                <p style={{ margin: 0, fontSize: '0.92rem', color: '#334155', fontWeight: 600, lineHeight: 1.5, whiteSpace: 'pre-line' }}>
-                  {primarySection?.explanation?.split('\n\n')[0] || lesson.description}
-                </p>
+                <div style={{ margin: 0, fontSize: '0.92rem', color: '#334155', fontWeight: 600, lineHeight: 1.5 }}>
+                  <FormattedText text={primarySection?.explanation?.split('\n\n')[0] || lesson.description} />
+                </div>
 
                 {/* Código de Ejemplo Sintético */}
                 {primarySection?.codeSnippet && (
@@ -453,7 +455,7 @@ export const TheoryCheckpointModal: React.FC<TheoryCheckpointModalProps> = ({
                       <div key={idx} style={{ display: 'flex', alignItems: 'flex-start', gap: '8px' }}>
                         <span style={{ color: '#16A34A', fontWeight: 900 }}>•</span>
                         <span style={{ fontSize: '0.88rem', color: '#14532D', fontWeight: 700, lineHeight: 1.35 }}>
-                          {pt}
+                          <FormattedText text={pt} inline />
                         </span>
                       </div>
                     ))}
@@ -562,7 +564,7 @@ export const TheoryCheckpointModal: React.FC<TheoryCheckpointModalProps> = ({
                   lineHeight: 1.4
                 }}
               >
-                {currentQuestion.prompt}
+                <FormattedText text={currentQuestion.prompt} inline />
               </div>
 
               {/* Snippet si la pregunta incluye código */}
@@ -629,7 +631,9 @@ export const TheoryCheckpointModal: React.FC<TheoryCheckpointModalProps> = ({
                         transition: 'all 0.12s ease'
                       }}
                     >
-                      <span className={currentQuestion.codeSnippet ? "font-mono" : ""}>{opt}</span>
+                      <span className={currentQuestion.codeSnippet ? "font-mono" : ""}>
+                        <FormattedText text={opt} inline />
+                      </span>
                       {isAnswerChecked && isThisCorrect && (
                         <CheckCircle2 size={20} color="#16A34A" strokeWidth={2.8} />
                       )}
@@ -666,7 +670,7 @@ export const TheoryCheckpointModal: React.FC<TheoryCheckpointModalProps> = ({
                     {isCorrect ? <CheckCircle2 size={18} /> : <AlertTriangle size={18} />}
                     <span>{isCorrect ? '¡Excelente deducción!' : '¡Casi! Inténtalo de nuevo'}</span>
                   </div>
-                  <p
+                  <div
                     style={{
                       margin: 0,
                       fontSize: '0.88rem',
@@ -675,8 +679,8 @@ export const TheoryCheckpointModal: React.FC<TheoryCheckpointModalProps> = ({
                       lineHeight: 1.4
                     }}
                   >
-                    {currentQuestion.explanation}
-                  </p>
+                    <FormattedText text={currentQuestion.explanation} inline />
+                  </div>
                 </div>
               )}
             </>
@@ -734,8 +738,8 @@ export const TheoryCheckpointModal: React.FC<TheoryCheckpointModalProps> = ({
                   boxShadow: '0 3px 0 #94A3B8'
                 }}
               >
-                <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                  <span style={{ fontSize: '1.2rem' }}>⚡</span>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <Zap size={22} color="#0284C7" />
                   <div style={{ textAlign: 'left' }}>
                     <div style={{ fontSize: '0.94rem', fontWeight: 900, color: '#0284C7' }}>+10 XP</div>
                     <div style={{ fontSize: '0.72rem', color: '#64748B', fontWeight: 800 }}>Bonus de Estudio</div>
@@ -744,8 +748,8 @@ export const TheoryCheckpointModal: React.FC<TheoryCheckpointModalProps> = ({
 
                 <div style={{ width: '1px', background: '#CBD5E1' }} />
 
-                <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                  <span style={{ fontSize: '1.2rem' }}>💎</span>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <Sparkles size={22} color="#16A34A" />
                   <div style={{ textAlign: 'left' }}>
                     <div style={{ fontSize: '0.94rem', fontWeight: 900, color: '#16A34A' }}>Desbloqueado</div>
                     <div style={{ fontSize: '0.72rem', color: '#64748B', fontWeight: 800 }}>Nivel de Juego</div>
@@ -832,7 +836,7 @@ export const TheoryCheckpointModal: React.FC<TheoryCheckpointModalProps> = ({
               }}
             >
               <Play size={20} fill="#FFFFFF" />
-              <span>🚀 ¡COMENZAR RETO DE CÓDIGO!</span>
+              <span>¡COMENZAR RETO DE CÓDIGO!</span>
             </button>
           )}
         </div>

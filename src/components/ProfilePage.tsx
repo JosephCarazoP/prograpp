@@ -195,7 +195,7 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({
 
   const handleShare = () => {
     soundService.playToken();
-    const text = `🎮 PrograApp | ${user.displayName}\nNivel ${currentLevel} • ${getRankTitle(currentLevel)}\nXP: ${totalXp} | Cofres: ${chestsCount} | Jefes: ${bossesCount}\n¡Aprende programación jugando estilo Duolingo!`;
+    const text = `PrograApp | ${user.displayName}\nNivel ${currentLevel} • ${getRankTitle(currentLevel)}\nXP: ${totalXp} | Cofres: ${chestsCount} | Jefes: ${bossesCount}\n¡Aprende programación jugando!`;
     if (navigator.share) {
       navigator.share({ title: 'Mi Perfil de Dev', text });
     } else {
@@ -382,7 +382,7 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({
                 }}
               >
                 <Shirt size={16} strokeWidth={2.6} />
-                <span>VESTIDOR 3D (SKINS)</span>
+                <span>VESTIDOR (SKINS)</span>
               </button>
             )}
           </div>
@@ -764,7 +764,7 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({
                     title="Probar Sonido"
                     type="button"
                   >
-                    🔊 Probar
+                    Probar Sonido
                   </button>
                 </div>
               </div>
@@ -842,7 +842,7 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({
                 onClick={() => {
                   if (!hasPendingDiagnostic) {
                     soundService.playError();
-                    setEvaluationAlert('🔒 La Evaluación Diagnóstica solo está disponible cuando el docente Joseph Carazo la habilita para tu cuenta desde el Panel de Seguimiento.');
+                    setEvaluationAlert('La Evaluación Diagnóstica solo está disponible cuando el docente Joseph Carazo la habilita para tu cuenta desde el Panel de Seguimiento.');
                     return;
                   }
                   soundService.playToken();
@@ -867,7 +867,7 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({
                 onClick={() => {
                   if (!isCourseCompleted) {
                     soundService.playError();
-                    setEvaluationAlert(`🔒 La Prueba Final requiere completar el 100% del curso (${completedLessons}/${totalLessons} lecciones completadas). ¡Sigue avanzando en tu camino!`);
+                    setEvaluationAlert(`La Prueba Final requiere completar el 100% del curso (${completedLessons}/${totalLessons} lecciones completadas). ¡Sigue avanzando en tu camino!`);
                     return;
                   }
                   soundService.playToken();

@@ -13,7 +13,8 @@ import {
   Zap,
   Star,
   Lock,
-  Flame
+  Flame,
+  Check
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { soundService } from '../services/soundService';
@@ -394,20 +395,19 @@ export const DailyQuestsModal: React.FC<DailyQuestsModalProps> = ({
           maxWidth: '780px',
           width: '100%',
           background: '#FFFFFF',
-          border: '2.5px solid #CBD5E1',
-          borderBottom: '6px solid #94A3B8',
-          borderRadius: 24,
+          border: '3px solid #000000',
+          boxShadow: '8px 8px 0px #000000',
+          borderRadius: 22,
           padding: '14px 14px 18px 14px',
           maxHeight: '92vh',
           display: 'flex',
           flexDirection: 'column',
           position: 'relative',
           overflow: 'hidden',
-          boxShadow: '0 24px 50px rgba(0, 0, 0, 0.25)',
           boxSizing: 'border-box'
         }}
       >
-        {/* Botón Cerrar 3D */}
+        {/* Botón Cerrar Neo-brutalism */}
         <button
           className="quests-modal-close"
           onClick={() => {
@@ -420,39 +420,40 @@ export const DailyQuestsModal: React.FC<DailyQuestsModalProps> = ({
             top: '12px',
             right: '12px',
             background: '#FFFFFF',
-            border: '2px solid #E2E8F0',
-            boxShadow: '0 3px 0 #CBD5E1',
-            borderRadius: '12px',
+            border: '2px solid #000000',
+            boxShadow: '2.5px 2.5px 0px #000000',
+            borderRadius: '10px',
             width: '32px',
             height: '32px',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
             cursor: 'pointer',
-            color: '#64748B',
-            transition: 'all 0.12s ease',
+            color: '#000000',
+            transition: 'transform 0.08s ease, box-shadow 0.08s ease',
             zIndex: 20
           }}
           onMouseDown={(e) => {
-            e.currentTarget.style.transform = 'translateY(2px)';
-            e.currentTarget.style.boxShadow = '0 1px 0 #CBD5E1';
+            e.currentTarget.style.transform = 'translate(1.5px, 1.5px)';
+            e.currentTarget.style.boxShadow = '1px 1px 0px #000000';
           }}
           onMouseUp={(e) => {
-            e.currentTarget.style.transform = 'translateY(0)';
-            e.currentTarget.style.boxShadow = '0 3px 0 #CBD5E1';
+            e.currentTarget.style.transform = 'translate(0, 0)';
+            e.currentTarget.style.boxShadow = '2.5px 2.5px 0px #000000';
           }}
         >
-          <X size={17} strokeWidth={2.6} />
+          <X size={17} strokeWidth={2.8} />
         </button>
 
-        {/* ENCABEZADO SUPERIOR: NIVEL DE PASE & PUNTOS (Estilo Fortnite Battle Pass) */}
+        {/* ENCABEZADO SUPERIOR: NIVEL DE PASE & PUNTOS (Estilo Neo-brutalism) */}
         <div className="quests-header-section" style={{ marginBottom: '10px', flexShrink: 0, paddingRight: '38px' }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '6px' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
               <span
                 style={{
                   background: '#FEF3C7',
-                  border: '1.5px solid #FDE68A',
+                  border: '1.5px solid #000000',
+                  boxShadow: '1.5px 1.5px 0px #000000',
                   color: '#B45309',
                   borderRadius: '999px',
                   padding: '2px 8px',
@@ -473,8 +474,9 @@ export const DailyQuestsModal: React.FC<DailyQuestsModalProps> = ({
             <div
               style={{
                 background: '#ECFEFF',
-                border: '1.5px solid #A5F3FC',
-                borderRadius: '10px',
+                border: '1.5px solid #000000',
+                boxShadow: '1.5px 1.5px 0px #000000',
+                borderRadius: '8px',
                 padding: '3px 8px',
                 fontSize: '0.72rem',
                 fontWeight: 900,
@@ -489,29 +491,29 @@ export const DailyQuestsModal: React.FC<DailyQuestsModalProps> = ({
             </div>
           </div>
 
-          {/* Barra de Nivel de Pase estilo Fortnite */}
+          {/* Barra de Nivel de Pase Neo-brutalism */}
           <div
             className="quests-tier-progress-box"
             style={{
               marginTop: '6px',
               background: '#F8FAFC',
-              border: '2px solid #E2E8F0',
-              borderRadius: '14px',
+              border: '2px solid #000000',
+              borderRadius: '12px',
               padding: '6px 10px',
               display: 'flex',
               alignItems: 'center',
               gap: '10px',
-              boxShadow: '0 2px 0 #CBD5E1'
+              boxShadow: '3px 3px 0px #000000'
             }}
           >
             {/* Medalla de Nivel */}
             <div
               style={{
-                background: 'linear-gradient(180deg, #F59E0B 0%, #D97706 100%)',
-                border: '2px solid #FDE68A',
-                boxShadow: '0 3px 0 #92400E',
+                background: '#F59E0B',
+                border: '1.5px solid #000000',
+                boxShadow: '2px 2px 0px #000000',
                 color: '#FFFFFF',
-                borderRadius: '11px',
+                borderRadius: '8px',
                 padding: '3px 9px',
                 fontSize: '0.78rem',
                 fontWeight: 900,
@@ -528,7 +530,7 @@ export const DailyQuestsModal: React.FC<DailyQuestsModalProps> = ({
             {/* Barra de progreso */}
             <div style={{ flex: 1, minWidth: 0 }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '2px' }}>
-                <span style={{ fontSize: '0.68rem', fontWeight: 800, color: '#334155' }}>
+                <span style={{ fontSize: '0.68rem', fontWeight: 800, color: '#0F172A' }}>
                   Progreso al Nivel {Math.min(10, currentTierLevel + 1)}
                 </span>
                 <span style={{ fontSize: '0.68rem', fontWeight: 900, color: '#0284C7' }}>
@@ -537,8 +539,9 @@ export const DailyQuestsModal: React.FC<DailyQuestsModalProps> = ({
               </div>
               <div
                 style={{
-                  height: '9px',
+                  height: '10px',
                   background: '#E2E8F0',
+                  border: '1.5px solid #000000',
                   borderRadius: '999px',
                   overflow: 'hidden',
                   position: 'relative'
@@ -548,40 +551,31 @@ export const DailyQuestsModal: React.FC<DailyQuestsModalProps> = ({
                   style={{
                     height: '100%',
                     width: `${tierProgressPercent}%`,
-                    background: 'linear-gradient(90deg, #22C55E 0%, #16A34A 100%)',
+                    background: '#22C55E',
+                    borderRight: tierProgressPercent > 0 && tierProgressPercent < 100 ? '1.5px solid #000000' : 'none',
                     borderRadius: '999px',
                     transition: 'width 0.4s cubic-bezier(0.16, 1, 0.3, 1)',
                     position: 'relative'
                   }}
-                >
-                  <div
-                    style={{
-                      position: 'absolute',
-                      top: '1px',
-                      left: '4px',
-                      right: '4px',
-                      height: '2px',
-                      background: 'rgba(255, 255, 255, 0.5)',
-                      borderRadius: '2px'
-                    }}
-                  />
-                </div>
+                />
               </div>
             </div>
           </div>
         </div>
 
-        {/* PESTAÑAS PRINCIPALES ESTILO FORTNITE BATTLE PASS (100% DUOLINGO 3D) */}
+        {/* PESTAÑAS PRINCIPALES (NEO-BRUTALISM) */}
         <div
           className="quests-tabs-wrapper"
           style={{
             display: 'flex',
-            gap: '6px',
+            gap: '8px',
             marginBottom: '10px',
             flexShrink: 0,
             background: '#F1F5F9',
-            padding: '4px',
-            borderRadius: '15px'
+            border: '2px solid #000000',
+            boxShadow: '2.5px 2.5px 0px #000000',
+            padding: '5px',
+            borderRadius: '14px'
           }}
         >
           {/* Pestaña 1: Camino de Recompensas */}
@@ -594,22 +588,22 @@ export const DailyQuestsModal: React.FC<DailyQuestsModalProps> = ({
             style={{
               flex: 1,
               padding: '7px 8px',
-              borderRadius: '11px',
-              border: activeTab === 'pass' ? '2px solid #CBD5E1' : '2px solid transparent',
+              borderRadius: '10px',
+              border: activeTab === 'pass' ? '2px solid #000000' : '2px solid transparent',
               background: activeTab === 'pass' ? '#FFFFFF' : 'transparent',
-              boxShadow: activeTab === 'pass' ? '0 3px 0 #94A3B8' : 'none',
+              boxShadow: activeTab === 'pass' ? '2px 2px 0px #000000' : 'none',
               cursor: 'pointer',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              gap: '5px',
+              gap: '6px',
               fontSize: '0.8rem',
               fontWeight: 900,
-              color: activeTab === 'pass' ? '#0F172A' : '#64748B',
-              transition: 'all 0.15s ease'
+              color: '#000000',
+              transition: 'transform 0.08s ease, box-shadow 0.08s ease'
             }}
           >
-            <Trophy size={15} color={activeTab === 'pass' ? '#F59E0B' : '#94A3B8'} strokeWidth={2.4} />
+            <Trophy size={15} color={activeTab === 'pass' ? '#D97706' : '#64748B'} strokeWidth={2.5} />
             <span className="tab-text-desktop">Camino de Recompensas</span>
             <span className="tab-text-mobile">Recompensas</span>
             {unclaimedTiersCount > 0 && (
@@ -617,6 +611,7 @@ export const DailyQuestsModal: React.FC<DailyQuestsModalProps> = ({
                 style={{
                   background: '#22C55E',
                   color: '#FFFFFF',
+                  border: '1px solid #000000',
                   borderRadius: '999px',
                   padding: '1px 6px',
                   fontSize: '0.64rem',
@@ -638,22 +633,22 @@ export const DailyQuestsModal: React.FC<DailyQuestsModalProps> = ({
             style={{
               flex: 1,
               padding: '7px 8px',
-              borderRadius: '11px',
-              border: activeTab === 'quests' ? '2px solid #CBD5E1' : '2px solid transparent',
+              borderRadius: '10px',
+              border: activeTab === 'quests' ? '2px solid #000000' : '2px solid transparent',
               background: activeTab === 'quests' ? '#FFFFFF' : 'transparent',
-              boxShadow: activeTab === 'quests' ? '0 3px 0 #94A3B8' : 'none',
+              boxShadow: activeTab === 'quests' ? '2px 2px 0px #000000' : 'none',
               cursor: 'pointer',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              gap: '5px',
+              gap: '6px',
               fontSize: '0.8rem',
               fontWeight: 900,
-              color: activeTab === 'quests' ? '#0F172A' : '#64748B',
-              transition: 'all 0.15s ease'
+              color: '#000000',
+              transition: 'transform 0.08s ease, box-shadow 0.08s ease'
             }}
           >
-            <Target size={15} color={activeTab === 'quests' ? '#2563EB' : '#94A3B8'} strokeWidth={2.4} />
+            <Target size={15} color={activeTab === 'quests' ? '#2563EB' : '#64748B'} strokeWidth={2.5} />
             <span className="tab-text-desktop">Misiones & Objetivos</span>
             <span className="tab-text-mobile">Misiones</span>
             {unclaimedQuestsCount > 0 && (
@@ -661,6 +656,7 @@ export const DailyQuestsModal: React.FC<DailyQuestsModalProps> = ({
                 style={{
                   background: '#F59E0B',
                   color: '#FFFFFF',
+                  border: '1px solid #000000',
                   borderRadius: '999px',
                   padding: '1px 6px',
                   fontSize: '0.64rem',
@@ -682,10 +678,10 @@ export const DailyQuestsModal: React.FC<DailyQuestsModalProps> = ({
               <div
                 className="pass-hero-card"
                 style={{
-                  background: 'linear-gradient(180deg, #F8FAFC 0%, #FFFFFF 100%)',
-                  border: '2.5px solid #CBD5E1',
-                  boxShadow: '0 4px 0 #94A3B8',
-                  borderRadius: '18px',
+                  background: '#FFFFFF',
+                  border: '2.5px solid #000000',
+                  boxShadow: '4px 4px 0px #000000',
+                  borderRadius: '16px',
                   padding: '12px 14px',
                   display: 'flex',
                   flexDirection: 'column',
@@ -693,18 +689,18 @@ export const DailyQuestsModal: React.FC<DailyQuestsModalProps> = ({
                   boxSizing: 'border-box'
                 }}
               >
-                {/* Fila superior: Icono 3D + Rango, Nivel y Título */}
+                {/* Fila superior: Icono + Rango, Nivel y Título */}
                 <div style={{ display: 'flex', alignItems: 'center', gap: '10px', width: '100%' }}>
-                  {/* Icono 3D de Recompensa */}
+                  {/* Icono de Recompensa */}
                   <div
                     className="pass-hero-icon"
                     style={{
                       width: '54px',
                       height: '54px',
-                      borderRadius: '14px',
+                      borderRadius: '12px',
                       background: isFeaturedTierUnlocked ? featuredTier.rarityColor : '#64748B',
-                      border: '2.5px solid rgba(255, 255, 255, 0.4)',
-                      boxShadow: '0 4px 0 rgba(0, 0, 0, 0.18)',
+                      border: '2px solid #000000',
+                      boxShadow: '2.5px 2.5px 0px #000000',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
@@ -738,14 +734,16 @@ export const DailyQuestsModal: React.FC<DailyQuestsModalProps> = ({
                           color: '#FFFFFF',
                           fontSize: '0.62rem',
                           fontWeight: 900,
-                          padding: '1px 6px',
-                          borderRadius: '5px',
+                          padding: '2px 7px',
+                          borderRadius: '6px',
+                          border: '1.5px solid #000000',
+                          boxShadow: '1.5px 1.5px 0px #000000',
                           letterSpacing: '0.5px'
                         }}
                       >
-                        ★ {featuredTier.rarity} ★
+                        {featuredTier.rarity}
                       </span>
-                      <span style={{ fontSize: '0.68rem', fontWeight: 800, color: '#64748B' }}>
+                      <span style={{ fontSize: '0.68rem', fontWeight: 800, color: '#475569' }}>
                         Nivel {featuredTier.tierNumber} • {featuredTier.reqPoints === 0 ? 'Desbloqueo Inicial' : `${featuredTier.reqPoints} Pts`}
                       </span>
                     </div>
@@ -754,7 +752,7 @@ export const DailyQuestsModal: React.FC<DailyQuestsModalProps> = ({
                       style={{
                         fontSize: '0.98rem',
                         fontWeight: 900,
-                        color: '#0F172A',
+                        color: '#000000',
                         margin: 0,
                         lineHeight: 1.25,
                         wordBreak: 'break-word'
@@ -768,11 +766,11 @@ export const DailyQuestsModal: React.FC<DailyQuestsModalProps> = ({
                 {/* Descripción Detallada */}
                 <p
                   style={{
-                    fontSize: '0.74rem',
-                    color: '#64748B',
+                    fontSize: '0.76rem',
+                    color: '#334155',
                     fontWeight: 700,
                     margin: 0,
-                    lineHeight: 1.3
+                    lineHeight: 1.35
                   }}
                 >
                   {featuredTier.description}
@@ -788,11 +786,12 @@ export const DailyQuestsModal: React.FC<DailyQuestsModalProps> = ({
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
-                        gap: '5px',
+                        gap: '6px',
                         background: '#DCFCE7',
-                        border: '2px solid #86EFAC',
+                        border: '2px solid #000000',
+                        boxShadow: '2.5px 2.5px 0px #000000',
                         color: '#15803D',
-                        borderRadius: '11px',
+                        borderRadius: '10px',
                         padding: '8px 12px',
                         fontSize: '0.78rem',
                         fontWeight: 900,
@@ -812,24 +811,24 @@ export const DailyQuestsModal: React.FC<DailyQuestsModalProps> = ({
                         justifyContent: 'center',
                         gap: '6px',
                         background: '#22C55E',
-                        border: '2.5px solid #86EFAC',
-                        boxShadow: '0 3px 0 #15803D',
+                        border: '2.5px solid #000000',
+                        boxShadow: '3.5px 3.5px 0px #000000',
                         color: '#FFFFFF',
-                        borderRadius: '12px',
-                        padding: '8px 14px',
-                        fontSize: '0.8rem',
+                        borderRadius: '10px',
+                        padding: '9px 14px',
+                        fontSize: '0.82rem',
                         fontWeight: 900,
                         cursor: 'pointer',
-                        transition: 'all 0.12s ease',
+                        transition: 'transform 0.08s ease, box-shadow 0.08s ease',
                         textAlign: 'center'
                       }}
                       onMouseDown={(e) => {
-                        e.currentTarget.style.transform = 'translateY(2px)';
-                        e.currentTarget.style.boxShadow = '0 1px 0 #15803D';
+                        e.currentTarget.style.transform = 'translate(2px, 2px)';
+                        e.currentTarget.style.boxShadow = '1.5px 1.5px 0px #000000';
                       }}
                       onMouseUp={(e) => {
-                        e.currentTarget.style.transform = 'translateY(0)';
-                        e.currentTarget.style.boxShadow = '0 3px 0 #15803D';
+                        e.currentTarget.style.transform = 'translate(0, 0)';
+                        e.currentTarget.style.boxShadow = '3.5px 3.5px 0px #000000';
                       }}
                     >
                       <Sparkles size={15} /> ¡RECLAMAR RECOMPENSA!
@@ -842,11 +841,11 @@ export const DailyQuestsModal: React.FC<DailyQuestsModalProps> = ({
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
-                        gap: '5px',
+                        gap: '6px',
                         background: '#F1F5F9',
-                        border: '2px solid #CBD5E1',
-                        color: '#94A3B8',
-                        borderRadius: '11px',
+                        border: '2px solid #000000',
+                        color: '#64748B',
+                        borderRadius: '10px',
                         padding: '8px 12px',
                         fontSize: '0.74rem',
                         fontWeight: 800,
@@ -862,11 +861,11 @@ export const DailyQuestsModal: React.FC<DailyQuestsModalProps> = ({
               {/* CAMINO HORIZONTAL DE CASILLAS (TIERS RIBBON) */}
               <div style={{ width: '100%', overflow: 'hidden' }}>
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '6px', padding: '0 2px' }}>
-                  <span style={{ fontSize: '0.74rem', fontWeight: 900, color: '#334155' }}>
+                  <span style={{ fontSize: '0.74rem', fontWeight: 900, color: '#000000' }}>
                     Camino de Temporada:
                   </span>
                   <span style={{ fontSize: '0.68rem', fontWeight: 800, color: '#0284C7' }}>
-                    Desliza horizontalmente ➔
+                    Desliza horizontalmente
                   </span>
                 </div>
 
@@ -909,31 +908,20 @@ export const DailyQuestsModal: React.FC<DailyQuestsModalProps> = ({
                             : isUnlocked
                             ? '#FFFFFF'
                             : '#F8FAFC',
-                          border: '2px solid',
-                          borderColor: isSelected
-                            ? '#F59E0B'
-                            : canClaim
-                            ? '#FBBF24'
-                            : isClaimed
-                            ? '#86EFAC'
-                            : isUnlocked
-                            ? '#CBD5E1'
-                            : '#E2E8F0',
+                          border: isSelected ? '2.5px solid #000000' : '2px solid #000000',
                           boxShadow: isSelected
-                            ? '0 3px 0 #D97706'
+                            ? '3px 3px 0px #000000'
                             : canClaim
-                            ? '0 3px 0 #D97706'
-                            : isClaimed
-                            ? '0 2px 0 #86EFAC'
-                            : '0 2px 0 #CBD5E1',
-                          borderRadius: '13px',
+                            ? '3px 3px 0px #000000'
+                            : '2px 2px 0px #000000',
+                          borderRadius: '12px',
                           padding: '7px 5px',
                           display: 'flex',
                           flexDirection: 'column',
                           alignItems: 'center',
                           textAlign: 'center',
                           cursor: 'pointer',
-                          transition: 'all 0.15s ease',
+                          transition: 'transform 0.08s ease, box-shadow 0.08s ease',
                           outline: 'none'
                         }}
                       >
@@ -941,8 +929,9 @@ export const DailyQuestsModal: React.FC<DailyQuestsModalProps> = ({
                           style={{
                             fontSize: '0.62rem',
                             fontWeight: 900,
-                            background: isUnlocked ? '#0284C7' : '#94A3B8',
+                            background: isUnlocked ? '#0284C7' : '#64748B',
                             color: '#FFFFFF',
+                            border: '1px solid #000000',
                             padding: '1px 5px',
                             borderRadius: '999px',
                             marginBottom: '4px'
@@ -956,8 +945,9 @@ export const DailyQuestsModal: React.FC<DailyQuestsModalProps> = ({
                           style={{
                             width: '32px',
                             height: '32px',
-                            borderRadius: '9px',
+                            borderRadius: '8px',
                             background: isUnlocked ? tier.rarityColor : '#CBD5E1',
+                            border: '1.5px solid #000000',
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',
@@ -986,7 +976,7 @@ export const DailyQuestsModal: React.FC<DailyQuestsModalProps> = ({
                           style={{
                             fontSize: '0.68rem',
                             fontWeight: 900,
-                            color: isUnlocked ? '#0F172A' : '#64748B',
+                            color: isUnlocked ? '#000000' : '#64748B',
                             lineHeight: 1.15,
                             marginBottom: '4px',
                             whiteSpace: 'nowrap',
@@ -1000,11 +990,15 @@ export const DailyQuestsModal: React.FC<DailyQuestsModalProps> = ({
 
                         {/* Estado */}
                         {isClaimed ? (
-                          <span style={{ fontSize: '0.64rem', fontWeight: 900, color: '#16A34A' }}>✓ Reclamado</span>
+                          <span style={{ display: 'inline-flex', alignItems: 'center', gap: 2, fontSize: '0.64rem', fontWeight: 900, color: '#16A34A' }}>
+                            <Check size={11} strokeWidth={3} /> Reclamado
+                          </span>
                         ) : canClaim ? (
-                          <span style={{ fontSize: '0.64rem', fontWeight: 900, color: '#D97706' }}>✨ ¡Listo!</span>
+                          <span style={{ display: 'inline-flex', alignItems: 'center', gap: 2, fontSize: '0.64rem', fontWeight: 900, color: '#D97706' }}>
+                            <Sparkles size={11} strokeWidth={2.5} /> ¡Listo!
+                          </span>
                         ) : (
-                          <span style={{ fontSize: '0.62rem', fontWeight: 800, color: '#94A3B8' }}>{tier.reqPoints} Pts</span>
+                          <span style={{ fontSize: '0.62rem', fontWeight: 800, color: '#64748B' }}>{tier.reqPoints} Pts</span>
                         )}
                       </button>
                     );
@@ -1020,16 +1014,17 @@ export const DailyQuestsModal: React.FC<DailyQuestsModalProps> = ({
               <div
                 style={{
                   background: '#EFF6FF',
-                  border: '1.5px solid #BFDBFE',
-                  borderRadius: '13px',
-                  padding: '7px 10px',
+                  border: '2px solid #000000',
+                  boxShadow: '2.5px 2.5px 0px #000000',
+                  borderRadius: '12px',
+                  padding: '8px 12px',
                   display: 'flex',
                   alignItems: 'center',
                   gap: '8px'
                 }}
               >
-                <Target size={16} color="#2563EB" flex-shrink="0" />
-                <span style={{ fontSize: '0.74rem', color: '#1E40AF', fontWeight: 800, lineHeight: 1.3 }}>
+                <Target size={16} color="#2563EB" strokeWidth={2.5} style={{ flexShrink: 0 }} />
+                <span style={{ fontSize: '0.76rem', color: '#1E40AF', fontWeight: 800, lineHeight: 1.3 }}>
                   Completa cada objetivo de programación para sumar Puntos de Pase y desbloquear recompensas.
                 </span>
               </div>
@@ -1047,24 +1042,19 @@ export const DailyQuestsModal: React.FC<DailyQuestsModalProps> = ({
                     className="quest-card-item"
                     style={{
                       background: canClaim ? '#FFFBEB' : isClaimed ? '#F0FDF4' : '#FFFFFF',
-                      border: '2px solid',
-                      borderColor: canClaim
-                        ? '#F59E0B'
-                        : isClaimed
-                        ? '#86EFAC'
-                        : '#E2E8F0',
+                      border: '2px solid #000000',
                       boxShadow: canClaim
-                        ? '0 3px 0 #D97706'
+                        ? '3.5px 3.5px 0px #000000'
                         : isClaimed
-                        ? '0 2px 0 #BBF7D0'
-                        : '0 2px 0 #CBD5E1',
+                        ? '2px 2px 0px #000000'
+                        : '3px 3px 0px #000000',
                       borderRadius: '14px',
-                      padding: '10px 10px',
+                      padding: '10px 12px',
                       display: 'flex',
                       flexDirection: 'column',
                       gap: '8px',
                       boxSizing: 'border-box',
-                      transition: 'all 0.15s ease'
+                      transition: 'transform 0.08s ease, box-shadow 0.08s ease'
                     }}
                   >
                     {/* Encabezado del Objetivo */}
@@ -1073,9 +1063,9 @@ export const DailyQuestsModal: React.FC<DailyQuestsModalProps> = ({
                         {/* Icono del objetivo */}
                         <div
                           style={{
-                            width: '32px',
-                            height: '32px',
-                            borderRadius: '9px',
+                            width: '34px',
+                            height: '34px',
+                            borderRadius: '8px',
                             background:
                               quest.iconType === 'flame'
                                 ? '#FFF7ED'
@@ -1086,17 +1076,8 @@ export const DailyQuestsModal: React.FC<DailyQuestsModalProps> = ({
                                 : quest.iconType === 'shield'
                                 ? '#F0FDF4'
                                 : '#FAF5FF',
-                            border: `1.5px solid ${
-                              quest.iconType === 'flame'
-                                ? '#FDBA74'
-                                : quest.iconType === 'star'
-                                ? '#FDE68A'
-                                : quest.iconType === 'target'
-                                ? '#93C5FD'
-                                : quest.iconType === 'shield'
-                                ? '#86EFAC'
-                                : '#D8B4FE'
-                            }`,
+                            border: '1.5px solid #000000',
+                            boxShadow: '1.5px 1.5px 0px #000000',
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',
@@ -1117,7 +1098,8 @@ export const DailyQuestsModal: React.FC<DailyQuestsModalProps> = ({
                                 fontSize: '0.58rem',
                                 fontWeight: 900,
                                 background: '#E2E8F0',
-                                color: '#475569',
+                                color: '#000000',
+                                border: '1px solid #000000',
                                 padding: '1px 5px',
                                 borderRadius: '4px'
                               }}
@@ -1125,10 +1107,10 @@ export const DailyQuestsModal: React.FC<DailyQuestsModalProps> = ({
                               {quest.category}
                             </span>
                           </div>
-                          <div style={{ fontSize: '0.86rem', fontWeight: 900, color: '#0F172A', lineHeight: 1.2 }}>
+                          <div style={{ fontSize: '0.88rem', fontWeight: 900, color: '#000000', lineHeight: 1.2 }}>
                             {quest.title}
                           </div>
-                          <div style={{ fontSize: '0.72rem', color: '#64748B', fontWeight: 700, lineHeight: 1.25 }}>
+                          <div style={{ fontSize: '0.74rem', color: '#334155', fontWeight: 700, lineHeight: 1.25 }}>
                             {quest.desc}
                           </div>
                         </div>
@@ -1139,8 +1121,9 @@ export const DailyQuestsModal: React.FC<DailyQuestsModalProps> = ({
                         <span
                           style={{
                             background: '#ECFEFF',
-                            border: '1.5px solid #A5F3FC',
-                            borderRadius: '7px',
+                            border: '1.5px solid #000000',
+                            boxShadow: '1px 1px 0px #000000',
+                            borderRadius: '6px',
                             padding: '2px 6px',
                             fontSize: '0.68rem',
                             fontWeight: 900,
@@ -1157,8 +1140,9 @@ export const DailyQuestsModal: React.FC<DailyQuestsModalProps> = ({
                           <span
                             style={{
                               background: '#EFF6FF',
-                              border: '1.5px solid #BFDBFE',
-                              borderRadius: '7px',
+                              border: '1.5px solid #000000',
+                              boxShadow: '1px 1px 0px #000000',
+                              borderRadius: '6px',
                               padding: '2px 6px',
                               fontSize: '0.68rem',
                               fontWeight: 900,
@@ -1173,8 +1157,9 @@ export const DailyQuestsModal: React.FC<DailyQuestsModalProps> = ({
                           <span
                             style={{
                               background: '#FAF5FF',
-                              border: '1.5px solid #E9D5FF',
-                              borderRadius: '7px',
+                              border: '1.5px solid #000000',
+                              boxShadow: '1px 1px 0px #000000',
+                              borderRadius: '6px',
                               padding: '2px 6px',
                               fontSize: '0.68rem',
                               fontWeight: 900,
@@ -1189,13 +1174,12 @@ export const DailyQuestsModal: React.FC<DailyQuestsModalProps> = ({
 
                     {/* BARRA DE PROGRESO DE ESTE OBJETIVO + BOTÓN DE RECLAMACIÓN */}
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '2px', flexWrap: 'wrap' }}>
-                      {/* Chunky Duolingo 3D Progress Bar */}
                       <div style={{ flex: 1, minWidth: '70px' }}>
                         <div
                           style={{
                             height: '10px',
                             background: '#E2E8F0',
-                            border: '1.5px solid #CBD5E1',
+                            border: '1.5px solid #000000',
                             borderRadius: '999px',
                             overflow: 'hidden',
                             position: 'relative'
@@ -1206,23 +1190,12 @@ export const DailyQuestsModal: React.FC<DailyQuestsModalProps> = ({
                               height: '100%',
                               width: `${percent}%`,
                               background: isReady ? '#22C55E' : '#FF9500',
+                              borderRight: percent > 0 && percent < 100 ? '1.5px solid #000000' : 'none',
                               borderRadius: '999px',
                               transition: 'width 0.35s ease',
                               position: 'relative'
                             }}
-                          >
-                            <div
-                              style={{
-                                position: 'absolute',
-                                top: '1px',
-                                left: '4px',
-                                right: '4px',
-                                height: '2px',
-                                background: 'rgba(255, 255, 255, 0.5)',
-                                borderRadius: '2px'
-                              }}
-                            />
-                          </div>
+                          />
                         </div>
                       </div>
 
@@ -1231,7 +1204,7 @@ export const DailyQuestsModal: React.FC<DailyQuestsModalProps> = ({
                         style={{
                           fontSize: '0.72rem',
                           fontWeight: 900,
-                          color: '#1E293B',
+                          color: '#000000',
                           minWidth: '45px',
                           textAlign: 'right'
                         }}
@@ -1247,16 +1220,16 @@ export const DailyQuestsModal: React.FC<DailyQuestsModalProps> = ({
                             fontWeight: 900,
                             color: '#16A34A',
                             background: '#DCFCE7',
-                            border: '1.5px solid #86EFAC',
+                            border: '1.5px solid #000000',
                             borderRadius: '8px',
                             padding: '4px 8px',
                             display: 'inline-flex',
                             alignItems: 'center',
-                            gap: '3px',
+                            gap: '4px',
                             flexShrink: 0
                           }}
                         >
-                          <CheckCircle2 size={12} /> Reclamado
+                          <CheckCircle2 size={13} /> Reclamado
                         </div>
                       ) : canClaim ? (
                         <button
@@ -1266,27 +1239,27 @@ export const DailyQuestsModal: React.FC<DailyQuestsModalProps> = ({
                             fontWeight: 900,
                             color: '#FFFFFF',
                             background: '#22C55E',
-                            border: '2px solid #86EFAC',
-                            boxShadow: '0 2px 0 #15803D',
-                            borderRadius: '9px',
+                            border: '2px solid #000000',
+                            boxShadow: '2.5px 2.5px 0px #000000',
+                            borderRadius: '8px',
                             padding: '4px 10px',
                             cursor: 'pointer',
                             display: 'inline-flex',
                             alignItems: 'center',
                             gap: '4px',
                             flexShrink: 0,
-                            transition: 'all 0.1s ease'
+                            transition: 'transform 0.08s ease, box-shadow 0.08s ease'
                           }}
                           onMouseDown={(e) => {
-                            e.currentTarget.style.transform = 'translateY(2px)';
-                            e.currentTarget.style.boxShadow = '0 1px 0 #15803D';
+                            e.currentTarget.style.transform = 'translate(1.5px, 1.5px)';
+                            e.currentTarget.style.boxShadow = '1px 1px 0px #000000';
                           }}
                           onMouseUp={(e) => {
-                            e.currentTarget.style.transform = 'translateY(0)';
-                            e.currentTarget.style.boxShadow = '0 2px 0 #15803D';
+                            e.currentTarget.style.transform = 'translate(0, 0)';
+                            e.currentTarget.style.boxShadow = '2.5px 2.5px 0px #000000';
                           }}
                         >
-                          <Sparkles size={12} /> ¡Reclamar!
+                          <Sparkles size={13} /> ¡Reclamar!
                         </button>
                       ) : null}
                     </div>

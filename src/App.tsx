@@ -2,13 +2,16 @@ import { useState, useEffect } from 'react';
 import confetti from 'canvas-confetti';
 import {
   X,
+  Check,
   CheckCircle2,
   XCircle,
   RotateCcw,
   Gamepad2,
   GraduationCap,
   Sparkles,
-  Trophy
+  Trophy,
+  Target,
+  Star
 } from 'lucide-react';
 
 import { UserProfile, LearningPath as PathType, UserPowerUps } from './types/user';
@@ -42,6 +45,7 @@ import { VSCodeSnippet } from './components/VSCodeSnippet';
 import { TraceStepComponent } from './components/exercises/TraceStepExercise';
 import { ParsonsPuzzleComponent } from './components/exercises/ParsonsPuzzleExercise';
 import { LoadingScreen } from './components/LoadingScreen';
+import { FormattedText } from './components/FormattedText';
 import { ConsoleMascot, ConsoleDevAvatar } from './components/ConsoleAvatar';
 import { GameAlertModal, GameAlertState } from './components/GameAlertModal';
 import { AnimatedDoodleBackground } from './components/AnimatedDoodleBackground';
@@ -286,7 +290,7 @@ export default function App() {
 
   // Estado de pantalla de carga con animación blur y tips
   const [showLoading, setShowLoading] = useState(true);
-  const [loadingTitle, setLoadingTitle] = useState('Inicializando PrograApp...');
+  const loadingTitle = 'Inicializando PrograApp...';
 
   // Estado de diagnóstico pendiente asignado por el profesor
   const [activePendingAssignment, setActivePendingAssignment] = useState<any | null>(null);
@@ -302,7 +306,7 @@ export default function App() {
           setGameAlert({
             isOpen: true,
             type: 'info',
-            title: '🔔 El Profesor te ha enviado un Diagnóstico',
+            title: 'El Profesor te ha enviado un Diagnóstico',
             message: `El profesor Joseph Carazo te ha enviado la evaluación: "${pending.title}". Debes completarla obligatoriamente para registrar tus avances.`,
             primaryButtonText: 'Comenzar Diagnóstico Obligatorio',
             onPrimaryClick: () => {
@@ -1256,12 +1260,6 @@ export default function App() {
           onPathToggle={() => {
             soundService.playToken();
             const nextPath: PathType = user.currentPath === 'kotlin' ? 'sql' : 'kotlin';
-            setLoadingTitle(
-              nextPath === 'sql'
-                ? 'Cargando Módulos Relacionales SQL...'
-                : 'Cargando Entorno Algorítmico Kotlin...'
-            );
-            setShowLoading(true);
             const updated = { ...user, currentPath: nextPath };
             userService.updateProfile(updated);
             setUser(updated);
@@ -1348,100 +1346,47 @@ export default function App() {
             />
           ) : (
             <>
-              {/* Barra de Cambio de Modo Triple: Jugar vs Cursos vs Liga Semanal */}
-              <div
-                style={{
-                  display: 'flex',
-                  background: '#F1F5F9',
-                  padding: '4px',
-                  borderRadius: '16px',
-                  border: '2px solid #E2E8F0',
-                  marginBottom: '16px',
-                  gap: '6px',
-                  maxWidth: '520px',
-                  width: '100%',
-                  boxSizing: 'border-box',
-                  boxShadow: '0 3px 0 #CBD5E1'
-                }}
-              >
+              {/* Barra de Cambio de Modo Triple: Jugar vs Cursos vs Liga Semanal (Neo-brutalism) */}
+              <div className="neo-mode-switch-wrapper" role="tablist" aria-label="Cambiar Modo Principal">
                 <button
+                  type="button"
+                  role="tab"
+                  aria-selected={mainTab === 'play'}
+                  className={`neo-mode-switch-tab ${mainTab === 'play' ? 'active tab-play' : ''}`}
                   onClick={() => {
                     soundService.playToken();
                     setMainTab('play');
                   }}
-                  style={{
-                    flex: 1,
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    gap: '6px',
-                    padding: '8px 12px',
-                    borderRadius: '10px',
-                    fontSize: '0.9rem',
-                    fontWeight: 800,
-                    cursor: 'pointer',
-                    transition: 'all 0.2s ease',
-                    background: mainTab === 'play' ? 'var(--orange-main)' : 'transparent',
-                    color: mainTab === 'play' ? '#FFFFFF' : '#64748B',
-                    border: 'none',
-                    boxShadow: mainTab === 'play' ? '0 3px 0 #C27100' : 'none'
-                  }}
                 >
-                  <Gamepad2 size={17} />
+                  <Gamepad2 size={18} strokeWidth={2.5} color={mainTab === 'play' ? '#FFFFFF' : '#64748B'} />
                   <span>Jugar</span>
                 </button>
 
                 <button
+                  type="button"
+                  role="tab"
+                  aria-selected={mainTab === 'courses'}
+                  className={`neo-mode-switch-tab ${mainTab === 'courses' ? 'active tab-courses' : ''}`}
                   onClick={() => {
                     soundService.playToken();
                     setMainTab('courses');
                   }}
-                  style={{
-                    flex: 1,
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    gap: '6px',
-                    padding: '8px 12px',
-                    borderRadius: '10px',
-                    fontSize: '0.9rem',
-                    fontWeight: 800,
-                    cursor: 'pointer',
-                    transition: 'all 0.2s ease',
-                    background: mainTab === 'courses' ? '#2563EB' : 'transparent',
-                    color: mainTab === 'courses' ? '#FFFFFF' : '#64748B',
-                    border: 'none',
-                    boxShadow: mainTab === 'courses' ? '0 3px 0 #1D4ED8' : 'none'
-                  }}
                 >
-                  <GraduationCap size={18} />
+                  <GraduationCap size={19} strokeWidth={2.5} color={mainTab === 'courses' ? '#FFFFFF' : '#64748B'} />
                   <span>Cursos</span>
                 </button>
 
                 <button
+                  type="button"
+                  role="tab"
+                  aria-selected={mainTab === 'league'}
+                  className={`neo-mode-switch-tab ${mainTab === 'league' ? 'active tab-league' : ''}`}
                   onClick={() => {
                     soundService.playToken();
                     setMainTab('league');
                   }}
-                  style={{
-                    flex: 1,
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    gap: '6px',
-                    padding: '8px 12px',
-                    borderRadius: '10px',
-                    fontSize: '0.9rem',
-                    fontWeight: 800,
-                    cursor: 'pointer',
-                    transition: 'all 0.2s ease',
-                    background: mainTab === 'league' ? '#D97706' : 'transparent',
-                    color: mainTab === 'league' ? '#FFFFFF' : '#64748B',
-                    border: 'none',
-                    boxShadow: mainTab === 'league' ? '0 3px 0 #B45309' : 'none'
-                  }}
                 >
-                  <Trophy size={17} />
+                  <Trophy size={18} strokeWidth={2.5} color={mainTab === 'league' ? '#FFFFFF' : '#64748B'} />
                   <span>Liga</span>
                 </button>
               </div>
@@ -1524,7 +1469,7 @@ export default function App() {
       {/* VISTA 2: SESIÓN DE LECCIÓN INTERACTIVA (CON COMODINES Y VS CODE SNIPPET) */}
       {view === 'lesson' && activeLesson && currentExercise && (
         <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', padding: '16px 16px 140px 16px', maxWidth: '640px', margin: '0 auto', width: '100%', boxSizing: 'border-box' }}>
-          {/* Barra de Progreso Superior Duolingo 3D */}
+          {/* Barra de Progreso Superior Neo-Brutal */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px' }}>
             <button
               onClick={() => {
@@ -1534,11 +1479,11 @@ export default function App() {
               style={{
                 width: '42px',
                 height: '42px',
-                borderRadius: '14px',
+                borderRadius: '12px',
                 background: '#FFFFFF',
-                border: '2px solid #CBD5E1',
-                boxShadow: '0 3px 0 #94A3B8',
-                color: '#64748B',
+                border: '2.5px solid #000000',
+                boxShadow: '3px 3px 0px #000000',
+                color: '#000000',
                 cursor: 'pointer',
                 display: 'flex',
                 alignItems: 'center',
@@ -1554,11 +1499,12 @@ export default function App() {
               style={{
                 flex: 1,
                 height: '18px',
-                background: '#E2E8F0',
+                background: '#FFFFFF',
+                border: '2px solid #000000',
+                boxShadow: '2.5px 2.5px 0px #000000',
                 borderRadius: '9999px',
                 overflow: 'hidden',
-                position: 'relative',
-                boxShadow: 'inset 0 2px 4px rgba(0,0,0,0.06)'
+                position: 'relative'
               }}
             >
               <div
@@ -1591,12 +1537,12 @@ export default function App() {
                   }%`,
                   background: isReviewPhase ? '#F59E0B' : '#22C55E',
                   borderRadius: '9999px',
-                  boxShadow: isReviewPhase ? '0 2px 0 #D97706' : '0 2px 0 #15803D',
+                  borderRight: '2px solid #000000',
                   transition: 'width 0.35s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.3s ease',
                   position: 'relative'
                 }}
               >
-                {/* Brillo 3D superior estilo Duolingo */}
+                {/* Brillo superior suave */}
                 <div
                   style={{
                     position: 'absolute',
@@ -1604,7 +1550,7 @@ export default function App() {
                     left: '8px',
                     right: '8px',
                     height: '4px',
-                    background: 'rgba(255, 255, 255, 0.6)',
+                    background: 'rgba(255, 255, 255, 0.55)',
                     borderRadius: '4px'
                   }}
                 />
@@ -1616,13 +1562,14 @@ export default function App() {
                 display: 'inline-flex',
                 alignItems: 'center',
                 gap: '4px',
-                background: isReviewPhase ? '#FEF3C7' : '#F1F5F9',
-                border: isReviewPhase ? '1.5px solid #F59E0B' : '1.5px solid #CBD5E1',
+                background: isReviewPhase ? '#FEF3C7' : '#FFFFFF',
+                border: '2px solid #000000',
+                boxShadow: '2px 2px 0px #000000',
                 padding: '6px 12px',
-                borderRadius: '14px',
+                borderRadius: '12px',
                 fontSize: '0.82rem',
                 fontWeight: 900,
-                color: isReviewPhase ? '#B45309' : '#0F172A',
+                color: isReviewPhase ? '#B45309' : '#000000',
                 minWidth: isReviewPhase ? '90px' : '52px',
                 justifyContent: 'center',
                 flexShrink: 0
@@ -1634,7 +1581,7 @@ export default function App() {
             </div>
           </div>
 
-          {/* Barra Táctica de Comodines Integrada (Requisito 2) */}
+          {/* Barra Táctica de Comodines Integrada */}
           <PowerUpsBar
             powerups={user.powerups}
             onUsePowerUp={handleUsePowerUpInLesson}
@@ -1650,24 +1597,39 @@ export default function App() {
                 alignItems: 'center',
                 gap: '12px',
                 background: '#F0F9FF',
-                border: '2px solid #38BDF8',
-                boxShadow: '0 3px 0 #0284C7',
-                borderRadius: '16px',
+                border: '2.5px solid #000000',
+                boxShadow: '3.5px 3.5px 0px #000000',
+                borderRadius: '14px',
                 padding: '12px 16px',
                 marginBottom: '12px'
               }}
             >
-              <GraduationCap size={22} color="#0284C7" style={{ flexShrink: 0 }} />
+              <GraduationCap size={22} color="#0284C7" strokeWidth={2.4} style={{ flexShrink: 0 }} />
               <span style={{ fontSize: '0.88rem', color: '#0369A1', lineHeight: 1.45, fontWeight: 700 }}>
                 <strong style={{ color: '#0284C7' }}>Pista del Profesor:</strong> {teacherHintText}
               </span>
             </div>
           )}
 
-          {/* Banner Duolingo de Fase de Repaso de Errores */}
+          {/* Banner de Fase de Repaso de Errores */}
           {isReviewPhase && (
-            <div className="review-banner">
-              <RotateCcw size={16} />
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '10px',
+                background: '#FEF3C7',
+                border: '2.5px solid #000000',
+                boxShadow: '3.5px 3.5px 0px #000000',
+                borderRadius: '14px',
+                padding: '10px 14px',
+                marginBottom: '12px',
+                color: '#B45309',
+                fontWeight: 800,
+                fontSize: '0.88rem'
+              }}
+            >
+              <RotateCcw size={18} strokeWidth={2.6} />
               <span>¡Repasemos las preguntas que fallaste para dominar el tema!</span>
             </div>
           )}
@@ -1680,8 +1642,8 @@ export default function App() {
           )}
 
           {isReviewPhase && (
-            <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', background: 'rgba(245, 158, 11, 0.15)', color: '#FBBF24', padding: '4px 10px', borderRadius: '12px', fontSize: '0.8rem', fontWeight: 800, width: 'fit-content', marginBottom: '8px' }}>
-              <RotateCcw size={14} /> Reto de Corrección
+            <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', background: '#FEF3C7', color: '#B45309', border: '2px solid #000000', boxShadow: '2px 2px 0px #000000', padding: '4px 10px', borderRadius: '10px', fontSize: '0.8rem', fontWeight: 900, width: 'fit-content', marginBottom: '8px' }}>
+              <RotateCcw size={14} strokeWidth={2.6} /> Reto de Corrección
             </div>
           )}
 
@@ -1693,15 +1655,14 @@ export default function App() {
                 alignItems: 'center',
                 gap: '10px',
                 background: '#FAF5FF',
-                border: '2px solid #C084FC',
-                borderLeft: '5px solid #7E22CE',
+                border: '2.5px solid #000000',
+                boxShadow: '3.5px 3.5px 0px #000000',
                 borderRadius: '14px',
                 padding: '10px 14px',
-                marginBottom: '12px',
-                boxShadow: '0 2px 0 #E9D5FF'
+                marginBottom: '12px'
               }}
             >
-              <Sparkles size={18} color="#7E22CE" style={{ flexShrink: 0 }} />
+              <Sparkles size={18} color="#7E22CE" strokeWidth={2.4} style={{ flexShrink: 0 }} />
               <span style={{ fontSize: '0.86rem', color: '#6B21A8', fontWeight: 800 }}>
                 {codePeekClueText}
               </span>
@@ -1715,7 +1676,7 @@ export default function App() {
             </div>
             <div className="duo-speech-bubble">
               <h2 className="duo-speech-title">
-                {currentExercise.prompt}
+                <FormattedText text={currentExercise.prompt} inline />
               </h2>
               <p className="duo-speech-instruction">
                 {getExerciseInstruction(currentExercise)}
@@ -1783,9 +1744,9 @@ export default function App() {
                 style={{
                   background: '#0F172A',
                   borderRadius: '16px',
-                  border: '2.5px solid #EF4444',
+                  border: '2.5px solid #000000',
                   overflow: 'hidden',
-                  boxShadow: '0 5px 0 #B91C1C'
+                  boxShadow: '4px 4px 0px #000000'
                 }}
               >
                 <div
@@ -1795,18 +1756,18 @@ export default function App() {
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'space-between',
-                    borderBottom: '2px solid #0F172A'
+                    borderBottom: '2.5px solid #000000'
                   }}
                 >
                   <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                    <div style={{ width: '10px', height: '10px', borderRadius: '50%', background: '#EF4444' }} />
-                    <div style={{ width: '10px', height: '10px', borderRadius: '50%', background: '#F59E0B' }} />
-                    <div style={{ width: '10px', height: '10px', borderRadius: '50%', background: '#10B981' }} />
+                    <div style={{ width: '10px', height: '10px', borderRadius: '50%', background: '#EF4444', border: '1px solid #000000' }} />
+                    <div style={{ width: '10px', height: '10px', borderRadius: '50%', background: '#F59E0B', border: '1px solid #000000' }} />
+                    <div style={{ width: '10px', height: '10px', borderRadius: '50%', background: '#10B981', border: '1px solid #000000' }} />
                     <span style={{ fontSize: '0.78rem', color: '#F8FAFC', fontFamily: 'JetBrains Mono', fontWeight: 800, marginLeft: '6px' }}>
                       debug_target.kt
                     </span>
                   </div>
-                  <span style={{ fontSize: '0.74rem', color: '#F87171', fontWeight: 800, background: 'rgba(239, 68, 68, 0.15)', padding: '2px 8px', borderRadius: '6px' }}>
+                  <span style={{ fontSize: '0.74rem', color: '#FFFFFF', fontWeight: 900, background: '#DC2626', border: '1.5px solid #000000', boxShadow: '1.5px 1.5px 0px #000000', padding: '3px 8px', borderRadius: '6px' }}>
                     Toca la línea con el error
                   </span>
                 </div>
@@ -1872,12 +1833,12 @@ export default function App() {
                           {line}
                         </code>
                         {isEliminated && (
-                          <span style={{ fontSize: '0.7rem', color: '#10B981', fontWeight: 800, padding: '2px 6px', background: 'rgba(16, 185, 129, 0.1)', borderRadius: '4px' }}>
-                            ✓ Correcta
+                          <span style={{ fontSize: '0.7rem', color: '#FFFFFF', fontWeight: 900, padding: '2px 6px', background: '#15803D', border: '1px solid #000000', borderRadius: '4px', display: 'inline-flex', alignItems: 'center', gap: '3px' }}>
+                            <Check size={11} strokeWidth={3} /> Correcta
                           </span>
                         )}
                         {isPeekBug && !isSelected && (
-                          <span style={{ fontSize: '0.7rem', color: '#C084FC', fontWeight: 800, padding: '2px 6px', background: 'rgba(168, 85, 247, 0.15)', borderRadius: '4px' }}>
+                          <span style={{ fontSize: '0.7rem', color: '#FFFFFF', fontWeight: 900, padding: '2px 6px', background: '#7E22CE', border: '1px solid #000000', borderRadius: '4px' }}>
                             ¡Error aquí!
                           </span>
                         )}
@@ -1917,7 +1878,7 @@ export default function App() {
                     >
                       <div className="duo-option-badge">{letterBadge}</div>
                       <span className="duo-option-text font-mono">
-                        {opt}
+                        <FormattedText text={opt} inline />
                       </span>
                     </button>
                   );
@@ -2003,7 +1964,7 @@ export default function App() {
                     >
                       <div className="duo-option-badge">{letterBadge}</div>
                       <span className="duo-option-text font-mono">
-                        {opt}
+                        <FormattedText text={opt} inline />
                       </span>
                     </button>
                   );
@@ -2031,19 +1992,25 @@ export default function App() {
             />
           )}
 
-          {/* ═══ BARRA INFERIOR DUOLINGO AUTÉNTICA (STICKY FOOTER CHECK/CONTINUE) ═══ */}
+          {/* ═══ BARRA INFERIOR DE LECCIÓN NEO-BRUTAL (STICKY FOOTER CHECK/CONTINUE) ═══ */}
           {feedbackState === 'idle' ? (
             <div className="duo-lesson-footer">
               <button
-                className="btn-3d btn-green"
                 disabled={!isAnswerReady()}
                 onClick={handleCheckAnswer}
                 style={{
                   width: '100%',
-                  fontSize: '1.1rem',
-                  padding: '16px 20px',
-                  borderRadius: '16px',
-                  letterSpacing: '0.8px'
+                  fontSize: '1.05rem',
+                  padding: '15px 20px',
+                  borderRadius: '14px',
+                  background: isAnswerReady() ? '#22C55E' : '#E2E8F0',
+                  color: isAnswerReady() ? '#FFFFFF' : '#94A3B8',
+                  border: '2.5px solid #000000',
+                  boxShadow: isAnswerReady() ? '3.5px 3.5px 0px #000000' : 'none',
+                  cursor: isAnswerReady() ? 'pointer' : 'not-allowed',
+                  fontWeight: 900,
+                  letterSpacing: '0.8px',
+                  transition: 'all 0.1s ease'
                 }}
               >
                 COMPROBAR
@@ -2061,20 +2028,22 @@ export default function App() {
                           height: '42px',
                           borderRadius: '50%',
                           background: '#22C55E',
+                          border: '2px solid #000000',
+                          boxShadow: '2px 2px 0px #000000',
                           display: 'flex',
                           alignItems: 'center',
                           justifyContent: 'center',
                           flexShrink: 0
                         }}
                       >
-                        <CheckCircle2 size={26} color="#FFFFFF" strokeWidth={2.5} />
+                        <CheckCircle2 size={26} color="#FFFFFF" strokeWidth={2.8} />
                       </div>
                       <div>
                         <div style={{ fontSize: '1.25rem', fontWeight: 900, color: '#15803D' }}>
                           ¡Compilación Exitosa!
                         </div>
-                        <div style={{ fontSize: '0.92rem', color: '#166534', fontWeight: 700 }}>
-                          {feedbackExplanation}
+                        <div style={{ fontSize: '0.92rem', color: '#166534', fontWeight: 800 }}>
+                          <FormattedText text={feedbackExplanation} inline />
                         </div>
                       </div>
                     </>
@@ -2086,20 +2055,22 @@ export default function App() {
                           height: '42px',
                           borderRadius: '50%',
                           background: '#EF4444',
+                          border: '2px solid #000000',
+                          boxShadow: '2px 2px 0px #000000',
                           display: 'flex',
                           alignItems: 'center',
                           justifyContent: 'center',
                           flexShrink: 0
                         }}
                       >
-                        <XCircle size={26} color="#FFFFFF" strokeWidth={2.5} />
+                        <XCircle size={26} color="#FFFFFF" strokeWidth={2.8} />
                       </div>
                       <div>
                         <div style={{ fontSize: '1.25rem', fontWeight: 900, color: '#B91C1C' }}>
                           Bug Detectado
                         </div>
-                        <div style={{ fontSize: '0.92rem', color: '#991B1B', fontWeight: 700 }}>
-                          {feedbackExplanation}
+                        <div style={{ fontSize: '0.92rem', color: '#991B1B', fontWeight: 800 }}>
+                          <FormattedText text={feedbackExplanation} inline />
                         </div>
                       </div>
                     </>
@@ -2107,14 +2078,20 @@ export default function App() {
                 </div>
 
                 <button
-                  className={`btn-3d ${feedbackState === 'success' ? 'btn-green' : 'btn-red'}`}
                   onClick={handleContinue}
                   style={{
                     width: '100%',
-                    fontSize: '1.1rem',
-                    padding: '16px 20px',
-                    borderRadius: '16px',
-                    letterSpacing: '0.8px'
+                    fontSize: '1.05rem',
+                    padding: '15px 20px',
+                    borderRadius: '14px',
+                    background: feedbackState === 'success' ? '#22C55E' : '#EF4444',
+                    color: '#FFFFFF',
+                    border: '2.5px solid #000000',
+                    boxShadow: '3.5px 3.5px 0px #000000',
+                    cursor: 'pointer',
+                    fontWeight: 900,
+                    letterSpacing: '0.8px',
+                    transition: 'all 0.1s ease'
                   }}
                 >
                   {currentQueueIndex < lessonQueue.length - 1 ? 'CONTINUAR' : 'FINALIZAR LECCIÓN'}
@@ -2343,7 +2320,9 @@ export default function App() {
               animation: 'bounce-in 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)'
             }}
           >
-            <div style={{ fontSize: '2.5rem' }}>🎯</div>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '56px', height: '56px', borderRadius: '16px', background: '#DCFCE7', border: '2.5px solid #000000', boxShadow: '3px 3px 0px #000000' }}>
+              <Target size={32} color="#000000" strokeWidth={2.6} />
+            </div>
             <h3 style={{ fontSize: '1.45rem', fontWeight: 900, color: '#0F172A', margin: 0 }}>
               ¡Nivel Completado con Éxito!
             </h3>
@@ -2353,15 +2332,27 @@ export default function App() {
 
             <div style={{ display: 'flex', gap: '8px', margin: '4px 0' }}>
               {Array.from({ length: 3 }).map((_, i) => (
-                <span
+                <div
                   key={i}
                   style={{
-                    fontSize: '2rem',
-                    filter: i < levelSuccessAlert.stars ? 'none' : 'grayscale(1) opacity(0.28)'
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    width: '40px',
+                    height: '40px',
+                    borderRadius: '10px',
+                    background: i < levelSuccessAlert.stars ? '#FFE600' : '#F1F5F9',
+                    border: '2px solid #000000',
+                    boxShadow: '2px 2px 0px #000000'
                   }}
                 >
-                  ⭐
-                </span>
+                  <Star
+                    size={22}
+                    color="#000000"
+                    fill={i < levelSuccessAlert.stars ? '#000000' : 'none'}
+                    strokeWidth={2.4}
+                  />
+                </div>
               ))}
             </div>
 

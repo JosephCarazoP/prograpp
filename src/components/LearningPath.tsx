@@ -8,7 +8,13 @@ import {
   BookOpen,
   Sparkles,
   Swords,
-  Trophy
+  Trophy,
+  Database,
+  Terminal,
+  Layers,
+  Code2,
+  Cpu,
+  Cloud
 } from 'lucide-react';
 import { Unit, Lesson } from '../types/lesson';
 import { UserProfile } from '../types/user';
@@ -19,8 +25,6 @@ import { DevRoadmapCharacter, DevRoadmapAction } from './DevRoadmapCharacter';
 import {
   RoadConnector,
   NodeSteppingPlatform,
-  BiomeHeaderIllustration,
-  BiomeSideProp,
   BiomeThemeType
 } from './BiomeScenery';
 
@@ -35,133 +39,298 @@ interface LearningPathProps {
   onLockedNotice?: (title: string, message: string) => void;
 }
 
+export type BiomeIconType = 'database' | 'terminal' | 'layers' | 'code' | 'cpu' | 'cloud';
 
 export interface UnitBiome {
   slug: string;
   name: string;
   subtitle: string;
   badgeTag: string;
-  emoji: string;
+  iconType: BiomeIconType;
   theme: BiomeThemeType;
-  bgGradient: string;
-  borderColor: string;
-  shadowColor: string;
-  accentColor: string;
-  accentDark: string;
-  bannerGradient: string;
-  bannerBorder: string;
-  bannerShadow: string;
+  tabColor: string;
+  accentBg: string;
 }
+
+export const BiomeBadgeIcon: React.FC<{ type: BiomeIconType; size?: number }> = ({ type, size = 14 }) => {
+  switch (type) {
+    case 'database':
+      return <Database size={size} color="#000000" strokeWidth={2.5} />;
+    case 'terminal':
+      return <Terminal size={size} color="#000000" strokeWidth={2.5} />;
+    case 'layers':
+      return <Layers size={size} color="#000000" strokeWidth={2.5} />;
+    case 'code':
+      return <Code2 size={size} color="#000000" strokeWidth={2.5} />;
+    case 'cpu':
+      return <Cpu size={size} color="#000000" strokeWidth={2.5} />;
+    case 'cloud':
+    default:
+      return <Cloud size={size} color="#000000" strokeWidth={2.5} />;
+  }
+};
+
+const SQL_BIOMES: Record<number, UnitBiome> = {
+  1: {
+    slug: 'sql-u01-fundamentos',
+    name: 'Fundamentos de bases de datos',
+    subtitle: 'Datos e información, bases de datos relacionales, tablas y SQLite',
+    badgeTag: 'UNIDAD 1 • FUNDAMENTOS BD',
+    iconType: 'database',
+    theme: 'quarry',
+    tabColor: '#FFE600',
+    accentBg: '#FEF9C3'
+  },
+  2: {
+    slug: 'sql-u02-modelado',
+    name: 'Modelado de información y relaciones',
+    subtitle: 'Entidades Estudiante, Asignatura, Matrícula y relaciones 1:N y N:M',
+    badgeTag: 'UNIDAD 2 • MODELADO Y RELACIONES',
+    iconType: 'layers',
+    theme: 'vault',
+    tabColor: '#38BDF8',
+    accentBg: '#E0F2FE'
+  },
+  3: {
+    slug: 'sql-u03-createtable',
+    name: 'Tipos de datos y CREATE TABLE',
+    subtitle: 'Esquemas de tablas, tipos INTEGER, REAL, TEXT, BLOB y fechas',
+    badgeTag: 'UNIDAD 3 • CREATE TABLE Y TIPOS',
+    iconType: 'code',
+    theme: 'cavern',
+    tabColor: '#10B981',
+    accentBg: '#D1FAE5'
+  },
+  4: {
+    slug: 'sql-u04-restricciones',
+    name: 'Llaves y restricciones',
+    subtitle: 'PRIMARY KEY, NOT NULL, UNIQUE, CHECK, DEFAULT y nulos',
+    badgeTag: 'UNIDAD 4 • RESTRICCIONES',
+    iconType: 'database',
+    theme: 'vault',
+    tabColor: '#F59E0B',
+    accentBg: '#FEF3C7'
+  },
+  5: {
+    slug: 'sql-u05-insert',
+    name: 'Inserción de registros',
+    subtitle: 'Inserción explícita de registros, orden de claves y manejo de restricciones',
+    badgeTag: 'UNIDAD 5 • INSERCIÓN INSERT',
+    iconType: 'terminal',
+    theme: 'river',
+    tabColor: '#8B5CF6',
+    accentBg: '#EDE9FE'
+  },
+  6: {
+    slug: 'sql-u06-select',
+    name: 'Consultas básicas',
+    subtitle: 'Proyección de datos, columnas calculadas, alias AS y DISTINCT',
+    badgeTag: 'UNIDAD 6 • CONSULTAS SELECT',
+    iconType: 'terminal',
+    theme: 'river',
+    tabColor: '#3B82F6',
+    accentBg: '#DBEAFE'
+  },
+  7: {
+    slug: 'sql-u07-filtros',
+    name: 'Filtros, búsquedas y ordenamiento',
+    subtitle: 'Operadores booleanos, BETWEEN, IN, comodines LIKE, ORDER BY y LIMIT',
+    badgeTag: 'UNIDAD 7 • FILTROS WHERE',
+    iconType: 'cpu',
+    theme: 'cavern',
+    tabColor: '#EC4899',
+    accentBg: '#FCE7F3'
+  },
+  8: {
+    slug: 'sql-u08-update-delete',
+    name: 'Actualización y eliminación',
+    subtitle: 'Modificación segura de registros, delimitación WHERE y diferencia con DROP',
+    badgeTag: 'UNIDAD 8 • UPDATE Y DELETE',
+    iconType: 'database',
+    theme: 'quarry',
+    tabColor: '#EF4444',
+    accentBg: '#FEE2E2'
+  },
+  9: {
+    slug: 'sql-u09-joins',
+    name: 'Consultas entre tablas',
+    subtitle: 'INNER JOIN, LEFT JOIN, condiciones ON y consultas sobre tres tablas',
+    badgeTag: 'UNIDAD 9 • JOIN ENTRE TABLAS',
+    iconType: 'layers',
+    theme: 'vault',
+    tabColor: '#6366F1',
+    accentBg: '#EEF2FF'
+  },
+  10: {
+    slug: 'sql-u10-agregaciones',
+    name: 'Agregaciones y agrupaciones',
+    subtitle: 'Funciones COUNT, SUM, AVG, MIN, MAX y filtrado posagregado con HAVING',
+    badgeTag: 'UNIDAD 10 • AGREGACIONES GROUP BY',
+    iconType: 'cloud',
+    theme: 'cloud',
+    tabColor: '#14B8A6',
+    accentBg: '#CCFBF1'
+  },
+  11: {
+    slug: 'sql-u11-subconsultas',
+    name: 'Funciones y subconsultas',
+    subtitle: 'Funciones de texto, CASE condicional, COALESCE y subconsultas anidadas',
+    badgeTag: 'UNIDAD 11 • SUBCONSULTAS Y FUNCIONES',
+    iconType: 'code',
+    theme: 'valley',
+    tabColor: '#8B5CF6',
+    accentBg: '#F3E8FF'
+  },
+  12: {
+    slug: 'sql-u12-transacciones',
+    name: 'Integridad referencial y transacciones',
+    subtitle: 'PRAGMA foreign_keys, ON DELETE CASCADE, BEGIN, COMMIT y ROLLBACK',
+    badgeTag: 'UNIDAD 12 • TRANSACCIONES ACID',
+    iconType: 'database',
+    theme: 'vault',
+    tabColor: '#F97316',
+    accentBg: '#FFEDD5'
+  },
+  13: {
+    slug: 'sql-u13-seguridad',
+    name: 'Buen diseño y seguridad básica',
+    subtitle: 'Normalización 1FN-3FN, ALTER TABLE, vistas, índices e inyección SQL',
+    badgeTag: 'UNIDAD 13 • SEGURIDAD Y DISEÑO',
+    iconType: 'cpu',
+    theme: 'cloud',
+    tabColor: '#10B981',
+    accentBg: '#D1FAE5'
+  }
+};
+
+const KOTLIN_BIOMES: Record<number, UnitBiome> = {
+  1: {
+    slug: 'kotlin-u01-pensamiento',
+    name: 'Pensamiento lógico y primeros programas',
+    subtitle: 'Algoritmos, entrada, proceso, salida y estructura main()',
+    badgeTag: 'UNIDAD 1 • PENSAMIENTO LÓGICO',
+    iconType: 'code',
+    theme: 'valley',
+    tabColor: '#4ADE80',
+    accentBg: '#DCFCE7'
+  },
+  2: {
+    slug: 'kotlin-u02-variables',
+    name: 'Variables y tipos de datos',
+    subtitle: 'Declaraciones val/var, tipos primitivos e interpolación de texto',
+    badgeTag: 'UNIDAD 2 • VARIABLES Y TIPOS',
+    iconType: 'layers',
+    theme: 'cavern',
+    tabColor: '#38BDF8',
+    accentBg: '#E0F2FE'
+  },
+  3: {
+    slug: 'kotlin-u03-operadores',
+    name: 'Operadores y expresiones',
+    subtitle: 'Aritmética, comparaciones lógicas y prioridad de operaciones',
+    badgeTag: 'UNIDAD 3 • OPERADORES',
+    iconType: 'cpu',
+    theme: 'vault',
+    tabColor: '#FB7185',
+    accentBg: '#FFE4E6'
+  },
+  4: {
+    slug: 'kotlin-u04-decision',
+    name: 'Estructuras de decisión',
+    subtitle: 'Caminos alternativos con if/else, rangos e inspección when',
+    badgeTag: 'UNIDAD 4 • ESTRUCTURAS DE DECISIÓN',
+    iconType: 'terminal',
+    theme: 'river',
+    tabColor: '#FBBF24',
+    accentBg: '#FEF3C7'
+  },
+  5: {
+    slug: 'kotlin-u05-repeticion',
+    name: 'Estructuras de repetición',
+    subtitle: 'Iteraciones for, while, do-while, contadores y control de flujo',
+    badgeTag: 'UNIDAD 5 • REPETICIÓN Y BUCLES',
+    iconType: 'cpu',
+    theme: 'quarry',
+    tabColor: '#A78BFA',
+    accentBg: '#EDE9FE'
+  },
+  6: {
+    slug: 'kotlin-u06-funciones',
+    name: 'Funciones',
+    subtitle: 'Modularización, parámetros con nombre, retornos y descomposición',
+    badgeTag: 'UNIDAD 6 • FUNCIONES',
+    iconType: 'cloud',
+    theme: 'cloud',
+    tabColor: '#34D399',
+    accentBg: '#D1FAE5'
+  },
+  7: {
+    slug: 'kotlin-u07-nulos',
+    name: 'Conversiones y valores nulos',
+    subtitle: 'Conversiones seguras, tipos anulables ?, operador Elvis ?: y verificación',
+    badgeTag: 'UNIDAD 7 • CONVERSIONES Y NULOS',
+    iconType: 'code',
+    theme: 'valley',
+    tabColor: '#F472B6',
+    accentBg: '#FCE7F3'
+  },
+  8: {
+    slug: 'kotlin-u08-texto',
+    name: 'Procesamiento de texto',
+    subtitle: 'Longitud, trim, mayúsculas, partición y validación de texto',
+    badgeTag: 'UNIDAD 8 • PROCESAMIENTO DE TEXTO',
+    iconType: 'terminal',
+    theme: 'river',
+    tabColor: '#60A5FA',
+    accentBg: '#DBEAFE'
+  },
+  9: {
+    slug: 'kotlin-u09-colecciones',
+    name: 'Colecciones',
+    subtitle: 'Estructuras de datos, mutabilidad, búsqueda e índices',
+    badgeTag: 'UNIDAD 9 • COLECCIONES',
+    iconType: 'layers',
+    theme: 'cavern',
+    tabColor: '#F59E0B',
+    accentBg: '#FEF3C7'
+  },
+  10: {
+    slug: 'kotlin-u10-poo',
+    name: 'Clases y objetos',
+    subtitle: 'Programación orientada a objetos, encapsulación y data classes',
+    badgeTag: 'UNIDAD 10 • CLASES Y OBJETOS',
+    iconType: 'database',
+    theme: 'vault',
+    tabColor: '#818CF8',
+    accentBg: '#E0E7FF'
+  },
+  11: {
+    slug: 'kotlin-u11-lambdas',
+    name: 'Operaciones sobre colecciones y lambdas',
+    subtitle: 'Transformación con map, filtrado filter, búsqueda y agregación',
+    badgeTag: 'UNIDAD 11 • LAMBDAS Y COLECCIONES',
+    iconType: 'cloud',
+    theme: 'cloud',
+    tabColor: '#2DD4BF',
+    accentBg: '#CCFBF1'
+  },
+  12: {
+    slug: 'kotlin-u12-depuracion',
+    name: 'Errores y depuración',
+    subtitle: 'Manejo robusto con try/catch, depuración paso a paso y casos límite',
+    badgeTag: 'UNIDAD 12 • ERRORES Y DEPURACIÓN',
+    iconType: 'cpu',
+    theme: 'quarry',
+    tabColor: '#EF4444',
+    accentBg: '#FEE2E2'
+  }
+};
 
 export const getUnitBiome = (unitId: number, pathId: 'kotlin' | 'sql'): UnitBiome => {
   if (pathId === 'sql') {
-    if (unitId === 1) {
-      return {
-        slug: 'sql-quarry',
-        name: 'Cantera de Esquemas & Tablas DDL',
-        subtitle: 'Cimientos relacionales, estructuras de entidades y tipos de datos SQL',
-        badgeTag: 'BIOMA 1 • CANTERA DE TABLAS',
-        emoji: '🏛️',
-        theme: 'quarry',
-        bgGradient: 'linear-gradient(180deg, #F0FDF4 0%, #DCFCE7 30%, #F0FDF4 70%, #E8F5E9 100%)',
-        borderColor: '#86EFAC',
-        shadowColor: '#4ADE80',
-        accentColor: '#16A34A',
-        accentDark: '#15803D',
-        bannerGradient: 'linear-gradient(135deg, #16A34A 0%, #15803D 60%, #14532D 100%)',
-        bannerBorder: '#86EFAC',
-        bannerShadow: '#14532D'
-      };
-    } else if (unitId === 2) {
-      return {
-        slug: 'sql-river',
-        name: 'Río de Consultas SELECT & Filtros',
-        subtitle: 'Corrientes de datos, proyección de columnas y condiciones WHERE',
-        badgeTag: 'BIOMA 2 • CORRIENTE SELECT',
-        emoji: '🌊',
-        theme: 'river',
-        bgGradient: 'linear-gradient(180deg, #EFF6FF 0%, #DBEAFE 30%, #EFF6FF 70%, #E0F2FE 100%)',
-        borderColor: '#93C5FD',
-        shadowColor: '#60A5FA',
-        accentColor: '#2563EB',
-        accentDark: '#1D4ED8',
-        bannerGradient: 'linear-gradient(135deg, #2563EB 0%, #1D4ED8 60%, #1E40AF 100%)',
-        bannerBorder: '#93C5FD',
-        bannerShadow: '#1E3A8A'
-      };
-    } else {
-      return {
-        slug: 'sql-vault',
-        name: 'Bóveda de Joins & Agregaciones',
-        subtitle: 'Cripta de relaciones multidimensionales, GROUP BY y funciones SUM/AVG',
-        badgeTag: 'BIOMA 3 • BÓVEDA RELACIONAL',
-        emoji: '💎',
-        theme: 'vault',
-        bgGradient: 'linear-gradient(180deg, #FAF5FF 0%, #F3E8FF 30%, #FAF5FF 70%, #EDE9FE 100%)',
-        borderColor: '#D8B4FE',
-        shadowColor: '#C084FC',
-        accentColor: '#9333EA',
-        accentDark: '#7E22CE',
-        bannerGradient: 'linear-gradient(135deg, #9333EA 0%, #7E22CE 60%, #581C87 100%)',
-        bannerBorder: '#D8B4FE',
-        bannerShadow: '#3B0764'
-      };
-    }
+    return SQL_BIOMES[unitId] || SQL_BIOMES[1];
   }
-
-  // Kotlin Path Biomes
-  if (unitId === 1) {
-    return {
-      slug: 'kotlin-terminal-valley',
-      name: 'Valle de las Variables & Terminal',
-      subtitle: 'Tierra fértil donde brotan los primeros tipos de datos, val/var y operadores',
-      badgeTag: 'BIOMA 1 • VALLE TERMINAL',
-      emoji: '🌿',
-      theme: 'valley',
-      bgGradient: 'linear-gradient(180deg, #F0FDF4 0%, #DCFCE7 30%, #F0FDF4 70%, #E8F5E9 100%)',
-      borderColor: '#86EFAC',
-      shadowColor: '#4ADE80',
-      accentColor: '#16A34A',
-      accentDark: '#15803D',
-      bannerGradient: 'linear-gradient(135deg, #16A34A 0%, #15803D 60%, #14532D 100%)',
-      bannerBorder: '#86EFAC',
-      bannerShadow: '#14532D'
-    };
-  } else if (unitId === 2) {
-    return {
-      slug: 'kotlin-logic-caverns',
-      name: 'Cavernas de Flujo & Circuitos',
-      subtitle: 'Laberinto de bifurcaciones if/when, bucles for/while y operadores lógicos',
-      badgeTag: 'BIOMA 2 • CIRCUITO LÓGICO',
-      emoji: '⚡',
-      theme: 'cavern',
-      bgGradient: 'linear-gradient(180deg, #EFF6FF 0%, #DBEAFE 30%, #EFF6FF 70%, #E0F2FE 100%)',
-      borderColor: '#93C5FD',
-      shadowColor: '#60A5FA',
-      accentColor: '#2563EB',
-      accentDark: '#1D4ED8',
-      bannerGradient: 'linear-gradient(135deg, #2563EB 0%, #1D4ED8 60%, #1E40AF 100%)',
-      bannerBorder: '#93C5FD',
-      bannerShadow: '#1E3A8A'
-    };
-  } else {
-    return {
-      slug: 'kotlin-cloud-metropolis',
-      name: 'Metrópolis Cloud & Funciones',
-      subtitle: 'Alturas cibernéticas de programación modular, colecciones y lambdas',
-      badgeTag: 'BIOMA 3 • METRÓPOLIS CLOUD',
-      emoji: '☁️',
-      theme: 'cloud',
-      bgGradient: 'linear-gradient(180deg, #FAF5FF 0%, #F3E8FF 30%, #FAF5FF 70%, #EDE9FE 100%)',
-      borderColor: '#D8B4FE',
-      shadowColor: '#C084FC',
-      accentColor: '#9333EA',
-      accentDark: '#7E22CE',
-      bannerGradient: 'linear-gradient(135deg, #9333EA 0%, #7E22CE 60%, #581C87 100%)',
-      bannerBorder: '#D8B4FE',
-      bannerShadow: '#3B0764'
-    };
-  }
+  return KOTLIN_BIOMES[unitId] || KOTLIN_BIOMES[1];
 };
 
 export const LearningPath: React.FC<LearningPathProps> = ({
@@ -187,10 +356,11 @@ export const LearningPath: React.FC<LearningPathProps> = ({
         boxSizing: 'border-box'
       }}
     >
-      {(units || []).map((unit) => {
+      {(units || []).map((unit, unitIndex) => {
         const isUnitUnlocked = progressionEngine.isUnitUnlocked(unit.id, user.currentPath, user);
         const track: TrackNode[] = progressionEngine.getUnitTrack(unit, user.currentPath);
         const biome = getUnitBiome(unit.id, user.currentPath);
+        const isFirstInStage = Boolean(unit.stage && (unitIndex === 0 || units[unitIndex - 1]?.stage !== unit.stage));
 
         // Métricas de progreso dentro de la unidad para el banner 3D
         const completedLessonsCount = (unit.lessons || []).filter(
@@ -229,57 +399,50 @@ export const LearningPath: React.FC<LearningPathProps> = ({
               flexDirection: 'column',
               alignItems: 'center',
               boxSizing: 'border-box',
-              background: isUnitUnlocked ? biome.bgGradient : '#F8FAFC',
-              border: `3px solid ${isUnitUnlocked ? biome.borderColor : '#E2E8F0'}`,
-              boxShadow: isUnitUnlocked
-                ? `0 10px 0 ${biome.shadowColor}, 0 16px 30px rgba(0, 0, 0, 0.07)`
-                : '0 8px 0 #CBD5E1',
-              borderRadius: '32px',
-              padding: '18px 14px 40px 14px',
-              position: 'relative',
-              overflow: 'hidden'
+              position: 'relative'
             }}
           >
+            {/* Banner de Etapa si es la primera unidad de dicha etapa */}
+            {unit.stage && isFirstInStage && (
+              <div
+                style={{
+                  width: '100%',
+                  maxWidth: '480px',
+                  marginBottom: '16px',
+                  padding: '10px 18px',
+                  background: '#0F172A',
+                  color: '#F8FAFC',
+                  borderRadius: '14px',
+                  boxShadow: '4px 4px 0px #000000',
+                  border: '2px solid #000000',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '10px',
+                  fontSize: '0.78rem',
+                  fontWeight: 900,
+                  letterSpacing: '0.8px',
+                  textTransform: 'uppercase',
+                  boxSizing: 'border-box'
+                }}
+              >
+                <span>{unit.stage}</span>
+              </div>
+            )}
 
-            {/* Tag 3D del Bioma */}
-            <div
-              style={{
-                alignSelf: 'flex-start',
-                marginBottom: '12px',
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '6px',
-                background: '#FFFFFF',
-                border: `2px solid ${isUnitUnlocked ? biome.borderColor : '#CBD5E1'}`,
-                boxShadow: `0 3px 0 ${isUnitUnlocked ? biome.shadowColor : '#94A3B8'}`,
-                borderRadius: '999px',
-                padding: '4px 14px',
-                fontSize: '0.74rem',
-                fontWeight: 900,
-                color: isUnitUnlocked ? biome.accentColor : '#64748B',
-                letterSpacing: '0.5px',
-                zIndex: 2
-              }}
-            >
-              <span>{biome.emoji}</span>
-              <span>{biome.badgeTag}</span>
-            </div>
-
-            {/* Encabezado Banner de Sección / Bioma estilo Duolingo 3D */}
+            {/* Encabezado Banner de Sección / Bioma estilo Neo-brutalism */}
             <div
               className="unit-card-banner"
               style={{
                 width: '100%',
                 maxWidth: '480px',
                 boxSizing: 'border-box',
-                background: isUnitUnlocked ? biome.bannerGradient : '#64748B',
+                background: isUnitUnlocked ? biome.accentBg : '#F1F5F9',
                 padding: '20px 22px',
-                borderRadius: '24px',
-                color: '#FFFFFF',
+                borderRadius: '18px',
+                color: '#000000',
                 marginBottom: '32px',
-                boxShadow: isUnitUnlocked ? `0 8px 0 ${biome.bannerShadow}` : '0 6px 0 #475569',
-                border: '2.5px solid',
-                borderColor: isUnitUnlocked ? biome.bannerBorder : '#94A3B8',
+                boxShadow: isUnitUnlocked ? '4px 4px 0px #000000' : '2px 2px 0px #CBD5E1',
+                border: '2.5px solid #000000',
                 position: 'relative',
                 overflow: 'hidden',
                 zIndex: 2,
@@ -288,39 +451,25 @@ export const LearningPath: React.FC<LearningPathProps> = ({
                 alignItems: 'center'
               }}
             >
-              {/* Ilustración Vectorial Isométrica 3D del Bioma en el Banner */}
-              {isUnitUnlocked && (
-                <div
-                  style={{
-                    position: 'absolute',
-                    right: '-4px',
-                    bottom: '-4px',
-                    opacity: 0.95,
-                    pointerEvents: 'none',
-                    zIndex: 0
-                  }}
-                >
-                  <BiomeHeaderIllustration theme={biome.theme} unitId={unit.id} />
-                </div>
-              )}
-
-              <div style={{ position: 'relative', zIndex: 1, maxWidth: isUnitUnlocked ? '72%' : '100%' }}>
+              <div style={{ position: 'relative', zIndex: 1, width: '100%' }}>
                 <div
                   style={{
                     display: 'inline-flex',
                     alignItems: 'center',
                     gap: '6px',
-                    fontSize: '0.74rem',
+                    fontSize: '0.72rem',
                     fontWeight: 900,
                     textTransform: 'uppercase',
-                    letterSpacing: '0.7px',
-                    background: 'rgba(0, 0, 0, 0.22)',
+                    letterSpacing: '0.6px',
+                    background: '#000000',
+                    color: '#FFFFFF',
                     padding: '3px 10px',
-                    borderRadius: '999px',
+                    borderRadius: '6px',
                     marginBottom: '8px'
                   }}
                 >
-                  <span>Unidad {unit.id}</span>
+                  <BiomeBadgeIcon type={biome.iconType} size={12} />
+                  <span>{biome.badgeTag}</span>
                 </div>
                 <h2
                   style={{
@@ -328,8 +477,7 @@ export const LearningPath: React.FC<LearningPathProps> = ({
                     fontWeight: 900,
                     margin: '0 0 6px 0',
                     lineHeight: 1.25,
-                    color: '#FFFFFF',
-                    textShadow: '0 1px 2px rgba(0,0,0,0.2)'
+                    color: '#000000'
                   }}
                 >
                   {unit.title}
@@ -338,23 +486,24 @@ export const LearningPath: React.FC<LearningPathProps> = ({
                   style={{
                     fontSize: '0.82rem',
                     margin: '0 0 12px 0',
-                    opacity: 0.95,
                     lineHeight: 1.35,
-                    color: 'rgba(255, 255, 255, 0.95)'
+                    color: '#334155',
+                    fontWeight: 600
                   }}
                 >
                   {unit.description}
                 </p>
 
-                {/* Barra de Progreso 3D de la Unidad */}
+                {/* Barra de Progreso Neo-brutalista de la Unidad */}
                 {isUnitUnlocked && (
                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                     <div
                       style={{
                         flex: 1,
-                        maxWidth: '160px',
-                        height: '10px',
-                        background: 'rgba(0, 0, 0, 0.28)',
+                        maxWidth: '170px',
+                        height: '14px',
+                        background: '#FFFFFF',
+                        border: '2px solid #000000',
                         borderRadius: '999px',
                         overflow: 'hidden',
                         padding: '1.5px',
@@ -365,9 +514,9 @@ export const LearningPath: React.FC<LearningPathProps> = ({
                         style={{
                           width: `${percentProgress}%`,
                           height: '100%',
-                          background: '#FFFFFF',
+                          background: '#4ADE80',
                           borderRadius: '999px',
-                          boxShadow: '0 1px 3px rgba(255,255,255,0.6)',
+                          borderRight: percentProgress > 0 && percentProgress < 100 ? '1.5px solid #000000' : 'none',
                           transition: 'width 0.4s cubic-bezier(0.16, 1, 0.3, 1)'
                         }}
                       />
@@ -376,8 +525,12 @@ export const LearningPath: React.FC<LearningPathProps> = ({
                       style={{
                         fontSize: '0.74rem',
                         fontWeight: 900,
-                        color: 'rgba(255, 255, 255, 0.95)',
-                        letterSpacing: '0.3px'
+                        color: '#000000',
+                        background: '#FFFFFF',
+                        border: '1.5px solid #000000',
+                        borderRadius: '6px',
+                        padding: '1px 6px',
+                        lineHeight: 1.1
                       }}
                     >
                       {completedLessonsCount} / {totalLessonsCount}
@@ -386,38 +539,39 @@ export const LearningPath: React.FC<LearningPathProps> = ({
                 )}
               </div>
 
-              {/* Medallón 3D de estado */}
+              {/* Medallón Neo-brutalista de estado */}
               <div style={{ position: 'relative', zIndex: 1, flexShrink: 0 }}>
                 {!isUnitUnlocked ? (
                   <div
                     style={{
-                      width: '44px',
-                      height: '44px',
-                      borderRadius: '16px',
-                      background: 'rgba(0, 0, 0, 0.25)',
-                      border: '2px solid rgba(255, 255, 255, 0.2)',
+                      width: '46px',
+                      height: '46px',
+                      borderRadius: '14px',
+                      background: '#E2E8F0',
+                      border: '2.5px solid #000000',
+                      boxShadow: '2px 2px 0px #000000',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center'
                     }}
                   >
-                    <Lock size={22} color="#FFFFFF" />
+                    <Lock size={22} color="#000000" strokeWidth={2.5} />
                   </div>
                 ) : (
                   <div
                     style={{
-                      width: '44px',
-                      height: '44px',
-                      borderRadius: '16px',
-                      background: 'rgba(255, 255, 255, 0.22)',
-                      border: '2px solid rgba(255, 255, 255, 0.4)',
-                      boxShadow: '0 3px 0 rgba(0, 0, 0, 0.15)',
+                      width: '46px',
+                      height: '46px',
+                      borderRadius: '14px',
+                      background: '#FFE600',
+                      border: '2.5px solid #000000',
+                      boxShadow: '2.5px 2.5px 0px #000000',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center'
                     }}
                   >
-                    <Trophy size={22} color="#FFFFFF" />
+                    <Trophy size={22} color="#000000" strokeWidth={2.5} />
                   </div>
                 )}
               </div>
@@ -479,14 +633,6 @@ export const LearningPath: React.FC<LearningPathProps> = ({
                           isCompleted={isCompleted}
                         />
 
-                        {/* Props ambientales 3D espaciados a los costados de la carretera (sin tocar botones ni avatar) */}
-                        {!isUnitStartNode && node.indexInTrack % 3 === 2 && (
-                          <BiomeSideProp
-                            theme={biome.theme}
-                            side={offsetX <= 0 ? 'right' : 'left'}
-                            propIndex={node.indexInTrack}
-                          />
-                        )}
 
                         {/* Personaje Dev: único al inicio de la unidad */}
                         {companion && (
@@ -499,21 +645,22 @@ export const LearningPath: React.FC<LearningPathProps> = ({
                           />
                         )}
 
-                        {/* Estrellas de Maestría */}
+                        {/* Estrellas de Maestría Neo-brutalistas */}
                         {isCompleted && (
                           <div className="node-stars">
                             {[1, 2, 3].map((s) => (
                               <Star
                                 key={s}
                                 size={15}
-                                fill={s <= (safeProgress[node.lesson!.id]?.starsEarned || 0) ? '#F59E0B' : '#CBD5E1'}
-                                color={s <= (safeProgress[node.lesson!.id]?.starsEarned || 0) ? '#F59E0B' : '#CBD5E1'}
+                                fill={s <= (safeProgress[node.lesson!.id]?.starsEarned || 0) ? '#FFE600' : '#E2E8F0'}
+                                color="#000000"
+                                strokeWidth={2}
                               />
                             ))}
                           </div>
                         )}
 
-                        {/* Botón Circular 3D del Nodo */}
+                        {/* Botón Circular Neo-brutalista del Nodo */}
                         <button
                           className={`path-node ${
                             isCompleted
@@ -539,22 +686,22 @@ export const LearningPath: React.FC<LearningPathProps> = ({
                           title={isUnlocked ? node.lesson.title : 'Nivel Bloqueado (Completa el anterior)'}
                         >
                           {isCompleted ? (
-                            <CheckCircle2 size={34} color="#FFFFFF" />
+                            <CheckCircle2 size={34} color="#000000" strokeWidth={2.8} />
                           ) : isUnlocked ? (
-                            <Star size={34} fill="#FFFFFF" color="#FFFFFF" />
+                            <Star size={34} fill="#000000" color="#000000" strokeWidth={2} />
                           ) : (
-                            <Lock size={26} color="#94A3B8" />
+                            <Lock size={26} color="#475569" strokeWidth={2.5} />
                           )}
                         </button>
 
                         {/* Etiqueta del Nodo */}
                         <span
                           style={{
-                            fontSize: '0.84rem',
-                            fontWeight: 800,
+                            fontSize: '0.86rem',
+                            fontWeight: 900,
                             marginTop: '8px',
-                            color: isCompleted ? '#1E293B' : isUnlocked ? '#0284C7' : '#64748B',
-                            maxWidth: '135px',
+                            color: '#000000',
+                            maxWidth: '140px',
                             textAlign: 'center',
                             lineHeight: 1.25
                           }}
@@ -562,7 +709,7 @@ export const LearningPath: React.FC<LearningPathProps> = ({
                           {node.lesson.title}
                         </span>
 
-                        {/* Botón de Estudio de Teoría antes de jugar */}
+                        {/* Botón Neo-brutalista de Estudio de Teoría antes de jugar */}
                         {isUnlocked && onOpenTheory && (
                           <button
                             onClick={() => {
@@ -570,33 +717,24 @@ export const LearningPath: React.FC<LearningPathProps> = ({
                               onOpenTheory(node.lesson!);
                             }}
                             style={{
-                              marginTop: '4px',
+                              marginTop: '5px',
                               display: 'inline-flex',
                               alignItems: 'center',
-                              gap: '4px',
+                              gap: '5px',
                               background: (safeProgress[node.lesson.id]?.theoryCompleted || isCompleted)
-                                ? '#F0FDF4'
-                                : '#EFF6FF',
-                              color: (safeProgress[node.lesson.id]?.theoryCompleted || isCompleted)
-                                ? '#16A34A'
-                                : '#2563EB',
-                              border: `1.5px solid ${
-                                (safeProgress[node.lesson.id]?.theoryCompleted || isCompleted)
-                                  ? '#86EFAC'
-                                  : '#BFDBFE'
-                              }`,
-                              boxShadow: `0 2px 0 ${
-                                (safeProgress[node.lesson.id]?.theoryCompleted || isCompleted)
-                                  ? '#4ADE80'
-                                  : '#93C5FD'
-                              }`,
-                              padding: '3px 9px',
-                              borderRadius: '12px',
+                                ? '#4ADE80'
+                                : '#FFE600',
+                              color: '#000000',
+                              border: '2px solid #000000',
+                              boxShadow: '2px 2px 0px #000000',
+                              padding: '3px 10px',
+                              borderRadius: '10px',
                               fontSize: '0.72rem',
-                              fontWeight: 800,
+                              fontWeight: 900,
                               cursor: 'pointer',
-                              transition: 'all 0.15s ease'
+                              transition: 'all 0.1s ease'
                             }}
+                            className="active:translate-x-[1px] active:translate-y-[1px] active:shadow-none"
                             title={
                               (safeProgress[node.lesson.id]?.theoryCompleted || isCompleted)
                                 ? 'Materia y Micro-Quiz completados'
@@ -605,12 +743,12 @@ export const LearningPath: React.FC<LearningPathProps> = ({
                           >
                             {(safeProgress[node.lesson.id]?.theoryCompleted || isCompleted) ? (
                               <>
-                                <CheckCircle2 size={12} color="#16A34A" />
+                                <CheckCircle2 size={13} color="#000000" strokeWidth={2.8} />
                                 <span>Teoría Lista</span>
                               </>
                             ) : (
                               <>
-                                <BookOpen size={12} />
+                                <BookOpen size={13} color="#000000" strokeWidth={2.8} />
                                 <span>Teoría Requerida</span>
                               </>
                             )}
@@ -630,24 +768,15 @@ export const LearningPath: React.FC<LearningPathProps> = ({
                             : 'chest-node-locked'
                         }`}
                         style={{
-                          background: isUnlocked && !(user.openedChests || []).includes(node.id)
-                            ? '#FFFBEB'
-                            : (user.openedChests || []).includes(node.id)
-                            ? '#F0FDF4'
-                            : '#FFFFFF',
-                          border: '2.5px solid',
-                          borderColor: isUnlocked && !(user.openedChests || []).includes(node.id)
-                            ? '#F59E0B'
-                            : (user.openedChests || []).includes(node.id)
-                            ? '#86EFAC'
-                            : '#E2E8F0',
+                          background: '#FFFFFF',
+                          border: '2.5px solid #000000',
                           boxShadow: isUnlocked && !(user.openedChests || []).includes(node.id)
-                            ? '0 6px 0 #D97706, 0 10px 20px rgba(217, 119, 6, 0.14)'
+                            ? '4px 4px 0px #000000'
                             : (user.openedChests || []).includes(node.id)
-                            ? '0 4px 0 #BBF7D0'
-                            : '0 4px 0 #CBD5E1',
-                          borderRadius: '22px',
-                          padding: '14px 18px',
+                            ? '3px 3px 0px #000000'
+                            : '3px 3px 0px #CBD5E1',
+                          borderRadius: '18px',
+                          padding: '16px 18px',
                           display: 'flex',
                           alignItems: 'center',
                           justifyContent: 'space-between',
@@ -660,10 +789,10 @@ export const LearningPath: React.FC<LearningPathProps> = ({
                           width: '100%',
                           maxWidth: '430px',
                           boxSizing: 'border-box',
-                          margin: '6px 0',
+                          margin: '12px 0',
                           position: 'relative',
                           zIndex: 3,
-                          transition: 'all 0.2s cubic-bezier(0.16, 1, 0.3, 1)'
+                          transition: 'all 0.15s ease'
                         }}
                         onClick={() => {
                           const isOpened = (user.openedChests || []).includes(node.id);
@@ -687,32 +816,54 @@ export const LearningPath: React.FC<LearningPathProps> = ({
                           }
                         }}
                       >
+                        {/* Pestaña tipo folder del cofre */}
+                        <div
+                          style={{
+                            position: 'absolute',
+                            top: '-13px',
+                            left: '16px',
+                            background: (user.openedChests || []).includes(node.id)
+                              ? '#4ADE80'
+                              : isUnlocked
+                              ? '#FFE600'
+                              : '#E2E8F0',
+                            border: '2px solid #000000',
+                            borderBottom: 'none',
+                            borderRadius: '7px 7px 0 0',
+                            padding: '2px 10px',
+                            fontSize: '0.66rem',
+                            fontWeight: 900,
+                            color: '#000000',
+                            letterSpacing: '0.4px',
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: '4px'
+                          }}
+                        >
+                          <Gift size={11} color="#000000" strokeWidth={2.4} />
+                          <span>
+                            {(user.openedChests || []).includes(node.id)
+                              ? 'RECLAMADO'
+                              : isUnlocked
+                              ? 'COFRE DISPONIBLE'
+                              : 'BLOQUEADO'}
+                          </span>
+                        </div>
+
                         <div style={{ display: 'flex', alignItems: 'center', gap: '12px', minWidth: 0 }}>
-                          {/* Token 3D del Cofre */}
+                          {/* Token Neo-brutalista del cofre */}
                           <div
                             style={{
                               width: '46px',
                               height: '46px',
-                              borderRadius: '14px',
-                              background: isUnlocked && !(user.openedChests || []).includes(node.id)
-                                ? '#D97706'
-                                : (user.openedChests || []).includes(node.id)
-                                ? '#15803D'
+                              borderRadius: '12px',
+                              background: (user.openedChests || []).includes(node.id)
+                                ? '#4ADE80'
+                                : isUnlocked
+                                ? '#FFE600'
                                 : '#E2E8F0',
-                              border: `2px solid ${
-                                isUnlocked && !(user.openedChests || []).includes(node.id)
-                                  ? '#FCD34D'
-                                  : (user.openedChests || []).includes(node.id)
-                                  ? '#4ADE80'
-                                  : '#CBD5E1'
-                              }`,
-                              boxShadow: `0 3px 0 ${
-                                isUnlocked && !(user.openedChests || []).includes(node.id)
-                                  ? '#B45309'
-                                  : (user.openedChests || []).includes(node.id)
-                                  ? '#166534'
-                                  : '#94A3B8'
-                              }`,
+                              border: '2px solid #000000',
+                              boxShadow: '2px 2px 0px #000000',
                               display: 'flex',
                               alignItems: 'center',
                               justifyContent: 'center',
@@ -721,12 +872,7 @@ export const LearningPath: React.FC<LearningPathProps> = ({
                           >
                             <Gift
                               size={24}
-                              color={
-                                isUnlocked && !(user.openedChests || []).includes(node.id) ||
-                                (user.openedChests || []).includes(node.id)
-                                  ? '#FFFFFF'
-                                  : '#64748B'
-                              }
+                              color="#000000"
                               strokeWidth={2.4}
                             />
                           </div>
@@ -734,16 +880,11 @@ export const LearningPath: React.FC<LearningPathProps> = ({
                           <div style={{ textAlign: 'left', minWidth: 0 }}>
                             <div
                               style={{
-                                fontSize: '0.74rem',
+                                fontSize: '0.72rem',
                                 fontWeight: 900,
                                 textTransform: 'uppercase',
-                                color:
-                                  isUnlocked && !(user.openedChests || []).includes(node.id)
-                                    ? '#D97706'
-                                    : (user.openedChests || []).includes(node.id)
-                                    ? '#15803D'
-                                    : '#64748B',
-                                letterSpacing: '0.5px'
+                                color: '#64748B',
+                                letterSpacing: '0.4px'
                               }}
                             >
                               {(user.openedChests || []).includes(node.id)
@@ -755,13 +896,8 @@ export const LearningPath: React.FC<LearningPathProps> = ({
                             <div
                               style={{
                                 fontSize: '0.94rem',
-                                fontWeight: 800,
-                                color:
-                                  isUnlocked && !(user.openedChests || []).includes(node.id)
-                                    ? '#1E293B'
-                                    : (user.openedChests || []).includes(node.id)
-                                    ? '#334155'
-                                    : '#64748B',
+                                fontWeight: 900,
+                                color: '#000000',
                                 whiteSpace: 'nowrap',
                                 overflow: 'hidden',
                                 textOverflow: 'ellipsis'
@@ -772,12 +908,14 @@ export const LearningPath: React.FC<LearningPathProps> = ({
                           </div>
                         </div>
 
-                        {/* Icono de Estado Duolingo */}
+                        {/* Botón de estado del cofre */}
                         <div style={{ flexShrink: 0 }}>
                           {(user.openedChests || []).includes(node.id) ? (
                             <div
                               style={{
-                                background: '#DCFCE7',
+                                background: '#4ADE80',
+                                border: '2px solid #000000',
+                                boxShadow: '2px 2px 0px #000000',
                                 borderRadius: '999px',
                                 padding: '5px',
                                 display: 'flex',
@@ -785,28 +923,40 @@ export const LearningPath: React.FC<LearningPathProps> = ({
                                 justifyContent: 'center'
                               }}
                             >
-                              <CheckCircle2 size={20} color="#16A34A" />
+                              <CheckCircle2 size={18} color="#000000" strokeWidth={2.8} />
                             </div>
                           ) : isUnlocked ? (
                             <div
                               style={{
-                                background: '#FEF3C7',
-                                border: '1.5px solid #FCD34D',
-                                borderRadius: '999px',
-                                padding: '4px 10px',
+                                background: '#FFE600',
+                                border: '2px solid #000000',
+                                boxShadow: '2px 2px 0px #000000',
+                                borderRadius: '10px',
+                                padding: '5px 12px',
                                 display: 'flex',
                                 alignItems: 'center',
                                 gap: '4px',
                                 fontSize: '0.76rem',
                                 fontWeight: 900,
-                                color: '#B45309'
+                                color: '#000000'
                               }}
                             >
-                              <Sparkles size={14} color="#D97706" />
+                              <Sparkles size={14} color="#000000" strokeWidth={2.5} />
                               <span>ABRIR</span>
                             </div>
                           ) : (
-                            <Lock size={18} color="#94A3B8" />
+                            <div
+                              style={{
+                                background: '#E2E8F0',
+                                border: '1.5px solid #000000',
+                                borderRadius: '8px',
+                                padding: '4px 8px',
+                                display: 'flex',
+                                alignItems: 'center'
+                              }}
+                            >
+                              <Lock size={16} color="#64748B" strokeWidth={2.5} />
+                            </div>
                           )}
                         </div>
                       </div>
@@ -846,30 +996,22 @@ export const LearningPath: React.FC<LearningPathProps> = ({
                           className="boss-trigger-node"
                           style={{
                             width: '100%',
-                            background: (user.defeatedBosses || []).includes(node.id)
-                              ? '#F0FDF4'
-                              : isUnlocked
-                              ? 'linear-gradient(135deg, #7C3AED 0%, #6D28D9 100%)'
-                              : '#F8FAFC',
-                            border: '2.5px solid',
-                            borderColor: (user.defeatedBosses || []).includes(node.id)
-                              ? '#86EFAC'
-                              : isUnlocked
-                              ? '#C084FC'
-                              : '#CBD5E1',
-                            borderRadius: '24px',
-                            padding: '16px 20px',
+                            background: '#FFFFFF',
+                            border: '3px solid #000000',
+                            borderRadius: '20px',
+                            padding: '18px 20px',
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'space-between',
                             cursor: isUnlocked || (user.defeatedBosses || []).includes(node.id) ? 'pointer' : 'not-allowed',
                             boxShadow: (user.defeatedBosses || []).includes(node.id)
-                              ? '0 6px 0 #BBF7D0'
+                              ? '4px 4px 0px #4ADE80, 4px 4px 0px #000000'
                               : isUnlocked
-                              ? '0 7px 0 #581C87, 0 12px 28px rgba(124, 58, 237, 0.35)'
-                              : '0 4px 0 #CBD5E1',
+                              ? '5px 5px 0px #000000'
+                              : '3px 3px 0px #CBD5E1',
                             boxSizing: 'border-box',
-                            transition: 'all 0.2s ease'
+                            position: 'relative',
+                            transition: 'all 0.15s ease'
                           }}
                           onClick={() => {
                             const access = progressionEngine.canAccessNode(node.id, unit, user, safeProgress);
@@ -884,76 +1026,90 @@ export const LearningPath: React.FC<LearningPathProps> = ({
                             }
                           }}
                         >
+                          {/* Pestaña tipo folder del jefe */}
+                          <div
+                            style={{
+                              position: 'absolute',
+                              top: '-14px',
+                              left: '18px',
+                              background: (user.defeatedBosses || []).includes(node.id)
+                                ? '#4ADE80'
+                                : isUnlocked
+                                ? '#FF6584'
+                                : '#E2E8F0',
+                              border: '2px solid #000000',
+                              borderBottom: 'none',
+                              borderRadius: '7px 7px 0 0',
+                              padding: '2px 12px',
+                              fontSize: '0.68rem',
+                              fontWeight: 900,
+                              color: '#000000',
+                              letterSpacing: '0.5px',
+                              display: 'inline-flex',
+                              alignItems: 'center',
+                              gap: '5px'
+                            }}
+                          >
+                            <Swords size={12} color="#000000" strokeWidth={2.5} />
+                            <span>
+                              {(user.defeatedBosses || []).includes(node.id)
+                                ? 'JEFE DERROTADO'
+                                : isUnlocked
+                                ? 'BATALLA FINAL'
+                                : 'JEFE BLOQUEADO'}
+                            </span>
+                          </div>
+
                           <div style={{ display: 'flex', alignItems: 'center', gap: '14px', minWidth: 0 }}>
+                            {/* Token Neo-brutalista de batalla */}
                             <div
                               style={{
                                 width: '48px',
                                 height: '48px',
-                                borderRadius: '15px',
+                                borderRadius: '14px',
                                 background: (user.defeatedBosses || []).includes(node.id)
-                                  ? '#15803D'
+                                  ? '#4ADE80'
                                   : isUnlocked
-                                  ? '#581C87'
+                                  ? '#FF6584'
                                   : '#E2E8F0',
-                                border: `2px solid ${
-                                  (user.defeatedBosses || []).includes(node.id)
-                                    ? '#4ADE80'
-                                    : isUnlocked
-                                    ? '#C084FC'
-                                    : '#CBD5E1'
-                                }`,
-                                boxShadow: `0 3px 0 ${
-                                  (user.defeatedBosses || []).includes(node.id)
-                                    ? '#166534'
-                                    : isUnlocked
-                                    ? '#3B0764'
-                                    : '#94A3B8'
-                                }`,
+                                border: '2.5px solid #000000',
+                                boxShadow: '2.5px 2.5px 0px #000000',
                                 display: 'flex',
                                 alignItems: 'center',
-                                justifyItems: 'center',
                                 justifyContent: 'center',
                                 flexShrink: 0
                               }}
                             >
                               {(user.defeatedBosses || []).includes(node.id) ? (
-                                <Trophy size={26} color="#FFFFFF" />
+                                <Trophy size={26} color="#000000" strokeWidth={2.5} />
                               ) : isUnlocked ? (
-                                <Swords size={26} color="#FFFFFF" />
+                                <Swords size={26} color="#000000" strokeWidth={2.5} />
                               ) : (
-                                <ShieldAlert size={26} color="#64748B" />
+                                <ShieldAlert size={26} color="#64748B" strokeWidth={2} />
                               )}
                             </div>
 
                             <div style={{ minWidth: 0 }}>
                               <div
                                 style={{
-                                  fontSize: '0.74rem',
+                                  fontSize: '0.72rem',
                                   fontWeight: 900,
-                                  color: (user.defeatedBosses || []).includes(node.id)
-                                    ? '#15803D'
-                                    : isUnlocked
-                                    ? '#E9D5FF'
-                                    : '#64748B',
+                                  color: '#64748B',
                                   textTransform: 'uppercase',
-                                  letterSpacing: '0.6px'
+                                  letterSpacing: '0.5px'
                                 }}
                               >
                                 {(user.defeatedBosses || []).includes(node.id)
-                                  ? '¡JEFE DERROTADO!'
+                                  ? '¡Superado con éxito!'
                                   : isUnlocked
-                                  ? '¡BATALLA DESBLOQUEADA!'
-                                  : 'JEFE FINAL'}
+                                  ? '¡Reto desbloqueado!'
+                                  : 'Jefe de Unidad'}
                               </div>
                               <div
                                 style={{
                                   fontSize: '1.05rem',
                                   fontWeight: 900,
-                                  color: (user.defeatedBosses || []).includes(node.id)
-                                    ? '#1E293B'
-                                    : isUnlocked
-                                    ? '#FFFFFF'
-                                    : '#64748B'
+                                  color: '#000000'
                                 }}
                               >
                                 {node.title}
@@ -963,30 +1119,52 @@ export const LearningPath: React.FC<LearningPathProps> = ({
 
                           <div style={{ flexShrink: 0 }}>
                             {(user.defeatedBosses || []).includes(node.id) ? (
-                              <div style={{ background: '#DCFCE7', borderRadius: '999px', padding: '5px' }}>
-                                <CheckCircle2 size={22} color="#16A34A" />
+                              <div
+                                style={{
+                                  background: '#4ADE80',
+                                  border: '2px solid #000000',
+                                  boxShadow: '2px 2px 0px #000000',
+                                  borderRadius: '999px',
+                                  padding: '6px',
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  justifyContent: 'center'
+                                }}
+                              >
+                                <CheckCircle2 size={20} color="#000000" strokeWidth={2.8} />
                               </div>
                             ) : isUnlocked ? (
                               <div
                                 style={{
-                                  background: '#F59E0B',
-                                  border: '1.5px solid #FCD34D',
-                                  boxShadow: '0 2px 0 #B45309',
-                                  color: '#FFFFFF',
+                                  background: '#FFE600',
+                                  border: '2px solid #000000',
+                                  boxShadow: '2.5px 2.5px 0px #000000',
+                                  color: '#000000',
                                   borderRadius: '12px',
-                                  padding: '6px 12px',
+                                  padding: '6px 14px',
                                   fontSize: '0.78rem',
                                   fontWeight: 900,
                                   display: 'flex',
                                   alignItems: 'center',
-                                  gap: '4px'
+                                  gap: '5px'
                                 }}
                               >
                                 <span>LUCHAR</span>
-                                <Swords size={14} />
+                                <Swords size={14} color="#000000" strokeWidth={2.5} />
                               </div>
                             ) : (
-                              <Lock size={20} color="#94A3B8" />
+                              <div
+                                style={{
+                                  background: '#E2E8F0',
+                                  border: '1.5px solid #000000',
+                                  borderRadius: '8px',
+                                  padding: '5px 8px',
+                                  display: 'flex',
+                                  alignItems: 'center'
+                                }}
+                              >
+                                <Lock size={18} color="#64748B" strokeWidth={2.5} />
+                              </div>
                             )}
                           </div>
                         </div>

@@ -1,2378 +1,1145 @@
-import { Lesson, Exercise } from '../../../types/lesson';
+import { Lesson } from '../../../types/lesson';
 
-const SQL_U03_BANKS: Record<number, { title: string; desc: string; exercises: Exercise[] }> = {
-  1: {
-    title: '1. La Cláusula WHERE y Condición de Filtrado Booleano',
-    desc: 'Filtrado de filas que evalúan estrictamente a TRUE.',
-    exercises: [
+export const SQL_UNIT_03_LESSONS: Lesson[] = [
+  {
+    "id": "sql-u03-l01",
+    "path": "sql",
+    "unit": 3,
+    "level": 1,
+    "title": "1. Estructura de CREATE TABLE",
+    "description": "Aprende la sintaxis oficial de DDL para crear tablas en SQLite especificando columnas, tipos y restricciones.",
+    "exercises": [
       {
-        id: 'sql-u03-l01-e01',
-        type: 'matching_pairs',
-        prompt: 'Empareja los términos y cláusulas de este nivel de SQL:',
-        pairs: [
-          { left: 'SELECT', right: 'Proyecta columnas a devolver' },
-          { left: 'FROM', right: 'Especifica la tabla de origen' },
-          { left: 'AS', right: 'Asigna alias temporal a columna o tabla' },
-          { left: 'DISTINCT', right: 'Elimina filas duplicadas' }
+        "id": "sql-u03-l01-e01",
+        "type": "predict_output",
+        "prompt": "¿Cuál es el resultado exacto en consola tras evaluar la siguiente instrucción sobre \"Estructura de CREATE TABLE\"?",
+        "code": "CREATE TABLE test (id INTEGER);",
+        "options": [
+          "Query OK (tabla creada)",
+          "Error",
+          "null",
+          "0 rows"
         ],
-        explanation: 'Las cláusulas fundamentales definen la estructura básica de cualquier consulta relacional.',
-        xpReward: 15
+        "correctOptionIndex": 0,
+        "explanation": "CREATE TABLE nombreTabla (definicionesColumnas) es la sentencia DDL oficial.",
+        "xpReward": 10
       },
       {
-        id: 'sql-u03-l01-e02',
-        type: 'code_builder',
-        prompt: 'Construye la consulta para obtener id y nombre de la tabla usuarios:',
-        tokens: ['SELECT', 'id, nombre', 'FROM', 'usuarios', ';', 'WHERE', '*'],
-        solution: ['SELECT', 'id, nombre', 'FROM', 'usuarios', ';'],
-        hint: 'Inicia con SELECT, lista los campos y enlaza con FROM.',
-        explanation: 'SELECT id, nombre FROM usuarios; es la forma estándar de proyección relacional.',
-        xpReward: 10
-      },
-      {
-        id: 'sql-u03-l01-e03',
-        type: 'predict_output',
-        prompt: '¿Qué resultado devuelve la siguiente expresión de columnas calculadas?',
-        code: 'SELECT 100 + 25 * 2 AS total;',
-        options: ['250', '150', '125', '200'],
-        correctOptionIndex: 1,
-        explanation: 'En SQL la multiplicación tiene prioridad: 25 * 2 = 50, y 100 + 50 = 150.',
-        xpReward: 10
-      },
-      {
-        id: 'sql-u03-l01-e04',
-        type: 'spot_the_bug',
-        prompt: 'Toca la línea con el error de paginación (recuerda que el desplazamiento OFFSET no puede ser negativo):',
-        codeSnippet: [
-          'SELECT id, nombre',
-          'FROM clientes AS c',
-          'LIMIT 10 OFFSET -5;'
+        "id": "sql-u03-l01-e02",
+        "type": "code_cloze",
+        "prompt": "La sentencia de lenguaje DDL para crear una nueva tabla en SQL es ___:",
+        "codeWithBlank": "La sentencia de lenguaje DDL para crear una nueva tabla en SQL es ___:",
+        "options": [
+          "CREATE TABLE",
+          "NEW TABLE",
+          "MAKE TABLE",
+          "ADD TABLE"
         ],
-        bugLineIndex: 2,
-        explanation: 'El valor de OFFSET debe ser un número entero no negativo.',
-        xpReward: 15
+        "correctOption": "CREATE TABLE",
+        "explanation": "Cada columna define nombre, tipo de dato y restricciones opcionales.",
+        "xpReward": 10
       },
       {
-        id: 'sql-u03-l01-e05',
-        type: 'code_cloze',
-        prompt: 'Completa la palabra clave de SQL (DISTINCT) para eliminar filas duplicadas:',
-        codeWithBlank: 'SELECT ___ ciudad FROM sucursales;',
-        options: ['DISTINCT', 'UNIQUE', 'SINGLE', 'FILTER'],
-        correctOption: 'DISTINCT',
-        explanation: 'SELECT DISTINCT suprime registros duplicados en el conjunto devuelto.',
-        xpReward: 10
-      },
-      {
-        id: 'sql-u03-l01-e06',
-        type: 'predict_output',
-        prompt: '¿Qué devuelve la función estándar COALESCE con estos argumentos?',
-        code: 'SELECT COALESCE(NULL, 100, 200) AS res;',
-        options: ['NULL', '100', '200', 'Error'],
-        correctOptionIndex: 1,
-        explanation: 'COALESCE devuelve el primer argumento no nulo evaluado de izquierda a derecha (100).',
-        xpReward: 10
-      },
-      {
-        id: 'sql-u03-l01-e07',
-        type: 'code_builder',
-        prompt: 'Construye la consulta con alias de tabla para proyectos:',
-        tokens: ['SELECT', 'p.id, p.titulo', 'FROM', 'proyectos', 'AS', 'p', ';'],
-        solution: ['SELECT', 'p.id, p.titulo', 'FROM', 'proyectos', 'AS', 'p', ';'],
-        hint: 'Asigna el alias p con AS y califica las columnas.',
-        explanation: 'Calificar con alias (p.id) hace la consulta concisa y preparada para JOINs.',
-        xpReward: 10
-      },
-      {
-        id: 'sql-u03-l01-e08',
-        type: 'matching_pairs',
-        prompt: 'Empareja cada función de texto con su propósito:',
-        pairs: [
-          { left: 'UPPER(col)', right: 'Convierte texto a mayúsculas' },
-          { left: 'LOWER(col)', right: 'Convierte texto a minúsculas' },
-          { left: 'LENGTH(col)', right: 'Calcula la longitud de la cadena' },
-          { left: 'TRIM(col)', right: 'Elimina espacios en blanco exteriores' }
+        "id": "sql-u03-l01-e03",
+        "type": "code_builder",
+        "prompt": "Ordena los bloques para construir la sentencia correcta de: \"Estructura de CREATE TABLE\":",
+        "tokens": [
+          "CREATE",
+          "TABLE",
+          "aulas",
+          "(",
+          "id",
+          "INTEGER",
+          ")"
         ],
-        explanation: 'Las funciones de texto permiten normalizar y analizar campos al vuelo.',
-        xpReward: 15
-      },
-      {
-        id: 'sql-u03-l01-e09',
-        type: 'code_cloze',
-        prompt: 'Completa la cláusula de SQL (LIMIT) para obtener únicamente las primeras 5 filas:',
-        codeWithBlank: 'SELECT * FROM productos ___ 5;',
-        options: ['LIMIT', 'TOP', 'MAX', 'FIRST'],
-        correctOption: 'LIMIT',
-        explanation: 'LIMIT n restringe la cantidad máxima de filas entregadas al cliente.',
-        xpReward: 10
-      },
-      {
-        id: 'sql-u03-l01-e10',
-        type: 'parsons_puzzle',
-        prompt: 'Ordena las cláusulas de la consulta SQL en el orden correcto (SELECT, FROM, LIMIT, OFFSET):',
-        lines: [
-          'SELECT codigo, descripcion',
-          'FROM catalogo.articulos',
-          'LIMIT 20 OFFSET 40;'
+        "solution": [
+          "CREATE",
+          "TABLE",
+          "aulas",
+          "(",
+          "id",
+          "INTEGER",
+          ")"
         ],
-        correctOrder: [0, 1, 2],
-        explanation: 'La anatomía estándar en SQL inicia con SELECT, continúa con FROM y finaliza con LIMIT/OFFSET.',
-        xpReward: 20
+        "explanation": "Usa siempre `IF NOT EXISTS` para que tu script de base de datos no falle si la tabla ya había sido creada.",
+        "xpReward": 15
+      },
+      {
+        "id": "sql-u03-l01-e04",
+        "type": "spot_the_bug",
+        "prompt": "Identifica la línea que contiene el error en este código de \"Estructura de CREATE TABLE\":",
+        "codeSnippet": [
+          "CREATE TABLE alumnos (",
+          "    id INTEGER,",
+          "    nombre TEXT, // Coma extra al final",
+          ")"
+        ],
+        "bugLineIndex": 2,
+        "explanation": "Olvidar la coma entre columnas o poner una coma de más después de la última columna antes del paréntesis de cierre.",
+        "xpReward": 15
+      },
+      {
+        "id": "sql-u03-l01-e05",
+        "type": "matching_pairs",
+        "prompt": "Empareja cada concepto clave de \"Estructura de CREATE TABLE\" con su definición correspondiente:",
+        "pairs": [
+          {
+            "left": "Estructura de CREATE TABLE",
+            "right": "CREATE TABLE nombreTabla (definicionesColumnas) es la sentencia DDL oficial."
+          },
+          {
+            "left": "Principio 2",
+            "right": "Cada columna define nombre, tipo de dato y restricciones opcionales."
+          },
+          {
+            "left": "Principio 3",
+            "right": "IF NOT EXISTS garantiza idempotencia en despliegues automatizados."
+          },
+          {
+            "left": "Buena práctica",
+            "right": "Usa siempre `IF NOT EXISTS` para que tu script de ba..."
+          }
+        ],
+        "explanation": "Dominio de los conceptos esenciales y fundamentos teóricos de la lección.",
+        "xpReward": 15
+      },
+      {
+        "id": "sql-u03-l01-e06",
+        "type": "code_cloze",
+        "prompt": "En SQLite, respecto a \"Estructura de CREATE TABLE\", para asegurar la coherencia de los datos se debe ___:",
+        "codeWithBlank": "Para garantizar la integridad en \"Estructura de CREATE TABLE\", la instrucción debe ___.",
+        "options": [
+          "cumplir las restricciones y tipos de columna",
+          "omitir el tipo de dato",
+          "eliminar las claves foráneas",
+          "evitar el uso de SELECT"
+        ],
+        "correctOption": "cumplir las restricciones y tipos de columna",
+        "explanation": "Usa siempre `IF NOT EXISTS` para que tu script de base de datos no falle si la tabla ya había sido creada.",
+        "xpReward": 10
+      },
+      {
+        "id": "sql-u03-l01-e07",
+        "type": "predict_output",
+        "prompt": "¿Qué resultado se obtendrá al evaluar la siguiente instrucción sobre \"Estructura de CREATE TABLE\"?",
+        "code": "CREATE TABLE IF NOT EXISTS profesores (\n    id INTEGER PRIMARY KEY,\n    nombre TEXT NOT NULL,\n    email TEXT UNIQUE,\n    salario REAL",
+        "options": [
+          "Query OK, 0 rows affected (Eng",
+          "Error de sintaxis",
+          "null / Sin registros",
+          "Excepción de tipo"
+        ],
+        "correctOptionIndex": 0,
+        "explanation": "La salida corresponde con el comportamiento documentado: Query OK, 0 rows affected (Eng",
+        "xpReward": 10
+      },
+      {
+        "id": "sql-u03-l01-e08",
+        "type": "code_builder",
+        "prompt": "Construye la instrucción sintáctica complementaria para \"Estructura de CREATE TABLE\":",
+        "tokens": [
+          "SELECT",
+          "id,",
+          "nombre",
+          "FROM",
+          "estudiantes",
+          ";"
+        ],
+        "solution": [
+          "SELECT",
+          "id,",
+          "nombre",
+          "FROM",
+          "estudiantes",
+          ";"
+        ],
+        "explanation": "Orden gramatical correcto respetando las convenciones del lenguaje.",
+        "xpReward": 15
+      },
+      {
+        "id": "sql-u03-l01-e09",
+        "type": "spot_the_bug",
+        "prompt": "Identifica la línea con el error de diseño o sintaxis en \"Estructura de CREATE TABLE\":",
+        "codeSnippet": [
+          "-- Consulta sobre el esquema educativo",
+          "SELECT id, nombre FROM estudiantes",
+          "WHERE id == 10; // Error: en SQL la igualdad se escribe con un solo = (WHERE id = 10)"
+        ],
+        "bugLineIndex": 2,
+        "explanation": "Olvidar la coma entre columnas o poner una coma de más después de la última columna antes del paréntesis de cierre.",
+        "xpReward": 15
+      },
+      {
+        "id": "sql-u03-l01-e10",
+        "type": "matching_pairs",
+        "prompt": "Empareja cada aspecto de \"Estructura de CREATE TABLE\" con su rol o impacto en el sistema:",
+        "pairs": [
+          {
+            "left": "Propósito técnico",
+            "right": "Aprende la sintaxis oficial de DDL para crear tablas..."
+          },
+          {
+            "left": "Riesgo crítico",
+            "right": "Olvidar la coma entre columnas o poner una coma de m..."
+          },
+          {
+            "left": "Recomendación",
+            "right": "Usa siempre `IF NOT EXISTS` para que tu script de ba..."
+          },
+          {
+            "left": "Ámbito de aplicación",
+            "right": "Motor relacional SQLite"
+          }
+        ],
+        "explanation": "Consolidación de buenas prácticas y prevención de errores críticos en el código.",
+        "xpReward": 15
       }
     ]
   },
-  2: {
-    title: '2. Comparaciones Numéricas Simples (=, !=, <>, >, <, >=, <=)',
-    desc: 'Comparaciones de igualdad y desigualdad matemática.',
-    exercises: [
+  {
+    "id": "sql-u03-l02",
+    "path": "sql",
+    "unit": 3,
+    "level": 2,
+    "title": "2. Nombres de tablas y columnas",
+    "description": "Aplica convenciones de nomenclatura profesionales: snake_case, sustantivos en minúscula y nombres descriptivos sin caracteres raros.",
+    "exercises": [
       {
-        id: 'sql-u03-l02-e01',
-        type: 'matching_pairs',
-        prompt: 'Empareja los términos y cláusulas de este nivel de SQL:',
-        pairs: [
-          { left: 'SELECT', right: 'Proyecta columnas a devolver' },
-          { left: 'FROM', right: 'Especifica la tabla de origen' },
-          { left: 'AS', right: 'Asigna alias temporal a columna o tabla' },
-          { left: 'DISTINCT', right: 'Elimina filas duplicadas' }
+        "id": "sql-u03-l02-e01",
+        "type": "predict_output",
+        "prompt": "¿Cuál es el resultado exacto en consola tras evaluar la siguiente instrucción sobre \"Nombres de tablas y columnas\"?",
+        "code": "SELECT id, nombre, carrera FROM estudiantes LIMIT 1;",
+        "options": [
+          "1 row returned",
+          "Error",
+          "0 rows",
+          "null"
         ],
-        explanation: 'Las cláusulas fundamentales definen la estructura básica de cualquier consulta relacional.',
-        xpReward: 15
+        "correctOptionIndex": 0,
+        "explanation": "Utiliza lower_snake_case para nombres en SQL (ej. fecha_nacimiento).",
+        "xpReward": 10
       },
       {
-        id: 'sql-u03-l02-e02',
-        type: 'code_builder',
-        prompt: 'Construye la consulta para obtener id y nombre de la tabla usuarios:',
-        tokens: ['SELECT', 'id, nombre', 'FROM', 'usuarios', ';', 'WHERE', '*'],
-        solution: ['SELECT', 'id, nombre', 'FROM', 'usuarios', ';'],
-        hint: 'Inicia con SELECT, lista los campos y enlaza con FROM.',
-        explanation: 'SELECT id, nombre FROM usuarios; es la forma estándar de proyección relacional.',
-        xpReward: 10
-      },
-      {
-        id: 'sql-u03-l02-e03',
-        type: 'predict_output',
-        prompt: '¿Qué resultado devuelve la siguiente expresión de columnas calculadas?',
-        code: 'SELECT 100 + 25 * 2 AS total;',
-        options: ['250', '150', '125', '200'],
-        correctOptionIndex: 1,
-        explanation: 'En SQL la multiplicación tiene prioridad: 25 * 2 = 50, y 100 + 50 = 150.',
-        xpReward: 10
-      },
-      {
-        id: 'sql-u03-l02-e04',
-        type: 'spot_the_bug',
-        prompt: 'Toca la línea con el error de paginación (recuerda que el desplazamiento OFFSET no puede ser negativo):',
-        codeSnippet: [
-          'SELECT id, nombre',
-          'FROM clientes AS c',
-          'LIMIT 10 OFFSET -5;'
+        "id": "sql-u03-l02-e02",
+        "type": "code_cloze",
+        "prompt": "La convención recomendada para nombres de columnas en bases de datos SQL es ___:",
+        "codeWithBlank": "La convención recomendada para nombres de columnas en bases de datos SQL es ___:",
+        "options": [
+          "snake_case",
+          "camelCase",
+          "kebab-case",
+          "UPPERCASE"
         ],
-        bugLineIndex: 2,
-        explanation: 'El valor de OFFSET debe ser un número entero no negativo.',
-        xpReward: 15
+        "correctOption": "snake_case",
+        "explanation": "Elige plural o singular consistentemente en tu proyecto (estudiantes o estudiante).",
+        "xpReward": 10
       },
       {
-        id: 'sql-u03-l02-e05',
-        type: 'code_cloze',
-        prompt: 'Completa la palabra clave de SQL (DISTINCT) para eliminar filas duplicadas:',
-        codeWithBlank: 'SELECT ___ ciudad FROM sucursales;',
-        options: ['DISTINCT', 'UNIQUE', 'SINGLE', 'FILTER'],
-        correctOption: 'DISTINCT',
-        explanation: 'SELECT DISTINCT suprime registros duplicados en el conjunto devuelto.',
-        xpReward: 10
-      },
-      {
-        id: 'sql-u03-l02-e06',
-        type: 'predict_output',
-        prompt: '¿Qué devuelve la función estándar COALESCE con estos argumentos?',
-        code: 'SELECT COALESCE(NULL, 100, 200) AS res;',
-        options: ['NULL', '100', '200', 'Error'],
-        correctOptionIndex: 1,
-        explanation: 'COALESCE devuelve el primer argumento no nulo evaluado de izquierda a derecha (100).',
-        xpReward: 10
-      },
-      {
-        id: 'sql-u03-l02-e07',
-        type: 'code_builder',
-        prompt: 'Construye la consulta con alias de tabla para proyectos:',
-        tokens: ['SELECT', 'p.id, p.titulo', 'FROM', 'proyectos', 'AS', 'p', ';'],
-        solution: ['SELECT', 'p.id, p.titulo', 'FROM', 'proyectos', 'AS', 'p', ';'],
-        hint: 'Asigna el alias p con AS y califica las columnas.',
-        explanation: 'Calificar con alias (p.id) hace la consulta concisa y preparada para JOINs.',
-        xpReward: 10
-      },
-      {
-        id: 'sql-u03-l02-e08',
-        type: 'matching_pairs',
-        prompt: 'Empareja cada función de texto con su propósito:',
-        pairs: [
-          { left: 'UPPER(col)', right: 'Convierte texto a mayúsculas' },
-          { left: 'LOWER(col)', right: 'Convierte texto a minúsculas' },
-          { left: 'LENGTH(col)', right: 'Calcula la longitud de la cadena' },
-          { left: 'TRIM(col)', right: 'Elimina espacios en blanco exteriores' }
+        "id": "sql-u03-l02-e03",
+        "type": "code_builder",
+        "prompt": "Ordena los bloques para construir la sentencia correcta de: \"Nombres de tablas y columnas\":",
+        "tokens": [
+          "fecha_registro",
+          "TEXT",
+          "NOT",
+          "NULL"
         ],
-        explanation: 'Las funciones de texto permiten normalizar y analizar campos al vuelo.',
-        xpReward: 15
-      },
-      {
-        id: 'sql-u03-l02-e09',
-        type: 'code_cloze',
-        prompt: 'Completa la cláusula de SQL (LIMIT) para obtener únicamente las primeras 5 filas:',
-        codeWithBlank: 'SELECT * FROM productos ___ 5;',
-        options: ['LIMIT', 'TOP', 'MAX', 'FIRST'],
-        correctOption: 'LIMIT',
-        explanation: 'LIMIT n restringe la cantidad máxima de filas entregadas al cliente.',
-        xpReward: 10
-      },
-      {
-        id: 'sql-u03-l02-e10',
-        type: 'parsons_puzzle',
-        prompt: 'Ordena las cláusulas de la consulta SQL en el orden correcto (SELECT, FROM, LIMIT, OFFSET):',
-        lines: [
-          'SELECT codigo, descripcion',
-          'FROM catalogo.articulos',
-          'LIMIT 20 OFFSET 40;'
+        "solution": [
+          "fecha_registro",
+          "TEXT",
+          "NOT",
+          "NULL"
         ],
-        correctOrder: [0, 1, 2],
-        explanation: 'La anatomía estándar en SQL inicia con SELECT, continúa con FROM y finaliza con LIMIT/OFFSET.',
-        xpReward: 20
+        "explanation": "Evita espacios y caracteres especiales como tildes o eñes en los nombres de tablas y columnas.",
+        "xpReward": 15
+      },
+      {
+        "id": "sql-u03-l02-e04",
+        "type": "spot_the_bug",
+        "prompt": "Identifica la línea que contiene el error en este código de \"Nombres de tablas y columnas\":",
+        "codeSnippet": [
+          "CREATE TABLE usuarios (",
+          "    primer nombre TEXT // Error: no se permiten espacios en el nombre",
+          ")"
+        ],
+        "bugLineIndex": 1,
+        "explanation": "Usar palabras reservadas de SQL como nombres de columnas (ej. llamar a una columna \"select\", \"where\" o \"table\").",
+        "xpReward": 15
+      },
+      {
+        "id": "sql-u03-l02-e05",
+        "type": "matching_pairs",
+        "prompt": "Empareja cada concepto clave de \"Nombres de tablas y columnas\" con su definición correspondiente:",
+        "pairs": [
+          {
+            "left": "Nombres de tablas y columnas",
+            "right": "Utiliza lower_snake_case para nombres en SQL (ej. fecha_nacimiento)."
+          },
+          {
+            "left": "Principio 2",
+            "right": "Elige plural o singular consistentemente en tu proyecto (estudiantes o estudiante)."
+          },
+          {
+            "left": "Principio 3",
+            "right": "Nunca uses espacios ni guiones medios (-) en los identificadores."
+          },
+          {
+            "left": "Buena práctica",
+            "right": "Evita espacios y caracteres especiales como tildes o..."
+          }
+        ],
+        "explanation": "Dominio de los conceptos esenciales y fundamentos teóricos de la lección.",
+        "xpReward": 15
+      },
+      {
+        "id": "sql-u03-l02-e06",
+        "type": "code_cloze",
+        "prompt": "En SQLite, respecto a \"Nombres de tablas y columnas\", para asegurar la coherencia de los datos se debe ___:",
+        "codeWithBlank": "Para garantizar la integridad en \"Nombres de tablas y columnas\", la instrucción debe ___.",
+        "options": [
+          "cumplir las restricciones y tipos de columna",
+          "omitir el tipo de dato",
+          "eliminar las claves foráneas",
+          "evitar el uso de SELECT"
+        ],
+        "correctOption": "cumplir las restricciones y tipos de columna",
+        "explanation": "Evita espacios y caracteres especiales como tildes o eñes en los nombres de tablas y columnas.",
+        "xpReward": 10
+      },
+      {
+        "id": "sql-u03-l02-e07",
+        "type": "predict_output",
+        "prompt": "¿Qué resultado se obtendrá al evaluar la siguiente instrucción sobre \"Nombres de tablas y columnas\"?",
+        "code": "CREATE TABLE IF NOT EXISTS historial_academico (\n    id INTEGER PRIMARY KEY,\n    estudiante_id INTEGER,\n    promedio_ponderado REAL,\n    fecha_cierre TEXT",
+        "options": [
+          "Query OK, 0 rows affected (Eng",
+          "Error de sintaxis",
+          "null / Sin registros",
+          "Excepción de tipo"
+        ],
+        "correctOptionIndex": 0,
+        "explanation": "La salida corresponde con el comportamiento documentado: Query OK, 0 rows affected (Eng",
+        "xpReward": 10
+      },
+      {
+        "id": "sql-u03-l02-e08",
+        "type": "code_builder",
+        "prompt": "Construye la instrucción sintáctica complementaria para \"Nombres de tablas y columnas\":",
+        "tokens": [
+          "SELECT",
+          "id,",
+          "nombre",
+          "FROM",
+          "estudiantes",
+          ";"
+        ],
+        "solution": [
+          "SELECT",
+          "id,",
+          "nombre",
+          "FROM",
+          "estudiantes",
+          ";"
+        ],
+        "explanation": "Orden gramatical correcto respetando las convenciones del lenguaje.",
+        "xpReward": 15
+      },
+      {
+        "id": "sql-u03-l02-e09",
+        "type": "spot_the_bug",
+        "prompt": "Identifica la línea con el error de diseño o sintaxis en \"Nombres de tablas y columnas\":",
+        "codeSnippet": [
+          "-- Consulta sobre el esquema educativo",
+          "SELECT id, nombre FROM estudiantes",
+          "WHERE id == 10; // Error: en SQL la igualdad se escribe con un solo = (WHERE id = 10)"
+        ],
+        "bugLineIndex": 2,
+        "explanation": "Usar palabras reservadas de SQL como nombres de columnas (ej. llamar a una columna \"select\", \"where\" o \"table\").",
+        "xpReward": 15
+      },
+      {
+        "id": "sql-u03-l02-e10",
+        "type": "matching_pairs",
+        "prompt": "Empareja cada aspecto de \"Nombres de tablas y columnas\" con su rol o impacto en el sistema:",
+        "pairs": [
+          {
+            "left": "Propósito técnico",
+            "right": "Aplica convenciones de nomenclatura profesionales: s..."
+          },
+          {
+            "left": "Riesgo crítico",
+            "right": "Usar palabras reservadas de SQL como nombres de colu..."
+          },
+          {
+            "left": "Recomendación",
+            "right": "Evita espacios y caracteres especiales como tildes o..."
+          },
+          {
+            "left": "Ámbito de aplicación",
+            "right": "Motor relacional SQLite"
+          }
+        ],
+        "explanation": "Consolidación de buenas prácticas y prevención de errores críticos en el código.",
+        "xpReward": 15
       }
     ]
   },
-  3: {
-    title: '3. Filtrado de Cadenas de Texto Exactas y Collation',
-    desc: 'Literales en comillas simples y sensibilidad a mayúsculas.',
-    exercises: [
+  {
+    "id": "sql-u03-l03",
+    "path": "sql",
+    "unit": 3,
+    "level": 3,
+    "title": "3. INTEGER, REAL y TEXT",
+    "description": "Domina los tres tipos de almacenamiento fundamentales de SQLite para números enteros, números decimales y cadenas alfanuméricas.",
+    "exercises": [
       {
-        id: 'sql-u03-l03-e01',
-        type: 'matching_pairs',
-        prompt: 'Empareja los términos y cláusulas de este nivel de SQL:',
-        pairs: [
-          { left: 'SELECT', right: 'Proyecta columnas a devolver' },
-          { left: 'FROM', right: 'Especifica la tabla de origen' },
-          { left: 'AS', right: 'Asigna alias temporal a columna o tabla' },
-          { left: 'DISTINCT', right: 'Elimina filas duplicadas' }
+        "id": "sql-u03-l03-e01",
+        "type": "predict_output",
+        "prompt": "¿Cuál es el resultado exacto en consola tras evaluar la siguiente instrucción sobre \"INTEGER, REAL y TEXT\"?",
+        "code": "SELECT typeof(100), typeof(99.9), typeof('SQL');",
+        "options": [
+          "integer | real | text",
+          "number | float | string",
+          "int | decimal | char",
+          "Error"
         ],
-        explanation: 'Las cláusulas fundamentales definen la estructura básica de cualquier consulta relacional.',
-        xpReward: 15
+        "correctOptionIndex": 0,
+        "explanation": "INTEGER: números enteros positivos y negativos con signo.",
+        "xpReward": 10
       },
       {
-        id: 'sql-u03-l03-e02',
-        type: 'code_builder',
-        prompt: 'Construye la consulta para obtener id y nombre de la tabla usuarios:',
-        tokens: ['SELECT', 'id, nombre', 'FROM', 'usuarios', ';', 'WHERE', '*'],
-        solution: ['SELECT', 'id, nombre', 'FROM', 'usuarios', ';'],
-        hint: 'Inicia con SELECT, lista los campos y enlaza con FROM.',
-        explanation: 'SELECT id, nombre FROM usuarios; es la forma estándar de proyección relacional.',
-        xpReward: 10
-      },
-      {
-        id: 'sql-u03-l03-e03',
-        type: 'predict_output',
-        prompt: '¿Qué resultado devuelve la siguiente expresión de columnas calculadas?',
-        code: 'SELECT 100 + 25 * 2 AS total;',
-        options: ['250', '150', '125', '200'],
-        correctOptionIndex: 1,
-        explanation: 'En SQL la multiplicación tiene prioridad: 25 * 2 = 50, y 100 + 50 = 150.',
-        xpReward: 10
-      },
-      {
-        id: 'sql-u03-l03-e04',
-        type: 'spot_the_bug',
-        prompt: 'Toca la línea con el error de paginación (recuerda que el desplazamiento OFFSET no puede ser negativo):',
-        codeSnippet: [
-          'SELECT id, nombre',
-          'FROM clientes AS c',
-          'LIMIT 10 OFFSET -5;'
+        "id": "sql-u03-l03-e02",
+        "type": "code_cloze",
+        "prompt": "En SQLite, el tipo de dato utilizado para almacenar números enteros se llama ___:",
+        "codeWithBlank": "En SQLite, el tipo de dato utilizado para almacenar números enteros se llama ___:",
+        "options": [
+          "INTEGER",
+          "NUMBER",
+          "VARCHAR",
+          "FLOAT"
         ],
-        bugLineIndex: 2,
-        explanation: 'El valor de OFFSET debe ser un número entero no negativo.',
-        xpReward: 15
+        "correctOption": "INTEGER",
+        "explanation": "REAL: números de coma flotante de 8 bytes (IEEE 754).",
+        "xpReward": 10
       },
       {
-        id: 'sql-u03-l03-e05',
-        type: 'code_cloze',
-        prompt: 'Completa la palabra clave de SQL (DISTINCT) para eliminar filas duplicadas:',
-        codeWithBlank: 'SELECT ___ ciudad FROM sucursales;',
-        options: ['DISTINCT', 'UNIQUE', 'SINGLE', 'FILTER'],
-        correctOption: 'DISTINCT',
-        explanation: 'SELECT DISTINCT suprime registros duplicados en el conjunto devuelto.',
-        xpReward: 10
-      },
-      {
-        id: 'sql-u03-l03-e06',
-        type: 'predict_output',
-        prompt: '¿Qué devuelve la función estándar COALESCE con estos argumentos?',
-        code: 'SELECT COALESCE(NULL, 100, 200) AS res;',
-        options: ['NULL', '100', '200', 'Error'],
-        correctOptionIndex: 1,
-        explanation: 'COALESCE devuelve el primer argumento no nulo evaluado de izquierda a derecha (100).',
-        xpReward: 10
-      },
-      {
-        id: 'sql-u03-l03-e07',
-        type: 'code_builder',
-        prompt: 'Construye la consulta con alias de tabla para proyectos:',
-        tokens: ['SELECT', 'p.id, p.titulo', 'FROM', 'proyectos', 'AS', 'p', ';'],
-        solution: ['SELECT', 'p.id, p.titulo', 'FROM', 'proyectos', 'AS', 'p', ';'],
-        hint: 'Asigna el alias p con AS y califica las columnas.',
-        explanation: 'Calificar con alias (p.id) hace la consulta concisa y preparada para JOINs.',
-        xpReward: 10
-      },
-      {
-        id: 'sql-u03-l03-e08',
-        type: 'matching_pairs',
-        prompt: 'Empareja cada función de texto con su propósito:',
-        pairs: [
-          { left: 'UPPER(col)', right: 'Convierte texto a mayúsculas' },
-          { left: 'LOWER(col)', right: 'Convierte texto a minúsculas' },
-          { left: 'LENGTH(col)', right: 'Calcula la longitud de la cadena' },
-          { left: 'TRIM(col)', right: 'Elimina espacios en blanco exteriores' }
+        "id": "sql-u03-l03-e03",
+        "type": "code_builder",
+        "prompt": "Ordena los bloques para construir la sentencia correcta de: \"INTEGER, REAL y TEXT\":",
+        "tokens": [
+          "precio",
+          "REAL",
+          ",",
+          "stock",
+          "INTEGER"
         ],
-        explanation: 'Las funciones de texto permiten normalizar y analizar campos al vuelo.',
-        xpReward: 15
-      },
-      {
-        id: 'sql-u03-l03-e09',
-        type: 'code_cloze',
-        prompt: 'Completa la cláusula de SQL (LIMIT) para obtener únicamente las primeras 5 filas:',
-        codeWithBlank: 'SELECT * FROM productos ___ 5;',
-        options: ['LIMIT', 'TOP', 'MAX', 'FIRST'],
-        correctOption: 'LIMIT',
-        explanation: 'LIMIT n restringe la cantidad máxima de filas entregadas al cliente.',
-        xpReward: 10
-      },
-      {
-        id: 'sql-u03-l03-e10',
-        type: 'parsons_puzzle',
-        prompt: 'Ordena las cláusulas de la consulta SQL en el orden correcto (SELECT, FROM, LIMIT, OFFSET):',
-        lines: [
-          'SELECT codigo, descripcion',
-          'FROM catalogo.articulos',
-          'LIMIT 20 OFFSET 40;'
+        "solution": [
+          "precio",
+          "REAL",
+          ",",
+          "stock",
+          "INTEGER"
         ],
-        correctOrder: [0, 1, 2],
-        explanation: 'La anatomía estándar en SQL inicia con SELECT, continúa con FROM y finaliza con LIMIT/OFFSET.',
-        xpReward: 20
+        "explanation": "INTEGER almacena números enteros con tamaño dinámico (1, 2, 3, 4, 6 u 8 bytes) según la magnitud del valor.",
+        "xpReward": 15
+      },
+      {
+        "id": "sql-u03-l03-e04",
+        "type": "spot_the_bug",
+        "prompt": "Identifica la línea que contiene el error en este código de \"INTEGER, REAL y TEXT\":",
+        "codeSnippet": [
+          "CREATE TABLE t (",
+          "    edad INT_VALOR_ERRONEO // Tipo de dato no estándar",
+          ")"
+        ],
+        "bugLineIndex": 1,
+        "explanation": "Usar TEXT para números que vas a sumar o promediar: la comparación alfabética hará que \"10\" sea menor que \"2\".",
+        "xpReward": 15
+      },
+      {
+        "id": "sql-u03-l03-e05",
+        "type": "matching_pairs",
+        "prompt": "Empareja cada concepto clave de \"INTEGER, REAL y TEXT\" con su definición correspondiente:",
+        "pairs": [
+          {
+            "left": "INTEGER",
+            "right": "números enteros positivos y negativos con signo."
+          },
+          {
+            "left": "REAL",
+            "right": "números de coma flotante de 8 bytes (IEEE 754)."
+          },
+          {
+            "left": "TEXT",
+            "right": "cadenas de caracteres codificadas en UTF-8 o UTF-16."
+          },
+          {
+            "left": "Buena práctica",
+            "right": "INTEGER almacena números enteros con tamaño dinámico..."
+          }
+        ],
+        "explanation": "Dominio de los conceptos esenciales y fundamentos teóricos de la lección.",
+        "xpReward": 15
+      },
+      {
+        "id": "sql-u03-l03-e06",
+        "type": "code_cloze",
+        "prompt": "En SQLite, respecto a \"INTEGER, REAL y TEXT\", para asegurar la coherencia de los datos se debe ___:",
+        "codeWithBlank": "Para garantizar la integridad en \"INTEGER, REAL y TEXT\", la instrucción debe ___.",
+        "options": [
+          "cumplir las restricciones y tipos de columna",
+          "omitir el tipo de dato",
+          "eliminar las claves foráneas",
+          "evitar el uso de SELECT"
+        ],
+        "correctOption": "cumplir las restricciones y tipos de columna",
+        "explanation": "INTEGER almacena números enteros con tamaño dinámico (1, 2, 3, 4, 6 u 8 bytes) según la magnitud del valor.",
+        "xpReward": 10
+      },
+      {
+        "id": "sql-u03-l03-e07",
+        "type": "predict_output",
+        "prompt": "¿Qué resultado se obtendrá al evaluar la siguiente instrucción sobre \"INTEGER, REAL y TEXT\"?",
+        "code": "CREATE TABLE IF NOT EXISTS productos (\n    id INTEGER PRIMARY KEY,\n    descripcion TEXT,\n    precio REAL,\n    stock INTEGER",
+        "options": [
+          "Consulta completada",
+          "Error de sintaxis",
+          "null / Sin registros",
+          "Excepción de tipo"
+        ],
+        "correctOptionIndex": 0,
+        "explanation": "La salida corresponde con el comportamiento documentado: Consulta completada",
+        "xpReward": 10
+      },
+      {
+        "id": "sql-u03-l03-e08",
+        "type": "code_builder",
+        "prompt": "Construye la instrucción sintáctica complementaria para \"INTEGER, REAL y TEXT\":",
+        "tokens": [
+          "SELECT",
+          "id,",
+          "nombre",
+          "FROM",
+          "estudiantes",
+          ";"
+        ],
+        "solution": [
+          "SELECT",
+          "id,",
+          "nombre",
+          "FROM",
+          "estudiantes",
+          ";"
+        ],
+        "explanation": "Orden gramatical correcto respetando las convenciones del lenguaje.",
+        "xpReward": 15
+      },
+      {
+        "id": "sql-u03-l03-e09",
+        "type": "spot_the_bug",
+        "prompt": "Identifica la línea con el error de diseño o sintaxis en \"INTEGER, REAL y TEXT\":",
+        "codeSnippet": [
+          "-- Consulta sobre el esquema educativo",
+          "SELECT id, nombre FROM estudiantes",
+          "WHERE id == 10; // Error: en SQL la igualdad se escribe con un solo = (WHERE id = 10)"
+        ],
+        "bugLineIndex": 2,
+        "explanation": "Usar TEXT para números que vas a sumar o promediar: la comparación alfabética hará que \"10\" sea menor que \"2\".",
+        "xpReward": 15
+      },
+      {
+        "id": "sql-u03-l03-e10",
+        "type": "matching_pairs",
+        "prompt": "Empareja cada aspecto de \"INTEGER, REAL y TEXT\" con su rol o impacto en el sistema:",
+        "pairs": [
+          {
+            "left": "Propósito técnico",
+            "right": "Domina los tres tipos de almacenamiento fundamentale..."
+          },
+          {
+            "left": "Riesgo crítico",
+            "right": "Usar TEXT para números que vas a sumar o promediar: ..."
+          },
+          {
+            "left": "Recomendación",
+            "right": "INTEGER almacena números enteros con tamaño dinámico..."
+          },
+          {
+            "left": "Ámbito de aplicación",
+            "right": "Motor relacional SQLite"
+          }
+        ],
+        "explanation": "Consolidación de buenas prácticas y prevención de errores críticos en el código.",
+        "xpReward": 15
       }
     ]
   },
-  4: {
-    title: '4. Conjunción de Filtros con AND',
-    desc: 'Exigencia de cumplimiento concurrente de todas las condiciones.',
-    exercises: [
+  {
+    "id": "sql-u03-l04",
+    "path": "sql",
+    "unit": 3,
+    "level": 4,
+    "title": "4. Reconocimiento de BLOB",
+    "description": "Conoce el tipo BLOB (Binary Large Object) para almacenar datos binarios puros como imágenes, archivos o firmas criptográficas.",
+    "exercises": [
       {
-        id: 'sql-u03-l04-e01',
-        type: 'matching_pairs',
-        prompt: 'Empareja los términos y cláusulas de este nivel de SQL:',
-        pairs: [
-          { left: 'SELECT', right: 'Proyecta columnas a devolver' },
-          { left: 'FROM', right: 'Especifica la tabla de origen' },
-          { left: 'AS', right: 'Asigna alias temporal a columna o tabla' },
-          { left: 'DISTINCT', right: 'Elimina filas duplicadas' }
+        "id": "sql-u03-l04-e01",
+        "type": "predict_output",
+        "prompt": "¿Cuál es el resultado exacto en consola tras evaluar la siguiente instrucción sobre \"Reconocimiento de BLOB\"?",
+        "code": "SELECT typeof(X'53514C'); -- Literal hexadecimal BLOB",
+        "options": [
+          "blob",
+          "text",
+          "integer",
+          "null"
         ],
-        explanation: 'Las cláusulas fundamentales definen la estructura básica de cualquier consulta relacional.',
-        xpReward: 15
+        "correctOptionIndex": 0,
+        "explanation": "BLOB significa Binary Large Object.",
+        "xpReward": 10
       },
       {
-        id: 'sql-u03-l04-e02',
-        type: 'code_builder',
-        prompt: 'Construye la consulta para obtener id y nombre de la tabla usuarios:',
-        tokens: ['SELECT', 'id, nombre', 'FROM', 'usuarios', ';', 'WHERE', '*'],
-        solution: ['SELECT', 'id, nombre', 'FROM', 'usuarios', ';'],
-        hint: 'Inicia con SELECT, lista los campos y enlaza con FROM.',
-        explanation: 'SELECT id, nombre FROM usuarios; es la forma estándar de proyección relacional.',
-        xpReward: 10
-      },
-      {
-        id: 'sql-u03-l04-e03',
-        type: 'predict_output',
-        prompt: '¿Qué resultado devuelve la siguiente expresión de columnas calculadas?',
-        code: 'SELECT 100 + 25 * 2 AS total;',
-        options: ['250', '150', '125', '200'],
-        correctOptionIndex: 1,
-        explanation: 'En SQL la multiplicación tiene prioridad: 25 * 2 = 50, y 100 + 50 = 150.',
-        xpReward: 10
-      },
-      {
-        id: 'sql-u03-l04-e04',
-        type: 'spot_the_bug',
-        prompt: 'Toca la línea con el error de paginación (recuerda que el desplazamiento OFFSET no puede ser negativo):',
-        codeSnippet: [
-          'SELECT id, nombre',
-          'FROM clientes AS c',
-          'LIMIT 10 OFFSET -5;'
+        "id": "sql-u03-l04-e02",
+        "type": "code_cloze",
+        "prompt": "El tipo de dato utilizado para guardar archivos binarios crudos como imágenes o hashes se abrevia ___:",
+        "codeWithBlank": "El tipo de dato utilizado para guardar archivos binarios crudos como imágenes o hashes se abrevia ___:",
+        "options": [
+          "BLOB",
+          "RAW",
+          "BYTE",
+          "BINARY"
         ],
-        bugLineIndex: 2,
-        explanation: 'El valor de OFFSET debe ser un número entero no negativo.',
-        xpReward: 15
+        "correctOption": "BLOB",
+        "explanation": "Almacena datos exactamente tal cual se ingresan, sin codificación de caracteres.",
+        "xpReward": 10
       },
       {
-        id: 'sql-u03-l04-e05',
-        type: 'code_cloze',
-        prompt: 'Completa la palabra clave de SQL (DISTINCT) para eliminar filas duplicadas:',
-        codeWithBlank: 'SELECT ___ ciudad FROM sucursales;',
-        options: ['DISTINCT', 'UNIQUE', 'SINGLE', 'FILTER'],
-        correctOption: 'DISTINCT',
-        explanation: 'SELECT DISTINCT suprime registros duplicados en el conjunto devuelto.',
-        xpReward: 10
-      },
-      {
-        id: 'sql-u03-l04-e06',
-        type: 'predict_output',
-        prompt: '¿Qué devuelve la función estándar COALESCE con estos argumentos?',
-        code: 'SELECT COALESCE(NULL, 100, 200) AS res;',
-        options: ['NULL', '100', '200', 'Error'],
-        correctOptionIndex: 1,
-        explanation: 'COALESCE devuelve el primer argumento no nulo evaluado de izquierda a derecha (100).',
-        xpReward: 10
-      },
-      {
-        id: 'sql-u03-l04-e07',
-        type: 'code_builder',
-        prompt: 'Construye la consulta con alias de tabla para proyectos:',
-        tokens: ['SELECT', 'p.id, p.titulo', 'FROM', 'proyectos', 'AS', 'p', ';'],
-        solution: ['SELECT', 'p.id, p.titulo', 'FROM', 'proyectos', 'AS', 'p', ';'],
-        hint: 'Asigna el alias p con AS y califica las columnas.',
-        explanation: 'Calificar con alias (p.id) hace la consulta concisa y preparada para JOINs.',
-        xpReward: 10
-      },
-      {
-        id: 'sql-u03-l04-e08',
-        type: 'matching_pairs',
-        prompt: 'Empareja cada función de texto con su propósito:',
-        pairs: [
-          { left: 'UPPER(col)', right: 'Convierte texto a mayúsculas' },
-          { left: 'LOWER(col)', right: 'Convierte texto a minúsculas' },
-          { left: 'LENGTH(col)', right: 'Calcula la longitud de la cadena' },
-          { left: 'TRIM(col)', right: 'Elimina espacios en blanco exteriores' }
+        "id": "sql-u03-l04-e03",
+        "type": "code_builder",
+        "prompt": "Ordena los bloques para construir la sentencia correcta de: \"Reconocimiento de BLOB\":",
+        "tokens": [
+          "foto",
+          "BLOB",
+          ",",
+          "firma",
+          "BLOB"
         ],
-        explanation: 'Las funciones de texto permiten normalizar y analizar campos al vuelo.',
-        xpReward: 15
-      },
-      {
-        id: 'sql-u03-l04-e09',
-        type: 'code_cloze',
-        prompt: 'Completa la cláusula de SQL (LIMIT) para obtener únicamente las primeras 5 filas:',
-        codeWithBlank: 'SELECT * FROM productos ___ 5;',
-        options: ['LIMIT', 'TOP', 'MAX', 'FIRST'],
-        correctOption: 'LIMIT',
-        explanation: 'LIMIT n restringe la cantidad máxima de filas entregadas al cliente.',
-        xpReward: 10
-      },
-      {
-        id: 'sql-u03-l04-e10',
-        type: 'parsons_puzzle',
-        prompt: 'Ordena las cláusulas de la consulta SQL en el orden correcto (SELECT, FROM, LIMIT, OFFSET):',
-        lines: [
-          'SELECT codigo, descripcion',
-          'FROM catalogo.articulos',
-          'LIMIT 20 OFFSET 40;'
+        "solution": [
+          "foto",
+          "BLOB",
+          ",",
+          "firma",
+          "BLOB"
         ],
-        correctOrder: [0, 1, 2],
-        explanation: 'La anatomía estándar en SQL inicia con SELECT, continúa con FROM y finaliza con LIMIT/OFFSET.',
-        xpReward: 20
+        "explanation": "En la práctica moderna suele guardarse la URL o ruta del archivo como TEXT, y solo el archivo en sí en almacenamiento en la nube.",
+        "xpReward": 15
+      },
+      {
+        "id": "sql-u03-l04-e04",
+        "type": "spot_the_bug",
+        "prompt": "Identifica la línea que contiene el error en este código de \"Reconocimiento de BLOB\":",
+        "codeSnippet": [
+          "CREATE TABLE img (",
+          "    foto IMAGE // En SQLite estándar el tipo binario se llama BLOB",
+          ")"
+        ],
+        "bugLineIndex": 1,
+        "explanation": "Guardar archivos de video de 500 MB en columnas BLOB ralentizará enormemente las copias de seguridad de la base de datos.",
+        "xpReward": 15
+      },
+      {
+        "id": "sql-u03-l04-e05",
+        "type": "matching_pairs",
+        "prompt": "Empareja cada concepto clave de \"Reconocimiento de BLOB\" con su definición correspondiente:",
+        "pairs": [
+          {
+            "left": "Reconocimiento de BLOB",
+            "right": "BLOB significa Binary Large Object."
+          },
+          {
+            "left": "Principio 2",
+            "right": "Almacena datos exactamente tal cual se ingresan, sin codificación de caracteres."
+          },
+          {
+            "left": "Principio 3",
+            "right": "Ideal para hashes de seguridad, claves públicas o miniaturas muy pequeñas."
+          },
+          {
+            "left": "Buena práctica",
+            "right": "En la práctica moderna suele guardarse la URL o ruta..."
+          }
+        ],
+        "explanation": "Dominio de los conceptos esenciales y fundamentos teóricos de la lección.",
+        "xpReward": 15
+      },
+      {
+        "id": "sql-u03-l04-e06",
+        "type": "code_cloze",
+        "prompt": "En SQLite, respecto a \"Reconocimiento de BLOB\", para asegurar la coherencia de los datos se debe ___:",
+        "codeWithBlank": "Para garantizar la integridad en \"Reconocimiento de BLOB\", la instrucción debe ___.",
+        "options": [
+          "cumplir las restricciones y tipos de columna",
+          "omitir el tipo de dato",
+          "eliminar las claves foráneas",
+          "evitar el uso de SELECT"
+        ],
+        "correctOption": "cumplir las restricciones y tipos de columna",
+        "explanation": "En la práctica moderna suele guardarse la URL o ruta del archivo como TEXT, y solo el archivo en sí en almacenamiento en la nube.",
+        "xpReward": 10
+      },
+      {
+        "id": "sql-u03-l04-e07",
+        "type": "predict_output",
+        "prompt": "¿Qué resultado se obtendrá al evaluar la siguiente instrucción sobre \"Reconocimiento de BLOB\"?",
+        "code": "CREATE TABLE IF NOT EXISTS credenciales (\n    id INTEGER PRIMARY KEY,\n    estudiante_id INTEGER,\n    foto_perfil BLOB, -- Datos binarios brutos de la imagen\n    huella_hash BLOB",
+        "options": [
+          "Query OK, 0 rows affected (Eng",
+          "Error de sintaxis",
+          "null / Sin registros",
+          "Excepción de tipo"
+        ],
+        "correctOptionIndex": 0,
+        "explanation": "La salida corresponde con el comportamiento documentado: Query OK, 0 rows affected (Eng",
+        "xpReward": 10
+      },
+      {
+        "id": "sql-u03-l04-e08",
+        "type": "code_builder",
+        "prompt": "Construye la instrucción sintáctica complementaria para \"Reconocimiento de BLOB\":",
+        "tokens": [
+          "SELECT",
+          "id,",
+          "nombre",
+          "FROM",
+          "estudiantes",
+          ";"
+        ],
+        "solution": [
+          "SELECT",
+          "id,",
+          "nombre",
+          "FROM",
+          "estudiantes",
+          ";"
+        ],
+        "explanation": "Orden gramatical correcto respetando las convenciones del lenguaje.",
+        "xpReward": 15
+      },
+      {
+        "id": "sql-u03-l04-e09",
+        "type": "spot_the_bug",
+        "prompt": "Identifica la línea con el error de diseño o sintaxis en \"Reconocimiento de BLOB\":",
+        "codeSnippet": [
+          "-- Consulta sobre el esquema educativo",
+          "SELECT id, nombre FROM estudiantes",
+          "WHERE id == 10; // Error: en SQL la igualdad se escribe con un solo = (WHERE id = 10)"
+        ],
+        "bugLineIndex": 2,
+        "explanation": "Guardar archivos de video de 500 MB en columnas BLOB ralentizará enormemente las copias de seguridad de la base de datos.",
+        "xpReward": 15
+      },
+      {
+        "id": "sql-u03-l04-e10",
+        "type": "matching_pairs",
+        "prompt": "Empareja cada aspecto de \"Reconocimiento de BLOB\" con su rol o impacto en el sistema:",
+        "pairs": [
+          {
+            "left": "Propósito técnico",
+            "right": "Conoce el tipo BLOB (Binary Large Object) para almac..."
+          },
+          {
+            "left": "Riesgo crítico",
+            "right": "Guardar archivos de video de 500 MB en columnas BLOB..."
+          },
+          {
+            "left": "Recomendación",
+            "right": "En la práctica moderna suele guardarse la URL o ruta..."
+          },
+          {
+            "left": "Ámbito de aplicación",
+            "right": "Motor relacional SQLite"
+          }
+        ],
+        "explanation": "Consolidación de buenas prácticas y prevención de errores críticos en el código.",
+        "xpReward": 15
       }
     ]
   },
-  5: {
-    title: '5. Disyunción de Filtros con OR',
-    desc: 'Cumplimiento de al menos una de las alternativas propuestas.',
-    exercises: [
+  {
+    "id": "sql-u03-l05",
+    "path": "sql",
+    "unit": 3,
+    "level": 5,
+    "title": "5. Representación de valores lógicos y fechas",
+    "description": "Aprende cómo maneja SQLite valores booleanos (0 y 1 en INTEGER) y marcas temporales (cadenas ISO-8601 en TEXT).",
+    "exercises": [
       {
-        id: 'sql-u03-l05-e01',
-        type: 'matching_pairs',
-        prompt: 'Empareja los términos y cláusulas de este nivel de SQL:',
-        pairs: [
-          { left: 'SELECT', right: 'Proyecta columnas a devolver' },
-          { left: 'FROM', right: 'Especifica la tabla de origen' },
-          { left: 'AS', right: 'Asigna alias temporal a columna o tabla' },
-          { left: 'DISTINCT', right: 'Elimina filas duplicadas' }
+        "id": "sql-u03-l05-e01",
+        "type": "predict_output",
+        "prompt": "¿Cuál es el resultado exacto en consola tras evaluar la siguiente instrucción sobre \"Representación de valores lógicos y fechas\"?",
+        "code": "SELECT 1 = true, 0 = false;",
+        "options": [
+          "1 | 1 (true | true)",
+          "0 | 0",
+          "false | false",
+          "Error"
         ],
-        explanation: 'Las cláusulas fundamentales definen la estructura básica de cualquier consulta relacional.',
-        xpReward: 15
+        "correctOptionIndex": 0,
+        "explanation": "SQLite no tiene un tipo BOOLEAN separado: utiliza INTEGER con valores 0 (false) y 1 (true).",
+        "xpReward": 10
       },
       {
-        id: 'sql-u03-l05-e02',
-        type: 'code_builder',
-        prompt: 'Construye la consulta para obtener id y nombre de la tabla usuarios:',
-        tokens: ['SELECT', 'id, nombre', 'FROM', 'usuarios', ';', 'WHERE', '*'],
-        solution: ['SELECT', 'id, nombre', 'FROM', 'usuarios', ';'],
-        hint: 'Inicia con SELECT, lista los campos y enlaza con FROM.',
-        explanation: 'SELECT id, nombre FROM usuarios; es la forma estándar de proyección relacional.',
-        xpReward: 10
-      },
-      {
-        id: 'sql-u03-l05-e03',
-        type: 'predict_output',
-        prompt: '¿Qué resultado devuelve la siguiente expresión de columnas calculadas?',
-        code: 'SELECT 100 + 25 * 2 AS total;',
-        options: ['250', '150', '125', '200'],
-        correctOptionIndex: 1,
-        explanation: 'En SQL la multiplicación tiene prioridad: 25 * 2 = 50, y 100 + 50 = 150.',
-        xpReward: 10
-      },
-      {
-        id: 'sql-u03-l05-e04',
-        type: 'spot_the_bug',
-        prompt: 'Toca la línea con el error de paginación (recuerda que el desplazamiento OFFSET no puede ser negativo):',
-        codeSnippet: [
-          'SELECT id, nombre',
-          'FROM clientes AS c',
-          'LIMIT 10 OFFSET -5;'
+        "id": "sql-u03-l05-e02",
+        "type": "code_cloze",
+        "prompt": "En SQLite, los valores booleanos true y false se representan numéricamente con los enteros ___ y ___:",
+        "codeWithBlank": "En SQLite, los valores booleanos true y false se representan numéricamente con los enteros ___ y ___:",
+        "options": [
+          "1 y 0",
+          "true y false",
+          "V y F",
+          "-1 y 0"
         ],
-        bugLineIndex: 2,
-        explanation: 'El valor de OFFSET debe ser un número entero no negativo.',
-        xpReward: 15
+        "correctOption": "1 y 0",
+        "explanation": "Las fechas se gestionan mediante funciones integradas como DATE(), TIME() y DATETIME().",
+        "xpReward": 10
       },
       {
-        id: 'sql-u03-l05-e05',
-        type: 'code_cloze',
-        prompt: 'Completa la palabra clave de SQL (DISTINCT) para eliminar filas duplicadas:',
-        codeWithBlank: 'SELECT ___ ciudad FROM sucursales;',
-        options: ['DISTINCT', 'UNIQUE', 'SINGLE', 'FILTER'],
-        correctOption: 'DISTINCT',
-        explanation: 'SELECT DISTINCT suprime registros duplicados en el conjunto devuelto.',
-        xpReward: 10
-      },
-      {
-        id: 'sql-u03-l05-e06',
-        type: 'predict_output',
-        prompt: '¿Qué devuelve la función estándar COALESCE con estos argumentos?',
-        code: 'SELECT COALESCE(NULL, 100, 200) AS res;',
-        options: ['NULL', '100', '200', 'Error'],
-        correctOptionIndex: 1,
-        explanation: 'COALESCE devuelve el primer argumento no nulo evaluado de izquierda a derecha (100).',
-        xpReward: 10
-      },
-      {
-        id: 'sql-u03-l05-e07',
-        type: 'code_builder',
-        prompt: 'Construye la consulta con alias de tabla para proyectos:',
-        tokens: ['SELECT', 'p.id, p.titulo', 'FROM', 'proyectos', 'AS', 'p', ';'],
-        solution: ['SELECT', 'p.id, p.titulo', 'FROM', 'proyectos', 'AS', 'p', ';'],
-        hint: 'Asigna el alias p con AS y califica las columnas.',
-        explanation: 'Calificar con alias (p.id) hace la consulta concisa y preparada para JOINs.',
-        xpReward: 10
-      },
-      {
-        id: 'sql-u03-l05-e08',
-        type: 'matching_pairs',
-        prompt: 'Empareja cada función de texto con su propósito:',
-        pairs: [
-          { left: 'UPPER(col)', right: 'Convierte texto a mayúsculas' },
-          { left: 'LOWER(col)', right: 'Convierte texto a minúsculas' },
-          { left: 'LENGTH(col)', right: 'Calcula la longitud de la cadena' },
-          { left: 'TRIM(col)', right: 'Elimina espacios en blanco exteriores' }
+        "id": "sql-u03-l05-e03",
+        "type": "code_builder",
+        "prompt": "Ordena los bloques para construir la sentencia correcta de: \"Representación de valores lógicos y fechas\":",
+        "tokens": [
+          "activo",
+          "INTEGER",
+          "DEFAULT",
+          "1"
         ],
-        explanation: 'Las funciones de texto permiten normalizar y analizar campos al vuelo.',
-        xpReward: 15
-      },
-      {
-        id: 'sql-u03-l05-e09',
-        type: 'code_cloze',
-        prompt: 'Completa la cláusula de SQL (LIMIT) para obtener únicamente las primeras 5 filas:',
-        codeWithBlank: 'SELECT * FROM productos ___ 5;',
-        options: ['LIMIT', 'TOP', 'MAX', 'FIRST'],
-        correctOption: 'LIMIT',
-        explanation: 'LIMIT n restringe la cantidad máxima de filas entregadas al cliente.',
-        xpReward: 10
-      },
-      {
-        id: 'sql-u03-l05-e10',
-        type: 'parsons_puzzle',
-        prompt: 'Ordena las cláusulas de la consulta SQL en el orden correcto (SELECT, FROM, LIMIT, OFFSET):',
-        lines: [
-          'SELECT codigo, descripcion',
-          'FROM catalogo.articulos',
-          'LIMIT 20 OFFSET 40;'
+        "solution": [
+          "activo",
+          "INTEGER",
+          "DEFAULT",
+          "1"
         ],
-        correctOrder: [0, 1, 2],
-        explanation: 'La anatomía estándar en SQL inicia con SELECT, continúa con FROM y finaliza con LIMIT/OFFSET.',
-        xpReward: 20
+        "explanation": "Almacena siempre fechas en formato ISO-8601 (\"AAAA-MM-DD HH:MM:SS\") para que el orden alfabético coincida con el orden cronológico.",
+        "xpReward": 15
+      },
+      {
+        "id": "sql-u03-l05-e04",
+        "type": "spot_the_bug",
+        "prompt": "Identifica la línea que contiene el error en este código de \"Representación de valores lógicos y fechas\":",
+        "codeSnippet": [
+          "// Guardar fecha como \"15 de marzo de 2024\": imposible de ordenar con ORDER BY"
+        ],
+        "bugLineIndex": 0,
+        "explanation": "Guardar fechas en formato \"DD/MM/AAAA\": si ordenas alfabéticamente, \"01/12/2024\" saldrá antes que \"02/01/2020\", ¡lo cual es un desastre!",
+        "xpReward": 15
+      },
+      {
+        "id": "sql-u03-l05-e05",
+        "type": "matching_pairs",
+        "prompt": "Empareja cada concepto clave de \"Representación de valores lógicos y fechas\" con su definición correspondiente:",
+        "pairs": [
+          {
+            "left": "SQLite no tiene un tipo BOOLEAN separado",
+            "right": "utiliza INTEGER con valores 0 (false) y 1 (true)."
+          },
+          {
+            "left": "Principio 2",
+            "right": "Las fechas se gestionan mediante funciones integradas como DATE(), TIME() y DATETIME()."
+          },
+          {
+            "left": "Principio 3",
+            "right": "El formato TEXT estándar ISO-8601 permite comparaciones cronológicas con < y >."
+          },
+          {
+            "left": "Buena práctica",
+            "right": "Almacena siempre fechas en formato ISO-8601 (\"AAAA-M..."
+          }
+        ],
+        "explanation": "Dominio de los conceptos esenciales y fundamentos teóricos de la lección.",
+        "xpReward": 15
+      },
+      {
+        "id": "sql-u03-l05-e06",
+        "type": "code_cloze",
+        "prompt": "En SQLite, respecto a \"Representación de valores lógicos y fechas\", para asegurar la coherencia de los datos se debe ___:",
+        "codeWithBlank": "Para garantizar la integridad en \"Representación de valores lógicos y fechas\", la instrucción debe ___.",
+        "options": [
+          "cumplir las restricciones y tipos de columna",
+          "omitir el tipo de dato",
+          "eliminar las claves foráneas",
+          "evitar el uso de SELECT"
+        ],
+        "correctOption": "cumplir las restricciones y tipos de columna",
+        "explanation": "Almacena siempre fechas en formato ISO-8601 (\"AAAA-MM-DD HH:MM:SS\") para que el orden alfabético coincida con el orden cronológico.",
+        "xpReward": 10
+      },
+      {
+        "id": "sql-u03-l05-e07",
+        "type": "predict_output",
+        "prompt": "¿Qué resultado se obtendrá al evaluar la siguiente instrucción sobre \"Representación de valores lógicos y fechas\"?",
+        "code": "CREATE TABLE IF NOT EXISTS prestamos_libros (\n    id INTEGER PRIMARY KEY,\n    libro_id INTEGER,\n    devuelto INTEGER DEFAULT 0, -- 0 = false, 1 = true\n    fecha_prestamo TEXT DEFAULT (DATE('now')) -- Formato 'AAAA-MM-DD'",
+        "options": [
+          "Consulta completada",
+          "Error de sintaxis",
+          "null / Sin registros",
+          "Excepción de tipo"
+        ],
+        "correctOptionIndex": 0,
+        "explanation": "La salida corresponde con el comportamiento documentado: Consulta completada",
+        "xpReward": 10
+      },
+      {
+        "id": "sql-u03-l05-e08",
+        "type": "code_builder",
+        "prompt": "Construye la instrucción sintáctica complementaria para \"Representación de valores lógicos y fechas\":",
+        "tokens": [
+          "SELECT",
+          "id,",
+          "nombre",
+          "FROM",
+          "estudiantes",
+          ";"
+        ],
+        "solution": [
+          "SELECT",
+          "id,",
+          "nombre",
+          "FROM",
+          "estudiantes",
+          ";"
+        ],
+        "explanation": "Orden gramatical correcto respetando las convenciones del lenguaje.",
+        "xpReward": 15
+      },
+      {
+        "id": "sql-u03-l05-e09",
+        "type": "spot_the_bug",
+        "prompt": "Identifica la línea con el error de diseño o sintaxis en \"Representación de valores lógicos y fechas\":",
+        "codeSnippet": [
+          "-- Consulta sobre el esquema educativo",
+          "SELECT id, nombre FROM estudiantes",
+          "WHERE id == 10; // Error: en SQL la igualdad se escribe con un solo = (WHERE id = 10)"
+        ],
+        "bugLineIndex": 2,
+        "explanation": "Guardar fechas en formato \"DD/MM/AAAA\": si ordenas alfabéticamente, \"01/12/2024\" saldrá antes que \"02/01/2020\", ¡lo cual es un desastre!",
+        "xpReward": 15
+      },
+      {
+        "id": "sql-u03-l05-e10",
+        "type": "matching_pairs",
+        "prompt": "Empareja cada aspecto de \"Representación de valores lógicos y fechas\" con su rol o impacto en el sistema:",
+        "pairs": [
+          {
+            "left": "Propósito técnico",
+            "right": "Aprende cómo maneja SQLite valores booleanos (0 y 1 ..."
+          },
+          {
+            "left": "Riesgo crítico",
+            "right": "Guardar fechas en formato \"DD/MM/AAAA\": si ordenas a..."
+          },
+          {
+            "left": "Recomendación",
+            "right": "Almacena siempre fechas en formato ISO-8601 (\"AAAA-M..."
+          },
+          {
+            "left": "Ámbito de aplicación",
+            "right": "Motor relacional SQLite"
+          }
+        ],
+        "explanation": "Consolidación de buenas prácticas y prevención de errores críticos en el código.",
+        "xpReward": 15
       }
     ]
   },
-  6: {
-    title: '6. Precedencia de Operadores Lógicos (AND sobre OR)',
-    desc: 'Prioridad de AND y uso obligatorio de paréntesis para agrupar.',
-    exercises: [
+  {
+    "id": "sql-u03-l06",
+    "path": "sql",
+    "unit": 3,
+    "level": 6,
+    "title": "6. Flexibilidad de tipos en SQLite",
+    "description": "Comprende el tipado dinámico y la afinidad de tipos (type affinity) de SQLite frente a la rigidez estricta de otros motores.",
+    "exercises": [
       {
-        id: 'sql-u03-l06-e01',
-        type: 'matching_pairs',
-        prompt: 'Empareja los términos y cláusulas de este nivel de SQL:',
-        pairs: [
-          { left: 'SELECT', right: 'Proyecta columnas a devolver' },
-          { left: 'FROM', right: 'Especifica la tabla de origen' },
-          { left: 'AS', right: 'Asigna alias temporal a columna o tabla' },
-          { left: 'DISTINCT', right: 'Elimina filas duplicadas' }
+        "id": "sql-u03-l06-e01",
+        "type": "predict_output",
+        "prompt": "¿Cuál es el resultado exacto en consola tras evaluar la siguiente instrucción sobre \"Flexibilidad de tipos en SQLite\"?",
+        "code": "SELECT typeof('123');",
+        "options": [
+          "text",
+          "integer",
+          "number",
+          "real"
         ],
-        explanation: 'Las cláusulas fundamentales definen la estructura básica de cualquier consulta relacional.',
-        xpReward: 15
+        "correctOptionIndex": 0,
+        "explanation": "Afinidad de tipos: SQLite intenta convertir el valor al tipo preferido de la columna.",
+        "xpReward": 10
       },
       {
-        id: 'sql-u03-l06-e02',
-        type: 'code_builder',
-        prompt: 'Construye la consulta para obtener id y nombre de la tabla usuarios:',
-        tokens: ['SELECT', 'id, nombre', 'FROM', 'usuarios', ';', 'WHERE', '*'],
-        solution: ['SELECT', 'id, nombre', 'FROM', 'usuarios', ';'],
-        hint: 'Inicia con SELECT, lista los campos y enlaza con FROM.',
-        explanation: 'SELECT id, nombre FROM usuarios; es la forma estándar de proyección relacional.',
-        xpReward: 10
-      },
-      {
-        id: 'sql-u03-l06-e03',
-        type: 'predict_output',
-        prompt: '¿Qué resultado devuelve la siguiente expresión de columnas calculadas?',
-        code: 'SELECT 100 + 25 * 2 AS total;',
-        options: ['250', '150', '125', '200'],
-        correctOptionIndex: 1,
-        explanation: 'En SQL la multiplicación tiene prioridad: 25 * 2 = 50, y 100 + 50 = 150.',
-        xpReward: 10
-      },
-      {
-        id: 'sql-u03-l06-e04',
-        type: 'spot_the_bug',
-        prompt: 'Toca la línea con el error de paginación (recuerda que el desplazamiento OFFSET no puede ser negativo):',
-        codeSnippet: [
-          'SELECT id, nombre',
-          'FROM clientes AS c',
-          'LIMIT 10 OFFSET -5;'
+        "id": "sql-u03-l06-e02",
+        "type": "code_cloze",
+        "prompt": "La función nativa de SQLite para inspeccionar el tipo de almacenamiento de un valor es ___():",
+        "codeWithBlank": "La función nativa de SQLite para inspeccionar el tipo de almacenamiento de un valor es ___():",
+        "options": [
+          "typeof()",
+          "type()",
+          "getType()",
+          "class()"
         ],
-        bugLineIndex: 2,
-        explanation: 'El valor de OFFSET debe ser un número entero no negativo.',
-        xpReward: 15
+        "correctOption": "typeof()",
+        "explanation": "Las 5 clases de almacenamiento fundamentales: NULL, INTEGER, REAL, TEXT, BLOB.",
+        "xpReward": 10
       },
       {
-        id: 'sql-u03-l06-e05',
-        type: 'code_cloze',
-        prompt: 'Completa la palabra clave de SQL (DISTINCT) para eliminar filas duplicadas:',
-        codeWithBlank: 'SELECT ___ ciudad FROM sucursales;',
-        options: ['DISTINCT', 'UNIQUE', 'SINGLE', 'FILTER'],
-        correctOption: 'DISTINCT',
-        explanation: 'SELECT DISTINCT suprime registros duplicados en el conjunto devuelto.',
-        xpReward: 10
-      },
-      {
-        id: 'sql-u03-l06-e06',
-        type: 'predict_output',
-        prompt: '¿Qué devuelve la función estándar COALESCE con estos argumentos?',
-        code: 'SELECT COALESCE(NULL, 100, 200) AS res;',
-        options: ['NULL', '100', '200', 'Error'],
-        correctOptionIndex: 1,
-        explanation: 'COALESCE devuelve el primer argumento no nulo evaluado de izquierda a derecha (100).',
-        xpReward: 10
-      },
-      {
-        id: 'sql-u03-l06-e07',
-        type: 'code_builder',
-        prompt: 'Construye la consulta con alias de tabla para proyectos:',
-        tokens: ['SELECT', 'p.id, p.titulo', 'FROM', 'proyectos', 'AS', 'p', ';'],
-        solution: ['SELECT', 'p.id, p.titulo', 'FROM', 'proyectos', 'AS', 'p', ';'],
-        hint: 'Asigna el alias p con AS y califica las columnas.',
-        explanation: 'Calificar con alias (p.id) hace la consulta concisa y preparada para JOINs.',
-        xpReward: 10
-      },
-      {
-        id: 'sql-u03-l06-e08',
-        type: 'matching_pairs',
-        prompt: 'Empareja cada función de texto con su propósito:',
-        pairs: [
-          { left: 'UPPER(col)', right: 'Convierte texto a mayúsculas' },
-          { left: 'LOWER(col)', right: 'Convierte texto a minúsculas' },
-          { left: 'LENGTH(col)', right: 'Calcula la longitud de la cadena' },
-          { left: 'TRIM(col)', right: 'Elimina espacios en blanco exteriores' }
+        "id": "sql-u03-l06-e03",
+        "type": "code_builder",
+        "prompt": "Ordena los bloques para construir la sentencia correcta de: \"Flexibilidad de tipos en SQLite\":",
+        "tokens": [
+          "SELECT",
+          "typeof",
+          "(",
+          "promedio",
+          ")",
+          "FROM",
+          "estudiantes"
         ],
-        explanation: 'Las funciones de texto permiten normalizar y analizar campos al vuelo.',
-        xpReward: 15
-      },
-      {
-        id: 'sql-u03-l06-e09',
-        type: 'code_cloze',
-        prompt: 'Completa la cláusula de SQL (LIMIT) para obtener únicamente las primeras 5 filas:',
-        codeWithBlank: 'SELECT * FROM productos ___ 5;',
-        options: ['LIMIT', 'TOP', 'MAX', 'FIRST'],
-        correctOption: 'LIMIT',
-        explanation: 'LIMIT n restringe la cantidad máxima de filas entregadas al cliente.',
-        xpReward: 10
-      },
-      {
-        id: 'sql-u03-l06-e10',
-        type: 'parsons_puzzle',
-        prompt: 'Ordena las cláusulas de la consulta SQL en el orden correcto (SELECT, FROM, LIMIT, OFFSET):',
-        lines: [
-          'SELECT codigo, descripcion',
-          'FROM catalogo.articulos',
-          'LIMIT 20 OFFSET 40;'
+        "solution": [
+          "SELECT",
+          "typeof",
+          "(",
+          "promedio",
+          ")",
+          "FROM",
+          "estudiantes"
         ],
-        correctOrder: [0, 1, 2],
-        explanation: 'La anatomía estándar en SQL inicia con SELECT, continúa con FROM y finaliza con LIMIT/OFFSET.',
-        xpReward: 20
+        "explanation": "Aunque SQLite sea flexible, escribe siempre tus sentencias como si fuera estricto para garantizar portabilidad con PostgreSQL.",
+        "xpReward": 15
+      },
+      {
+        "id": "sql-u03-l06-e04",
+        "type": "spot_the_bug",
+        "prompt": "Identifica la línea que contiene el error en este código de \"Flexibilidad de tipos en SQLite\":",
+        "codeSnippet": [
+          "SELECT type(columna) // Error: en SQLite la función es typeof()"
+        ],
+        "bugLineIndex": 0,
+        "explanation": "Aprovecharse del tipado flexible para meter texto en una columna INTEGER: arruinará tus funciones AVG() o SUM().",
+        "xpReward": 15
+      },
+      {
+        "id": "sql-u03-l06-e05",
+        "type": "matching_pairs",
+        "prompt": "Empareja cada concepto clave de \"Flexibilidad de tipos en SQLite\" con su definición correspondiente:",
+        "pairs": [
+          {
+            "left": "Afinidad de tipos",
+            "right": "SQLite intenta convertir el valor al tipo preferido de la columna."
+          },
+          {
+            "left": "Las 5 clases de almacenamiento fundamentales",
+            "right": "NULL, INTEGER, REAL, TEXT, BLOB."
+          },
+          {
+            "left": "Principio 3",
+            "right": "La función typeof() devuelve la clase de almacenamiento real de cualquier expresión."
+          },
+          {
+            "left": "Buena práctica",
+            "right": "Aunque SQLite sea flexible, escribe siempre tus sent..."
+          }
+        ],
+        "explanation": "Dominio de los conceptos esenciales y fundamentos teóricos de la lección.",
+        "xpReward": 15
+      },
+      {
+        "id": "sql-u03-l06-e06",
+        "type": "code_cloze",
+        "prompt": "En SQLite, respecto a \"Flexibilidad de tipos en SQLite\", para asegurar la coherencia de los datos se debe ___:",
+        "codeWithBlank": "Para garantizar la integridad en \"Flexibilidad de tipos en SQLite\", la instrucción debe ___.",
+        "options": [
+          "cumplir las restricciones y tipos de columna",
+          "omitir el tipo de dato",
+          "eliminar las claves foráneas",
+          "evitar el uso de SELECT"
+        ],
+        "correctOption": "cumplir las restricciones y tipos de columna",
+        "explanation": "Aunque SQLite sea flexible, escribe siempre tus sentencias como si fuera estricto para garantizar portabilidad con PostgreSQL.",
+        "xpReward": 10
+      },
+      {
+        "id": "sql-u03-l06-e07",
+        "type": "predict_output",
+        "prompt": "¿Qué resultado se obtendrá al evaluar la siguiente instrucción sobre \"Flexibilidad de tipos en SQLite\"?",
+        "code": "CREATE TABLE IF NOT EXISTS demo_afinidad (\n    col_int INTEGER,\n    col_txt TEXT,\n    col_num NUMERIC\n);",
+        "options": [
+          "Consulta completada",
+          "Error de sintaxis",
+          "null / Sin registros",
+          "Excepción de tipo"
+        ],
+        "correctOptionIndex": 0,
+        "explanation": "La salida corresponde con el comportamiento documentado: Consulta completada",
+        "xpReward": 10
+      },
+      {
+        "id": "sql-u03-l06-e08",
+        "type": "code_builder",
+        "prompt": "Construye la instrucción sintáctica complementaria para \"Flexibilidad de tipos en SQLite\":",
+        "tokens": [
+          "SELECT",
+          "id,",
+          "nombre",
+          "FROM",
+          "estudiantes",
+          ";"
+        ],
+        "solution": [
+          "SELECT",
+          "id,",
+          "nombre",
+          "FROM",
+          "estudiantes",
+          ";"
+        ],
+        "explanation": "Orden gramatical correcto respetando las convenciones del lenguaje.",
+        "xpReward": 15
+      },
+      {
+        "id": "sql-u03-l06-e09",
+        "type": "spot_the_bug",
+        "prompt": "Identifica la línea con el error de diseño o sintaxis en \"Flexibilidad de tipos en SQLite\":",
+        "codeSnippet": [
+          "-- Consulta sobre el esquema educativo",
+          "SELECT id, nombre FROM estudiantes",
+          "WHERE id == 10; // Error: en SQL la igualdad se escribe con un solo = (WHERE id = 10)"
+        ],
+        "bugLineIndex": 2,
+        "explanation": "Aprovecharse del tipado flexible para meter texto en una columna INTEGER: arruinará tus funciones AVG() o SUM().",
+        "xpReward": 15
+      },
+      {
+        "id": "sql-u03-l06-e10",
+        "type": "matching_pairs",
+        "prompt": "Empareja cada aspecto de \"Flexibilidad de tipos en SQLite\" con su rol o impacto en el sistema:",
+        "pairs": [
+          {
+            "left": "Propósito técnico",
+            "right": "Comprende el tipado dinámico y la afinidad de tipos ..."
+          },
+          {
+            "left": "Riesgo crítico",
+            "right": "Aprovecharse del tipado flexible para meter texto en..."
+          },
+          {
+            "left": "Recomendación",
+            "right": "Aunque SQLite sea flexible, escribe siempre tus sent..."
+          },
+          {
+            "left": "Ámbito de aplicación",
+            "right": "Motor relacional SQLite"
+          }
+        ],
+        "explanation": "Consolidación de buenas prácticas y prevención de errores críticos en el código.",
+        "xpReward": 15
       }
     ]
-  },
-  7: {
-    title: '7. Inversión de Condiciones con NOT',
-    desc: 'Inversión de valores de verdad en lógica trivaluada.',
-    exercises: [
-      {
-        id: 'sql-u03-l07-e01',
-        type: 'matching_pairs',
-        prompt: 'Empareja los términos y cláusulas de este nivel de SQL:',
-        pairs: [
-          { left: 'SELECT', right: 'Proyecta columnas a devolver' },
-          { left: 'FROM', right: 'Especifica la tabla de origen' },
-          { left: 'AS', right: 'Asigna alias temporal a columna o tabla' },
-          { left: 'DISTINCT', right: 'Elimina filas duplicadas' }
-        ],
-        explanation: 'Las cláusulas fundamentales definen la estructura básica de cualquier consulta relacional.',
-        xpReward: 15
-      },
-      {
-        id: 'sql-u03-l07-e02',
-        type: 'code_builder',
-        prompt: 'Construye la consulta para obtener id y nombre de la tabla usuarios:',
-        tokens: ['SELECT', 'id, nombre', 'FROM', 'usuarios', ';', 'WHERE', '*'],
-        solution: ['SELECT', 'id, nombre', 'FROM', 'usuarios', ';'],
-        hint: 'Inicia con SELECT, lista los campos y enlaza con FROM.',
-        explanation: 'SELECT id, nombre FROM usuarios; es la forma estándar de proyección relacional.',
-        xpReward: 10
-      },
-      {
-        id: 'sql-u03-l07-e03',
-        type: 'predict_output',
-        prompt: '¿Qué resultado devuelve la siguiente expresión de columnas calculadas?',
-        code: 'SELECT 100 + 25 * 2 AS total;',
-        options: ['250', '150', '125', '200'],
-        correctOptionIndex: 1,
-        explanation: 'En SQL la multiplicación tiene prioridad: 25 * 2 = 50, y 100 + 50 = 150.',
-        xpReward: 10
-      },
-      {
-        id: 'sql-u03-l07-e04',
-        type: 'spot_the_bug',
-        prompt: 'Toca la línea con el error de paginación (recuerda que el desplazamiento OFFSET no puede ser negativo):',
-        codeSnippet: [
-          'SELECT id, nombre',
-          'FROM clientes AS c',
-          'LIMIT 10 OFFSET -5;'
-        ],
-        bugLineIndex: 2,
-        explanation: 'El valor de OFFSET debe ser un número entero no negativo.',
-        xpReward: 15
-      },
-      {
-        id: 'sql-u03-l07-e05',
-        type: 'code_cloze',
-        prompt: 'Completa la palabra clave de SQL (DISTINCT) para eliminar filas duplicadas:',
-        codeWithBlank: 'SELECT ___ ciudad FROM sucursales;',
-        options: ['DISTINCT', 'UNIQUE', 'SINGLE', 'FILTER'],
-        correctOption: 'DISTINCT',
-        explanation: 'SELECT DISTINCT suprime registros duplicados en el conjunto devuelto.',
-        xpReward: 10
-      },
-      {
-        id: 'sql-u03-l07-e06',
-        type: 'predict_output',
-        prompt: '¿Qué devuelve la función estándar COALESCE con estos argumentos?',
-        code: 'SELECT COALESCE(NULL, 100, 200) AS res;',
-        options: ['NULL', '100', '200', 'Error'],
-        correctOptionIndex: 1,
-        explanation: 'COALESCE devuelve el primer argumento no nulo evaluado de izquierda a derecha (100).',
-        xpReward: 10
-      },
-      {
-        id: 'sql-u03-l07-e07',
-        type: 'code_builder',
-        prompt: 'Construye la consulta con alias de tabla para proyectos:',
-        tokens: ['SELECT', 'p.id, p.titulo', 'FROM', 'proyectos', 'AS', 'p', ';'],
-        solution: ['SELECT', 'p.id, p.titulo', 'FROM', 'proyectos', 'AS', 'p', ';'],
-        hint: 'Asigna el alias p con AS y califica las columnas.',
-        explanation: 'Calificar con alias (p.id) hace la consulta concisa y preparada para JOINs.',
-        xpReward: 10
-      },
-      {
-        id: 'sql-u03-l07-e08',
-        type: 'matching_pairs',
-        prompt: 'Empareja cada función de texto con su propósito:',
-        pairs: [
-          { left: 'UPPER(col)', right: 'Convierte texto a mayúsculas' },
-          { left: 'LOWER(col)', right: 'Convierte texto a minúsculas' },
-          { left: 'LENGTH(col)', right: 'Calcula la longitud de la cadena' },
-          { left: 'TRIM(col)', right: 'Elimina espacios en blanco exteriores' }
-        ],
-        explanation: 'Las funciones de texto permiten normalizar y analizar campos al vuelo.',
-        xpReward: 15
-      },
-      {
-        id: 'sql-u03-l07-e09',
-        type: 'code_cloze',
-        prompt: 'Completa la cláusula de SQL (LIMIT) para obtener únicamente las primeras 5 filas:',
-        codeWithBlank: 'SELECT * FROM productos ___ 5;',
-        options: ['LIMIT', 'TOP', 'MAX', 'FIRST'],
-        correctOption: 'LIMIT',
-        explanation: 'LIMIT n restringe la cantidad máxima de filas entregadas al cliente.',
-        xpReward: 10
-      },
-      {
-        id: 'sql-u03-l07-e10',
-        type: 'parsons_puzzle',
-        prompt: 'Ordena las cláusulas de la consulta SQL en el orden correcto (SELECT, FROM, LIMIT, OFFSET):',
-        lines: [
-          'SELECT codigo, descripcion',
-          'FROM catalogo.articulos',
-          'LIMIT 20 OFFSET 40;'
-        ],
-        correctOrder: [0, 1, 2],
-        explanation: 'La anatomía estándar en SQL inicia con SELECT, continúa con FROM y finaliza con LIMIT/OFFSET.',
-        xpReward: 20
-      }
-    ]
-  },
-  8: {
-    title: '8. Comprobación de Rangos con BETWEEN y AND',
-    desc: 'Rangos inclusivos que abarcan ambos extremos y el intervalo.',
-    exercises: [
-      {
-        id: 'sql-u03-l08-e01',
-        type: 'matching_pairs',
-        prompt: 'Empareja los términos y cláusulas de este nivel de SQL:',
-        pairs: [
-          { left: 'SELECT', right: 'Proyecta columnas a devolver' },
-          { left: 'FROM', right: 'Especifica la tabla de origen' },
-          { left: 'AS', right: 'Asigna alias temporal a columna o tabla' },
-          { left: 'DISTINCT', right: 'Elimina filas duplicadas' }
-        ],
-        explanation: 'Las cláusulas fundamentales definen la estructura básica de cualquier consulta relacional.',
-        xpReward: 15
-      },
-      {
-        id: 'sql-u03-l08-e02',
-        type: 'code_builder',
-        prompt: 'Construye la consulta para obtener id y nombre de la tabla usuarios:',
-        tokens: ['SELECT', 'id, nombre', 'FROM', 'usuarios', ';', 'WHERE', '*'],
-        solution: ['SELECT', 'id, nombre', 'FROM', 'usuarios', ';'],
-        hint: 'Inicia con SELECT, lista los campos y enlaza con FROM.',
-        explanation: 'SELECT id, nombre FROM usuarios; es la forma estándar de proyección relacional.',
-        xpReward: 10
-      },
-      {
-        id: 'sql-u03-l08-e03',
-        type: 'predict_output',
-        prompt: '¿Qué resultado devuelve la siguiente expresión de columnas calculadas?',
-        code: 'SELECT 100 + 25 * 2 AS total;',
-        options: ['250', '150', '125', '200'],
-        correctOptionIndex: 1,
-        explanation: 'En SQL la multiplicación tiene prioridad: 25 * 2 = 50, y 100 + 50 = 150.',
-        xpReward: 10
-      },
-      {
-        id: 'sql-u03-l08-e04',
-        type: 'spot_the_bug',
-        prompt: 'Toca la línea con el error de paginación (recuerda que el desplazamiento OFFSET no puede ser negativo):',
-        codeSnippet: [
-          'SELECT id, nombre',
-          'FROM clientes AS c',
-          'LIMIT 10 OFFSET -5;'
-        ],
-        bugLineIndex: 2,
-        explanation: 'El valor de OFFSET debe ser un número entero no negativo.',
-        xpReward: 15
-      },
-      {
-        id: 'sql-u03-l08-e05',
-        type: 'code_cloze',
-        prompt: 'Completa la palabra clave de SQL (DISTINCT) para eliminar filas duplicadas:',
-        codeWithBlank: 'SELECT ___ ciudad FROM sucursales;',
-        options: ['DISTINCT', 'UNIQUE', 'SINGLE', 'FILTER'],
-        correctOption: 'DISTINCT',
-        explanation: 'SELECT DISTINCT suprime registros duplicados en el conjunto devuelto.',
-        xpReward: 10
-      },
-      {
-        id: 'sql-u03-l08-e06',
-        type: 'predict_output',
-        prompt: '¿Qué devuelve la función estándar COALESCE con estos argumentos?',
-        code: 'SELECT COALESCE(NULL, 100, 200) AS res;',
-        options: ['NULL', '100', '200', 'Error'],
-        correctOptionIndex: 1,
-        explanation: 'COALESCE devuelve el primer argumento no nulo evaluado de izquierda a derecha (100).',
-        xpReward: 10
-      },
-      {
-        id: 'sql-u03-l08-e07',
-        type: 'code_builder',
-        prompt: 'Construye la consulta con alias de tabla para proyectos:',
-        tokens: ['SELECT', 'p.id, p.titulo', 'FROM', 'proyectos', 'AS', 'p', ';'],
-        solution: ['SELECT', 'p.id, p.titulo', 'FROM', 'proyectos', 'AS', 'p', ';'],
-        hint: 'Asigna el alias p con AS y califica las columnas.',
-        explanation: 'Calificar con alias (p.id) hace la consulta concisa y preparada para JOINs.',
-        xpReward: 10
-      },
-      {
-        id: 'sql-u03-l08-e08',
-        type: 'matching_pairs',
-        prompt: 'Empareja cada función de texto con su propósito:',
-        pairs: [
-          { left: 'UPPER(col)', right: 'Convierte texto a mayúsculas' },
-          { left: 'LOWER(col)', right: 'Convierte texto a minúsculas' },
-          { left: 'LENGTH(col)', right: 'Calcula la longitud de la cadena' },
-          { left: 'TRIM(col)', right: 'Elimina espacios en blanco exteriores' }
-        ],
-        explanation: 'Las funciones de texto permiten normalizar y analizar campos al vuelo.',
-        xpReward: 15
-      },
-      {
-        id: 'sql-u03-l08-e09',
-        type: 'code_cloze',
-        prompt: 'Completa la cláusula de SQL (LIMIT) para obtener únicamente las primeras 5 filas:',
-        codeWithBlank: 'SELECT * FROM productos ___ 5;',
-        options: ['LIMIT', 'TOP', 'MAX', 'FIRST'],
-        correctOption: 'LIMIT',
-        explanation: 'LIMIT n restringe la cantidad máxima de filas entregadas al cliente.',
-        xpReward: 10
-      },
-      {
-        id: 'sql-u03-l08-e10',
-        type: 'parsons_puzzle',
-        prompt: 'Ordena las cláusulas de la consulta SQL en el orden correcto (SELECT, FROM, LIMIT, OFFSET):',
-        lines: [
-          'SELECT codigo, descripcion',
-          'FROM catalogo.articulos',
-          'LIMIT 20 OFFSET 40;'
-        ],
-        correctOrder: [0, 1, 2],
-        explanation: 'La anatomía estándar en SQL inicia con SELECT, continúa con FROM y finaliza con LIMIT/OFFSET.',
-        xpReward: 20
-      }
-    ]
-  },
-  9: {
-    title: '9. Negación de Rangos con NOT BETWEEN',
-    desc: 'Selección de datos que caen fuera de los márgenes especificados.',
-    exercises: [
-      {
-        id: 'sql-u03-l09-e01',
-        type: 'matching_pairs',
-        prompt: 'Empareja los términos y cláusulas de este nivel de SQL:',
-        pairs: [
-          { left: 'SELECT', right: 'Proyecta columnas a devolver' },
-          { left: 'FROM', right: 'Especifica la tabla de origen' },
-          { left: 'AS', right: 'Asigna alias temporal a columna o tabla' },
-          { left: 'DISTINCT', right: 'Elimina filas duplicadas' }
-        ],
-        explanation: 'Las cláusulas fundamentales definen la estructura básica de cualquier consulta relacional.',
-        xpReward: 15
-      },
-      {
-        id: 'sql-u03-l09-e02',
-        type: 'code_builder',
-        prompt: 'Construye la consulta para obtener id y nombre de la tabla usuarios:',
-        tokens: ['SELECT', 'id, nombre', 'FROM', 'usuarios', ';', 'WHERE', '*'],
-        solution: ['SELECT', 'id, nombre', 'FROM', 'usuarios', ';'],
-        hint: 'Inicia con SELECT, lista los campos y enlaza con FROM.',
-        explanation: 'SELECT id, nombre FROM usuarios; es la forma estándar de proyección relacional.',
-        xpReward: 10
-      },
-      {
-        id: 'sql-u03-l09-e03',
-        type: 'predict_output',
-        prompt: '¿Qué resultado devuelve la siguiente expresión de columnas calculadas?',
-        code: 'SELECT 100 + 25 * 2 AS total;',
-        options: ['250', '150', '125', '200'],
-        correctOptionIndex: 1,
-        explanation: 'En SQL la multiplicación tiene prioridad: 25 * 2 = 50, y 100 + 50 = 150.',
-        xpReward: 10
-      },
-      {
-        id: 'sql-u03-l09-e04',
-        type: 'spot_the_bug',
-        prompt: 'Toca la línea con el error de paginación (recuerda que el desplazamiento OFFSET no puede ser negativo):',
-        codeSnippet: [
-          'SELECT id, nombre',
-          'FROM clientes AS c',
-          'LIMIT 10 OFFSET -5;'
-        ],
-        bugLineIndex: 2,
-        explanation: 'El valor de OFFSET debe ser un número entero no negativo.',
-        xpReward: 15
-      },
-      {
-        id: 'sql-u03-l09-e05',
-        type: 'code_cloze',
-        prompt: 'Completa la palabra clave de SQL (DISTINCT) para eliminar filas duplicadas:',
-        codeWithBlank: 'SELECT ___ ciudad FROM sucursales;',
-        options: ['DISTINCT', 'UNIQUE', 'SINGLE', 'FILTER'],
-        correctOption: 'DISTINCT',
-        explanation: 'SELECT DISTINCT suprime registros duplicados en el conjunto devuelto.',
-        xpReward: 10
-      },
-      {
-        id: 'sql-u03-l09-e06',
-        type: 'predict_output',
-        prompt: '¿Qué devuelve la función estándar COALESCE con estos argumentos?',
-        code: 'SELECT COALESCE(NULL, 100, 200) AS res;',
-        options: ['NULL', '100', '200', 'Error'],
-        correctOptionIndex: 1,
-        explanation: 'COALESCE devuelve el primer argumento no nulo evaluado de izquierda a derecha (100).',
-        xpReward: 10
-      },
-      {
-        id: 'sql-u03-l09-e07',
-        type: 'code_builder',
-        prompt: 'Construye la consulta con alias de tabla para proyectos:',
-        tokens: ['SELECT', 'p.id, p.titulo', 'FROM', 'proyectos', 'AS', 'p', ';'],
-        solution: ['SELECT', 'p.id, p.titulo', 'FROM', 'proyectos', 'AS', 'p', ';'],
-        hint: 'Asigna el alias p con AS y califica las columnas.',
-        explanation: 'Calificar con alias (p.id) hace la consulta concisa y preparada para JOINs.',
-        xpReward: 10
-      },
-      {
-        id: 'sql-u03-l09-e08',
-        type: 'matching_pairs',
-        prompt: 'Empareja cada función de texto con su propósito:',
-        pairs: [
-          { left: 'UPPER(col)', right: 'Convierte texto a mayúsculas' },
-          { left: 'LOWER(col)', right: 'Convierte texto a minúsculas' },
-          { left: 'LENGTH(col)', right: 'Calcula la longitud de la cadena' },
-          { left: 'TRIM(col)', right: 'Elimina espacios en blanco exteriores' }
-        ],
-        explanation: 'Las funciones de texto permiten normalizar y analizar campos al vuelo.',
-        xpReward: 15
-      },
-      {
-        id: 'sql-u03-l09-e09',
-        type: 'code_cloze',
-        prompt: 'Completa la cláusula de SQL (LIMIT) para obtener únicamente las primeras 5 filas:',
-        codeWithBlank: 'SELECT * FROM productos ___ 5;',
-        options: ['LIMIT', 'TOP', 'MAX', 'FIRST'],
-        correctOption: 'LIMIT',
-        explanation: 'LIMIT n restringe la cantidad máxima de filas entregadas al cliente.',
-        xpReward: 10
-      },
-      {
-        id: 'sql-u03-l09-e10',
-        type: 'parsons_puzzle',
-        prompt: 'Ordena las cláusulas de la consulta SQL en el orden correcto (SELECT, FROM, LIMIT, OFFSET):',
-        lines: [
-          'SELECT codigo, descripcion',
-          'FROM catalogo.articulos',
-          'LIMIT 20 OFFSET 40;'
-        ],
-        correctOrder: [0, 1, 2],
-        explanation: 'La anatomía estándar en SQL inicia con SELECT, continúa con FROM y finaliza con LIMIT/OFFSET.',
-        xpReward: 20
-      }
-    ]
-  },
-  10: {
-    title: '10. Desafío de Punto Medio: Filtros Financieros',
-    desc: 'Consolidación de filtros multinivel con reglas monetarias.',
-    exercises: [
-      {
-        id: 'sql-u03-l10-e01',
-        type: 'matching_pairs',
-        prompt: 'Empareja los términos y cláusulas de este nivel de SQL:',
-        pairs: [
-          { left: 'SELECT', right: 'Proyecta columnas a devolver' },
-          { left: 'FROM', right: 'Especifica la tabla de origen' },
-          { left: 'AS', right: 'Asigna alias temporal a columna o tabla' },
-          { left: 'DISTINCT', right: 'Elimina filas duplicadas' }
-        ],
-        explanation: 'Las cláusulas fundamentales definen la estructura básica de cualquier consulta relacional.',
-        xpReward: 15
-      },
-      {
-        id: 'sql-u03-l10-e02',
-        type: 'code_builder',
-        prompt: 'Construye la consulta para obtener id y nombre de la tabla usuarios:',
-        tokens: ['SELECT', 'id, nombre', 'FROM', 'usuarios', ';', 'WHERE', '*'],
-        solution: ['SELECT', 'id, nombre', 'FROM', 'usuarios', ';'],
-        hint: 'Inicia con SELECT, lista los campos y enlaza con FROM.',
-        explanation: 'SELECT id, nombre FROM usuarios; es la forma estándar de proyección relacional.',
-        xpReward: 10
-      },
-      {
-        id: 'sql-u03-l10-e03',
-        type: 'predict_output',
-        prompt: '¿Qué resultado devuelve la siguiente expresión de columnas calculadas?',
-        code: 'SELECT 100 + 25 * 2 AS total;',
-        options: ['250', '150', '125', '200'],
-        correctOptionIndex: 1,
-        explanation: 'En SQL la multiplicación tiene prioridad: 25 * 2 = 50, y 100 + 50 = 150.',
-        xpReward: 10
-      },
-      {
-        id: 'sql-u03-l10-e04',
-        type: 'spot_the_bug',
-        prompt: 'Toca la línea con el error de paginación (recuerda que el desplazamiento OFFSET no puede ser negativo):',
-        codeSnippet: [
-          'SELECT id, nombre',
-          'FROM clientes AS c',
-          'LIMIT 10 OFFSET -5;'
-        ],
-        bugLineIndex: 2,
-        explanation: 'El valor de OFFSET debe ser un número entero no negativo.',
-        xpReward: 15
-      },
-      {
-        id: 'sql-u03-l10-e05',
-        type: 'code_cloze',
-        prompt: 'Completa la palabra clave de SQL (DISTINCT) para eliminar filas duplicadas:',
-        codeWithBlank: 'SELECT ___ ciudad FROM sucursales;',
-        options: ['DISTINCT', 'UNIQUE', 'SINGLE', 'FILTER'],
-        correctOption: 'DISTINCT',
-        explanation: 'SELECT DISTINCT suprime registros duplicados en el conjunto devuelto.',
-        xpReward: 10
-      },
-      {
-        id: 'sql-u03-l10-e06',
-        type: 'predict_output',
-        prompt: '¿Qué devuelve la función estándar COALESCE con estos argumentos?',
-        code: 'SELECT COALESCE(NULL, 100, 200) AS res;',
-        options: ['NULL', '100', '200', 'Error'],
-        correctOptionIndex: 1,
-        explanation: 'COALESCE devuelve el primer argumento no nulo evaluado de izquierda a derecha (100).',
-        xpReward: 10
-      },
-      {
-        id: 'sql-u03-l10-e07',
-        type: 'code_builder',
-        prompt: 'Construye la consulta con alias de tabla para proyectos:',
-        tokens: ['SELECT', 'p.id, p.titulo', 'FROM', 'proyectos', 'AS', 'p', ';'],
-        solution: ['SELECT', 'p.id, p.titulo', 'FROM', 'proyectos', 'AS', 'p', ';'],
-        hint: 'Asigna el alias p con AS y califica las columnas.',
-        explanation: 'Calificar con alias (p.id) hace la consulta concisa y preparada para JOINs.',
-        xpReward: 10
-      },
-      {
-        id: 'sql-u03-l10-e08',
-        type: 'matching_pairs',
-        prompt: 'Empareja cada función de texto con su propósito:',
-        pairs: [
-          { left: 'UPPER(col)', right: 'Convierte texto a mayúsculas' },
-          { left: 'LOWER(col)', right: 'Convierte texto a minúsculas' },
-          { left: 'LENGTH(col)', right: 'Calcula la longitud de la cadena' },
-          { left: 'TRIM(col)', right: 'Elimina espacios en blanco exteriores' }
-        ],
-        explanation: 'Las funciones de texto permiten normalizar y analizar campos al vuelo.',
-        xpReward: 15
-      },
-      {
-        id: 'sql-u03-l10-e09',
-        type: 'code_cloze',
-        prompt: 'Completa la cláusula de SQL (LIMIT) para obtener únicamente las primeras 5 filas:',
-        codeWithBlank: 'SELECT * FROM productos ___ 5;',
-        options: ['LIMIT', 'TOP', 'MAX', 'FIRST'],
-        correctOption: 'LIMIT',
-        explanation: 'LIMIT n restringe la cantidad máxima de filas entregadas al cliente.',
-        xpReward: 10
-      },
-      {
-        id: 'sql-u03-l10-e10',
-        type: 'parsons_puzzle',
-        prompt: 'Ordena las cláusulas de la consulta SQL en el orden correcto (SELECT, FROM, LIMIT, OFFSET):',
-        lines: [
-          'SELECT codigo, descripcion',
-          'FROM catalogo.articulos',
-          'LIMIT 20 OFFSET 40;'
-        ],
-        correctOrder: [0, 1, 2],
-        explanation: 'La anatomía estándar en SQL inicia con SELECT, continúa con FROM y finaliza con LIMIT/OFFSET.',
-        xpReward: 20
-      }
-    ]
-  },
-  11: {
-    title: '11. Pertenencia a Conjuntos con IN',
-    desc: 'Alternativa limpia y compacta a largas cadenas de operadores OR.',
-    exercises: [
-      {
-        id: 'sql-u03-l11-e01',
-        type: 'matching_pairs',
-        prompt: 'Empareja los términos y cláusulas de este nivel de SQL:',
-        pairs: [
-          { left: 'SELECT', right: 'Proyecta columnas a devolver' },
-          { left: 'FROM', right: 'Especifica la tabla de origen' },
-          { left: 'AS', right: 'Asigna alias temporal a columna o tabla' },
-          { left: 'DISTINCT', right: 'Elimina filas duplicadas' }
-        ],
-        explanation: 'Las cláusulas fundamentales definen la estructura básica de cualquier consulta relacional.',
-        xpReward: 15
-      },
-      {
-        id: 'sql-u03-l11-e02',
-        type: 'code_builder',
-        prompt: 'Construye la consulta para obtener id y nombre de la tabla usuarios:',
-        tokens: ['SELECT', 'id, nombre', 'FROM', 'usuarios', ';', 'WHERE', '*'],
-        solution: ['SELECT', 'id, nombre', 'FROM', 'usuarios', ';'],
-        hint: 'Inicia con SELECT, lista los campos y enlaza con FROM.',
-        explanation: 'SELECT id, nombre FROM usuarios; es la forma estándar de proyección relacional.',
-        xpReward: 10
-      },
-      {
-        id: 'sql-u03-l11-e03',
-        type: 'predict_output',
-        prompt: '¿Qué resultado devuelve la siguiente expresión de columnas calculadas?',
-        code: 'SELECT 100 + 25 * 2 AS total;',
-        options: ['250', '150', '125', '200'],
-        correctOptionIndex: 1,
-        explanation: 'En SQL la multiplicación tiene prioridad: 25 * 2 = 50, y 100 + 50 = 150.',
-        xpReward: 10
-      },
-      {
-        id: 'sql-u03-l11-e04',
-        type: 'spot_the_bug',
-        prompt: 'Toca la línea con el error de paginación (recuerda que el desplazamiento OFFSET no puede ser negativo):',
-        codeSnippet: [
-          'SELECT id, nombre',
-          'FROM clientes AS c',
-          'LIMIT 10 OFFSET -5;'
-        ],
-        bugLineIndex: 2,
-        explanation: 'El valor de OFFSET debe ser un número entero no negativo.',
-        xpReward: 15
-      },
-      {
-        id: 'sql-u03-l11-e05',
-        type: 'code_cloze',
-        prompt: 'Completa la palabra clave de SQL (DISTINCT) para eliminar filas duplicadas:',
-        codeWithBlank: 'SELECT ___ ciudad FROM sucursales;',
-        options: ['DISTINCT', 'UNIQUE', 'SINGLE', 'FILTER'],
-        correctOption: 'DISTINCT',
-        explanation: 'SELECT DISTINCT suprime registros duplicados en el conjunto devuelto.',
-        xpReward: 10
-      },
-      {
-        id: 'sql-u03-l11-e06',
-        type: 'predict_output',
-        prompt: '¿Qué devuelve la función estándar COALESCE con estos argumentos?',
-        code: 'SELECT COALESCE(NULL, 100, 200) AS res;',
-        options: ['NULL', '100', '200', 'Error'],
-        correctOptionIndex: 1,
-        explanation: 'COALESCE devuelve el primer argumento no nulo evaluado de izquierda a derecha (100).',
-        xpReward: 10
-      },
-      {
-        id: 'sql-u03-l11-e07',
-        type: 'code_builder',
-        prompt: 'Construye la consulta con alias de tabla para proyectos:',
-        tokens: ['SELECT', 'p.id, p.titulo', 'FROM', 'proyectos', 'AS', 'p', ';'],
-        solution: ['SELECT', 'p.id, p.titulo', 'FROM', 'proyectos', 'AS', 'p', ';'],
-        hint: 'Asigna el alias p con AS y califica las columnas.',
-        explanation: 'Calificar con alias (p.id) hace la consulta concisa y preparada para JOINs.',
-        xpReward: 10
-      },
-      {
-        id: 'sql-u03-l11-e08',
-        type: 'matching_pairs',
-        prompt: 'Empareja cada función de texto con su propósito:',
-        pairs: [
-          { left: 'UPPER(col)', right: 'Convierte texto a mayúsculas' },
-          { left: 'LOWER(col)', right: 'Convierte texto a minúsculas' },
-          { left: 'LENGTH(col)', right: 'Calcula la longitud de la cadena' },
-          { left: 'TRIM(col)', right: 'Elimina espacios en blanco exteriores' }
-        ],
-        explanation: 'Las funciones de texto permiten normalizar y analizar campos al vuelo.',
-        xpReward: 15
-      },
-      {
-        id: 'sql-u03-l11-e09',
-        type: 'code_cloze',
-        prompt: 'Completa la cláusula de SQL (LIMIT) para obtener únicamente las primeras 5 filas:',
-        codeWithBlank: 'SELECT * FROM productos ___ 5;',
-        options: ['LIMIT', 'TOP', 'MAX', 'FIRST'],
-        correctOption: 'LIMIT',
-        explanation: 'LIMIT n restringe la cantidad máxima de filas entregadas al cliente.',
-        xpReward: 10
-      },
-      {
-        id: 'sql-u03-l11-e10',
-        type: 'parsons_puzzle',
-        prompt: 'Ordena las cláusulas de la consulta SQL en el orden correcto (SELECT, FROM, LIMIT, OFFSET):',
-        lines: [
-          'SELECT codigo, descripcion',
-          'FROM catalogo.articulos',
-          'LIMIT 20 OFFSET 40;'
-        ],
-        correctOrder: [0, 1, 2],
-        explanation: 'La anatomía estándar en SQL inicia con SELECT, continúa con FROM y finaliza con LIMIT/OFFSET.',
-        xpReward: 20
-      }
-    ]
-  },
-  12: {
-    title: '12. Exclusión de Listas con NOT IN',
-    desc: 'Filtrado negativo para descartar elementos de listas negras.',
-    exercises: [
-      {
-        id: 'sql-u03-l12-e01',
-        type: 'matching_pairs',
-        prompt: 'Empareja los términos y cláusulas de este nivel de SQL:',
-        pairs: [
-          { left: 'SELECT', right: 'Proyecta columnas a devolver' },
-          { left: 'FROM', right: 'Especifica la tabla de origen' },
-          { left: 'AS', right: 'Asigna alias temporal a columna o tabla' },
-          { left: 'DISTINCT', right: 'Elimina filas duplicadas' }
-        ],
-        explanation: 'Las cláusulas fundamentales definen la estructura básica de cualquier consulta relacional.',
-        xpReward: 15
-      },
-      {
-        id: 'sql-u03-l12-e02',
-        type: 'code_builder',
-        prompt: 'Construye la consulta para obtener id y nombre de la tabla usuarios:',
-        tokens: ['SELECT', 'id, nombre', 'FROM', 'usuarios', ';', 'WHERE', '*'],
-        solution: ['SELECT', 'id, nombre', 'FROM', 'usuarios', ';'],
-        hint: 'Inicia con SELECT, lista los campos y enlaza con FROM.',
-        explanation: 'SELECT id, nombre FROM usuarios; es la forma estándar de proyección relacional.',
-        xpReward: 10
-      },
-      {
-        id: 'sql-u03-l12-e03',
-        type: 'predict_output',
-        prompt: '¿Qué resultado devuelve la siguiente expresión de columnas calculadas?',
-        code: 'SELECT 100 + 25 * 2 AS total;',
-        options: ['250', '150', '125', '200'],
-        correctOptionIndex: 1,
-        explanation: 'En SQL la multiplicación tiene prioridad: 25 * 2 = 50, y 100 + 50 = 150.',
-        xpReward: 10
-      },
-      {
-        id: 'sql-u03-l12-e04',
-        type: 'spot_the_bug',
-        prompt: 'Toca la línea con el error de paginación (recuerda que el desplazamiento OFFSET no puede ser negativo):',
-        codeSnippet: [
-          'SELECT id, nombre',
-          'FROM clientes AS c',
-          'LIMIT 10 OFFSET -5;'
-        ],
-        bugLineIndex: 2,
-        explanation: 'El valor de OFFSET debe ser un número entero no negativo.',
-        xpReward: 15
-      },
-      {
-        id: 'sql-u03-l12-e05',
-        type: 'code_cloze',
-        prompt: 'Completa la palabra clave de SQL (DISTINCT) para eliminar filas duplicadas:',
-        codeWithBlank: 'SELECT ___ ciudad FROM sucursales;',
-        options: ['DISTINCT', 'UNIQUE', 'SINGLE', 'FILTER'],
-        correctOption: 'DISTINCT',
-        explanation: 'SELECT DISTINCT suprime registros duplicados en el conjunto devuelto.',
-        xpReward: 10
-      },
-      {
-        id: 'sql-u03-l12-e06',
-        type: 'predict_output',
-        prompt: '¿Qué devuelve la función estándar COALESCE con estos argumentos?',
-        code: 'SELECT COALESCE(NULL, 100, 200) AS res;',
-        options: ['NULL', '100', '200', 'Error'],
-        correctOptionIndex: 1,
-        explanation: 'COALESCE devuelve el primer argumento no nulo evaluado de izquierda a derecha (100).',
-        xpReward: 10
-      },
-      {
-        id: 'sql-u03-l12-e07',
-        type: 'code_builder',
-        prompt: 'Construye la consulta con alias de tabla para proyectos:',
-        tokens: ['SELECT', 'p.id, p.titulo', 'FROM', 'proyectos', 'AS', 'p', ';'],
-        solution: ['SELECT', 'p.id, p.titulo', 'FROM', 'proyectos', 'AS', 'p', ';'],
-        hint: 'Asigna el alias p con AS y califica las columnas.',
-        explanation: 'Calificar con alias (p.id) hace la consulta concisa y preparada para JOINs.',
-        xpReward: 10
-      },
-      {
-        id: 'sql-u03-l12-e08',
-        type: 'matching_pairs',
-        prompt: 'Empareja cada función de texto con su propósito:',
-        pairs: [
-          { left: 'UPPER(col)', right: 'Convierte texto a mayúsculas' },
-          { left: 'LOWER(col)', right: 'Convierte texto a minúsculas' },
-          { left: 'LENGTH(col)', right: 'Calcula la longitud de la cadena' },
-          { left: 'TRIM(col)', right: 'Elimina espacios en blanco exteriores' }
-        ],
-        explanation: 'Las funciones de texto permiten normalizar y analizar campos al vuelo.',
-        xpReward: 15
-      },
-      {
-        id: 'sql-u03-l12-e09',
-        type: 'code_cloze',
-        prompt: 'Completa la cláusula de SQL (LIMIT) para obtener únicamente las primeras 5 filas:',
-        codeWithBlank: 'SELECT * FROM productos ___ 5;',
-        options: ['LIMIT', 'TOP', 'MAX', 'FIRST'],
-        correctOption: 'LIMIT',
-        explanation: 'LIMIT n restringe la cantidad máxima de filas entregadas al cliente.',
-        xpReward: 10
-      },
-      {
-        id: 'sql-u03-l12-e10',
-        type: 'parsons_puzzle',
-        prompt: 'Ordena las cláusulas de la consulta SQL en el orden correcto (SELECT, FROM, LIMIT, OFFSET):',
-        lines: [
-          'SELECT codigo, descripcion',
-          'FROM catalogo.articulos',
-          'LIMIT 20 OFFSET 40;'
-        ],
-        correctOrder: [0, 1, 2],
-        explanation: 'La anatomía estándar en SQL inicia con SELECT, continúa con FROM y finaliza con LIMIT/OFFSET.',
-        xpReward: 20
-      }
-    ]
-  },
-  13: {
-    title: '13. La Trampa de los Nulos en NOT IN',
-    desc: 'Por qué un solo NULL en NOT IN descarta todo el resultado.',
-    exercises: [
-      {
-        id: 'sql-u03-l13-e01',
-        type: 'matching_pairs',
-        prompt: 'Empareja los términos y cláusulas de este nivel de SQL:',
-        pairs: [
-          { left: 'SELECT', right: 'Proyecta columnas a devolver' },
-          { left: 'FROM', right: 'Especifica la tabla de origen' },
-          { left: 'AS', right: 'Asigna alias temporal a columna o tabla' },
-          { left: 'DISTINCT', right: 'Elimina filas duplicadas' }
-        ],
-        explanation: 'Las cláusulas fundamentales definen la estructura básica de cualquier consulta relacional.',
-        xpReward: 15
-      },
-      {
-        id: 'sql-u03-l13-e02',
-        type: 'code_builder',
-        prompt: 'Construye la consulta para obtener id y nombre de la tabla usuarios:',
-        tokens: ['SELECT', 'id, nombre', 'FROM', 'usuarios', ';', 'WHERE', '*'],
-        solution: ['SELECT', 'id, nombre', 'FROM', 'usuarios', ';'],
-        hint: 'Inicia con SELECT, lista los campos y enlaza con FROM.',
-        explanation: 'SELECT id, nombre FROM usuarios; es la forma estándar de proyección relacional.',
-        xpReward: 10
-      },
-      {
-        id: 'sql-u03-l13-e03',
-        type: 'predict_output',
-        prompt: '¿Qué resultado devuelve la siguiente expresión de columnas calculadas?',
-        code: 'SELECT 100 + 25 * 2 AS total;',
-        options: ['250', '150', '125', '200'],
-        correctOptionIndex: 1,
-        explanation: 'En SQL la multiplicación tiene prioridad: 25 * 2 = 50, y 100 + 50 = 150.',
-        xpReward: 10
-      },
-      {
-        id: 'sql-u03-l13-e04',
-        type: 'spot_the_bug',
-        prompt: 'Toca la línea con el error de paginación (recuerda que el desplazamiento OFFSET no puede ser negativo):',
-        codeSnippet: [
-          'SELECT id, nombre',
-          'FROM clientes AS c',
-          'LIMIT 10 OFFSET -5;'
-        ],
-        bugLineIndex: 2,
-        explanation: 'El valor de OFFSET debe ser un número entero no negativo.',
-        xpReward: 15
-      },
-      {
-        id: 'sql-u03-l13-e05',
-        type: 'code_cloze',
-        prompt: 'Completa la palabra clave de SQL (DISTINCT) para eliminar filas duplicadas:',
-        codeWithBlank: 'SELECT ___ ciudad FROM sucursales;',
-        options: ['DISTINCT', 'UNIQUE', 'SINGLE', 'FILTER'],
-        correctOption: 'DISTINCT',
-        explanation: 'SELECT DISTINCT suprime registros duplicados en el conjunto devuelto.',
-        xpReward: 10
-      },
-      {
-        id: 'sql-u03-l13-e06',
-        type: 'predict_output',
-        prompt: '¿Qué devuelve la función estándar COALESCE con estos argumentos?',
-        code: 'SELECT COALESCE(NULL, 100, 200) AS res;',
-        options: ['NULL', '100', '200', 'Error'],
-        correctOptionIndex: 1,
-        explanation: 'COALESCE devuelve el primer argumento no nulo evaluado de izquierda a derecha (100).',
-        xpReward: 10
-      },
-      {
-        id: 'sql-u03-l13-e07',
-        type: 'code_builder',
-        prompt: 'Construye la consulta con alias de tabla para proyectos:',
-        tokens: ['SELECT', 'p.id, p.titulo', 'FROM', 'proyectos', 'AS', 'p', ';'],
-        solution: ['SELECT', 'p.id, p.titulo', 'FROM', 'proyectos', 'AS', 'p', ';'],
-        hint: 'Asigna el alias p con AS y califica las columnas.',
-        explanation: 'Calificar con alias (p.id) hace la consulta concisa y preparada para JOINs.',
-        xpReward: 10
-      },
-      {
-        id: 'sql-u03-l13-e08',
-        type: 'matching_pairs',
-        prompt: 'Empareja cada función de texto con su propósito:',
-        pairs: [
-          { left: 'UPPER(col)', right: 'Convierte texto a mayúsculas' },
-          { left: 'LOWER(col)', right: 'Convierte texto a minúsculas' },
-          { left: 'LENGTH(col)', right: 'Calcula la longitud de la cadena' },
-          { left: 'TRIM(col)', right: 'Elimina espacios en blanco exteriores' }
-        ],
-        explanation: 'Las funciones de texto permiten normalizar y analizar campos al vuelo.',
-        xpReward: 15
-      },
-      {
-        id: 'sql-u03-l13-e09',
-        type: 'code_cloze',
-        prompt: 'Completa la cláusula de SQL (LIMIT) para obtener únicamente las primeras 5 filas:',
-        codeWithBlank: 'SELECT * FROM productos ___ 5;',
-        options: ['LIMIT', 'TOP', 'MAX', 'FIRST'],
-        correctOption: 'LIMIT',
-        explanation: 'LIMIT n restringe la cantidad máxima de filas entregadas al cliente.',
-        xpReward: 10
-      },
-      {
-        id: 'sql-u03-l13-e10',
-        type: 'parsons_puzzle',
-        prompt: 'Ordena las cláusulas de la consulta SQL en el orden correcto (SELECT, FROM, LIMIT, OFFSET):',
-        lines: [
-          'SELECT codigo, descripcion',
-          'FROM catalogo.articulos',
-          'LIMIT 20 OFFSET 40;'
-        ],
-        correctOrder: [0, 1, 2],
-        explanation: 'La anatomía estándar en SQL inicia con SELECT, continúa con FROM y finaliza con LIMIT/OFFSET.',
-        xpReward: 20
-      }
-    ]
-  },
-  14: {
-    title: '14. Detección Correcta de Nulos con IS NULL / IS NOT NULL',
-    desc: 'Inspección de ausencia de valor sin caer en la trampa de = NULL.',
-    exercises: [
-      {
-        id: 'sql-u03-l14-e01',
-        type: 'matching_pairs',
-        prompt: 'Empareja los términos y cláusulas de este nivel de SQL:',
-        pairs: [
-          { left: 'SELECT', right: 'Proyecta columnas a devolver' },
-          { left: 'FROM', right: 'Especifica la tabla de origen' },
-          { left: 'AS', right: 'Asigna alias temporal a columna o tabla' },
-          { left: 'DISTINCT', right: 'Elimina filas duplicadas' }
-        ],
-        explanation: 'Las cláusulas fundamentales definen la estructura básica de cualquier consulta relacional.',
-        xpReward: 15
-      },
-      {
-        id: 'sql-u03-l14-e02',
-        type: 'code_builder',
-        prompt: 'Construye la consulta para obtener id y nombre de la tabla usuarios:',
-        tokens: ['SELECT', 'id, nombre', 'FROM', 'usuarios', ';', 'WHERE', '*'],
-        solution: ['SELECT', 'id, nombre', 'FROM', 'usuarios', ';'],
-        hint: 'Inicia con SELECT, lista los campos y enlaza con FROM.',
-        explanation: 'SELECT id, nombre FROM usuarios; es la forma estándar de proyección relacional.',
-        xpReward: 10
-      },
-      {
-        id: 'sql-u03-l14-e03',
-        type: 'predict_output',
-        prompt: '¿Qué resultado devuelve la siguiente expresión de columnas calculadas?',
-        code: 'SELECT 100 + 25 * 2 AS total;',
-        options: ['250', '150', '125', '200'],
-        correctOptionIndex: 1,
-        explanation: 'En SQL la multiplicación tiene prioridad: 25 * 2 = 50, y 100 + 50 = 150.',
-        xpReward: 10
-      },
-      {
-        id: 'sql-u03-l14-e04',
-        type: 'spot_the_bug',
-        prompt: 'Toca la línea con el error de paginación (recuerda que el desplazamiento OFFSET no puede ser negativo):',
-        codeSnippet: [
-          'SELECT id, nombre',
-          'FROM clientes AS c',
-          'LIMIT 10 OFFSET -5;'
-        ],
-        bugLineIndex: 2,
-        explanation: 'El valor de OFFSET debe ser un número entero no negativo.',
-        xpReward: 15
-      },
-      {
-        id: 'sql-u03-l14-e05',
-        type: 'code_cloze',
-        prompt: 'Completa la palabra clave de SQL (DISTINCT) para eliminar filas duplicadas:',
-        codeWithBlank: 'SELECT ___ ciudad FROM sucursales;',
-        options: ['DISTINCT', 'UNIQUE', 'SINGLE', 'FILTER'],
-        correctOption: 'DISTINCT',
-        explanation: 'SELECT DISTINCT suprime registros duplicados en el conjunto devuelto.',
-        xpReward: 10
-      },
-      {
-        id: 'sql-u03-l14-e06',
-        type: 'predict_output',
-        prompt: '¿Qué devuelve la función estándar COALESCE con estos argumentos?',
-        code: 'SELECT COALESCE(NULL, 100, 200) AS res;',
-        options: ['NULL', '100', '200', 'Error'],
-        correctOptionIndex: 1,
-        explanation: 'COALESCE devuelve el primer argumento no nulo evaluado de izquierda a derecha (100).',
-        xpReward: 10
-      },
-      {
-        id: 'sql-u03-l14-e07',
-        type: 'code_builder',
-        prompt: 'Construye la consulta con alias de tabla para proyectos:',
-        tokens: ['SELECT', 'p.id, p.titulo', 'FROM', 'proyectos', 'AS', 'p', ';'],
-        solution: ['SELECT', 'p.id, p.titulo', 'FROM', 'proyectos', 'AS', 'p', ';'],
-        hint: 'Asigna el alias p con AS y califica las columnas.',
-        explanation: 'Calificar con alias (p.id) hace la consulta concisa y preparada para JOINs.',
-        xpReward: 10
-      },
-      {
-        id: 'sql-u03-l14-e08',
-        type: 'matching_pairs',
-        prompt: 'Empareja cada función de texto con su propósito:',
-        pairs: [
-          { left: 'UPPER(col)', right: 'Convierte texto a mayúsculas' },
-          { left: 'LOWER(col)', right: 'Convierte texto a minúsculas' },
-          { left: 'LENGTH(col)', right: 'Calcula la longitud de la cadena' },
-          { left: 'TRIM(col)', right: 'Elimina espacios en blanco exteriores' }
-        ],
-        explanation: 'Las funciones de texto permiten normalizar y analizar campos al vuelo.',
-        xpReward: 15
-      },
-      {
-        id: 'sql-u03-l14-e09',
-        type: 'code_cloze',
-        prompt: 'Completa la cláusula de SQL (LIMIT) para obtener únicamente las primeras 5 filas:',
-        codeWithBlank: 'SELECT * FROM productos ___ 5;',
-        options: ['LIMIT', 'TOP', 'MAX', 'FIRST'],
-        correctOption: 'LIMIT',
-        explanation: 'LIMIT n restringe la cantidad máxima de filas entregadas al cliente.',
-        xpReward: 10
-      },
-      {
-        id: 'sql-u03-l14-e10',
-        type: 'parsons_puzzle',
-        prompt: 'Ordena las cláusulas de la consulta SQL en el orden correcto (SELECT, FROM, LIMIT, OFFSET):',
-        lines: [
-          'SELECT codigo, descripcion',
-          'FROM catalogo.articulos',
-          'LIMIT 20 OFFSET 40;'
-        ],
-        correctOrder: [0, 1, 2],
-        explanation: 'La anatomía estándar en SQL inicia con SELECT, continúa con FROM y finaliza con LIMIT/OFFSET.',
-        xpReward: 20
-      }
-    ]
-  },
-  15: {
-    title: '15. Búsqueda por Patrones con LIKE y Comodín %',
-    desc: 'Búsqueda difusa para coincidencias de cero o más caracteres.',
-    exercises: [
-      {
-        id: 'sql-u03-l15-e01',
-        type: 'matching_pairs',
-        prompt: 'Empareja los términos y cláusulas de este nivel de SQL:',
-        pairs: [
-          { left: 'SELECT', right: 'Proyecta columnas a devolver' },
-          { left: 'FROM', right: 'Especifica la tabla de origen' },
-          { left: 'AS', right: 'Asigna alias temporal a columna o tabla' },
-          { left: 'DISTINCT', right: 'Elimina filas duplicadas' }
-        ],
-        explanation: 'Las cláusulas fundamentales definen la estructura básica de cualquier consulta relacional.',
-        xpReward: 15
-      },
-      {
-        id: 'sql-u03-l15-e02',
-        type: 'code_builder',
-        prompt: 'Construye la consulta para obtener id y nombre de la tabla usuarios:',
-        tokens: ['SELECT', 'id, nombre', 'FROM', 'usuarios', ';', 'WHERE', '*'],
-        solution: ['SELECT', 'id, nombre', 'FROM', 'usuarios', ';'],
-        hint: 'Inicia con SELECT, lista los campos y enlaza con FROM.',
-        explanation: 'SELECT id, nombre FROM usuarios; es la forma estándar de proyección relacional.',
-        xpReward: 10
-      },
-      {
-        id: 'sql-u03-l15-e03',
-        type: 'predict_output',
-        prompt: '¿Qué resultado devuelve la siguiente expresión de columnas calculadas?',
-        code: 'SELECT 100 + 25 * 2 AS total;',
-        options: ['250', '150', '125', '200'],
-        correctOptionIndex: 1,
-        explanation: 'En SQL la multiplicación tiene prioridad: 25 * 2 = 50, y 100 + 50 = 150.',
-        xpReward: 10
-      },
-      {
-        id: 'sql-u03-l15-e04',
-        type: 'spot_the_bug',
-        prompt: 'Toca la línea con el error de paginación (recuerda que el desplazamiento OFFSET no puede ser negativo):',
-        codeSnippet: [
-          'SELECT id, nombre',
-          'FROM clientes AS c',
-          'LIMIT 10 OFFSET -5;'
-        ],
-        bugLineIndex: 2,
-        explanation: 'El valor de OFFSET debe ser un número entero no negativo.',
-        xpReward: 15
-      },
-      {
-        id: 'sql-u03-l15-e05',
-        type: 'code_cloze',
-        prompt: 'Completa la palabra clave de SQL (DISTINCT) para eliminar filas duplicadas:',
-        codeWithBlank: 'SELECT ___ ciudad FROM sucursales;',
-        options: ['DISTINCT', 'UNIQUE', 'SINGLE', 'FILTER'],
-        correctOption: 'DISTINCT',
-        explanation: 'SELECT DISTINCT suprime registros duplicados en el conjunto devuelto.',
-        xpReward: 10
-      },
-      {
-        id: 'sql-u03-l15-e06',
-        type: 'predict_output',
-        prompt: '¿Qué devuelve la función estándar COALESCE con estos argumentos?',
-        code: 'SELECT COALESCE(NULL, 100, 200) AS res;',
-        options: ['NULL', '100', '200', 'Error'],
-        correctOptionIndex: 1,
-        explanation: 'COALESCE devuelve el primer argumento no nulo evaluado de izquierda a derecha (100).',
-        xpReward: 10
-      },
-      {
-        id: 'sql-u03-l15-e07',
-        type: 'code_builder',
-        prompt: 'Construye la consulta con alias de tabla para proyectos:',
-        tokens: ['SELECT', 'p.id, p.titulo', 'FROM', 'proyectos', 'AS', 'p', ';'],
-        solution: ['SELECT', 'p.id, p.titulo', 'FROM', 'proyectos', 'AS', 'p', ';'],
-        hint: 'Asigna el alias p con AS y califica las columnas.',
-        explanation: 'Calificar con alias (p.id) hace la consulta concisa y preparada para JOINs.',
-        xpReward: 10
-      },
-      {
-        id: 'sql-u03-l15-e08',
-        type: 'matching_pairs',
-        prompt: 'Empareja cada función de texto con su propósito:',
-        pairs: [
-          { left: 'UPPER(col)', right: 'Convierte texto a mayúsculas' },
-          { left: 'LOWER(col)', right: 'Convierte texto a minúsculas' },
-          { left: 'LENGTH(col)', right: 'Calcula la longitud de la cadena' },
-          { left: 'TRIM(col)', right: 'Elimina espacios en blanco exteriores' }
-        ],
-        explanation: 'Las funciones de texto permiten normalizar y analizar campos al vuelo.',
-        xpReward: 15
-      },
-      {
-        id: 'sql-u03-l15-e09',
-        type: 'code_cloze',
-        prompt: 'Completa la cláusula de SQL (LIMIT) para obtener únicamente las primeras 5 filas:',
-        codeWithBlank: 'SELECT * FROM productos ___ 5;',
-        options: ['LIMIT', 'TOP', 'MAX', 'FIRST'],
-        correctOption: 'LIMIT',
-        explanation: 'LIMIT n restringe la cantidad máxima de filas entregadas al cliente.',
-        xpReward: 10
-      },
-      {
-        id: 'sql-u03-l15-e10',
-        type: 'parsons_puzzle',
-        prompt: 'Ordena las cláusulas de la consulta SQL en el orden correcto (SELECT, FROM, LIMIT, OFFSET):',
-        lines: [
-          'SELECT codigo, descripcion',
-          'FROM catalogo.articulos',
-          'LIMIT 20 OFFSET 40;'
-        ],
-        correctOrder: [0, 1, 2],
-        explanation: 'La anatomía estándar en SQL inicia con SELECT, continúa con FROM y finaliza con LIMIT/OFFSET.',
-        xpReward: 20
-      }
-    ]
-  },
-  16: {
-    title: '16. Coincidencia de Carácter Único con Comodín _',
-    desc: 'Comodín posicional de exactamente un carácter obligatorio.',
-    exercises: [
-      {
-        id: 'sql-u03-l16-e01',
-        type: 'matching_pairs',
-        prompt: 'Empareja los términos y cláusulas de este nivel de SQL:',
-        pairs: [
-          { left: 'SELECT', right: 'Proyecta columnas a devolver' },
-          { left: 'FROM', right: 'Especifica la tabla de origen' },
-          { left: 'AS', right: 'Asigna alias temporal a columna o tabla' },
-          { left: 'DISTINCT', right: 'Elimina filas duplicadas' }
-        ],
-        explanation: 'Las cláusulas fundamentales definen la estructura básica de cualquier consulta relacional.',
-        xpReward: 15
-      },
-      {
-        id: 'sql-u03-l16-e02',
-        type: 'code_builder',
-        prompt: 'Construye la consulta para obtener id y nombre de la tabla usuarios:',
-        tokens: ['SELECT', 'id, nombre', 'FROM', 'usuarios', ';', 'WHERE', '*'],
-        solution: ['SELECT', 'id, nombre', 'FROM', 'usuarios', ';'],
-        hint: 'Inicia con SELECT, lista los campos y enlaza con FROM.',
-        explanation: 'SELECT id, nombre FROM usuarios; es la forma estándar de proyección relacional.',
-        xpReward: 10
-      },
-      {
-        id: 'sql-u03-l16-e03',
-        type: 'predict_output',
-        prompt: '¿Qué resultado devuelve la siguiente expresión de columnas calculadas?',
-        code: 'SELECT 100 + 25 * 2 AS total;',
-        options: ['250', '150', '125', '200'],
-        correctOptionIndex: 1,
-        explanation: 'En SQL la multiplicación tiene prioridad: 25 * 2 = 50, y 100 + 50 = 150.',
-        xpReward: 10
-      },
-      {
-        id: 'sql-u03-l16-e04',
-        type: 'spot_the_bug',
-        prompt: 'Toca la línea con el error de paginación (recuerda que el desplazamiento OFFSET no puede ser negativo):',
-        codeSnippet: [
-          'SELECT id, nombre',
-          'FROM clientes AS c',
-          'LIMIT 10 OFFSET -5;'
-        ],
-        bugLineIndex: 2,
-        explanation: 'El valor de OFFSET debe ser un número entero no negativo.',
-        xpReward: 15
-      },
-      {
-        id: 'sql-u03-l16-e05',
-        type: 'code_cloze',
-        prompt: 'Completa la palabra clave de SQL (DISTINCT) para eliminar filas duplicadas:',
-        codeWithBlank: 'SELECT ___ ciudad FROM sucursales;',
-        options: ['DISTINCT', 'UNIQUE', 'SINGLE', 'FILTER'],
-        correctOption: 'DISTINCT',
-        explanation: 'SELECT DISTINCT suprime registros duplicados en el conjunto devuelto.',
-        xpReward: 10
-      },
-      {
-        id: 'sql-u03-l16-e06',
-        type: 'predict_output',
-        prompt: '¿Qué devuelve la función estándar COALESCE con estos argumentos?',
-        code: 'SELECT COALESCE(NULL, 100, 200) AS res;',
-        options: ['NULL', '100', '200', 'Error'],
-        correctOptionIndex: 1,
-        explanation: 'COALESCE devuelve el primer argumento no nulo evaluado de izquierda a derecha (100).',
-        xpReward: 10
-      },
-      {
-        id: 'sql-u03-l16-e07',
-        type: 'code_builder',
-        prompt: 'Construye la consulta con alias de tabla para proyectos:',
-        tokens: ['SELECT', 'p.id, p.titulo', 'FROM', 'proyectos', 'AS', 'p', ';'],
-        solution: ['SELECT', 'p.id, p.titulo', 'FROM', 'proyectos', 'AS', 'p', ';'],
-        hint: 'Asigna el alias p con AS y califica las columnas.',
-        explanation: 'Calificar con alias (p.id) hace la consulta concisa y preparada para JOINs.',
-        xpReward: 10
-      },
-      {
-        id: 'sql-u03-l16-e08',
-        type: 'matching_pairs',
-        prompt: 'Empareja cada función de texto con su propósito:',
-        pairs: [
-          { left: 'UPPER(col)', right: 'Convierte texto a mayúsculas' },
-          { left: 'LOWER(col)', right: 'Convierte texto a minúsculas' },
-          { left: 'LENGTH(col)', right: 'Calcula la longitud de la cadena' },
-          { left: 'TRIM(col)', right: 'Elimina espacios en blanco exteriores' }
-        ],
-        explanation: 'Las funciones de texto permiten normalizar y analizar campos al vuelo.',
-        xpReward: 15
-      },
-      {
-        id: 'sql-u03-l16-e09',
-        type: 'code_cloze',
-        prompt: 'Completa la cláusula de SQL (LIMIT) para obtener únicamente las primeras 5 filas:',
-        codeWithBlank: 'SELECT * FROM productos ___ 5;',
-        options: ['LIMIT', 'TOP', 'MAX', 'FIRST'],
-        correctOption: 'LIMIT',
-        explanation: 'LIMIT n restringe la cantidad máxima de filas entregadas al cliente.',
-        xpReward: 10
-      },
-      {
-        id: 'sql-u03-l16-e10',
-        type: 'parsons_puzzle',
-        prompt: 'Ordena las cláusulas de la consulta SQL en el orden correcto (SELECT, FROM, LIMIT, OFFSET):',
-        lines: [
-          'SELECT codigo, descripcion',
-          'FROM catalogo.articulos',
-          'LIMIT 20 OFFSET 40;'
-        ],
-        correctOrder: [0, 1, 2],
-        explanation: 'La anatomía estándar en SQL inicia con SELECT, continúa con FROM y finaliza con LIMIT/OFFSET.',
-        xpReward: 20
-      }
-    ]
-  },
-  17: {
-    title: '17. Búsqueda Insensible con ILIKE y LOWER',
-    desc: 'Ignorar mayúsculas y minúsculas de forma nativa o portable.',
-    exercises: [
-      {
-        id: 'sql-u03-l17-e01',
-        type: 'matching_pairs',
-        prompt: 'Empareja los términos y cláusulas de este nivel de SQL:',
-        pairs: [
-          { left: 'SELECT', right: 'Proyecta columnas a devolver' },
-          { left: 'FROM', right: 'Especifica la tabla de origen' },
-          { left: 'AS', right: 'Asigna alias temporal a columna o tabla' },
-          { left: 'DISTINCT', right: 'Elimina filas duplicadas' }
-        ],
-        explanation: 'Las cláusulas fundamentales definen la estructura básica de cualquier consulta relacional.',
-        xpReward: 15
-      },
-      {
-        id: 'sql-u03-l17-e02',
-        type: 'code_builder',
-        prompt: 'Construye la consulta para obtener id y nombre de la tabla usuarios:',
-        tokens: ['SELECT', 'id, nombre', 'FROM', 'usuarios', ';', 'WHERE', '*'],
-        solution: ['SELECT', 'id, nombre', 'FROM', 'usuarios', ';'],
-        hint: 'Inicia con SELECT, lista los campos y enlaza con FROM.',
-        explanation: 'SELECT id, nombre FROM usuarios; es la forma estándar de proyección relacional.',
-        xpReward: 10
-      },
-      {
-        id: 'sql-u03-l17-e03',
-        type: 'predict_output',
-        prompt: '¿Qué resultado devuelve la siguiente expresión de columnas calculadas?',
-        code: 'SELECT 100 + 25 * 2 AS total;',
-        options: ['250', '150', '125', '200'],
-        correctOptionIndex: 1,
-        explanation: 'En SQL la multiplicación tiene prioridad: 25 * 2 = 50, y 100 + 50 = 150.',
-        xpReward: 10
-      },
-      {
-        id: 'sql-u03-l17-e04',
-        type: 'spot_the_bug',
-        prompt: 'Toca la línea con el error de paginación (recuerda que el desplazamiento OFFSET no puede ser negativo):',
-        codeSnippet: [
-          'SELECT id, nombre',
-          'FROM clientes AS c',
-          'LIMIT 10 OFFSET -5;'
-        ],
-        bugLineIndex: 2,
-        explanation: 'El valor de OFFSET debe ser un número entero no negativo.',
-        xpReward: 15
-      },
-      {
-        id: 'sql-u03-l17-e05',
-        type: 'code_cloze',
-        prompt: 'Completa la palabra clave de SQL (DISTINCT) para eliminar filas duplicadas:',
-        codeWithBlank: 'SELECT ___ ciudad FROM sucursales;',
-        options: ['DISTINCT', 'UNIQUE', 'SINGLE', 'FILTER'],
-        correctOption: 'DISTINCT',
-        explanation: 'SELECT DISTINCT suprime registros duplicados en el conjunto devuelto.',
-        xpReward: 10
-      },
-      {
-        id: 'sql-u03-l17-e06',
-        type: 'predict_output',
-        prompt: '¿Qué devuelve la función estándar COALESCE con estos argumentos?',
-        code: 'SELECT COALESCE(NULL, 100, 200) AS res;',
-        options: ['NULL', '100', '200', 'Error'],
-        correctOptionIndex: 1,
-        explanation: 'COALESCE devuelve el primer argumento no nulo evaluado de izquierda a derecha (100).',
-        xpReward: 10
-      },
-      {
-        id: 'sql-u03-l17-e07',
-        type: 'code_builder',
-        prompt: 'Construye la consulta con alias de tabla para proyectos:',
-        tokens: ['SELECT', 'p.id, p.titulo', 'FROM', 'proyectos', 'AS', 'p', ';'],
-        solution: ['SELECT', 'p.id, p.titulo', 'FROM', 'proyectos', 'AS', 'p', ';'],
-        hint: 'Asigna el alias p con AS y califica las columnas.',
-        explanation: 'Calificar con alias (p.id) hace la consulta concisa y preparada para JOINs.',
-        xpReward: 10
-      },
-      {
-        id: 'sql-u03-l17-e08',
-        type: 'matching_pairs',
-        prompt: 'Empareja cada función de texto con su propósito:',
-        pairs: [
-          { left: 'UPPER(col)', right: 'Convierte texto a mayúsculas' },
-          { left: 'LOWER(col)', right: 'Convierte texto a minúsculas' },
-          { left: 'LENGTH(col)', right: 'Calcula la longitud de la cadena' },
-          { left: 'TRIM(col)', right: 'Elimina espacios en blanco exteriores' }
-        ],
-        explanation: 'Las funciones de texto permiten normalizar y analizar campos al vuelo.',
-        xpReward: 15
-      },
-      {
-        id: 'sql-u03-l17-e09',
-        type: 'code_cloze',
-        prompt: 'Completa la cláusula de SQL (LIMIT) para obtener únicamente las primeras 5 filas:',
-        codeWithBlank: 'SELECT * FROM productos ___ 5;',
-        options: ['LIMIT', 'TOP', 'MAX', 'FIRST'],
-        correctOption: 'LIMIT',
-        explanation: 'LIMIT n restringe la cantidad máxima de filas entregadas al cliente.',
-        xpReward: 10
-      },
-      {
-        id: 'sql-u03-l17-e10',
-        type: 'parsons_puzzle',
-        prompt: 'Ordena las cláusulas de la consulta SQL en el orden correcto (SELECT, FROM, LIMIT, OFFSET):',
-        lines: [
-          'SELECT codigo, descripcion',
-          'FROM catalogo.articulos',
-          'LIMIT 20 OFFSET 40;'
-        ],
-        correctOrder: [0, 1, 2],
-        explanation: 'La anatomía estándar en SQL inicia con SELECT, continúa con FROM y finaliza con LIMIT/OFFSET.',
-        xpReward: 20
-      }
-    ]
-  },
-  18: {
-    title: '18. Escape de Caracteres Especiales con ESCAPE',
-    desc: 'Búsqueda de % y _ literales sin que actúen como comodines.',
-    exercises: [
-      {
-        id: 'sql-u03-l18-e01',
-        type: 'matching_pairs',
-        prompt: 'Empareja los términos y cláusulas de este nivel de SQL:',
-        pairs: [
-          { left: 'SELECT', right: 'Proyecta columnas a devolver' },
-          { left: 'FROM', right: 'Especifica la tabla de origen' },
-          { left: 'AS', right: 'Asigna alias temporal a columna o tabla' },
-          { left: 'DISTINCT', right: 'Elimina filas duplicadas' }
-        ],
-        explanation: 'Las cláusulas fundamentales definen la estructura básica de cualquier consulta relacional.',
-        xpReward: 15
-      },
-      {
-        id: 'sql-u03-l18-e02',
-        type: 'code_builder',
-        prompt: 'Construye la consulta para obtener id y nombre de la tabla usuarios:',
-        tokens: ['SELECT', 'id, nombre', 'FROM', 'usuarios', ';', 'WHERE', '*'],
-        solution: ['SELECT', 'id, nombre', 'FROM', 'usuarios', ';'],
-        hint: 'Inicia con SELECT, lista los campos y enlaza con FROM.',
-        explanation: 'SELECT id, nombre FROM usuarios; es la forma estándar de proyección relacional.',
-        xpReward: 10
-      },
-      {
-        id: 'sql-u03-l18-e03',
-        type: 'predict_output',
-        prompt: '¿Qué resultado devuelve la siguiente expresión de columnas calculadas?',
-        code: 'SELECT 100 + 25 * 2 AS total;',
-        options: ['250', '150', '125', '200'],
-        correctOptionIndex: 1,
-        explanation: 'En SQL la multiplicación tiene prioridad: 25 * 2 = 50, y 100 + 50 = 150.',
-        xpReward: 10
-      },
-      {
-        id: 'sql-u03-l18-e04',
-        type: 'spot_the_bug',
-        prompt: 'Toca la línea con el error de paginación (recuerda que el desplazamiento OFFSET no puede ser negativo):',
-        codeSnippet: [
-          'SELECT id, nombre',
-          'FROM clientes AS c',
-          'LIMIT 10 OFFSET -5;'
-        ],
-        bugLineIndex: 2,
-        explanation: 'El valor de OFFSET debe ser un número entero no negativo.',
-        xpReward: 15
-      },
-      {
-        id: 'sql-u03-l18-e05',
-        type: 'code_cloze',
-        prompt: 'Completa la palabra clave de SQL (DISTINCT) para eliminar filas duplicadas:',
-        codeWithBlank: 'SELECT ___ ciudad FROM sucursales;',
-        options: ['DISTINCT', 'UNIQUE', 'SINGLE', 'FILTER'],
-        correctOption: 'DISTINCT',
-        explanation: 'SELECT DISTINCT suprime registros duplicados en el conjunto devuelto.',
-        xpReward: 10
-      },
-      {
-        id: 'sql-u03-l18-e06',
-        type: 'predict_output',
-        prompt: '¿Qué devuelve la función estándar COALESCE con estos argumentos?',
-        code: 'SELECT COALESCE(NULL, 100, 200) AS res;',
-        options: ['NULL', '100', '200', 'Error'],
-        correctOptionIndex: 1,
-        explanation: 'COALESCE devuelve el primer argumento no nulo evaluado de izquierda a derecha (100).',
-        xpReward: 10
-      },
-      {
-        id: 'sql-u03-l18-e07',
-        type: 'code_builder',
-        prompt: 'Construye la consulta con alias de tabla para proyectos:',
-        tokens: ['SELECT', 'p.id, p.titulo', 'FROM', 'proyectos', 'AS', 'p', ';'],
-        solution: ['SELECT', 'p.id, p.titulo', 'FROM', 'proyectos', 'AS', 'p', ';'],
-        hint: 'Asigna el alias p con AS y califica las columnas.',
-        explanation: 'Calificar con alias (p.id) hace la consulta concisa y preparada para JOINs.',
-        xpReward: 10
-      },
-      {
-        id: 'sql-u03-l18-e08',
-        type: 'matching_pairs',
-        prompt: 'Empareja cada función de texto con su propósito:',
-        pairs: [
-          { left: 'UPPER(col)', right: 'Convierte texto a mayúsculas' },
-          { left: 'LOWER(col)', right: 'Convierte texto a minúsculas' },
-          { left: 'LENGTH(col)', right: 'Calcula la longitud de la cadena' },
-          { left: 'TRIM(col)', right: 'Elimina espacios en blanco exteriores' }
-        ],
-        explanation: 'Las funciones de texto permiten normalizar y analizar campos al vuelo.',
-        xpReward: 15
-      },
-      {
-        id: 'sql-u03-l18-e09',
-        type: 'code_cloze',
-        prompt: 'Completa la cláusula de SQL (LIMIT) para obtener únicamente las primeras 5 filas:',
-        codeWithBlank: 'SELECT * FROM productos ___ 5;',
-        options: ['LIMIT', 'TOP', 'MAX', 'FIRST'],
-        correctOption: 'LIMIT',
-        explanation: 'LIMIT n restringe la cantidad máxima de filas entregadas al cliente.',
-        xpReward: 10
-      },
-      {
-        id: 'sql-u03-l18-e10',
-        type: 'parsons_puzzle',
-        prompt: 'Ordena las cláusulas de la consulta SQL en el orden correcto (SELECT, FROM, LIMIT, OFFSET):',
-        lines: [
-          'SELECT codigo, descripcion',
-          'FROM catalogo.articulos',
-          'LIMIT 20 OFFSET 40;'
-        ],
-        correctOrder: [0, 1, 2],
-        explanation: 'La anatomía estándar en SQL inicia con SELECT, continúa con FROM y finaliza con LIMIT/OFFSET.',
-        xpReward: 20
-      }
-    ]
-  },
-  19: {
-    title: '19. Filtrado por Fechas y Tiempos Básicos',
-    desc: 'Formato ISO-8601 (YYYY-MM-DD) y rangos semi-abiertos.',
-    exercises: [
-      {
-        id: 'sql-u03-l19-e01',
-        type: 'matching_pairs',
-        prompt: 'Empareja los términos y cláusulas de este nivel de SQL:',
-        pairs: [
-          { left: 'SELECT', right: 'Proyecta columnas a devolver' },
-          { left: 'FROM', right: 'Especifica la tabla de origen' },
-          { left: 'AS', right: 'Asigna alias temporal a columna o tabla' },
-          { left: 'DISTINCT', right: 'Elimina filas duplicadas' }
-        ],
-        explanation: 'Las cláusulas fundamentales definen la estructura básica de cualquier consulta relacional.',
-        xpReward: 15
-      },
-      {
-        id: 'sql-u03-l19-e02',
-        type: 'code_builder',
-        prompt: 'Construye la consulta para obtener id y nombre de la tabla usuarios:',
-        tokens: ['SELECT', 'id, nombre', 'FROM', 'usuarios', ';', 'WHERE', '*'],
-        solution: ['SELECT', 'id, nombre', 'FROM', 'usuarios', ';'],
-        hint: 'Inicia con SELECT, lista los campos y enlaza con FROM.',
-        explanation: 'SELECT id, nombre FROM usuarios; es la forma estándar de proyección relacional.',
-        xpReward: 10
-      },
-      {
-        id: 'sql-u03-l19-e03',
-        type: 'predict_output',
-        prompt: '¿Qué resultado devuelve la siguiente expresión de columnas calculadas?',
-        code: 'SELECT 100 + 25 * 2 AS total;',
-        options: ['250', '150', '125', '200'],
-        correctOptionIndex: 1,
-        explanation: 'En SQL la multiplicación tiene prioridad: 25 * 2 = 50, y 100 + 50 = 150.',
-        xpReward: 10
-      },
-      {
-        id: 'sql-u03-l19-e04',
-        type: 'spot_the_bug',
-        prompt: 'Toca la línea con el error de paginación (recuerda que el desplazamiento OFFSET no puede ser negativo):',
-        codeSnippet: [
-          'SELECT id, nombre',
-          'FROM clientes AS c',
-          'LIMIT 10 OFFSET -5;'
-        ],
-        bugLineIndex: 2,
-        explanation: 'El valor de OFFSET debe ser un número entero no negativo.',
-        xpReward: 15
-      },
-      {
-        id: 'sql-u03-l19-e05',
-        type: 'code_cloze',
-        prompt: 'Completa la palabra clave de SQL (DISTINCT) para eliminar filas duplicadas:',
-        codeWithBlank: 'SELECT ___ ciudad FROM sucursales;',
-        options: ['DISTINCT', 'UNIQUE', 'SINGLE', 'FILTER'],
-        correctOption: 'DISTINCT',
-        explanation: 'SELECT DISTINCT suprime registros duplicados en el conjunto devuelto.',
-        xpReward: 10
-      },
-      {
-        id: 'sql-u03-l19-e06',
-        type: 'predict_output',
-        prompt: '¿Qué devuelve la función estándar COALESCE con estos argumentos?',
-        code: 'SELECT COALESCE(NULL, 100, 200) AS res;',
-        options: ['NULL', '100', '200', 'Error'],
-        correctOptionIndex: 1,
-        explanation: 'COALESCE devuelve el primer argumento no nulo evaluado de izquierda a derecha (100).',
-        xpReward: 10
-      },
-      {
-        id: 'sql-u03-l19-e07',
-        type: 'code_builder',
-        prompt: 'Construye la consulta con alias de tabla para proyectos:',
-        tokens: ['SELECT', 'p.id, p.titulo', 'FROM', 'proyectos', 'AS', 'p', ';'],
-        solution: ['SELECT', 'p.id, p.titulo', 'FROM', 'proyectos', 'AS', 'p', ';'],
-        hint: 'Asigna el alias p con AS y califica las columnas.',
-        explanation: 'Calificar con alias (p.id) hace la consulta concisa y preparada para JOINs.',
-        xpReward: 10
-      },
-      {
-        id: 'sql-u03-l19-e08',
-        type: 'matching_pairs',
-        prompt: 'Empareja cada función de texto con su propósito:',
-        pairs: [
-          { left: 'UPPER(col)', right: 'Convierte texto a mayúsculas' },
-          { left: 'LOWER(col)', right: 'Convierte texto a minúsculas' },
-          { left: 'LENGTH(col)', right: 'Calcula la longitud de la cadena' },
-          { left: 'TRIM(col)', right: 'Elimina espacios en blanco exteriores' }
-        ],
-        explanation: 'Las funciones de texto permiten normalizar y analizar campos al vuelo.',
-        xpReward: 15
-      },
-      {
-        id: 'sql-u03-l19-e09',
-        type: 'code_cloze',
-        prompt: 'Completa la cláusula de SQL (LIMIT) para obtener únicamente las primeras 5 filas:',
-        codeWithBlank: 'SELECT * FROM productos ___ 5;',
-        options: ['LIMIT', 'TOP', 'MAX', 'FIRST'],
-        correctOption: 'LIMIT',
-        explanation: 'LIMIT n restringe la cantidad máxima de filas entregadas al cliente.',
-        xpReward: 10
-      },
-      {
-        id: 'sql-u03-l19-e10',
-        type: 'parsons_puzzle',
-        prompt: 'Ordena las cláusulas de la consulta SQL en el orden correcto (SELECT, FROM, LIMIT, OFFSET):',
-        lines: [
-          'SELECT codigo, descripcion',
-          'FROM catalogo.articulos',
-          'LIMIT 20 OFFSET 40;'
-        ],
-        correctOrder: [0, 1, 2],
-        explanation: 'La anatomía estándar en SQL inicia con SELECT, continúa con FROM y finaliza con LIMIT/OFFSET.',
-        xpReward: 20
-      }
-    ]
-  },
-  20: {
-    title: '20. Desafío Maestro: Motor Forense y Auditoría',
-    desc: 'Evaluación integral de consultas defensivas con todos los filtros.',
-    exercises: [
-      {
-        id: 'sql-u03-l20-e01',
-        type: 'matching_pairs',
-        prompt: 'Empareja los términos y cláusulas de este nivel de SQL:',
-        pairs: [
-          { left: 'SELECT', right: 'Proyecta columnas a devolver' },
-          { left: 'FROM', right: 'Especifica la tabla de origen' },
-          { left: 'AS', right: 'Asigna alias temporal a columna o tabla' },
-          { left: 'DISTINCT', right: 'Elimina filas duplicadas' }
-        ],
-        explanation: 'Las cláusulas fundamentales definen la estructura básica de cualquier consulta relacional.',
-        xpReward: 15
-      },
-      {
-        id: 'sql-u03-l20-e02',
-        type: 'code_builder',
-        prompt: 'Construye la consulta para obtener id y nombre de la tabla usuarios:',
-        tokens: ['SELECT', 'id, nombre', 'FROM', 'usuarios', ';', 'WHERE', '*'],
-        solution: ['SELECT', 'id, nombre', 'FROM', 'usuarios', ';'],
-        hint: 'Inicia con SELECT, lista los campos y enlaza con FROM.',
-        explanation: 'SELECT id, nombre FROM usuarios; es la forma estándar de proyección relacional.',
-        xpReward: 10
-      },
-      {
-        id: 'sql-u03-l20-e03',
-        type: 'predict_output',
-        prompt: '¿Qué resultado devuelve la siguiente expresión de columnas calculadas?',
-        code: 'SELECT 100 + 25 * 2 AS total;',
-        options: ['250', '150', '125', '200'],
-        correctOptionIndex: 1,
-        explanation: 'En SQL la multiplicación tiene prioridad: 25 * 2 = 50, y 100 + 50 = 150.',
-        xpReward: 10
-      },
-      {
-        id: 'sql-u03-l20-e04',
-        type: 'spot_the_bug',
-        prompt: 'Toca la línea con el error de paginación (recuerda que el desplazamiento OFFSET no puede ser negativo):',
-        codeSnippet: [
-          'SELECT id, nombre',
-          'FROM clientes AS c',
-          'LIMIT 10 OFFSET -5;'
-        ],
-        bugLineIndex: 2,
-        explanation: 'El valor de OFFSET debe ser un número entero no negativo.',
-        xpReward: 15
-      },
-      {
-        id: 'sql-u03-l20-e05',
-        type: 'code_cloze',
-        prompt: 'Completa la palabra clave de SQL (DISTINCT) para eliminar filas duplicadas:',
-        codeWithBlank: 'SELECT ___ ciudad FROM sucursales;',
-        options: ['DISTINCT', 'UNIQUE', 'SINGLE', 'FILTER'],
-        correctOption: 'DISTINCT',
-        explanation: 'SELECT DISTINCT suprime registros duplicados en el conjunto devuelto.',
-        xpReward: 10
-      },
-      {
-        id: 'sql-u03-l20-e06',
-        type: 'predict_output',
-        prompt: '¿Qué devuelve la función estándar COALESCE con estos argumentos?',
-        code: 'SELECT COALESCE(NULL, 100, 200) AS res;',
-        options: ['NULL', '100', '200', 'Error'],
-        correctOptionIndex: 1,
-        explanation: 'COALESCE devuelve el primer argumento no nulo evaluado de izquierda a derecha (100).',
-        xpReward: 10
-      },
-      {
-        id: 'sql-u03-l20-e07',
-        type: 'code_builder',
-        prompt: 'Construye la consulta con alias de tabla para proyectos:',
-        tokens: ['SELECT', 'p.id, p.titulo', 'FROM', 'proyectos', 'AS', 'p', ';'],
-        solution: ['SELECT', 'p.id, p.titulo', 'FROM', 'proyectos', 'AS', 'p', ';'],
-        hint: 'Asigna el alias p con AS y califica las columnas.',
-        explanation: 'Calificar con alias (p.id) hace la consulta concisa y preparada para JOINs.',
-        xpReward: 10
-      },
-      {
-        id: 'sql-u03-l20-e08',
-        type: 'matching_pairs',
-        prompt: 'Empareja cada función de texto con su propósito:',
-        pairs: [
-          { left: 'UPPER(col)', right: 'Convierte texto a mayúsculas' },
-          { left: 'LOWER(col)', right: 'Convierte texto a minúsculas' },
-          { left: 'LENGTH(col)', right: 'Calcula la longitud de la cadena' },
-          { left: 'TRIM(col)', right: 'Elimina espacios en blanco exteriores' }
-        ],
-        explanation: 'Las funciones de texto permiten normalizar y analizar campos al vuelo.',
-        xpReward: 15
-      },
-      {
-        id: 'sql-u03-l20-e09',
-        type: 'code_cloze',
-        prompt: 'Completa la cláusula de SQL (LIMIT) para obtener únicamente las primeras 5 filas:',
-        codeWithBlank: 'SELECT * FROM productos ___ 5;',
-        options: ['LIMIT', 'TOP', 'MAX', 'FIRST'],
-        correctOption: 'LIMIT',
-        explanation: 'LIMIT n restringe la cantidad máxima de filas entregadas al cliente.',
-        xpReward: 10
-      },
-      {
-        id: 'sql-u03-l20-e10',
-        type: 'parsons_puzzle',
-        prompt: 'Ordena las cláusulas de la consulta SQL en el orden correcto (SELECT, FROM, LIMIT, OFFSET):',
-        lines: [
-          'SELECT codigo, descripcion',
-          'FROM catalogo.articulos',
-          'LIMIT 20 OFFSET 40;'
-        ],
-        correctOrder: [0, 1, 2],
-        explanation: 'La anatomía estándar en SQL inicia con SELECT, continúa con FROM y finaliza con LIMIT/OFFSET.',
-        xpReward: 20
-      }
-    ]
-  },
-};
-
-export const SQL_UNIT_03_LESSONS: Lesson[] = Object.keys(SQL_U03_BANKS).map(lvlStr => {
-  const lvl = Number(lvlStr);
-  const data = SQL_U03_BANKS[lvl];
-  return {
-    id: `sql-u03-l${String(lvl).padStart(2, '0')}`,
-    path: 'sql',
-    unit: 3,
-    level: lvl,
-    title: data.title,
-    description: data.desc,
-    exercises: data.exercises
-  };
-});
+  }
+];

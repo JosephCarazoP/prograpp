@@ -7,8 +7,10 @@ interface VSCodeSnippetProps {
   language?: 'kotlin' | 'sql' | 'text';
   filename?: string;
   highlightLine?: number; // 0-indexed para resaltar
+  errorLine?: number; // 0-indexed para marcar líneas con error de compilación/ejecución
   showLineNumbers?: boolean;
   maxHeight?: string | number;
+  hideHeader?: boolean;
   style?: React.CSSProperties;
 }
 
@@ -17,8 +19,10 @@ export const VSCodeSnippet: React.FC<VSCodeSnippetProps> = ({
   language = 'kotlin',
   filename,
   highlightLine,
+  errorLine,
   showLineNumbers = true,
   maxHeight,
+  hideHeader = false,
   style
 }) => {
   const [copied, setCopied] = useState(false);
@@ -147,8 +151,8 @@ export const VSCodeSnippet: React.FC<VSCodeSnippetProps> = ({
         borderRadius: '16px',
         overflow: 'hidden',
         background: '#0F172A',
-        border: '2px solid #E2E8F0',
-        boxShadow: '0 5px 0 #CBD5E1',
+        border: '2.5px solid #000000',
+        boxShadow: '4px 4px 0px #000000',
         margin: '14px 0',
         maxWidth: '100%',
         width: '100%',
@@ -161,80 +165,84 @@ export const VSCodeSnippet: React.FC<VSCodeSnippetProps> = ({
       }}
     >
       {/* Barra de Título / Pestaña VS Code */}
-      <div
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          background: '#1E293B',
-          padding: '8px 14px',
-          borderBottom: '2px solid #0F172A',
-          userSelect: 'none',
-          flexShrink: 0
-        }}
-      >
-        {/* Controles y pestaña */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-          {/* Tres botones decorativos estilo Mac con color vivo */}
-          <div style={{ display: 'flex', gap: '6px' }}>
-            <div style={{ width: '10px', height: '10px', borderRadius: '50%', background: '#EF4444' }} />
-            <div style={{ width: '10px', height: '10px', borderRadius: '50%', background: '#F59E0B' }} />
-            <div style={{ width: '10px', height: '10px', borderRadius: '50%', background: '#10B981' }} />
-          </div>
-
-          {/* Tab activo */}
-          <div
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '6px',
-              background: '#0F172A',
-              padding: '4px 12px',
-              borderRadius: '8px 8px 0 0',
-              borderTop: '2px solid #38BDF8',
-              fontSize: '0.8rem',
-              fontWeight: 800,
-              color: '#F8FAFC'
-            }}
-          >
-            <FileCode size={14} color="#38BDF8" />
-            <span>{defaultFilename}</span>
-          </div>
-        </div>
-
-        {/* Botón copiar código */}
-        <button
-          onClick={handleCopy}
+      {!hideHeader && (
+        <div
           style={{
-            background: copied ? 'rgba(16, 185, 129, 0.2)' : '#334155',
-            border: '1px solid',
-            borderColor: copied ? '#10B981' : '#475569',
-            borderRadius: '8px',
-            padding: '4px 10px',
-            color: copied ? '#34D399' : '#CBD5E1',
-            fontSize: '0.74rem',
-            fontWeight: 800,
-            cursor: 'pointer',
             display: 'flex',
             alignItems: 'center',
-            gap: '5px',
-            transition: 'all 0.15s ease'
+            justifyContent: 'space-between',
+            background: '#1E293B',
+            padding: '8px 14px',
+            borderBottom: '2.5px solid #000000',
+            userSelect: 'none',
+            flexShrink: 0
           }}
-          title="Copiar código al portapapeles"
         >
-          {copied ? (
-            <>
-              <Check size={12} strokeWidth={3} />
-              <span>Copiado</span>
-            </>
-          ) : (
-            <>
-              <Copy size={12} />
-              <span>Copiar</span>
-            </>
-          )}
-        </button>
-      </div>
+          {/* Controles y pestaña */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+            {/* Tres botones decorativos estilo Mac con color vivo */}
+            <div style={{ display: 'flex', gap: '6px' }}>
+              <div style={{ width: '10px', height: '10px', borderRadius: '50%', background: '#EF4444', border: '1px solid #000000' }} />
+              <div style={{ width: '10px', height: '10px', borderRadius: '50%', background: '#F59E0B', border: '1px solid #000000' }} />
+              <div style={{ width: '10px', height: '10px', borderRadius: '50%', background: '#10B981', border: '1px solid #000000' }} />
+            </div>
+
+            {/* Tab activo */}
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '6px',
+                background: '#0F172A',
+                padding: '4px 12px',
+                borderRadius: '8px 8px 0 0',
+                borderTop: '2px solid #38BDF8',
+                borderLeft: '1.5px solid #000000',
+                borderRight: '1.5px solid #000000',
+                fontSize: '0.8rem',
+                fontWeight: 800,
+                color: '#F8FAFC'
+              }}
+            >
+              <FileCode size={14} color="#38BDF8" />
+              <span>{defaultFilename}</span>
+            </div>
+          </div>
+
+          {/* Botón copiar código */}
+          <button
+            onClick={handleCopy}
+            style={{
+              background: copied ? 'rgba(16, 185, 129, 0.2)' : '#334155',
+              border: '1.5px solid #000000',
+              boxShadow: '2px 2px 0px #000000',
+              borderRadius: '8px',
+              padding: '4px 10px',
+              color: copied ? '#34D399' : '#CBD5E1',
+              fontSize: '0.74rem',
+              fontWeight: 800,
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '5px',
+              transition: 'all 0.15s ease'
+            }}
+            title="Copiar código al portapapeles"
+          >
+            {copied ? (
+              <>
+                <Check size={12} strokeWidth={3} />
+                <span>Copiado</span>
+              </>
+            ) : (
+              <>
+                <Copy size={12} />
+                <span>Copiar</span>
+              </>
+            )}
+          </button>
+        </div>
+      )}
 
       {/* Cuerpo del Editor con Números de Línea y Código (autoexpandible en altura y con scroll vertical si excede maxHeight) */}
       <div
@@ -273,14 +281,16 @@ export const VSCodeSnippet: React.FC<VSCodeSnippetProps> = ({
                 style={{
                   minHeight: '24px',
                   lineHeight: '24px',
-                  color: highlightLine === i ? '#F59E0B' : '#64748B',
-                  fontWeight: highlightLine === i ? 900 : 500,
+                  color: errorLine === i ? '#EF4444' : highlightLine === i ? '#F59E0B' : '#64748B',
+                  fontWeight: errorLine === i ? 900 : highlightLine === i ? 900 : 500,
                   display: 'flex',
                   alignItems: 'center',
-                  justifyContent: 'flex-end'
+                  justifyContent: 'flex-end',
+                  gap: '4px'
                 }}
               >
-                {i + 1}
+                {errorLine === i && <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#EF4444' }} />}
+                <span>{i + 1}</span>
               </div>
             ))}
           </div>
@@ -295,9 +305,15 @@ export const VSCodeSnippet: React.FC<VSCodeSnippetProps> = ({
                 minHeight: '24px',
                 lineHeight: '24px',
                 whiteSpace: 'pre',
-                background: highlightLine === i ? 'rgba(245, 158, 11, 0.15)' : 'transparent',
-                borderRadius: '6px',
-                padding: highlightLine === i ? '0 6px' : '0',
+                background:
+                  errorLine === i
+                    ? 'rgba(239, 68, 68, 0.22)'
+                    : highlightLine === i
+                    ? 'rgba(245, 158, 11, 0.15)'
+                    : 'transparent',
+                borderLeft: errorLine === i ? '3.5px solid #EF4444' : 'none',
+                borderRadius: errorLine === i ? '0 6px 6px 0' : '6px',
+                padding: errorLine === i ? '0 8px' : highlightLine === i ? '0 6px' : '0',
                 display: 'flex',
                 alignItems: 'center'
               }}

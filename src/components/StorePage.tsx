@@ -321,7 +321,7 @@ export const StorePage: React.FC<StorePageProps> = ({
           }}
         >
           <Sparkles size={16} />
-          <span>VESTIDOR 3D ({BYTE_SKINS.length})</span>
+          <span>VESTIDOR ({BYTE_SKINS.length})</span>
         </button>
 
         <button
@@ -383,7 +383,6 @@ export const StorePage: React.FC<StorePageProps> = ({
                 <div
                   className="duo-rank-chip"
                   style={{
-                    border: `2px solid ${currentRank.color}`,
                     color: currentRank.color
                   }}
                 >
@@ -616,7 +615,7 @@ export const StorePage: React.FC<StorePageProps> = ({
         <div className="duo-store-powerups-grid">
           {/* 1. Protector de Racha */}
           <div className="duo-3d-item-card">
-            <div className="duo-item-icon-box" style={{ background: '#E0F2FE', borderColor: '#7DD3FC' }}>
+            <div className="duo-item-icon-box" style={{ background: '#E0F2FE' }}>
               <Shield size={32} color="#0284C7" strokeWidth={2.5} />
             </div>
             <div className="duo-item-body">
@@ -654,7 +653,7 @@ export const StorePage: React.FC<StorePageProps> = ({
 
           {/* 3. Descarte 50/50 */}
           <div className="duo-3d-item-card">
-            <div className="duo-item-icon-box" style={{ background: '#FEF3C7', borderColor: '#FDE68A' }}>
+            <div className="duo-item-icon-box" style={{ background: '#FEF3C7' }}>
               <Scissors size={32} color="#D97706" strokeWidth={2.5} />
             </div>
             <div className="duo-item-body">
@@ -680,7 +679,7 @@ export const StorePage: React.FC<StorePageProps> = ({
 
           {/* 4. Segunda Oportunidad */}
           <div className="duo-3d-item-card">
-            <div className="duo-item-icon-box" style={{ background: '#F3E8FF', borderColor: '#D8B4FE' }}>
+            <div className="duo-item-icon-box" style={{ background: '#F3E8FF' }}>
               <Sparkle size={32} color="#9333EA" strokeWidth={2.5} />
             </div>
             <div className="duo-item-body">
@@ -706,7 +705,7 @@ export const StorePage: React.FC<StorePageProps> = ({
 
           {/* 5. Pista Pedagógica */}
           <div className="duo-3d-item-card">
-            <div className="duo-item-icon-box" style={{ background: '#DCFCE7', borderColor: '#86EFAC' }}>
+            <div className="duo-item-icon-box" style={{ background: '#DCFCE7' }}>
               <HelpCircle size={32} color="#16A34A" strokeWidth={2.5} />
             </div>
             <div className="duo-item-body">

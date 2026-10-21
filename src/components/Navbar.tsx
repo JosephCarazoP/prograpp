@@ -14,7 +14,8 @@ import {
   Menu,
   ShoppingBag,
   ChevronRight,
-  Trophy
+  Trophy,
+  Hash
 } from 'lucide-react';
 import { UserProfile } from '../types/user';
 import { soundService } from '../services/soundService';
@@ -70,13 +71,22 @@ export const Navbar: React.FC<NavbarProps> = ({
     if (!nextMuted) soundService.playToken();
   };
 
-  // Prevenir que el scroll del fondo interfiera con el scroll del drawer en móvil
+  // Prevenir que el scroll del fondo interfiera con el scroll del drawer y cerrar con Escape
   React.useEffect(() => {
     if (isDrawerOpen) {
       const originalOverflow = document.body.style.overflow;
       document.body.style.overflow = 'hidden';
+
+      const handleKeyDown = (e: KeyboardEvent) => {
+        if (e.key === 'Escape') {
+          setIsDrawerOpen(false);
+        }
+      };
+      window.addEventListener('keydown', handleKeyDown);
+
       return () => {
         document.body.style.overflow = originalOverflow;
+        window.removeEventListener('keydown', handleKeyDown);
       };
     }
   }, [isDrawerOpen]);
@@ -143,7 +153,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               aria-label="Abrir Notificaciones"
               style={{ position: 'relative', color: (unreadNotificationsCount ?? 0) > 0 ? '#D97706' : '#64748B' }}
             >
-              <Bell size={18} strokeWidth={2.4} />
+              <Bell size={18} strokeWidth={2.4} color={(unreadNotificationsCount ?? 0) > 0 ? '#D97706' : '#64748B'} />
               {(unreadNotificationsCount ?? 0) > 0 && (
                 <span className="nav-notif-badge">
                   {unreadNotificationsCount}
@@ -152,152 +162,23 @@ export const Navbar: React.FC<NavbarProps> = ({
             </button>
           )}
 
-          {/* Botones Solo de Escritorio / Tablet */}
-          <div className="nav-desktop-actions">
-            {/* Misiones Diarias */}
-            <button
-              className="nav-icon-btn"
-              onClick={() => {
-                soundService.playToken();
-                onOpenQuests();
-              }}
-              title="Misiones Diarias y Objetivos"
-              type="button"
-              aria-label="Abrir Misiones Diarias"
-            >
-              <Target size={18} color="#F59E0B" strokeWidth={2.5} />
-            </button>
-
-            {/* Liga y Ranking Semanal */}
-            {onOpenLeague && (
-              <button
-                className="nav-icon-btn"
-                onClick={() => {
-                  soundService.playToken();
-                  onOpenLeague();
-                }}
-                title="Liga y Torneo Semanal"
-                type="button"
-                aria-label="Abrir Liga Semanal"
-                style={{ color: '#D97706' }}
-              >
-                <Trophy size={18} color="#F59E0B" strokeWidth={2.5} />
-              </button>
-            )}
-
-            {/* Tienda y Vestidor de Byte */}
-            {onOpenLocker && (
-              <button
-                className="nav-icon-btn"
-                onClick={() => {
-                  soundService.playToken();
-                  onOpenLocker();
-                }}
-                title="Tienda de Byte y Vestidor 3D"
-                type="button"
-                aria-label="Abrir Tienda de Byte"
-                style={{ color: '#0284C7' }}
-              >
-                <ShoppingBag size={18} strokeWidth={2.4} />
-              </button>
-            )}
-
-            {/* Silencio / Audio */}
-            <button
-              className="nav-icon-btn sound-toggle"
-              onClick={handleSoundToggle}
-              title={isMuted ? 'Activar sonido' : 'Silenciar sonido'}
-              type="button"
-            >
-              {isMuted ? <VolumeX size={17} color="#64748B" /> : <Volume2 size={17} color="#4ADE80" />}
-            </button>
-
-            {/* Avatar -> Perfil */}
-            <button
-              className="nav-avatar-btn"
-              onClick={() => {
-                soundService.playToken();
-                onOpenProfile();
-              }}
-              title="Mi Perfil de Desarrollador"
-              type="button"
-              aria-label="Abrir Mi Perfil"
-            >
-              <DevAvatar
-                avatarId={user?.avatarId || 'robot_byte'}
-                skinId={user?.equippedSkin}
-                size={32}
-              />
-            </button>
-
-            {/* Docente: Seguimiento */}
-            {isTeacherAdmin && onOpenAcademic && (
-              <button
-                className="btn-3d btn-orange nav-admin-btn"
-                onClick={() => {
-                  soundService.playToken();
-                  onOpenAcademic();
-                }}
-                title="Seguimiento Académico (Exclusivo Docente)"
-                aria-label="Seguimiento Académico"
-                type="button"
-              >
-                <ShieldCheck size={15} color="#FFFFFF" strokeWidth={2.5} />
-                <span className="nav-admin-label">Seguimiento</span>
-              </button>
-            )}
-
-            {/* Docente: En Línea */}
-            {isTeacherAdmin && onOpenLiveUsers && (
-              <button
-                className="btn-3d btn-green nav-live-users-btn"
-                onClick={() => {
-                  soundService.playToken();
-                  onOpenLiveUsers();
-                }}
-                title="Usuarios en Línea en Tiempo Real"
-                aria-label="Usuarios en Línea"
-                type="button"
-              >
-                <span className="live-pulsing-dot" />
-                <Users size={15} color="#FFFFFF" strokeWidth={2.5} />
-                <span className="nav-live-users-label">
-                  En Línea{onlineUsersCount > 0 ? ` (${onlineUsersCount})` : ''}
-                </span>
-              </button>
-            )}
-
-            {/* Cerrar Sesión */}
-            {onSignOut && (
-              <button
-                className="nav-icon-btn"
-                onClick={onSignOut}
-                title="Cerrar Sesión Segura"
-                type="button"
-                style={{ color: '#F87171' }}
-              >
-                <LogOut size={16} />
-              </button>
-            )}
-          </div>
-
-          {/* Botón Menú Hamburguesa para Móvil (hb-nav) */}
+          {/* Botón Menú Hamburguesa Neo-brutalism (hb-nav para Desktop y Móvil) */}
           <button
             type="button"
-            className="nav-mobile-hamburger-btn"
+            className="nav-hamburger-btn nav-mobile-hamburger-btn"
             onClick={() => {
               soundService.playToken();
               setIsDrawerOpen(true);
             }}
-            title="Abrir Menú de Navegación"
+            title="Abrir Menú de Navegación y Ajustes"
             aria-label="Menú de Navegación"
           >
-            <Menu size={20} />
+            <Menu size={22} color="#000000" strokeWidth={2.8} />
           </button>
         </div>
       </header>
 
-      {/* DRAWER MÓVIL ESTILO DUOLINGO AJUSTES / MENÚ (FOTO 1) */}
+      {/* DRAWER MÓVIL ESTILO NEO-BRUTALISM */}
       {isDrawerOpen && (
         <div
           className="hb-drawer-backdrop"
@@ -309,9 +190,9 @@ export const Navbar: React.FC<NavbarProps> = ({
             className="hb-drawer-content duo-settings-drawer"
             onClick={(e) => e.stopPropagation()}
           >
-            {/* Top Bar: Settings / Ajustes + DONE / LISTO */}
+            {/* Top Bar: Settings / Ajustes + LISTO */}
             <div className="duo-settings-header">
-              <span className="duo-settings-title">Ajustes</span>
+              <span className="duo-settings-title">Menú y Ajustes</span>
               <button
                 type="button"
                 className="duo-settings-done-btn"
@@ -325,65 +206,45 @@ export const Navbar: React.FC<NavbarProps> = ({
             </div>
 
             <div className="duo-settings-scroll">
-              {/* SECCIÓN 1: CUENTA (Orden fiel a Foto 1: Preferences, Profile, Notifications, Courses) */}
-              <div className="duo-settings-group-label">Cuenta</div>
-              <div className="duo-settings-table">
-                {/* Preferencias / Efectos de Sonido */}
-                <button
-                  type="button"
-                  className="duo-settings-row"
-                  onClick={(e) => handleSoundToggle(e)}
-                >
-                  <span className="duo-settings-row-label">Preferencias</span>
-                  <div className="duo-settings-row-right">
-                    <span className={`duo-settings-pill-tag ${isMuted ? 'gray' : 'green'}`}>
-                      {isMuted ? 'Silenciado' : 'Sonido Activado'}
+              {/* Tarjeta de Usuario Neo-Brutalist (Clickable para abrir Perfil) */}
+              <button
+                type="button"
+                className="duo-settings-user-card"
+                onClick={() => {
+                  soundService.playToken();
+                  setIsDrawerOpen(false);
+                  onOpenProfile();
+                }}
+                title="Ver mi perfil completo"
+              >
+                <div className="duo-settings-user-avatar-wrap">
+                  <DevAvatar
+                    avatarId={user?.avatarId || 'robot_byte'}
+                    skinId={user?.equippedSkin}
+                    size={46}
+                  />
+                </div>
+                <div className="duo-settings-user-info">
+                  <div className="duo-settings-user-name">{user?.displayName || 'Desarrollador'}</div>
+                  <div className="duo-settings-user-meta">
+                    <span className="duo-settings-user-pill streak">
+                      <Flame size={13} color="#EA580C" fill="#EA580C" />
+                      {user?.streak?.count ?? 0} días
                     </span>
-                    <ChevronRight size={18} color="#AFAFAF" strokeWidth={2.5} />
+                    <span className="duo-settings-user-pill code">
+                      {user?.studentCode || 'E01'}
+                    </span>
                   </div>
-                </button>
+                </div>
+                <div className="duo-settings-user-arrow">
+                  <ChevronRight size={18} color="#000000" strokeWidth={3} />
+                </div>
+              </button>
 
-                {/* Perfil */}
-                <button
-                  type="button"
-                  className="duo-settings-row"
-                  onClick={() => {
-                    soundService.playToken();
-                    setIsDrawerOpen(false);
-                    onOpenProfile();
-                  }}
-                >
-                  <span className="duo-settings-row-label">Perfil</span>
-                  <div className="duo-settings-row-right">
-                    <span className="duo-settings-row-sub">{user?.displayName || 'Dev'}</span>
-                    <ChevronRight size={18} color="#AFAFAF" strokeWidth={2.5} />
-                  </div>
-                </button>
-
-                {/* Notificaciones */}
-                {onOpenNotifications && (
-                  <button
-                    type="button"
-                    className="duo-settings-row"
-                    onClick={() => {
-                      soundService.playToken();
-                      setIsDrawerOpen(false);
-                      onOpenNotifications();
-                    }}
-                  >
-                    <span className="duo-settings-row-label">Notificaciones</span>
-                    <div className="duo-settings-row-right">
-                      {(unreadNotificationsCount ?? 0) > 0 && (
-                        <span className="duo-settings-pill-tag red">
-                          {unreadNotificationsCount} NUEVAS
-                        </span>
-                      )}
-                      <ChevronRight size={18} color="#AFAFAF" strokeWidth={2.5} />
-                    </div>
-                  </button>
-                )}
-
-                {/* Cursos */}
+              {/* SECCIÓN 1: NAVEGACIÓN PRINCIPAL */}
+              <div className="duo-settings-group-label">Navegación</div>
+              <div className="duo-settings-table">
+                {/* Selector de Ruta Cursos */}
                 <button
                   type="button"
                   className="duo-settings-row"
@@ -393,16 +254,25 @@ export const Navbar: React.FC<NavbarProps> = ({
                     onPathToggle();
                   }}
                 >
-                  <span className="duo-settings-row-label">Cursos</span>
+                  <div className="duo-settings-row-left">
+                    <div className="duo-settings-row-icon-box cyan">
+                      {user.currentPath === 'kotlin' ? (
+                        <Code2 size={18} color="#0284C7" strokeWidth={2.6} />
+                      ) : (
+                        <Database size={18} color="#2563EB" strokeWidth={2.6} />
+                      )}
+                    </div>
+                    <span className="duo-settings-row-label">Ruta Actual</span>
+                  </div>
                   <div className="duo-settings-row-right">
                     <span className="duo-settings-pill-tag blue">
                       {user.currentPath === 'kotlin' ? 'Kotlin' : 'SQL'}
                     </span>
-                    <ChevronRight size={18} color="#AFAFAF" strokeWidth={2.5} />
+                    <ChevronRight size={18} color="#000000" strokeWidth={3} />
                   </div>
                 </button>
 
-                {/* Liga Semanal */}
+                {/* Liga Semanal (Sin etiqueta innecesaria) */}
                 {onOpenLeague && (
                   <button
                     type="button"
@@ -413,17 +283,19 @@ export const Navbar: React.FC<NavbarProps> = ({
                       onOpenLeague();
                     }}
                   >
-                    <span className="duo-settings-row-label">Liga Semanal</span>
+                    <div className="duo-settings-row-left">
+                      <div className="duo-settings-row-icon-box gold">
+                        <Trophy size={18} color="#D97706" strokeWidth={2.6} />
+                      </div>
+                      <span className="duo-settings-row-label">Liga Semanal</span>
+                    </div>
                     <div className="duo-settings-row-right">
-                      <span className="duo-settings-pill-tag orange">
-                        TORNEO
-                      </span>
-                      <ChevronRight size={18} color="#AFAFAF" strokeWidth={2.5} />
+                      <ChevronRight size={18} color="#000000" strokeWidth={3} />
                     </div>
                   </button>
                 )}
 
-                {/* Tienda y Vestidor 3D */}
+                {/* Tienda y Vestidor (Sin etiqueta innecesaria) */}
                 {onOpenLocker && (
                   <button
                     type="button"
@@ -434,10 +306,14 @@ export const Navbar: React.FC<NavbarProps> = ({
                       onOpenLocker();
                     }}
                   >
-                    <span className="duo-settings-row-label">Tienda y Vestidor</span>
+                    <div className="duo-settings-row-left">
+                      <div className="duo-settings-row-icon-box blue">
+                        <ShoppingBag size={18} color="#0284C7" strokeWidth={2.6} />
+                      </div>
+                      <span className="duo-settings-row-label">Tienda y Vestidor</span>
+                    </div>
                     <div className="duo-settings-row-right">
-                      <span className="duo-settings-pill-tag green">3D</span>
-                      <ChevronRight size={18} color="#AFAFAF" strokeWidth={2.5} />
+                      <ChevronRight size={18} color="#000000" strokeWidth={3} />
                     </div>
                   </button>
                 )}
@@ -452,17 +328,104 @@ export const Navbar: React.FC<NavbarProps> = ({
                     onOpenQuests();
                   }}
                 >
-                  <span className="duo-settings-row-label">Misiones Diarias</span>
+                  <div className="duo-settings-row-left">
+                    <div className="duo-settings-row-icon-box orange">
+                      <Target size={18} color="#D97706" strokeWidth={2.6} />
+                    </div>
+                    <span className="duo-settings-row-label">Misiones Diarias</span>
+                  </div>
                   <div className="duo-settings-row-right">
-                    <ChevronRight size={18} color="#AFAFAF" strokeWidth={2.5} />
+                    <ChevronRight size={18} color="#000000" strokeWidth={3} />
+                  </div>
+                </button>
+
+                {/* Mi Perfil */}
+                <button
+                  type="button"
+                  className="duo-settings-row"
+                  onClick={() => {
+                    soundService.playToken();
+                    setIsDrawerOpen(false);
+                    onOpenProfile();
+                  }}
+                >
+                  <div className="duo-settings-row-left">
+                    <div className="duo-settings-row-icon-box purple">
+                      <DevAvatar
+                        avatarId={user?.avatarId || 'robot_byte'}
+                        skinId={user?.equippedSkin}
+                        size={22}
+                      />
+                    </div>
+                    <span className="duo-settings-row-label">Mi Perfil</span>
+                  </div>
+                  <div className="duo-settings-row-right">
+                    <span className="duo-settings-row-sub">{user?.displayName || 'Dev'}</span>
+                    <ChevronRight size={18} color="#000000" strokeWidth={3} />
+                  </div>
+                </button>
+
+                {/* Notificaciones */}
+                {onOpenNotifications && (
+                  <button
+                    type="button"
+                    className="duo-settings-row"
+                    onClick={() => {
+                      soundService.playToken();
+                      setIsDrawerOpen(false);
+                      onOpenNotifications();
+                    }}
+                  >
+                    <div className="duo-settings-row-left">
+                      <div className="duo-settings-row-icon-box yellow">
+                        <Bell size={18} color="#B45309" strokeWidth={2.6} />
+                      </div>
+                      <span className="duo-settings-row-label">Notificaciones</span>
+                    </div>
+                    <div className="duo-settings-row-right">
+                      {(unreadNotificationsCount ?? 0) > 0 && (
+                        <span className="duo-settings-pill-tag red">
+                          {unreadNotificationsCount} NUEVAS
+                        </span>
+                      )}
+                      <ChevronRight size={18} color="#000000" strokeWidth={3} />
+                    </div>
+                  </button>
+                )}
+              </div>
+
+              {/* SECCIÓN 2: PREFERENCIAS */}
+              <div className="duo-settings-group-label">Preferencias</div>
+              <div className="duo-settings-table">
+                {/* Sonido / Audio */}
+                <button
+                  type="button"
+                  className="duo-settings-row"
+                  onClick={(e) => handleSoundToggle(e)}
+                >
+                  <div className="duo-settings-row-left">
+                    <div className={`duo-settings-row-icon-box ${isMuted ? 'gray' : 'green'}`}>
+                      {isMuted ? (
+                        <VolumeX size={18} color="#64748B" strokeWidth={2.6} />
+                      ) : (
+                        <Volume2 size={18} color="#15803D" strokeWidth={2.6} />
+                      )}
+                    </div>
+                    <span className="duo-settings-row-label">Efectos de Sonido</span>
+                  </div>
+                  <div className="duo-settings-row-right">
+                    <span className={`duo-settings-pill-tag ${isMuted ? 'gray' : 'green'}`}>
+                      {isMuted ? 'Silenciado' : 'Activado'}
+                    </span>
+                    <ChevronRight size={18} color="#000000" strokeWidth={3} />
                   </div>
                 </button>
               </div>
 
-              {/* SECCIÓN 2: DOCENTE (Si es docente/admin) */}
+              {/* SECCIÓN 3: DOCENTE (Si es docente/admin) */}
               {isTeacherAdmin && (
                 <>
-                  <div className="duo-settings-group-label">Docente</div>
+                  <div className="duo-settings-group-label">Panel Docente</div>
                   <div className="duo-settings-table">
                     {onOpenAcademic && (
                       <button
@@ -474,9 +437,14 @@ export const Navbar: React.FC<NavbarProps> = ({
                           onOpenAcademic();
                         }}
                       >
-                        <span className="duo-settings-row-label">Seguimiento Académico</span>
+                        <div className="duo-settings-row-left">
+                          <div className="duo-settings-row-icon-box purple">
+                            <ShieldCheck size={18} color="#7C3AED" strokeWidth={2.6} />
+                          </div>
+                          <span className="duo-settings-row-label">Seguimiento Académico</span>
+                        </div>
                         <div className="duo-settings-row-right">
-                          <ChevronRight size={18} color="#AFAFAF" strokeWidth={2.5} />
+                          <ChevronRight size={18} color="#000000" strokeWidth={3} />
                         </div>
                       </button>
                     )}
@@ -490,14 +458,19 @@ export const Navbar: React.FC<NavbarProps> = ({
                           onOpenLiveUsers();
                         }}
                       >
-                        <span className="duo-settings-row-label">Usuarios en Línea</span>
+                        <div className="duo-settings-row-left">
+                          <div className="duo-settings-row-icon-box green">
+                            <Users size={18} color="#15803D" strokeWidth={2.6} />
+                          </div>
+                          <span className="duo-settings-row-label">Usuarios en Línea</span>
+                        </div>
                         <div className="duo-settings-row-right">
                           {onlineUsersCount > 0 && (
                             <span className="duo-settings-pill-tag green">
                               {onlineUsersCount} ACTIVOS
                             </span>
                           )}
-                          <ChevronRight size={18} color="#AFAFAF" strokeWidth={2.5} />
+                          <ChevronRight size={18} color="#000000" strokeWidth={3} />
                         </div>
                       </button>
                     )}
@@ -505,11 +478,16 @@ export const Navbar: React.FC<NavbarProps> = ({
                 </>
               )}
 
-              {/* SECCIÓN 3: SOPORTE Y SESIÓN (Fiel a Foto 1) */}
-              <div className="duo-settings-group-label">Soporte</div>
+              {/* SECCIÓN 4: CUENTA Y SESIÓN */}
+              <div className="duo-settings-group-label">Cuenta</div>
               <div className="duo-settings-table">
                 <div className="duo-settings-row static">
-                  <span className="duo-settings-row-label">Código de Estudiante</span>
+                  <div className="duo-settings-row-left">
+                    <div className="duo-settings-row-icon-box gray">
+                      <Hash size={18} color="#475569" strokeWidth={2.6} />
+                    </div>
+                    <span className="duo-settings-row-label">Código de Estudiante</span>
+                  </div>
                   <div className="duo-settings-row-right">
                     <span className="duo-settings-row-sub">{user?.studentCode || 'E01'}</span>
                   </div>
@@ -524,9 +502,14 @@ export const Navbar: React.FC<NavbarProps> = ({
                       onSignOut();
                     }}
                   >
-                    <span className="duo-settings-row-label red">Cerrar Sesión</span>
+                    <div className="duo-settings-row-left">
+                      <div className="duo-settings-row-icon-box red">
+                        <LogOut size={18} color="#DC2626" strokeWidth={2.6} />
+                      </div>
+                      <span className="duo-settings-row-label red">Cerrar Sesión</span>
+                    </div>
                     <div className="duo-settings-row-right">
-                      <ChevronRight size={18} color="#FF4B4B" strokeWidth={2.5} />
+                      <ChevronRight size={18} color="#DC2626" strokeWidth={3} />
                     </div>
                   </button>
                 )}

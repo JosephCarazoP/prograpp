@@ -97,11 +97,10 @@ export const BIOME_ROAD_THEMES: Record<
 };
 
 /**
- * Conector de carretera 3D entre dos nodos consecutivos del camino serpenteante.
- * Curva cúbica bezier suave con relieve, sombra en el suelo y líneas divisorias.
+ * Conector de carretera Neo-brutalista entre dos nodos consecutivos del camino serpenteante.
+ * Curva Bézier fluida con grueso contorno negro, firme sombra sin difuminar y línea discontinua.
  */
-export const RoadConnector: React.FC<RoadConnectorProps> = ({ fromOffset, toOffset, theme }) => {
-  const colors = BIOME_ROAD_THEMES[theme] || BIOME_ROAD_THEMES.valley;
+export const RoadConnector: React.FC<RoadConnectorProps> = ({ fromOffset, toOffset }) => {
   const svgWidth = 220;
   const svgHeight = 42;
   const centerX = svgWidth / 2;
@@ -138,41 +137,40 @@ export const RoadConnector: React.FC<RoadConnectorProps> = ({ fromOffset, toOffs
         xmlns="http://www.w3.org/2000/svg"
         style={{ overflow: 'visible' }}
       >
-        {/* Capa 1: Sombra profunda del camino sobre el terreno */}
+        {/* Sombra dura negra neo-brutalista proyectada */}
         <path
           d={pathD}
-          stroke={colors.pathShadow}
-          strokeWidth="28"
+          stroke="#000000"
+          strokeWidth="20"
           strokeLinecap="round"
-          strokeOpacity="0.85"
+          fill="none"
+          transform="translate(3, 3)"
+        />
+
+        {/* Borde exterior negro grueso */}
+        <path
+          d={pathD}
+          stroke="#000000"
+          strokeWidth="18"
+          strokeLinecap="round"
           fill="none"
         />
 
-        {/* Capa 2: Superficie de piedra / camino transitable */}
+        {/* Superficie blanca del camino */}
         <path
           d={pathD}
-          stroke={colors.pathSurface}
-          strokeWidth="22"
+          stroke="#FFFFFF"
+          strokeWidth="12"
           strokeLinecap="round"
           fill="none"
         />
 
-        {/* Capa 3: Borde de brillo superior del pavimento */}
+        {/* Línea central discontinua en negro */}
         <path
           d={pathD}
-          stroke={colors.pathHighlight}
-          strokeWidth="16"
-          strokeLinecap="round"
-          strokeOpacity="0.65"
-          fill="none"
-        />
-
-        {/* Capa 4: Marcas centrales del camino (adoquines o guijarros) */}
-        <path
-          d={pathD}
-          stroke={colors.pathDashes}
-          strokeWidth="3.5"
-          strokeDasharray="6 8"
+          stroke="#000000"
+          strokeWidth="2.5"
+          strokeDasharray="4 6"
           strokeLinecap="round"
           fill="none"
         />
@@ -182,16 +180,13 @@ export const RoadConnector: React.FC<RoadConnectorProps> = ({ fromOffset, toOffs
 };
 
 /**
- * Pedestal 3D / Plataforma de adoquín bajo el botón del nodo.
- * Ancla físicamente el botón al suelo del bioma (estilo Duolingo 3D).
+ * Pedestal Neo-brutalista bajo el botón del nodo.
+ * Ancla físicamente el botón al suelo con bordes negros sólidos y sombra dura.
  */
 export const NodeSteppingPlatform: React.FC<NodeSteppingPlatformProps> = ({
-  theme,
   isCurrent = false,
   isCompleted = false
 }) => {
-  const colors = BIOME_ROAD_THEMES[theme] || BIOME_ROAD_THEMES.valley;
-
   return (
     <div
       style={{
@@ -206,47 +201,27 @@ export const NodeSteppingPlatform: React.FC<NodeSteppingPlatformProps> = ({
       }}
     >
       <svg width="96" height="38" viewBox="0 0 96 38" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <defs>
-          <radialGradient id={`pedestal-glow-${theme}`} cx="50%" cy="50%" r="50%">
-            <stop offset="0%" stopColor={isCurrent ? '#F59E0B' : '#FFFFFF'} stopOpacity={isCurrent ? 0.45 : 0.25} />
-            <stop offset="100%" stopColor="#FFFFFF" stopOpacity="0" />
-          </radialGradient>
-        </defs>
+        {/* Sombra dura negra neo-brutalista */}
+        <ellipse cx="51" cy="27" rx="42" ry="10" fill="#000000" />
 
-        {/* Sombra proyectada en el césped / agua / nube */}
-        <ellipse cx="48" cy="27" rx="44" ry="10" fill={colors.pedestalShadow} />
-
-        {/* Bisel inferior 3D del pedestal cilíndrico */}
+        {/* Base cilíndrica con borde negro */}
         <path
-          d="M 6 18 C 6 18, 6 23, 6 24 C 6 29 25 33 48 33 C 71 33 90 29 90 24 C 90 23 90 18 90 18 Z"
-          fill={colors.pedestalSide}
+          d="M 6 18 C 6 18, 6 22, 6 23 C 6 28 25 32 48 32 C 71 32 90 28 90 23 C 90 22 90 18 90 18 Z"
+          fill={isCompleted ? '#86EFAC' : isCurrent ? '#FEF08A' : '#CBD5E1'}
+          stroke="#000000"
+          strokeWidth="2.5"
         />
 
         {/* Superficie superior elíptica */}
-        <ellipse cx="48" cy="18" rx="42" ry="11" fill={isCompleted ? colors.pedestalHighlight : colors.pedestalTop} />
-
-        {/* Borde biselado interior con brillo */}
-        <ellipse cx="48" cy="16.5" rx="38" ry="9" fill={colors.pedestalHighlight} fillOpacity={isCompleted ? 0.9 : 0.7} />
-
-        {/* Halo de resplandor para el nivel actual activo */}
-        {isCurrent && (
-          <ellipse cx="48" cy="18" rx="44" ry="12" fill={`url(#pedestal-glow-${theme})`} />
-        )}
-
-        {/* Detalle temático en la base */}
-        {theme === 'valley' || theme === 'quarry' ? (
-          // Brote de hierba en el borde
-          <g transform="translate(10, 16)">
-            <path d="M 0 4 Q -2 -2 2 -4 Q 2 2 0 4" fill="#22C55E" />
-            <path d="M 2 4 Q 4 -1 7 -2 Q 5 2 2 4" fill="#16A34A" />
-          </g>
-        ) : theme === 'river' || theme === 'cavern' ? (
-          // Onda concéntrica de agua
-          <ellipse cx="48" cy="28" rx="47" ry="9" stroke="#93C5FD" strokeWidth="1" strokeOpacity="0.5" fill="none" />
-        ) : (
-          // Pequeña chispa dorada
-          <circle cx="82" cy="14" r="2" fill="#FBBF24" />
-        )}
+        <ellipse
+          cx="48"
+          cy="18"
+          rx="42"
+          ry="11"
+          fill={isCompleted ? '#BBF7D0' : isCurrent ? '#FFE600' : '#FFFFFF'}
+          stroke="#000000"
+          strokeWidth="2.5"
+        />
       </svg>
     </div>
   );
