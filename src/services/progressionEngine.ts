@@ -150,8 +150,10 @@ export const progressionEngine = {
    * Unidad 1 siempre está desbloqueada.
    * Unidades superiores requieren haber derrotado al Jefe de la unidad inmediatamente anterior.
    */
-  isUnitUnlocked(_unitId: number, _pathId: 'kotlin' | 'sql', _user: UserProfile): boolean {
-    return true; // Desbloqueo temporal de todas las unidades solicitado
+  isUnitUnlocked(unitId: number, pathId: 'kotlin' | 'sql', user: UserProfile): boolean {
+    if (unitId === 1) return true;
+    const previousBossId = `${pathId}-u0${unitId - 1}-boss`;
+    return (user.defeatedBosses || []).includes(previousBossId);
   },
 
   /**
@@ -161,12 +163,56 @@ export const progressionEngine = {
    * 3. El jefe se desbloquea cuando todas las lecciones de la unidad están completadas.
    */
   isNodeUnlocked(
-    _node: TrackNode,
-    _track: TrackNode[],
-    _user: UserProfile,
-    _progress: Record<string, LessonProgress>
+    node: TrackNode,
+    track: TrackNode[],
+    user: UserProfile,
+    progress: Record<string, LessonProgress>
   ): boolean {
-    return true; // Desbloqueo temporal de todos los niveles, cofres y jefes solicitado
+    const pathId =
+      (node.lesson?.path as 'kotlin' | 'sql') ||
+      (track[0]?.lesson?.path as 'kotlin' | 'sql') ||
+      user.currentPath ||
+      'kotlin';
+
+    if (!this.isUnitUnlocked(node.unitId, pathId, user)) {
+      return false;
+    }
+
+    // Caso 1: Nodos de Lección
+    if (node.type === 'lesson') {
+      const prevLesson = track
+        .slice(0, node.indexInTrack)
+        .reverse()
+        .find(n => n.type === 'lesson');
+
+      // Si es la primera lección de la unidad
+      if (!prevLesson) {
+        return this.isUnitUnlocked(node.unitId, pathId, user);
+      }
+
+      return this.isNodeCompleted(prevLesson, user, progress);
+    }
+
+    // Caso 2: Nodos de Cofre
+    // "Los cofres deben abrirse hasta que uno pase por ellos. Es decir si hay un cofre entre A y B, debe poder abrirse cuando estoy en B."
+    if (node.type === 'chest') {
+      const nextNode = track[node.indexInTrack + 1];
+      if (nextNode) {
+        // Se puede abrir cuando el estudiante ha alcanzado B (B está desbloqueado) o ya completó B
+        return this.isNodeUnlocked(nextNode, track, user, progress) || this.isNodeCompleted(nextNode, user, progress);
+      }
+      // Fallback si no hubiera nodo posterior: verificar el anterior
+      const previousNode = track[node.indexInTrack - 1];
+      return previousNode ? this.isNodeCompleted(previousNode, user, progress) : false;
+    }
+
+    // Caso 3: Jefe de Unidad
+    if (node.type === 'boss') {
+      const lessonsInUnit = track.filter(n => n.type === 'lesson');
+      return lessonsInUnit.length > 0 && lessonsInUnit.every(l => this.isNodeCompleted(l, user, progress));
+    }
+
+    return false;
   },
 
   /**
@@ -174,11 +220,56 @@ export const progressionEngine = {
    * Valida en lógica de negocio si el usuario tiene permiso para iniciar una lección, cofre o jefe.
    */
   canAccessNode(
-    _nodeId: string,
-    _unit: Unit,
-    _user: UserProfile,
-    _progress: Record<string, LessonProgress>
+    nodeId: string,
+    unit: Unit,
+    user: UserProfile,
+    progress: Record<string, LessonProgress>
   ): { allowed: boolean; reason?: string; previousNodeTitle?: string } {
-    return { allowed: true }; // Desbloqueo temporal activo
+    const pathId = (unit.lessons?.[0]?.path as 'kotlin' | 'sql') || user.currentPath || 'kotlin';
+    const track = this.getUnitTrack(unit, pathId);
+    const node = track.find(n => n.id === nodeId);
+
+    if (!node) {
+      return { allowed: false, reason: 'El elemento solicitado no existe en la ruta de aprendizaje.' };
+    }
+
+    if (!this.isUnitUnlocked(node.unitId, pathId, user)) {
+      return {
+        allowed: false,
+        reason: `Debes vencer al Jefe de la Unidad ${node.unitId - 1} antes de ingresar a los contenidos de la Unidad ${node.unitId}.`
+      };
+    }
+
+    if (this.isNodeUnlocked(node, track, user, progress)) {
+      return { allowed: true };
+    }
+
+    if (node.type === 'chest') {
+      const nextNode = track[node.indexInTrack + 1];
+      const nextTitle = nextNode ? nextNode.title : 'el siguiente nivel';
+      return {
+        allowed: false,
+        reason: `Cofre en el camino: Debes avanzar y alcanzar "${nextTitle}" para poder abrir este cofre.`
+      };
+    }
+
+    if (node.type === 'boss') {
+      return {
+        allowed: false,
+        reason: 'Debes superar todas las lecciones de la unidad antes de enfrentar al Jefe.'
+      };
+    }
+
+    const prevLesson = track
+      .slice(0, node.indexInTrack)
+      .reverse()
+      .find(n => n.type === 'lesson');
+    const prevTitle = prevLesson ? prevLesson.title : 'el nivel anterior';
+
+    return {
+      allowed: false,
+      reason: `Progresión bloqueada: Debes completar primero "${prevTitle}" en orden secuencial para continuar.`,
+      previousNodeTitle: prevTitle
+    };
   }
 };
