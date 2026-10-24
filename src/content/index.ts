@@ -62,7 +62,7 @@ export const UNITS_KOTLIN: Unit[] = [
   {
     id: 1,
     title: "Pensamiento lógico y primeros programas",
-    description: "Comprende el propósito del software, el modelo Entrada-Proceso-Salida, algoritmos ordenados, traza manual de instrucciones, la función fun main(), print/println y comentarios en el código.",
+    description: "Comprende el propósito del software, el modelo Entrada-Proceso-Salida, algoritmos ordenados, diagramas de flujo interactivos, pseudocódigo estructurado, secuencias lineales, traza manual de instrucciones, la función fun main(), print/println y comentarios en el código.",
     icon: "Brain",
     color: "#06B6D4",
     stage: "ETAPA I. COMPRENDER CÓMO FUNCIONA UN PROGRAMA",
@@ -133,8 +133,8 @@ export const UNITS_KOTLIN: Unit[] = [
   },
   {
     id: 9,
-    title: "Colecciones",
-    description: "Listas y acceso por índice, List vs MutableList, agregar/modificar/eliminar, recorrer colecciones, conjuntos Set sin duplicados, diccionarios Map y cómo elegir la colección adecuada.",
+    title: "Arreglos y Colecciones",
+    description: "Arreglos (Arrays) de tamaño fijo, vectores y matrices, listas y acceso por índice, List vs MutableList, agregar/modificar/eliminar, conjuntos Set sin duplicados, diccionarios Map y selección de colecciones.",
     icon: "ListFilter",
     color: "#E11D48",
     stage: "ETAPA II. TRABAJAR CON INFORMACIÓN Y ESTRUCTURAS",

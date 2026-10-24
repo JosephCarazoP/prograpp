@@ -262,113 +262,98 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({
   ];
 
   return (
-    <div className="profile-page-root" role="dialog" aria-modal="true" aria-label="Perfil de usuario">
+    <div className="profile-page-root" role="region" aria-label="Perfil de usuario">
       <div className="profile-page-container duo-profile-screen">
-        {/* ═══ BANNER VERDE DUOLINGO CON AVATAR ARRIBA (FOTO 2) ═══ */}
-        <section className="duo-profile-green-banner">
-          {/* Top Bar: Volver, Nombre del Usuario, Compartir y Ajustes */}
-          <div className="duo-profile-top-bar">
+        {/* ═══ CABECERA NEO-BRUTALISM (IGUAL A TODAS LAS PANTALLAS) ═══ */}
+        <header className="duo-profile-topbar">
+          <div className="duo-profile-nav-left">
             <button
+              type="button"
+              className="duo-3d-back-btn"
               onClick={() => {
                 soundService.playToken();
                 onBack();
               }}
-              className="duo-profile-header-icon-btn"
-              title="Volver al Camino"
-              aria-label="Volver al Camino"
-              type="button"
+              title="Volver a la ruta de aprendizaje"
+              aria-label="Volver"
             >
-              <ArrowLeft size={22} color="#FFFFFF" strokeWidth={2.8} />
+              <ArrowLeft size={20} strokeWidth={3} />
             </button>
-
-            <span className="duo-profile-header-username">{displayName}</span>
-
-            <div className="duo-profile-header-actions">
-              <button
-                onClick={handleShare}
-                className="duo-profile-header-icon-btn"
-                title="Compartir Perfil"
-                aria-label="Compartir Perfil"
-                type="button"
-              >
-                <Share2 size={20} color="#FFFFFF" strokeWidth={2.6} />
-              </button>
-              <button
-                onClick={() => {
-                  soundService.playToken();
-                  setActiveTab('settings');
-                }}
-                className="duo-profile-header-icon-btn"
-                title="Ajustes de Cuenta"
-                aria-label="Ajustes de Cuenta"
-                type="button"
-              >
-                <Settings size={20} color="#FFFFFF" strokeWidth={2.6} />
-              </button>
-            </div>
-          </div>
-
-          {/* AVATAR ARRIBA (CENTRO DE LA SECCIÓN VERDE DUOLINGO) */}
-          <div className="duo-profile-avatar-hero-slot">
-            <DevAvatar
-              avatarId={selectedAvatar}
-              skinId={user.equippedSkin}
-              size={120}
-            />
-          </div>
-        </section>
-
-        {/* ═══ HOJA BLANCA CURVADA DEBAJO (FOTO 2) ═══ */}
-        <main className="duo-profile-white-sheet">
-          {/* Meta Handle y Miembro Desde */}
-          <div className="duo-profile-handle-tag">
-            <span>@{user.studentCode ? user.studentCode.toUpperCase() : 'DEV'}</span>
-            <span>•</span>
-            <span>UNIDO EN 2024</span>
-            {user.group && (
-              <>
-                <span>•</span>
-                <span>{user.group.toUpperCase()}</span>
-              </>
-            )}
-          </div>
-
-          {/* Fila de Insignias y Datos */}
-          <div className="duo-profile-tags-row">
-            <div className="duo-profile-tag-pill path">
-              {selectedPath === 'kotlin' ? (
-                <>
-                  <Code2 size={14} color="#7C3AED" strokeWidth={2.6} />
-                  <span>Kotlin</span>
-                </>
-              ) : (
-                <>
-                  <Database size={14} color="#0284C7" strokeWidth={2.6} />
-                  <span>SQL</span>
-                </>
-              )}
-            </div>
-
-            <div className="duo-profile-tag-pill rank">
-              <Star size={14} fill="#EAB308" color="#EAB308" />
-              <span>Nivel {currentLevel} · {getRankTitle(currentLevel)}</span>
-            </div>
-
-            {user.idNumber && (
-              <div className="duo-profile-tag-pill id">
-                <span>Cédula: {user.idNumber}</span>
+            <div>
+              <div className="duo-profile-badge-top">
+                <User size={13} strokeWidth={2.6} /> PERFIL DE ESTUDIANTE
               </div>
-            )}
+              <h1 className="duo-profile-top-title">{displayName}</h1>
+            </div>
           </div>
 
-          {/* BOTÓN DUOLINGO BLANCO: + COMPARTIR PERFIL (Estilo "+ ADD FRIENDS" de Foto 2) */}
+          <div className="duo-profile-top-actions">
+            <button
+              type="button"
+              className="duo-3d-back-btn"
+              onClick={handleShare}
+              title="Compartir Perfil"
+              aria-label="Compartir Perfil"
+            >
+              <Share2 size={18} strokeWidth={2.6} />
+            </button>
+          </div>
+        </header>
+
+        {/* ═══ TARJETA HERO DEL ESTUDIANTE NEO-BRUTALISM ═══ */}
+        <div className="duo-profile-hero-card">
+          <div className="duo-profile-hero-main">
+            <div className="neo-profile-avatar-frame">
+              <DevAvatar
+                avatarId={selectedAvatar}
+                skinId={user.equippedSkin}
+                size={88}
+              />
+            </div>
+
+            <div className="duo-profile-hero-info">
+              <div className="duo-profile-name-row">
+                <h2 className="duo-profile-name-text">{displayName}</h2>
+                <span className="duo-profile-code-chip">@{user.studentCode ? user.studentCode.toUpperCase() : 'DEV'}</span>
+              </div>
+
+              <div className="duo-profile-chips-wrap">
+                {user.group && (
+                  <span className="duo-profile-meta-chip group">{user.group.toUpperCase()}</span>
+                )}
+                <span className={`duo-profile-meta-chip path ${selectedPath}`}>
+                  {selectedPath === 'kotlin' ? (
+                    <>
+                      <Code2 size={13} color="#000000" strokeWidth={2.6} />
+                      <span>Kotlin</span>
+                    </>
+                  ) : (
+                    <>
+                      <Database size={13} color="#000000" strokeWidth={2.6} />
+                      <span>SQL</span>
+                    </>
+                  )}
+                </span>
+                <span className="duo-profile-meta-chip rank">
+                  <Star size={13} fill="#EAB308" color="#000000" strokeWidth={2} />
+                  <span>Nivel {currentLevel} · {getRankTitle(currentLevel)}</span>
+                </span>
+                {user.idNumber && (
+                  <span className="duo-profile-meta-chip id">
+                    <span>Cédula: {user.idNumber}</span>
+                  </span>
+                )}
+              </div>
+            </div>
+          </div>
+
           <div className="duo-profile-cta-group">
             <button
               type="button"
               className="duo-profile-white-btn"
               onClick={handleShare}
             >
-              <Share2 size={16} strokeWidth={2.6} />
+              <Share2 size={17} strokeWidth={2.6} />
               <span>{copied ? '¡ENLACE COPIADO!' : '+ COMPARTIR PERFIL'}</span>
             </button>
 
@@ -381,18 +366,27 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({
                   onOpenLocker();
                 }}
               >
-                <Shirt size={16} strokeWidth={2.6} />
+                <Shirt size={17} strokeWidth={2.6} />
                 <span>VESTIDOR (SKINS)</span>
               </button>
             )}
           </div>
+        </div>
 
-          {/* ─── SECCIÓN: OVERVIEW (FOTO 2) ─── */}
-          <div className="duo-profile-section-title">OVERVIEW</div>
+        {/* ═══ HOJA DE CONTENIDO NEO-BRUTALISM ═══ */}
+        <main className="duo-profile-white-sheet">
+
+          {/* ─── SECCIÓN: OVERVIEW NEO-BRUTALISM ─── */}
+          <div className="duo-profile-section-title">
+            <Award size={15} color="#000000" strokeWidth={3} />
+            <span>OVERVIEW</span>
+          </div>
           <div className="duo-profile-overview-box">
-            {/* Racha */}
-            <div className="duo-overview-item">
-              <Flame size={24} color="#FF9500" fill="#FF9500" />
+            {/* Racha con icono animado neo-brutal */}
+            <div className="duo-overview-card streak">
+              <div className="duo-overview-icon streak">
+                <Flame size={24} color="#000000" fill="#FF5400" strokeWidth={2.4} />
+              </div>
               <div className="duo-overview-item-text">
                 <span className="duo-overview-item-val">{streakCount} días</span>
                 <span className="duo-overview-item-lbl">Racha</span>
@@ -400,8 +394,10 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({
             </div>
 
             {/* Total XP */}
-            <div className="duo-overview-item">
-              <Zap size={24} color="#0284C7" fill="#0284C7" />
+            <div className="duo-overview-card xp">
+              <div className="duo-overview-icon xp">
+                <Zap size={24} color="#000000" fill="#06B6D4" strokeWidth={2.4} />
+              </div>
               <div className="duo-overview-item-text">
                 <span className="duo-overview-item-val">{totalXp.toLocaleString()} XP</span>
                 <span className="duo-overview-item-lbl">Total Exp</span>
@@ -409,8 +405,10 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({
             </div>
 
             {/* Rango */}
-            <div className="duo-overview-item">
-              <Award size={24} color="#EAB308" />
+            <div className="duo-overview-card rank">
+              <div className="duo-overview-icon rank">
+                <Award size={24} color="#000000" fill="#EAB308" strokeWidth={2.4} />
+              </div>
               <div className="duo-overview-item-text">
                 <span className="duo-overview-item-val">{getRankTitle(currentLevel)}</span>
                 <span className="duo-overview-item-lbl">Rango</span>
@@ -418,8 +416,10 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({
             </div>
 
             {/* Retos y Jefes */}
-            <div className="duo-overview-item">
-              <Trophy size={24} color="#8B5CF6" />
+            <div className="duo-overview-card bosses">
+              <div className="duo-overview-icon bosses">
+                <Trophy size={24} color="#000000" fill="#8B5CF6" strokeWidth={2.4} />
+              </div>
               <div className="duo-overview-item-text">
                 <span className="duo-overview-item-val">{bossesCount + chestsCount}</span>
                 <span className="duo-overview-item-lbl">Jefes & Cofres</span>
@@ -463,10 +463,10 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({
             ))}
           </nav>
 
-          {/* ═══ PESTAÑA 1: LOGROS ═══ */}
+          {/* ═══ PESTAÑA 1: LOGROS NEO-BRUTALISM ═══ */}
           {activeTab === 'stats' && (
             <section aria-label="Logros y medallas">
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
                 {achievements.map((ach) => {
                   const Icon = ach.icon;
                   return (
@@ -474,38 +474,39 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({
                       key={ach.id}
                       style={{
                         background: ach.unlocked ? '#FFFFFF' : '#F8FAFC',
-                        border: '2px solid #E2E8F0',
-                        borderBottom: `4px solid ${ach.unlocked ? '#CBD5E1' : '#E2E8F0'}`,
+                        border: '2.5px solid #000000',
+                        boxShadow: ach.unlocked ? '3.5px 3.5px 0px #000000' : '2px 2px 0px #CBD5E1',
                         borderRadius: 16,
                         padding: '12px 14px',
                         display: 'flex',
                         alignItems: 'center',
                         gap: 12,
-                        opacity: ach.unlocked ? 1 : 0.65
+                        opacity: ach.unlocked ? 1 : 0.7
                       }}
                     >
                       <div
                         style={{
                           width: 44,
                           height: 44,
-                          borderRadius: 14,
-                          background: ach.unlocked ? `${ach.color}20` : '#F1F5F9',
-                          border: `2px solid ${ach.unlocked ? ach.color : '#CBD5E1'}`,
+                          borderRadius: 12,
+                          background: ach.unlocked ? `${ach.color}25` : '#F1F5F9',
+                          border: '2px solid #000000',
+                          boxShadow: '2px 2px 0px #000000',
                           display: 'flex',
                           alignItems: 'center',
                           justifyContent: 'center',
                           flexShrink: 0
                         }}
                       >
-                        <Icon size={22} color={ach.unlocked ? ach.color : '#94A3B8'} strokeWidth={2.4} />
+                        <Icon size={22} color={ach.unlocked ? ach.color : '#64748B'} strokeWidth={2.6} />
                       </div>
 
                       <div style={{ flex: 1, minWidth: 0 }}>
                         <div
                           style={{
                             fontSize: '0.94rem',
-                            fontWeight: 800,
-                            color: ach.unlocked ? '#0F172A' : '#64748B',
+                            fontWeight: 900,
+                            color: '#000000',
                             marginBottom: 2
                           }}
                         >
@@ -513,9 +514,9 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({
                         </div>
                         <div
                           style={{
-                            fontSize: '0.76rem',
-                            fontWeight: 600,
-                            color: '#64748B',
+                            fontSize: '0.78rem',
+                            fontWeight: 700,
+                            color: '#475569',
                             lineHeight: 1.3
                           }}
                         >
@@ -526,37 +527,39 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({
                       {ach.unlocked ? (
                         <div
                           style={{
-                            background: '#DCFCE7',
-                            color: '#15803D',
-                            border: '1.5px solid #86EFAC',
+                            background: '#4ADE80',
+                            color: '#000000',
+                            border: '2px solid #000000',
+                            boxShadow: '1.5px 1.5px 0px #000000',
                             padding: '4px 10px',
                             borderRadius: 10,
                             fontSize: '0.72rem',
-                            fontWeight: 800,
+                            fontWeight: 900,
                             display: 'flex',
                             alignItems: 'center',
                             gap: 4
                           }}
                         >
-                          <Check size={14} strokeWidth={3} />
+                          <Check size={14} strokeWidth={3.2} />
                           <span>LISTO</span>
                         </div>
                       ) : (
                         <div
                           style={{
-                            background: '#F1F5F9',
-                            color: '#94A3B8',
-                            border: '1.5px solid #CBD5E1',
+                            background: '#E2E8F0',
+                            color: '#475569',
+                            border: '2px solid #000000',
+                            boxShadow: '1.5px 1.5px 0px #000000',
                             padding: '4px 10px',
                             borderRadius: 10,
                             fontSize: '0.72rem',
-                            fontWeight: 800,
+                            fontWeight: 900,
                             display: 'flex',
                             alignItems: 'center',
                             gap: 4
                           }}
                         >
-                          <Lock size={12} strokeWidth={2.5} />
+                          <Lock size={12} strokeWidth={2.6} />
                           <span>BLOQUEADO</span>
                         </div>
                       )}
@@ -567,7 +570,7 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({
             </section>
           )}
 
-          {/* ═══ PESTAÑA 2: COMODINES (Tarjetas 3D Coherentes con la App) ═══ */}
+          {/* ═══ PESTAÑA 2: COMODINES NEO-BRUTALISM ═══ */}
           {activeTab === 'powerups' && (
             <section aria-label="Inventario de comodines">
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 16 }}>
@@ -576,27 +579,27 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({
                     key={item.id}
                     style={{
                       background: '#FFFFFF',
-                      border: '2px solid #E2E8F0',
-                      boxShadow: '0 4px 0 #CBD5E1',
-                      borderRadius: 20,
+                      border: '2.5px solid #000000',
+                      boxShadow: '4px 4px 0px #000000',
+                      borderRadius: 18,
                       padding: '18px 12px',
                       display: 'flex',
                       flexDirection: 'column',
                       alignItems: 'center',
                       textAlign: 'center',
                       position: 'relative',
-                      opacity: item.count === 0 ? 0.6 : 1
+                      opacity: item.count === 0 ? 0.65 : 1
                     }}
                   >
-                    {/* Token de Icono 3D */}
+                    {/* Token de Icono Neo-brutalism */}
                     <div
                       style={{
                         width: 58,
                         height: 54,
-                        borderRadius: 16,
+                        borderRadius: 14,
                         background: item.tokenBg,
-                        border: `2px solid ${item.tokenBorder}`,
-                        boxShadow: `0 4px 0 ${item.tokenShadow}`,
+                        border: '2.5px solid #000000',
+                        boxShadow: '2.5px 2.5px 0px #000000',
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
@@ -606,20 +609,20 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({
                       {item.icon}
                     </div>
 
-                    <div style={{ fontSize: '0.94rem', fontWeight: 800, color: '#1E293B', marginBottom: 6 }}>
+                    <div style={{ fontSize: '0.94rem', fontWeight: 900, color: '#000000', marginBottom: 6 }}>
                       {item.title}
                     </div>
 
                     <div
                       style={{
-                        background: '#F1F5F9',
-                        border: '1.5px solid #CBD5E1',
-                        boxShadow: '0 2px 0 #94A3B8',
-                        color: '#475569',
-                        borderRadius: 999,
+                        background: '#FFE600',
+                        border: '2px solid #000000',
+                        boxShadow: '1.5px 1.5px 0px #000000',
+                        color: '#000000',
+                        borderRadius: 10,
                         padding: '3px 10px',
                         fontSize: '0.72rem',
-                        fontWeight: 800,
+                        fontWeight: 900,
                         textTransform: 'uppercase'
                       }}
                     >
@@ -629,28 +632,28 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({
                 ))}
               </div>
 
-              {/* Guía Explicativa de Comodines en Tarjeta Duolingo 3D */}
+              {/* Guía Explicativa de Comodines en Tarjeta Neo-brutalism */}
               <div className="profile-card-duo">
                 <span className="profile-card-label">Guía de uso de tus comodines</span>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
                   {[
                     {
-                      icon: <GraduationCap size={18} color="#38BDF8" strokeWidth={2.4} />,
+                      icon: <GraduationCap size={18} color="#0284C7" strokeWidth={2.6} />,
                       name: 'Profesor',
                       desc: 'Muestra una pista conceptual explicada sin penalización'
                     },
                     {
-                      icon: <EyeOff size={18} color="#F59E0B" strokeWidth={2.4} />,
+                      icon: <EyeOff size={18} color="#D97706" strokeWidth={2.6} />,
                       name: '50 / 50',
                       desc: 'Descarta 2 opciones erróneas de la pantalla al instante'
                     },
                     {
-                      icon: <ShieldCheck size={18} color="#22C55E" strokeWidth={2.4} />,
+                      icon: <ShieldCheck size={18} color="#16A34A" strokeWidth={2.6} />,
                       name: 'Escudo',
                       desc: 'Absorbe automáticamente tu próximo error en lección'
                     },
                     {
-                      icon: <Code2 size={18} color="#A855F7" strokeWidth={2.4} />,
+                      icon: <Code2 size={18} color="#7C3AED" strokeWidth={2.6} />,
                       name: 'Código',
                       desc: 'Resalta la sintaxis de la solución en el editor de código'
                     }
@@ -658,11 +661,12 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({
                     <div key={idx} style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                       <div
                         style={{
-                          width: 34,
-                          height: 34,
+                          width: 36,
+                          height: 36,
                           borderRadius: 10,
                           background: '#F8FAFC',
-                          border: '1.5px solid #CBD5E1',
+                          border: '2px solid #000000',
+                          boxShadow: '1.5px 1.5px 0px #000000',
                           display: 'flex',
                           alignItems: 'center',
                           justifyContent: 'center',
@@ -672,8 +676,8 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({
                         {p.icon}
                       </div>
                       <div style={{ fontSize: '0.82rem', lineHeight: 1.35 }}>
-                        <strong style={{ color: '#1E293B' }}>{p.name}: </strong>
-                        <span style={{ color: '#64748B' }}>{p.desc}</span>
+                        <strong style={{ color: '#000000', fontWeight: 900 }}>{p.name}: </strong>
+                        <span style={{ color: '#475569', fontWeight: 700 }}>{p.desc}</span>
                       </div>
                     </div>
                   ))}
@@ -881,17 +885,18 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({
             )}
           </div>
 
-          {/* Alerta explicativa de estado de evaluaciones */}
+          {/* Alerta explicativa de estado de evaluaciones Neo-brutalism */}
           {evaluationAlert && (
             <div
               style={{
-                marginTop: 10,
+                marginTop: 12,
                 background: '#FEF2F2',
-                border: '2px solid #FCA5A5',
+                border: '2.5px solid #000000',
+                boxShadow: '3px 3px 0px #000000',
                 borderRadius: 14,
-                padding: '10px 14px',
-                fontSize: '0.82rem',
-                fontWeight: 700,
+                padding: '12px 14px',
+                fontSize: '0.84rem',
+                fontWeight: 800,
                 color: '#991B1B',
                 lineHeight: 1.35,
                 display: 'flex',
@@ -903,15 +908,30 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({
               <span>{evaluationAlert}</span>
               <button
                 onClick={() => setEvaluationAlert(null)}
-                style={{ background: 'transparent', border: 'none', cursor: 'pointer', color: '#991B1B', fontWeight: 800 }}
+                style={{
+                  background: '#FFFFFF',
+                  border: '2px solid #000000',
+                  boxShadow: '1.5px 1.5px 0px #000000',
+                  borderRadius: 8,
+                  cursor: 'pointer',
+                  color: '#000000',
+                  fontWeight: 900,
+                  width: 26,
+                  height: 26,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  flexShrink: 0
+                }}
                 type="button"
+                aria-label="Cerrar alerta"
               >
                 ✕
               </button>
             </div>
           )}
 
-          {/* ─── ACCIONES DE CUENTA DUOLINGO 3D ─── */}
+          {/* ─── ACCIONES DE CUENTA NEO-BRUTALISM ─── */}
           <div style={{ display: 'flex', gap: 10, marginTop: 14 }}>
             <button
               className="btn-3d btn-outline"
@@ -923,7 +943,7 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({
               }}
               type="button"
             >
-              <Settings size={16} strokeWidth={2.4} />
+              <Settings size={16} strokeWidth={2.6} />
               Ajustes de Cuenta
             </button>
 
@@ -933,24 +953,24 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({
                 flex: 1,
                 padding: 13,
                 fontSize: '0.85rem',
-                color: '#F87171'
+                color: '#EF4444'
               }}
               onClick={handleSignOut}
             >
-              <LogOut size={16} strokeWidth={2.4} />
+              <LogOut size={16} strokeWidth={2.6} />
               Cerrar Sesión
             </button>
           </div>
 
-          {/* ─── ZONA DE RIESGO (100% ABAJO DEL TODO - REQUIERE ESCRIBIR) ─── */}
+          {/* ─── ZONA DE RIESGO NEO-BRUTALISM (100% ABAJO DEL TODO) ─── */}
           <div
             style={{
               marginTop: 26,
               marginBottom: 16,
               background: '#FFF5F5',
-              border: '2px solid #FCA5A5',
-              borderBottom: '4.5px solid #EF4444',
-              borderRadius: 20,
+              border: '2.5px solid #000000',
+              boxShadow: '4px 4px 0px #000000',
+              borderRadius: 18,
               padding: '16px 18px',
               textAlign: 'left'
             }}
@@ -958,24 +978,25 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({
             <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
               <div
                 style={{
-                  width: 28,
-                  height: 28,
-                  borderRadius: 8,
-                  background: '#FEE2E2',
-                  border: '1.5px solid #F87171',
+                  width: 32,
+                  height: 32,
+                  borderRadius: 10,
+                  background: '#EF4444',
+                  border: '2px solid #000000',
+                  boxShadow: '2px 2px 0px #000000',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  color: '#DC2626'
+                  color: '#FFFFFF'
                 }}
               >
-                <AlertTriangle size={16} strokeWidth={2.8} />
+                <AlertTriangle size={17} strokeWidth={2.8} />
               </div>
               <span
                 style={{
-                  fontSize: '0.86rem',
+                  fontSize: '0.88rem',
                   fontWeight: 900,
-                  color: '#991B1B',
+                  color: '#000000',
                   letterSpacing: '0.04em',
                   textTransform: 'uppercase'
                 }}
@@ -984,7 +1005,7 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({
               </span>
             </div>
 
-            <p style={{ fontSize: '0.82rem', color: '#7F1D1D', margin: '0 0 12px 0', lineHeight: 1.45, fontWeight: 600 }}>
+            <p style={{ fontSize: '0.82rem', color: '#7F1D1D', margin: '0 0 12px 0', lineHeight: 1.45, fontWeight: 700 }}>
               Esta acción es destructiva e irreversible. Borrará todo tu progreso de niveles completados, devolverá tu cuenta al Nivel 1 y reiniciará tu experiencia (EXP).
             </p>
 
@@ -992,7 +1013,8 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({
               <div
                 style={{
                   background: '#FFFFFF',
-                  border: '1.5px solid #FECACA',
+                  border: '2px solid #000000',
+                  boxShadow: '2.5px 2.5px 0px #000000',
                   borderRadius: 14,
                   padding: 14,
                   display: 'flex',
@@ -1000,7 +1022,7 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({
                   gap: 10
                 }}
               >
-                <label style={{ fontSize: '0.78rem', fontWeight: 800, color: '#991B1B' }}>
+                <label style={{ fontSize: '0.8rem', fontWeight: 900, color: '#991B1B' }}>
                   Escribe <strong style={{ color: '#DC2626', textDecoration: 'underline' }}>REINICIAR</strong> para confirmar:
                 </label>
                 <input
@@ -1012,10 +1034,10 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({
                   style={{
                     padding: '10px 14px',
                     borderRadius: 12,
-                    border: '2px solid',
-                    borderColor: resetInputText.trim().toUpperCase() === 'REINICIAR' ? '#DC2626' : '#CBD5E1',
+                    border: '2.5px solid #000000',
+                    boxShadow: '2px 2px 0px #000000',
                     fontSize: '0.9rem',
-                    fontWeight: 800,
+                    fontWeight: 900,
                     fontFamily: 'JetBrains Mono, monospace',
                     letterSpacing: '1px',
                     outline: 'none',
@@ -1057,9 +1079,7 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({
                   width: '100%',
                   padding: 12,
                   fontSize: '0.86rem',
-                  color: '#DC2626',
-                  borderColor: '#FCA5A5',
-                  boxShadow: '0 3px 0 #F87171'
+                  color: '#DC2626'
                 }}
                 onClick={() => {
                   soundService.playToken();
@@ -1067,7 +1087,7 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({
                   setResetInputText('');
                 }}
               >
-                <RotateCcw size={15} strokeWidth={2.4} /> Reiniciar Progreso de Aventura
+                <RotateCcw size={15} strokeWidth={2.6} /> Reiniciar Progreso de Aventura
               </button>
             )}
           </div>

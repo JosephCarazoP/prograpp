@@ -64,10 +64,8 @@ export const SQL_UNIT_12_LESSONS: Lesson[] = [
         "id": "sql-u12-l01-e04",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea que contiene el error en este código de \"Activación de llaves foráneas (PRAGMA foreign_keys)\":",
-        "codeSnippet": [
-          "SET foreign_keys = ON // En SQLite la directiva es PRAGMA, no SET"
-        ],
-        "bugLineIndex": 0,
+        "codeSnippet": [ "-- Consulta sobre estudiantes", "SET foreign_keys = ON", "ORDER BY id ASC;" ],
+        "bugLineIndex": 1,
         "explanation": "Creer que tus llaves foráneas te protegen si no ejecutaste el comando PRAGMA: ¡SQLite permitirá meter IDs inexistentes!",
         "xpReward": 15
       },
@@ -153,11 +151,7 @@ export const SQL_UNIT_12_LESSONS: Lesson[] = [
         "id": "sql-u12-l01-e09",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea con el error de diseño o sintaxis en \"Activación de llaves foráneas (PRAGMA foreign_keys)\":",
-        "codeSnippet": [
-          "-- Consulta sobre el esquema educativo",
-          "SELECT id, nombre FROM estudiantes",
-          "WHERE id == 10; // Error: en SQL la igualdad se escribe con un solo = (WHERE id = 10)"
-        ],
+        "codeSnippet": [ "-- Consulta sobre el esquema educativo", "SELECT id, nombre FROM estudiantes", "WHERE id == 10;" ],
         "bugLineIndex": 2,
         "explanation": "Creer que tus llaves foráneas te protegen si no ejecutaste el comando PRAGMA: ¡SQLite permitirá meter IDs inexistentes!",
         "xpReward": 15
@@ -254,10 +248,8 @@ export const SQL_UNIT_12_LESSONS: Lesson[] = [
         "id": "sql-u12-l02-e04",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea que contiene el error en este código de \"Referencias inexistentes\":",
-        "codeSnippet": [
-          "// Insertar hijo con FK huérfana cuando foreign_keys está activo"
-        ],
-        "bugLineIndex": 0,
+        "codeSnippet": [ "-- Consulta sobre estudiantes", "// Insertar hijo con FK huérfana cuando foreign_keys está activo", "ORDER BY id ASC;" ],
+        "bugLineIndex": 1,
         "explanation": "Desactivar la verificación para salir del paso: es una deuda técnica que corrompe la consistencia del negocio.",
         "xpReward": 15
       },
@@ -343,11 +335,7 @@ export const SQL_UNIT_12_LESSONS: Lesson[] = [
         "id": "sql-u12-l02-e09",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea con el error de diseño o sintaxis en \"Referencias inexistentes\":",
-        "codeSnippet": [
-          "-- Consulta sobre el esquema educativo",
-          "SELECT id, nombre FROM estudiantes",
-          "WHERE id == 10; // Error: en SQL la igualdad se escribe con un solo = (WHERE id = 10)"
-        ],
+        "codeSnippet": [ "-- Consulta sobre el esquema educativo", "SELECT id, nombre FROM estudiantes", "WHERE id == 10;" ],
         "bugLineIndex": 2,
         "explanation": "Desactivar la verificación para salir del paso: es una deuda técnica que corrompe la consistencia del negocio.",
         "xpReward": 15
@@ -438,10 +426,8 @@ export const SQL_UNIT_12_LESSONS: Lesson[] = [
         "id": "sql-u12-l03-e04",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea que contiene el error en este código de \"ON DELETE / ON UPDATE: NO ACTION, RESTRICT, CASCADE, SET NULL\":",
-        "codeSnippet": [
-          "ON DELETE REMOVE // La palabra clave del estándar SQL es CASCADE"
-        ],
-        "bugLineIndex": 0,
+        "codeSnippet": [ "-- Consulta sobre estudiantes", "ON DELETE REMOVE", "ORDER BY id ASC;" ],
+        "bugLineIndex": 1,
         "explanation": "Cuidado con ON DELETE CASCADE en cascadas multinivel: podrías borrar media base de datos sin darte cuenta al eliminar un solo registro.",
         "xpReward": 15
       },
@@ -527,11 +513,7 @@ export const SQL_UNIT_12_LESSONS: Lesson[] = [
         "id": "sql-u12-l03-e09",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea con el error de diseño o sintaxis en \"ON DELETE / ON UPDATE: NO ACTION, RESTRICT, CASCADE, SET NULL\":",
-        "codeSnippet": [
-          "-- Consulta sobre el esquema educativo",
-          "SELECT id, nombre FROM estudiantes",
-          "WHERE id == 10; // Error: en SQL la igualdad se escribe con un solo = (WHERE id = 10)"
-        ],
+        "codeSnippet": [ "-- Consulta sobre el esquema educativo", "SELECT id, nombre FROM estudiantes", "WHERE id == 10;" ],
         "bugLineIndex": 2,
         "explanation": "Cuidado con ON DELETE CASCADE en cascadas multinivel: podrías borrar media base de datos sin darte cuenta al eliminar un solo registro.",
         "xpReward": 15
@@ -626,10 +608,8 @@ export const SQL_UNIT_12_LESSONS: Lesson[] = [
         "id": "sql-u12-l04-e04",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea que contiene el error en este código de \"Qué es una transacción\":",
-        "codeSnippet": [
-          "// Realizar transferencias de dinero sin envolverlas en transacciones ACID"
-        ],
-        "bugLineIndex": 0,
+        "codeSnippet": [ "-- Consulta sobre estudiantes", "// Realizar transferencias de dinero sin envolverlas en transacciones ACID", "ORDER BY id ASC;" ],
+        "bugLineIndex": 1,
         "explanation": "Hacer múltiples operaciones críticas sueltas sin englobarlas en una transacción: si se va la luz en medio, la base de datos queda corrupta.",
         "xpReward": 15
       },
@@ -715,11 +695,7 @@ export const SQL_UNIT_12_LESSONS: Lesson[] = [
         "id": "sql-u12-l04-e09",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea con el error de diseño o sintaxis en \"Qué es una transacción\":",
-        "codeSnippet": [
-          "-- Consulta sobre el esquema educativo",
-          "SELECT id, nombre FROM estudiantes",
-          "WHERE id == 10; // Error: en SQL la igualdad se escribe con un solo = (WHERE id = 10)"
-        ],
+        "codeSnippet": [ "-- Consulta sobre el esquema educativo", "SELECT id, nombre FROM estudiantes", "WHERE id == 10;" ],
         "bugLineIndex": 2,
         "explanation": "Hacer múltiples operaciones críticas sueltas sin englobarlas en una transacción: si se va la luz en medio, la base de datos queda corrupta.",
         "xpReward": 15
@@ -816,10 +792,8 @@ export const SQL_UNIT_12_LESSONS: Lesson[] = [
         "id": "sql-u12-l05-e04",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea que contiene el error en este código de \"BEGIN, COMMIT y ROLLBACK\":",
-        "codeSnippet": [
-          "START; // En SQLite la sentencia estándar de transacción es BEGIN"
-        ],
-        "bugLineIndex": 0,
+        "codeSnippet": [ "-- Consulta sobre estudiantes", "START;", "ORDER BY id ASC;" ],
+        "bugLineIndex": 1,
         "explanation": "Dejar una transacción abierta con BEGIN sin ejecutar COMMIT ni ROLLBACK bloqueará las tablas impidiendo el acceso a otros usuarios.",
         "xpReward": 15
       },
@@ -905,11 +879,7 @@ export const SQL_UNIT_12_LESSONS: Lesson[] = [
         "id": "sql-u12-l05-e09",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea con el error de diseño o sintaxis en \"BEGIN, COMMIT y ROLLBACK\":",
-        "codeSnippet": [
-          "-- Consulta sobre el esquema educativo",
-          "SELECT id, nombre FROM estudiantes",
-          "WHERE id == 10; // Error: en SQL la igualdad se escribe con un solo = (WHERE id = 10)"
-        ],
+        "codeSnippet": [ "-- Consulta sobre el esquema educativo", "SELECT id, nombre FROM estudiantes", "WHERE id == 10;" ],
         "bugLineIndex": 2,
         "explanation": "Dejar una transacción abierta con BEGIN sin ejecutar COMMIT ni ROLLBACK bloqueará las tablas impidiendo el acceso a otros usuarios.",
         "xpReward": 15

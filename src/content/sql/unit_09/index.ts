@@ -74,10 +74,8 @@ export const SQL_UNIT_09_LESSONS: Lesson[] = [
         "id": "sql-u09-l01-e04",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea que contiene el error en este código de \"Para qué sirve un JOIN\":",
-        "codeSnippet": [
-          "SELECT * FROM a JOIN b // Peligro: falta la condición ON (producto cartesiano)"
-        ],
-        "bugLineIndex": 0,
+        "codeSnippet": [ "-- Consulta sobre estudiantes", "SELECT * FROM a JOIN b", "ORDER BY id ASC;" ],
+        "bugLineIndex": 1,
         "explanation": "Si omites la cláusula ON, ocurrirá un Producto Cartesiano (todas las filas de A multiplicadas por todas las de B).",
         "xpReward": 15
       },
@@ -163,11 +161,7 @@ export const SQL_UNIT_09_LESSONS: Lesson[] = [
         "id": "sql-u09-l01-e09",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea con el error de diseño o sintaxis en \"Para qué sirve un JOIN\":",
-        "codeSnippet": [
-          "-- Consulta sobre el esquema educativo",
-          "SELECT id, nombre FROM estudiantes",
-          "WHERE id == 10; // Error: en SQL la igualdad se escribe con un solo = (WHERE id = 10)"
-        ],
+        "codeSnippet": [ "-- Consulta sobre el esquema educativo", "SELECT id, nombre FROM estudiantes", "WHERE id == 10;" ],
         "bugLineIndex": 2,
         "explanation": "Si omites la cláusula ON, ocurrirá un Producto Cartesiano (todas las filas de A multiplicadas por todas las de B).",
         "xpReward": 15
@@ -266,10 +260,8 @@ export const SQL_UNIT_09_LESSONS: Lesson[] = [
         "id": "sql-u09-l02-e04",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea que contiene el error en este código de \"INNER JOIN\":",
-        "codeSnippet": [
-          "FROM a INNER b // Falta la palabra clave JOIN"
-        ],
-        "bugLineIndex": 0,
+        "codeSnippet": [ "-- Consulta sobre estudiantes", "FROM a INNER b", "ORDER BY id ASC;" ],
+        "bugLineIndex": 1,
         "explanation": "Si un estudiante no tiene ninguna materia matriculada, un INNER JOIN lo excluirá por completo de la salida.",
         "xpReward": 15
       },
@@ -355,11 +347,7 @@ export const SQL_UNIT_09_LESSONS: Lesson[] = [
         "id": "sql-u09-l02-e09",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea con el error de diseño o sintaxis en \"INNER JOIN\":",
-        "codeSnippet": [
-          "-- Consulta sobre el esquema educativo",
-          "SELECT id, nombre FROM estudiantes",
-          "WHERE id == 10; // Error: en SQL la igualdad se escribe con un solo = (WHERE id = 10)"
-        ],
+        "codeSnippet": [ "-- Consulta sobre el esquema educativo", "SELECT id, nombre FROM estudiantes", "WHERE id == 10;" ],
         "bugLineIndex": 2,
         "explanation": "Si un estudiante no tiene ninguna materia matriculada, un INNER JOIN lo excluirá por completo de la salida.",
         "xpReward": 15
@@ -452,10 +440,8 @@ export const SQL_UNIT_09_LESSONS: Lesson[] = [
         "id": "sql-u09-l03-e04",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea que contiene el error en este código de \"Condiciones de unión con ON\":",
-        "codeSnippet": [
-          "JOIN matriculas WHERE estudiantes.id = matriculas.estudiante_id // Para JOIN se usa ON, no WHERE"
-        ],
-        "bugLineIndex": 0,
+        "codeSnippet": [ "-- Consulta sobre estudiantes", "JOIN matriculas WHERE estudiantes.id = matriculas.estudiante_id // Para JOIN se usa ON, no WHERE", "ORDER BY id ASC;" ],
+        "bugLineIndex": 1,
         "explanation": "No confundir ON con WHERE: ON define cómo se unen las tablas; WHERE filtra el resultado tras la unión.",
         "xpReward": 15
       },
@@ -541,11 +527,7 @@ export const SQL_UNIT_09_LESSONS: Lesson[] = [
         "id": "sql-u09-l03-e09",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea con el error de diseño o sintaxis en \"Condiciones de unión con ON\":",
-        "codeSnippet": [
-          "-- Consulta sobre el esquema educativo",
-          "SELECT id, nombre FROM estudiantes",
-          "WHERE id == 10; // Error: en SQL la igualdad se escribe con un solo = (WHERE id = 10)"
-        ],
+        "codeSnippet": [ "-- Consulta sobre el esquema educativo", "SELECT id, nombre FROM estudiantes", "WHERE id == 10;" ],
         "bugLineIndex": 2,
         "explanation": "No confundir ON con WHERE: ON define cómo se unen las tablas; WHERE filtra el resultado tras la unión.",
         "xpReward": 15
@@ -646,10 +628,8 @@ export const SQL_UNIT_09_LESSONS: Lesson[] = [
         "id": "sql-u09-l04-e04",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea que contiene el error en este código de \"Alias de tablas y columnas calificadas\":",
-        "codeSnippet": [
-          "SELECT id FROM estudiantes JOIN matriculas // Error: columna id es ambigua en ambas tablas"
-        ],
-        "bugLineIndex": 0,
+        "codeSnippet": [ "-- Consulta sobre estudiantes", "SELECT id FROM estudiantes JOIN matriculas", "ORDER BY id ASC;" ],
+        "bugLineIndex": 1,
         "explanation": "Definir un alias en el FROM y luego intentar usar el nombre largo de la tabla en el SELECT.",
         "xpReward": 15
       },
@@ -735,11 +715,7 @@ export const SQL_UNIT_09_LESSONS: Lesson[] = [
         "id": "sql-u09-l04-e09",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea con el error de diseño o sintaxis en \"Alias de tablas y columnas calificadas\":",
-        "codeSnippet": [
-          "-- Consulta sobre el esquema educativo",
-          "SELECT id, nombre FROM estudiantes",
-          "WHERE id == 10; // Error: en SQL la igualdad se escribe con un solo = (WHERE id = 10)"
-        ],
+        "codeSnippet": [ "-- Consulta sobre el esquema educativo", "SELECT id, nombre FROM estudiantes", "WHERE id == 10;" ],
         "bugLineIndex": 2,
         "explanation": "Definir un alias en el FROM y luego intentar usar el nombre largo de la tabla en el SELECT.",
         "xpReward": 15
@@ -840,10 +816,8 @@ export const SQL_UNIT_09_LESSONS: Lesson[] = [
         "id": "sql-u09-l05-e04",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea que contiene el error en este código de \"Consultas sobre tres tablas\":",
-        "codeSnippet": [
-          "JOIN matriculas ON ... JOIN asignaturas // Olvidó la cláusula ON en la segunda unión"
-        ],
-        "bugLineIndex": 0,
+        "codeSnippet": [ "-- Consulta sobre estudiantes", "JOIN matriculas ON ... JOIN asignaturas // Olvidó la cláusula ON en la segunda unión", "ORDER BY id ASC;" ],
+        "bugLineIndex": 1,
         "explanation": "Intentar unir Estudiantes directamente con Asignaturas: no existe relación directa entre ambas sin pasar por Matrículas.",
         "xpReward": 15
       },
@@ -929,11 +903,7 @@ export const SQL_UNIT_09_LESSONS: Lesson[] = [
         "id": "sql-u09-l05-e09",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea con el error de diseño o sintaxis en \"Consultas sobre tres tablas\":",
-        "codeSnippet": [
-          "-- Consulta sobre el esquema educativo",
-          "SELECT id, nombre FROM estudiantes",
-          "WHERE id == 10; // Error: en SQL la igualdad se escribe con un solo = (WHERE id = 10)"
-        ],
+        "codeSnippet": [ "-- Consulta sobre el esquema educativo", "SELECT id, nombre FROM estudiantes", "WHERE id == 10;" ],
         "bugLineIndex": 2,
         "explanation": "Intentar unir Estudiantes directamente con Asignaturas: no existe relación directa entre ambas sin pasar por Matrículas.",
         "xpReward": 15
@@ -1032,10 +1002,8 @@ export const SQL_UNIT_09_LESSONS: Lesson[] = [
         "id": "sql-u09-l06-e04",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea que contiene el error en este código de \"LEFT JOIN y registros sin coincidencia\":",
-        "codeSnippet": [
-          "LEFT INNER JOIN // Incompatible: es LEFT JOIN o INNER JOIN"
-        ],
-        "bugLineIndex": 0,
+        "codeSnippet": [ "-- Consulta sobre estudiantes", "LEFT INNER JOIN // Incompatible: es LEFT JOIN o INNER JOIN", "ORDER BY id ASC;" ],
+        "bugLineIndex": 1,
         "explanation": "Poner un filtro en el WHERE sobre la tabla derecha como `WHERE m.nota > 7` transformará accidentalmente tu LEFT JOIN en un INNER JOIN.",
         "xpReward": 15
       },
@@ -1121,11 +1089,7 @@ export const SQL_UNIT_09_LESSONS: Lesson[] = [
         "id": "sql-u09-l06-e09",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea con el error de diseño o sintaxis en \"LEFT JOIN y registros sin coincidencia\":",
-        "codeSnippet": [
-          "-- Consulta sobre el esquema educativo",
-          "SELECT id, nombre FROM estudiantes",
-          "WHERE id == 10; // Error: en SQL la igualdad se escribe con un solo = (WHERE id = 10)"
-        ],
+        "codeSnippet": [ "-- Consulta sobre el esquema educativo", "SELECT id, nombre FROM estudiantes", "WHERE id == 10;" ],
         "bugLineIndex": 2,
         "explanation": "Poner un filtro en el WHERE sobre la tabla derecha como `WHERE m.nota > 7` transformará accidentalmente tu LEFT JOIN en un INNER JOIN.",
         "xpReward": 15
@@ -1222,10 +1186,8 @@ export const SQL_UNIT_09_LESSONS: Lesson[] = [
         "id": "sql-u09-l07-e04",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea que contiene el error en este código de \"Errores frecuentes al unir tablas\":",
-        "codeSnippet": [
-          "SELECT id FROM estudiantes JOIN matriculas ON estudiantes.id = matriculas.estudiante_id // Error: id es ambiguo"
-        ],
-        "bugLineIndex": 0,
+        "codeSnippet": [ "-- Consulta sobre estudiantes", "SELECT id FROM estudiantes JOIN matriculas ON estudiantes.id = matriculas.estudiante_id", "ORDER BY id ASC;" ],
+        "bugLineIndex": 1,
         "explanation": "Hacer JOIN sobre columnas de tipos incompatibles (ej. TEXT con INTEGER) causará fallos de coincidencia.",
         "xpReward": 15
       },
@@ -1311,11 +1273,7 @@ export const SQL_UNIT_09_LESSONS: Lesson[] = [
         "id": "sql-u09-l07-e09",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea con el error de diseño o sintaxis en \"Errores frecuentes al unir tablas\":",
-        "codeSnippet": [
-          "-- Consulta sobre el esquema educativo",
-          "SELECT id, nombre FROM estudiantes",
-          "WHERE id == 10; // Error: en SQL la igualdad se escribe con un solo = (WHERE id = 10)"
-        ],
+        "codeSnippet": [ "-- Consulta sobre el esquema educativo", "SELECT id, nombre FROM estudiantes", "WHERE id == 10;" ],
         "bugLineIndex": 2,
         "explanation": "Hacer JOIN sobre columnas de tipos incompatibles (ej. TEXT con INTEGER) causará fallos de coincidencia.",
         "xpReward": 15

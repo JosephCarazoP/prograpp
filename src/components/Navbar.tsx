@@ -3,7 +3,6 @@ import {
   Flame,
   Code2,
   Database,
-  Target,
   Volume2,
   VolumeX,
   ChevronDown,
@@ -15,11 +14,13 @@ import {
   ShoppingBag,
   ChevronRight,
   Trophy,
-  Hash
+  Hash,
+  Smartphone
 } from 'lucide-react';
 import { UserProfile } from '../types/user';
 import { soundService } from '../services/soundService';
 import { DevAvatar } from './Avatars';
+import { usePWAInstall } from '../hooks/usePWAInstall';
 
 interface NavbarProps {
   user: UserProfile;
@@ -59,6 +60,7 @@ export const Navbar: React.FC<NavbarProps> = ({
 }) => {
   const [isMuted, setIsMuted] = useState(soundService.getMuted());
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const { isInstalled, isIOS, isNativePromptAvailable, promptInstall } = usePWAInstall();
 
   const isTeacherAdmin = Boolean(
     isAdmin || (user?.email && user.email.toLowerCase() === 'josephcarazo56@gmail.com')
@@ -318,7 +320,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                   </button>
                 )}
 
-                {/* Misiones Diarias */}
+                {/* Temporada y Desafíos */}
                 <button
                   type="button"
                   className="duo-settings-row"
@@ -330,9 +332,9 @@ export const Navbar: React.FC<NavbarProps> = ({
                 >
                   <div className="duo-settings-row-left">
                     <div className="duo-settings-row-icon-box orange">
-                      <Target size={18} color="#D97706" strokeWidth={2.6} />
+                      <Flame size={18} color="#D97706" strokeWidth={2.6} />
                     </div>
-                    <span className="duo-settings-row-label">Misiones Diarias</span>
+                    <span className="duo-settings-row-label">Temporada y Desafíos</span>
                   </div>
                   <div className="duo-settings-row-right">
                     <ChevronRight size={18} color="#000000" strokeWidth={3} />
@@ -416,6 +418,41 @@ export const Navbar: React.FC<NavbarProps> = ({
                   <div className="duo-settings-row-right">
                     <span className={`duo-settings-pill-tag ${isMuted ? 'gray' : 'green'}`}>
                       {isMuted ? 'Silenciado' : 'Activado'}
+                    </span>
+                    <ChevronRight size={18} color="#000000" strokeWidth={3} />
+                  </div>
+                </button>
+
+                {/* Instalar App en el Celular (PWA) */}
+                <button
+                  type="button"
+                  className="duo-settings-row"
+                  onClick={async () => {
+                    soundService.playToken();
+                    if (!isInstalled) {
+                      if (isNativePromptAvailable) {
+                        await promptInstall();
+                      } else {
+                        alert(
+                          isIOS
+                            ? 'Para instalar en iPhone/iPad:\n1. Toca el botón Compartir de Safari (icono cuadrado con flecha).\n2. Elige "Añadir a la pantalla de inicio".'
+                            : 'Para instalar en tu celular, pulsa en los 3 puntos del navegador y elige "Instalar aplicación" o "Añadir a pantalla de inicio".'
+                        );
+                      }
+                    }
+                  }}
+                >
+                  <div className="duo-settings-row-left">
+                    <div className={`duo-settings-row-icon-box ${isInstalled ? 'green' : 'blue'}`}>
+                      <Smartphone size={18} color={isInstalled ? '#15803D' : '#0284C7'} strokeWidth={2.6} />
+                    </div>
+                    <span className="duo-settings-row-label">
+                      {isInstalled ? 'App en tu Pantalla' : 'Instalar en Celular'}
+                    </span>
+                  </div>
+                  <div className="duo-settings-row-right">
+                    <span className={`duo-settings-pill-tag ${isInstalled ? 'green' : 'blue'}`}>
+                      {isInstalled ? 'Instalada' : 'Instalar'}
                     </span>
                     <ChevronRight size={18} color="#000000" strokeWidth={3} />
                   </div>

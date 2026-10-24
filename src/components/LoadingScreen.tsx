@@ -1,194 +1,236 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { ChevronRight } from 'lucide-react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
+import byteAppIconImg from '../assets/byte-app-icon.png';
 
 interface LoadingScreenProps {
+  /** Indica que los datos de arranque (sesión, perfil, progreso) ya están listos */
   isReady: boolean;
+  /** Duración mínima visible de la animación de entrada (ms) */
   minDurationMs?: number;
+  /** Se invoca cuando termina la animación de salida */
   onFinish?: () => void;
+  /** Texto opcional (se usa como primer mensaje de estado) */
   title?: string;
 }
 
+const STATUS_MESSAGES = [
+  'Encendiendo a Byte...',
+  'Compilando lecciones...',
+  'Sincronizando tu progreso...',
+  'Preparando tu racha...',
+  '¡Casi listo!'
+];
+
+const CODE_GLYPHS = ['</>', '{ }', '=>', ';', '( )', 'if', 'fun', '[ ]', '&&', 'SQL'];
+const WORD_PROGRA = 'progra'.split('');
+const WORD_APP = 'app'.split('');
+const EXIT_DURATION_MS = 700;
+
+// Pseudo-aleatorio determinista para que las partículas no "salten" entre renders
+const seeded = (seed: number) => {
+  const x = Math.sin(seed * 9301 + 49297) * 233280;
+  return x - Math.floor(x);
+};
+
 export const LoadingScreen: React.FC<LoadingScreenProps> = ({
   isReady,
-  minDurationMs = 2400,
+  minDurationMs = 2600,
   onFinish,
-  title = 'Inicializando PrograApp...'
+  title
 }) => {
+  const [progress, setProgress] = useState(0);
   const [isExiting, setIsExiting] = useState(false);
+  const [statusIndex, setStatusIndex] = useState(0);
+
   const onFinishRef = useRef(onFinish);
   onFinishRef.current = onFinish;
+  const isReadyRef = useRef(isReady);
+  isReadyRef.current = isReady;
 
-  // Transición controlada de salida
+  const messages = useMemo(
+    () => (title ? [title, ...STATUS_MESSAGES.slice(1)] : STATUS_MESSAGES),
+    [title]
+  );
+
+  // Partículas de píxeles (como las del ícono) y glifos de código flotantes
+  const pixels = useMemo(
+    () =>
+      Array.from({ length: 22 }, (_, i) => ({
+        left: seeded(i + 1) * 100,
+        size: 6 + Math.round(seeded(i + 31) * 10),
+        delay: seeded(i + 61) * 6,
+        duration: 6 + seeded(i + 91) * 6,
+        opacity: 0.25 + seeded(i + 121) * 0.55
+      })),
+    []
+  );
+
+  const glyphs = useMemo(
+    () =>
+      CODE_GLYPHS.map((text, i) => ({
+        text,
+        left: 6 + seeded(i + 200) * 88,
+        delay: seeded(i + 230) * 7,
+        duration: 9 + seeded(i + 260) * 6,
+        size: 0.8 + seeded(i + 290) * 0.7
+      })),
+    []
+  );
+
+  // Bloquear scroll del fondo mientras la pantalla de carga está visible
   useEffect(() => {
-    if (!isReady) return;
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = prev;
+    };
+  }, []);
 
-    let exitTimeout: any;
-    const enterTimeout = setTimeout(() => {
-      setIsExiting(true);
-      exitTimeout = setTimeout(() => {
-        onFinishRef.current?.();
-      }, 400);
-    }, minDurationMs);
+  // Rotación de mensajes de estado
+  useEffect(() => {
+    const id = setInterval(() => {
+      setStatusIndex((i) => (i + 1 < messages.length ? i + 1 : i));
+    }, Math.max(520, minDurationMs / messages.length));
+    return () => clearInterval(id);
+  }, [messages.length, minDurationMs]);
+
+  // Motor de progreso: avanza suave hasta 90% y solo completa cuando los datos están listos
+  useEffect(() => {
+    const start = performance.now();
+    let current = 0;
+    let exitTimer: ReturnType<typeof setTimeout> | undefined;
+
+    const id = setInterval(() => {
+      const elapsed = performance.now() - start;
+      const timeFrac = Math.min(1, elapsed / minDurationMs);
+      const ready = isReadyRef.current;
+      const target = ready
+        ? timeFrac >= 1 ? 100 : Math.max(timeFrac * 100, 60)
+        : Math.min(90, timeFrac * 100);
+
+      current = Math.min(target, current + Math.max(0.35, (target - current) * 0.1));
+      setProgress(current);
+
+      if (ready && elapsed >= minDurationMs && current >= 99.5) {
+        clearInterval(id);
+        setProgress(100);
+        setStatusIndex(messages.length - 1);
+        setIsExiting(true);
+        exitTimer = setTimeout(() => onFinishRef.current?.(), EXIT_DURATION_MS);
+      }
+    }, 30);
 
     return () => {
-      clearTimeout(enterTimeout);
-      clearTimeout(exitTimeout);
+      clearInterval(id);
+      if (exitTimer) clearTimeout(exitTimer);
     };
-  }, [isReady, minDurationMs]);
+  }, [minDurationMs, messages.length]);
 
-  const handleSkip = () => {
-    if (!isExiting) {
-      setIsExiting(true);
-      setTimeout(() => {
-        onFinishRef.current?.();
-      }, 250);
-    }
-  };
+  const shown = Math.round(progress);
 
   return (
     <div
-      className={`loading-screen-container loading-screen-backdrop ${
-        isExiting ? 'loading-screen-exit' : ''
-      }`}
-      style={{
-        position: 'fixed',
-        inset: 0,
-        width: '100vw',
-        height: '100vh',
-        zIndex: 99999,
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
-        backgroundColor: '#FFFFFF',
-        padding: '24px',
-        boxSizing: 'border-box'
-      }}
+      className={`splash-root ${isExiting ? 'splash-exit' : ''}`}
+      role="status"
+      aria-live="polite"
+      aria-label={`Cargando PrograApp ${shown}%`}
     >
-      <div
-        className="loading-screen-content"
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          justifyContent: 'center',
-          maxWidth: '400px',
-          width: '100%'
-        }}
-      >
-        {/* Spinner animado minimalista estilo Duolingo */}
-        <div
-          style={{
-            position: 'relative',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            width: '64px',
-            height: '64px'
-          }}
-        >
-          <div
+      {/* Fondo: cuadrícula de píxeles en movimiento */}
+      <div className="splash-grid" aria-hidden="true" />
+      <div className="splash-vignette" aria-hidden="true" />
+
+      {/* Partículas pixeladas ascendentes */}
+      <div className="splash-particles" aria-hidden="true">
+        {pixels.map((p, i) => (
+          <span
+            key={`px-${i}`}
+            className="splash-pixel"
             style={{
-              width: '48px',
-              height: '48px',
-              borderRadius: '50%',
-              border: '4px solid #E2E8F0',
-              borderTopColor: '#22C55E',
-              animation: 'spin 0.8s linear infinite'
+              left: `${p.left}%`,
+              width: p.size,
+              height: p.size,
+              animationDelay: `${p.delay}s`,
+              animationDuration: `${p.duration}s`,
+              opacity: p.opacity
             }}
           />
-        </div>
-
-        {/* Título de Carga limpio con tipografía Duolingo */}
-        <div
-          style={{
-            marginTop: '22px',
-            color: '#1E293B',
-            fontSize: '1.25rem',
-            fontWeight: 900,
-            letterSpacing: '0.2px',
-            textAlign: 'center'
-          }}
-        >
-          {title}
-        </div>
-
-        {/* Barra de Progreso limpia estilo Duolingo */}
-        <div
-          style={{
-            width: '240px',
-            height: '14px',
-            background: '#F1F5F9',
-            borderRadius: '999px',
-            border: '2px solid #E2E8F0',
-            boxShadow: 'inset 0 2px 4px rgba(0,0,0,0.06)',
-            marginTop: '18px',
-            overflow: 'hidden',
-            padding: '2px'
-          }}
-        >
-          <div
+        ))}
+        {glyphs.map((g, i) => (
+          <span
+            key={`gl-${i}`}
+            className="splash-glyph"
             style={{
-              height: '100%',
-              borderRadius: '999px',
-              background: 'linear-gradient(90deg, #22C55E 0%, #16A34A 100%)',
-              boxShadow: '0 2px 0 #15803D',
-              animation: 'duoProgressFill 2.4s ease-out forwards'
+              left: `${g.left}%`,
+              animationDelay: `${g.delay}s`,
+              animationDuration: `${g.duration}s`,
+              fontSize: `${g.size}rem`
             }}
-          />
-        </div>
-
-        {/* Botón táctil 3D Duolingo para saltar */}
-        <button
-          onClick={handleSkip}
-          style={{
-            marginTop: '24px',
-            color: '#475569',
-            fontSize: '0.85rem',
-            fontWeight: 800,
-            display: 'flex',
-            alignItems: 'center',
-            gap: '6px',
-            cursor: 'pointer',
-            padding: '8px 18px',
-            borderRadius: '14px',
-            background: '#FFFFFF',
-            border: '2px solid #E2E8F0',
-            boxShadow: '0 3px 0 #CBD5E1',
-            transition: 'all 0.15s ease'
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.borderColor = '#CBD5E1';
-            e.currentTarget.style.color = '#1E293B';
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.borderColor = '#E2E8F0';
-            e.currentTarget.style.color = '#475569';
-          }}
-        >
-          <span>Saltar</span>
-          <ChevronRight size={15} strokeWidth={2.5} />
-        </button>
+          >
+            {g.text}
+          </span>
+        ))}
       </div>
 
-      <style>{`
-        @keyframes devGentleBob {
-          0% { transform: translateY(0px); }
-          100% { transform: translateY(-6px); }
-        }
-        @keyframes devHappyBounce {
-          0% { transform: scale(1) translateY(0); }
-          40% { transform: scale(1.08) translateY(-10px); }
-          70% { transform: scale(0.96) translateY(2px); }
-          100% { transform: scale(1) translateY(0); }
-        }
-        @keyframes duoProgressFill {
-          0% { width: 8%; }
-          30% { width: 35%; }
-          60% { width: 70%; }
-          100% { width: 100%; }
-        }
-      `}</style>
+      <div className="splash-content">
+        {/* ═══ ÍCONO DE BYTE CON ANILLOS, ÓRBITA Y PARPADEO ═══ */}
+        <div className="splash-stage">
+          <span className="splash-ring splash-ring-1" aria-hidden="true" />
+          <span className="splash-ring splash-ring-2" aria-hidden="true" />
+          <span className="splash-ring splash-ring-3" aria-hidden="true" />
+
+          <div className="splash-orbit" aria-hidden="true">
+            <span className="splash-orbit-dot dot-a" />
+            <span className="splash-orbit-dot dot-b" />
+            <span className="splash-orbit-dot dot-c" />
+          </div>
+
+          <div className="splash-icon-float">
+            <div className="splash-icon">
+              <img src={byteAppIconImg} alt="" draggable={false} />
+              {/* Párpados para el parpadeo */}
+              <span className="splash-lid lid-left" aria-hidden="true" />
+              <span className="splash-lid lid-right" aria-hidden="true" />
+              {/* Destello de brillo */}
+              <span className="splash-shine" aria-hidden="true" />
+            </div>
+          </div>
+
+          <span className="splash-shadow" aria-hidden="true" />
+        </div>
+
+        {/* ═══ WORDMARK ANIMADO ═══ */}
+        <h1 className="splash-wordmark" aria-label="PrograApp">
+          {WORD_PROGRA.map((ch, i) => (
+            <span key={`p-${i}`} className="splash-letter" style={{ animationDelay: `${0.55 + i * 0.05}s` }}>
+              {ch}
+            </span>
+          ))}
+          {WORD_APP.map((ch, i) => (
+            <span
+              key={`a-${i}`}
+              className="splash-letter accent"
+              style={{ animationDelay: `${0.55 + (WORD_PROGRA.length + i) * 0.05}s` }}
+            >
+              {ch}
+            </span>
+          ))}
+        </h1>
+        <div className="splash-tag">DEV ACADEMY</div>
+
+        {/* ═══ BARRA DE PROGRESO NEO-BRUTALIST ═══ */}
+        <div className="splash-progress-wrap">
+          <div className="splash-progress-track">
+            <div className="splash-progress-fill" style={{ width: `${Math.max(4, progress)}%` }}>
+              <span className="splash-progress-stripes" />
+            </div>
+          </div>
+          <div className="splash-progress-meta">
+            <span key={statusIndex} className="splash-status">
+              {messages[statusIndex]}
+            </span>
+            <span className="splash-percent">{shown}%</span>
+          </div>
+        </div>
+      </div>
     </div>
   );
 };

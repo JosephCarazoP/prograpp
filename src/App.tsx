@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react';
 import confetti from 'canvas-confetti';
 import {
   X,
-  Check,
   CheckCircle2,
   XCircle,
   RotateCcw,
@@ -30,6 +29,8 @@ import { getTheoryByLessonId, getTheoriesByPath } from './content/theoryIndex';
 
 // Componentes modulares
 import { Navbar } from './components/Navbar';
+import { DesktopSidebar } from './components/DesktopSidebar';
+import { DesktopRightSidebar } from './components/DesktopRightSidebar';
 import { LearningPath } from './components/LearningPath';
 import { CoursesView } from './components/CoursesView';
 import { LeagueView } from './components/LeagueView';
@@ -37,13 +38,13 @@ import { TheoryViewer } from './components/TheoryViewer';
 import { TheoryCheckpointModal } from './components/TheoryCheckpointModal';
 import { AuthModal } from './components/AuthModal';
 import { ProfilePage } from './components/ProfilePage';
-import { DailyQuestsModal } from './components/DailyQuestsModal';
 import { ChestModal } from './components/ChestModal';
 import { BossFightArena } from './components/BossFight';
 import { PowerUpsBar } from './components/PowerUpsBar';
 import { VSCodeSnippet } from './components/VSCodeSnippet';
 import { TraceStepComponent } from './components/exercises/TraceStepExercise';
 import { ParsonsPuzzleComponent } from './components/exercises/ParsonsPuzzleExercise';
+import { FlowchartExerciseComponent } from './components/exercises/FlowchartExercise';
 import { LoadingScreen } from './components/LoadingScreen';
 import { FormattedText } from './components/FormattedText';
 import { ConsoleMascot, ConsoleDevAvatar } from './components/ConsoleAvatar';
@@ -54,8 +55,12 @@ import { EvaluationPage } from './components/EvaluationPage';
 import { ActivityOpinionModal } from './components/ActivityOpinionModal';
 import { StreakCelebrationModal } from './components/StreakCelebrationModal';
 import { StorePage } from './components/StorePage';
+import { SeasonPathPage } from './components/SeasonPathPage';
+import { MobileBottomNav } from './components/MobileBottomNav';
 import { LiveUsersModal } from './components/LiveUsersModal';
 import { NotificationsPage } from './components/NotificationsPage';
+import { NetworkStatusBadge } from './components/NetworkStatusBadge';
+import { PWAInstallBanner } from './components/PWAInstallBanner';
 import { academicService } from './services/academicService';
 import { timeTrackingService } from './services/timeTrackingService';
 import { presenceService } from './services/presenceService';
@@ -92,6 +97,42 @@ function randomizeExercise(exercise: Exercise): Exercise {
     cloned.tokens = shuffleArray([...cloned.tokens]);
   } else if (cloned.type === 'matching_pairs') {
     cloned.pairs = shuffleArray([...cloned.pairs]);
+  } else if (cloned.type === 'spot_the_bug') {
+    if (Array.isArray(cloned.codeSnippet)) {
+      // 1. Quitar comentarios spoiler y numeración manual que ensucian el código
+      let cleaned = cloned.codeSnippet.map(l => {
+        let line = l.replace(/^\s*\d+[\.\)]\s*/, '');
+        line = line.replace(/\s*\/\/\s*(error|¡error|falta|peligro|atención|en\s+kotlin|en\s+sql|el\s+valor|la\s+palabra|data\s+class|type\s+mismatch|sqlite\s+es|no\s+existe|string\s+normal|int\s+no\s+anulable|char\s+usa|val\s+es|var\s+es|no\s+se\s+puede).*$/i, '');
+        line = line.replace(/\s*--\s*(error|¡error|falta|en\s+sql|la\s+sentencia|en\s+sqlite|sqlite\s+es|no\s+se\s+puede).*$/i, '');
+        return line.trimEnd();
+      });
+
+      // 2. Garantizar al menos 3 líneas de código para que el ejercicio tenga sentido de depuración
+      if (cleaned.length <= 1) {
+        const bugLine = cleaned[0] || '';
+        const isSql = /select|from|table|insert|where|alter|drop|create/i.test(bugLine);
+        if (isSql) {
+          cleaned = [
+            '-- Consulta de base de datos',
+            bugLine,
+            'ORDER BY id ASC;'
+          ];
+          cloned.bugLineIndex = 1;
+        } else {
+          cleaned = [
+            'fun main() {',
+            '    ' + bugLine.trim(),
+            '    println("Operación completada")',
+            '}'
+          ];
+          cloned.bugLineIndex = 1;
+        }
+      } else if (cleaned.length === 2) {
+        cleaned.push('println("Resultado listo")');
+      }
+
+      cloned.codeSnippet = cleaned;
+    }
   }
 
   return cloned;
@@ -103,7 +144,7 @@ function getExerciseInstruction(exercise: Exercise): string {
     case 'trace_step':
       return 'Observa cada operación del código y anota en la tabla el valor que toma la variable en cada paso.';
     case 'spot_the_bug':
-      return 'Examina la sintaxis del programa y pulsa directamente sobre el renglón defectuoso.';
+      return 'Lee el código detenidamente y pulsa sobre la línea que tiene el error de sintaxis o lógica.';
     case 'predict_output': {
       const p = exercise.prompt.toLowerCase();
       if (
@@ -146,14 +187,15 @@ export default function App() {
     return raw && typeof raw === 'object' ? raw : {};
   });
 
-  // Vistas principales: path, lesson, practice, boss, profile, academic, notifications, store
-  const [view, setView] = useState<'path' | 'lesson' | 'practice' | 'boss' | 'profile' | 'academic' | 'notifications' | 'store'>(() => {
+  // Vistas principales: path, lesson, practice, boss, profile, academic, notifications, store, season
+  const [view, setView] = useState<'path' | 'lesson' | 'practice' | 'boss' | 'profile' | 'academic' | 'notifications' | 'store' | 'season'>(() => {
     if (typeof window !== 'undefined') {
       const params = new URLSearchParams(window.location.search);
       if (params.get('view') === 'boss') return 'boss';
       if (params.get('view') === 'academic') return 'academic';
       if (params.get('view') === 'notifications') return 'notifications';
       if (params.get('view') === 'store' || params.get('view') === 'shop') return 'store';
+      if (params.get('view') === 'season') return 'season';
     }
     return 'path';
   });
@@ -191,9 +233,17 @@ export default function App() {
     document.documentElement.setAttribute('data-theme', activeTheme);
   }, [user?.currentThemeId]);
 
-  // Modales
+  // Modales y Pestaña de Temporada
   const [isAuthOpen, setIsAuthOpen] = useState(false);
-  const [isQuestsOpen, setIsQuestsOpen] = useState(false);
+  const [seasonTab, setSeasonTab] = useState<'path' | 'quests'>('path');
+
+  const handleOpenSeason = (tab: 'path' | 'quests' = 'path') => {
+    soundService.playToken();
+    setSeasonTab(tab);
+    setView('season');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
   const [isChestOpen, setIsChestOpen] = useState(() => {
     if (typeof window !== 'undefined') {
       const params = new URLSearchParams(window.location.search);
@@ -283,6 +333,7 @@ export default function App() {
   const [traceInputsReady, setTraceInputsReady] = useState(false);
   const [traceUserValues, setTraceUserValues] = useState<Record<number, Record<string, string>>>({});
   const [parsonsOrder, setParsonsOrder] = useState<number[]>([]);
+  const [flowchartOrder, setFlowchartOrder] = useState<number[]>([]);
 
   // Hoja inferior de feedback
   const [feedbackState, setFeedbackState] = useState<'idle' | 'success' | 'error'>('idle');
@@ -290,7 +341,8 @@ export default function App() {
 
   // Estado de pantalla de carga con animación blur y tips
   const [showLoading, setShowLoading] = useState(true);
-  const loadingTitle = 'Inicializando PrograApp...';
+  const [isBootReady, setIsBootReady] = useState(false);
+  const loadingTitle = 'Encendiendo a Byte...';
 
   // Estado de diagnóstico pendiente asignado por el profesor
   const [activePendingAssignment, setActivePendingAssignment] = useState<any | null>(null);
@@ -369,7 +421,8 @@ export default function App() {
         setIsAuthenticated(false);
         setIsAuthOpen(true);
       } finally {
-        setShowLoading(false);
+        // La pantalla de carga termina su propia animación de salida cuando está lista
+        setIsBootReady(true);
       }
     }
     loadData();
@@ -713,6 +766,7 @@ export default function App() {
     setTraceInputsReady(false);
     setTraceUserValues({});
     setParsonsOrder([]);
+    setFlowchartOrder([]);
     // Limpiar comodines por ejercicio
     setTeacherHintText(null);
     setEliminatedOptionIndices([]);
@@ -746,6 +800,7 @@ export default function App() {
     if (currentExercise.type === 'matching_pairs') return matchedPairs.length === currentExercise.pairs.length * 2;
     if (currentExercise.type === 'trace_step') return traceInputsReady;
     if (currentExercise.type === 'parsons_puzzle') return parsonsOrder.length > 0;
+    if (currentExercise.type === 'flowchart_builder') return flowchartOrder.length > 0;
     return true;
   };
 
@@ -786,6 +841,10 @@ export default function App() {
       isCorrect =
         parsonsOrder.length === currentExercise.correctOrder.length &&
         parsonsOrder.every((val, index) => val === currentExercise.correctOrder[index]);
+    } else if (currentExercise.type === 'flowchart_builder') {
+      isCorrect =
+        flowchartOrder.length === currentExercise.correctOrder.length &&
+        flowchartOrder.every((val, index) => val === currentExercise.correctOrder[index]);
     }
 
     // Extraer respuesta textual para trazabilidad en la investigación
@@ -804,6 +863,8 @@ export default function App() {
       userAnswerStr = JSON.stringify(traceUserValues);
     } else if (currentExercise.type === 'parsons_puzzle') {
       userAnswerStr = parsonsOrder.map(idx => currentExercise.lines[idx]).join('\n');
+    } else if (currentExercise.type === 'flowchart_builder') {
+      userAnswerStr = flowchartOrder.map(idx => currentExercise.blocks[idx]?.text || '').join(' -> ');
     }
 
     const currentAttemptNum = (exerciseAttemptsMap[currentExercise.id] || 0) + 1;
@@ -1230,15 +1291,15 @@ export default function App() {
       <AnimatedDoodleBackground />
       {showLoading && (
         <LoadingScreen
-          isReady={!!user}
-          minDurationMs={1500}
+          isReady={isBootReady}
+          minDurationMs={2600}
           title={loadingTitle}
           onFinish={() => setShowLoading(false)}
         />
       )}
 
       {/* Barra de Estado Superior (solo visible en path y practice cuando no se está leyendo teoría o en páginas dedicadas) */}
-      {view !== 'boss' && view !== 'lesson' && view !== 'academic' && view !== 'notifications' && view !== 'store' && !activeTheory && (
+      {view !== 'boss' && view !== 'lesson' && view !== 'academic' && view !== 'notifications' && view !== 'store' && view !== 'season' && !activeTheory && (
         <Navbar
           user={user}
           isAdmin={authService.isCurrentUserAdmin()}
@@ -1265,8 +1326,7 @@ export default function App() {
             setUser(updated);
           }}
           onOpenQuests={() => {
-            soundService.playToken();
-            setIsQuestsOpen(true);
+            handleOpenSeason('quests');
           }}
           onOpenProfile={() => {
             soundService.playToken();
@@ -1295,20 +1355,53 @@ export default function App() {
         />
       )}
 
-      {/* VISTA 1: EL CAMINO (LEARNING PATH) / SECCIÓN DE CURSOS / TEORÍA */}
-      {view === 'path' && (
-        <main
-          style={{
-            padding: activeTheory ? '16px 10px 80px 10px' : '10px 12px 120px 12px',
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            width: '100%',
-            maxWidth: activeTheory ? '680px' : '520px',
-            margin: '0 auto',
-            boxSizing: 'border-box'
-          }}
-        >
+      {/* ═══ CONTENEDOR MAESTRO DUOLINGO DESKTOP (3 COLUMNAS: SIDEBAR IZQ + CONTENIDO + SIDEBAR DER) ═══ */}
+      {view !== 'boss' && view !== 'lesson' && (
+        <>
+          <div className="duo-desktop-app-layout">
+          {/* Columna Izquierda: Barra Lateral de Navegación Permanente (Desktop) */}
+          <div className="duo-desktop-left-column">
+            <DesktopSidebar
+              currentView={view}
+              currentMainTab={mainTab}
+              unreadNotificationsCount={unreadNotificationsCount}
+              onlineUsersCount={onlineUsersCount}
+              isAdmin={authService.isCurrentUserAdmin()}
+              onNavigate={(targetView, targetTab) => {
+                setView(targetView);
+                if (targetTab) {
+                  setMainTab(targetTab);
+                }
+                if (targetView === 'path') {
+                  setActiveTheory(null);
+                }
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }}
+              onOpenQuests={() => {
+                handleOpenSeason('quests');
+              }}
+              onOpenLiveUsers={() => {
+                soundService.playToken();
+                setIsLiveUsersOpen(true);
+              }}
+              onSignOut={handleSignOut}
+            />
+          </div>
+
+          {/* Área Principal Desktop (Centro + Widgets Derecha) */}
+          <div className="duo-desktop-main-wrapper">
+            {/* Columna Central: Contenido Principal */}
+            <div className={`duo-desktop-center-column ${['store', 'academic', 'season', 'notifications', 'profile'].includes(view) ? 'wide-view' : ''}`}>
+            {/* VISTA 1: EL CAMINO (LEARNING PATH) / SECCIÓN DE CURSOS / TEORÍA */}
+            {view === 'path' && (
+              <main
+                className="duo-main-content-column"
+                style={{
+                  padding: activeTheory ? '16px 10px 80px 10px' : '10px 12px 120px 12px',
+                  width: '100%',
+                  boxSizing: 'border-box'
+                }}
+              >
           {activeTheory ? (
             <TheoryViewer
               theory={activeTheory}
@@ -1466,9 +1559,161 @@ export default function App() {
         </main>
       )}
 
+            {/* VISTA PERFIL */}
+            {view === 'profile' && (
+              <ProfilePage
+                user={user}
+                progress={progress}
+                hasPendingDiagnostic={Boolean(activePendingAssignment)}
+                onBack={() => setView('path')}
+                onUpdate={(updated) => setUser(updated)}
+                onOpenAuth={() => { setView('path'); setIsAuthOpen(true); }}
+                onOpenAcademic={() => setView('academic')}
+                onOpenLocker={() => {
+                  soundService.playToken();
+                  setView('store');
+                }}
+                onOpenDiagnostic={() => {
+                  if (activePendingAssignment) {
+                    const inst = getDiagnosticInstrumentById(activePendingAssignment.instrumentId);
+                    if (inst) setActiveEvaluationInstrument(inst);
+                    else setActiveEvaluationInstrument(getInstrument(currentPath, 'diagnostic'));
+                  } else {
+                    setActiveEvaluationInstrument(getInstrument(currentPath, 'diagnostic'));
+                  }
+                }}
+                onOpenFinalTest={() => setActiveEvaluationInstrument(getInstrument(currentPath, 'final'))}
+                onSignOut={handleSignOut}
+              />
+            )}
+
+            {/* SECCIÓN PRIVADA DE SEGUIMIENTO ACADÉMICO (SOLO ADMIN CON CONTRASEÑA HASH) */}
+            {view === 'academic' && (
+              <AcademicDashboard
+                currentUser={user}
+                onBack={() => setView('path')}
+                onOpenLiveUsers={() => {
+                  soundService.playToken();
+                  setIsLiveUsersOpen(true);
+                }}
+                initialSelectedStudentUid={selectedAcademicStudentUid}
+              />
+            )}
+
+            {/* VISTA DE PÁGINA COMPLETA: CENTRO DE NOTIFICACIONES Y AVISOS */}
+            {view === 'notifications' && (
+              <NotificationsPage
+                user={user}
+                notifications={notifications}
+                onBack={() => setView('path')}
+                onMarkAsRead={handleMarkNotificationAsRead}
+                onMarkAllAsRead={handleMarkAllNotificationsAsRead}
+                onDismissNotification={handleDismissNotification}
+                onDismissAllRead={handleDismissAllRead}
+              />
+            )}
+
+            {/* VISTA DEDICADA 100% DUOLINGO 3D: TIENDA Y VESTIDOR DE BYTE (NO MODAL) */}
+            {view === 'store' && (
+              <StorePage
+                user={user}
+                totalStars={Object.values(progress).reduce((acc, curr) => acc + (curr?.starsEarned || 0), 0)}
+                onBack={() => setView('path')}
+                onUpdateUser={(updated) => setUser(updated)}
+              />
+            )}
+
+            {/* VISTA DEDICADA 100% PANTALLA COMPLETA: CAMINO DE TEMPORADA DE 100 NIVELES Y DESAFÍOS */}
+            {view === 'season' && (
+              <SeasonPathPage
+                user={user}
+                progress={progress}
+                initialTab={seasonTab}
+                onBack={() => setView('path')}
+                onUpdateUser={(updated) => setUser(updated)}
+              />
+            )}
+          </div>
+
+          {/* Columna Derecha Desktop: Estadísticas y Widgets Duolingo */}
+          {view === 'path' && (
+            <div className="duo-desktop-right-column">
+              <DesktopRightSidebar
+                user={user}
+                currentPath={currentPath}
+                onPathToggle={() => {
+                  soundService.playToken();
+                  const nextPath: PathType = user.currentPath === 'kotlin' ? 'sql' : 'kotlin';
+                  const updated = { ...user, currentPath: nextPath };
+                  userService.updateProfile(updated);
+                  setUser(updated);
+                }}
+                onOpenStreak={() => {
+                  soundService.playToken();
+                  setIsJustFinishedStreak(false);
+                  setIsStreakModalOpen(true);
+                }}
+                onOpenStore={() => {
+                  soundService.playToken();
+                  setView('store');
+                }}
+                onOpenQuests={() => {
+                  handleOpenSeason('quests');
+                }}
+                onOpenProfile={() => {
+                  soundService.playToken();
+                  setView('profile');
+                }}
+                onNavigateToLeague={() => {
+                  soundService.playToken();
+                  setView('path');
+                  setMainTab('league');
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                }}
+                onOpenSeason={(tab = 'path') => {
+                  handleOpenSeason(tab);
+                }}
+              />
+            </div>
+          )}
+          </div>
+        </div>
+
+        {/* ═══ NAVEGACIÓN INFERIOR MÓVIL (IDÉNTICA A SIDEBAR DESKTOP) ═══ */}
+        <MobileBottomNav
+          currentView={view}
+          currentMainTab={mainTab}
+          unreadNotificationsCount={unreadNotificationsCount}
+          isAdmin={authService.isCurrentUserAdmin()}
+          onNavigate={(targetView, targetTab) => {
+            setView(targetView);
+            if (targetTab) {
+              setMainTab(targetTab);
+            }
+            if (targetView === 'path') {
+              setActiveTheory(null);
+            }
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          }}
+        />
+      </>
+    )}
+
       {/* VISTA 2: SESIÓN DE LECCIÓN INTERACTIVA (CON COMODINES Y VS CODE SNIPPET) */}
       {view === 'lesson' && activeLesson && currentExercise && (
-        <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', padding: '16px 16px 140px 16px', maxWidth: '640px', margin: '0 auto', width: '100%', boxSizing: 'border-box' }}>
+        <div
+          className={`duo-lesson-wrapper ${currentExercise.type === 'flowchart_builder' ? 'duo-lesson-wide' : ''}`}
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            minHeight: '100vh',
+            padding: '16px 16px 140px 16px',
+            maxWidth: currentExercise.type === 'flowchart_builder' ? '100%' : '680px',
+            margin: '0 auto',
+            width: '100%',
+            boxSizing: 'border-box'
+          }}
+        >
           {/* Barra de Progreso Superior Neo-Brutal */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px' }}>
             <button
@@ -1737,52 +1982,53 @@ export default function App() {
             </div>
           )}
 
-          {/* EJERCICIO 2: CAZA DE ERRORES (SPOT THE BUG) */}
+          {/* EJERCICIO 2: CAZA DE ERRORES (SPOT THE BUG - REDISEÑO LIMPIO Y ULTRA USABLE) */}
           {currentExercise.type === 'spot_the_bug' && (
-            <div style={{ margin: '8px 0 16px 0' }}>
+            <div style={{ margin: '12px 0 18px 0' }}>
               <div
                 style={{
-                  background: '#0F172A',
-                  borderRadius: '16px',
+                  background: '#0B0F19',
+                  borderRadius: '18px',
                   border: '2.5px solid #000000',
                   overflow: 'hidden',
                   boxShadow: '4px 4px 0px #000000'
                 }}
               >
+                {/* Cabecera limpia y clara del editor de depuración */}
                 <div
                   style={{
-                    background: '#1E293B',
-                    padding: '10px 14px',
+                    background: '#151D2F',
+                    padding: '11px 16px',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'space-between',
-                    borderBottom: '2.5px solid #000000'
+                    borderBottom: '2px solid rgba(255, 255, 255, 0.08)'
                   }}
                 >
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                    <div style={{ width: '10px', height: '10px', borderRadius: '50%', background: '#EF4444', border: '1px solid #000000' }} />
-                    <div style={{ width: '10px', height: '10px', borderRadius: '50%', background: '#F59E0B', border: '1px solid #000000' }} />
-                    <div style={{ width: '10px', height: '10px', borderRadius: '50%', background: '#10B981', border: '1px solid #000000' }} />
-                    <span style={{ fontSize: '0.78rem', color: '#F8FAFC', fontFamily: 'JetBrains Mono', fontWeight: 800, marginLeft: '6px' }}>
-                      debug_target.kt
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <div style={{ width: '10px', height: '10px', borderRadius: '50%', background: '#EF4444' }} />
+                    <div style={{ width: '10px', height: '10px', borderRadius: '50%', background: '#F59E0B' }} />
+                    <div style={{ width: '10px', height: '10px', borderRadius: '50%', background: '#10B981' }} />
+                    <span style={{ fontSize: '0.82rem', color: '#94A3B8', fontFamily: 'JetBrains Mono, monospace', fontWeight: 800, marginLeft: '6px' }}>
+                      {currentPath === 'sql' ? 'consulta.sql' : 'codigo.kt'}
                     </span>
                   </div>
-                  <span style={{ fontSize: '0.74rem', color: '#FFFFFF', fontWeight: 900, background: '#DC2626', border: '1.5px solid #000000', boxShadow: '1.5px 1.5px 0px #000000', padding: '3px 8px', borderRadius: '6px' }}>
-                    Toca la línea con el error
-                  </span>
+                  <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', fontSize: '0.75rem', color: '#FFE600', fontWeight: 900, background: 'rgba(255, 230, 0, 0.12)', border: '1px solid #FFE600', padding: '4px 10px', borderRadius: '8px' }}>
+                    <span>Toca la línea con el error</span>
+                  </div>
                 </div>
 
-                <div style={{ padding: '8px 0', maxHeight: '360px', overflowY: 'auto' }}>
+                {/* Lista de líneas con espaciado amplio, números legibles y feedback instantáneo */}
+                <div style={{ padding: '8px 0', maxHeight: '420px', overflowY: 'auto' }}>
                   {currentExercise.codeSnippet.map((line, idx) => {
                     const isEliminated = eliminatedBugLines.includes(idx);
                     const isPeekBug = codePeekBugLineIndex === idx;
                     const isSelected = selectedBugLine === idx;
+
                     return (
                       <div
                         key={idx}
-                        className={`bug-line ${isSelected ? 'selected' : ''} ${
-                          isEliminated ? 'bug-line-safe' : ''
-                        } ${isPeekBug ? 'bug-line-peek' : ''}`}
+                        className={`bug-line ${isSelected ? 'selected' : ''}`}
                         onClick={() => {
                           if (isEliminated) return;
                           soundService.playToken();
@@ -1791,60 +2037,152 @@ export default function App() {
                         style={{
                           display: 'flex',
                           alignItems: 'center',
-                          padding: '9px 14px',
+                          padding: '11px 16px',
                           cursor: isEliminated ? 'not-allowed' : 'pointer',
                           fontFamily: 'JetBrains Mono, monospace',
-                          fontSize: '0.92rem',
+                          fontSize: '0.94rem',
                           background: isSelected
-                            ? 'rgba(239, 68, 68, 0.25)'
+                            ? 'rgba(0, 229, 255, 0.16)'
                             : isPeekBug
-                            ? 'rgba(168, 85, 247, 0.25)'
+                            ? 'rgba(168, 85, 247, 0.22)'
                             : isEliminated
-                            ? 'rgba(100, 116, 139, 0.12)'
+                            ? 'rgba(100, 116, 139, 0.08)'
                             : 'transparent',
                           borderLeft: isSelected
-                            ? '4px solid #EF4444'
+                            ? '5px solid #00E5FF'
                             : isPeekBug
-                            ? '4px solid #A855F7'
+                            ? '5px solid #A855F7'
                             : isEliminated
-                            ? '4px solid #10B981'
-                            : '4px solid transparent',
-                          opacity: isEliminated ? 0.45 : 1,
-                          transition: 'all 0.15s ease'
+                            ? '5px solid #10B981'
+                            : '5px solid transparent',
+                          opacity: isEliminated ? 0.35 : 1,
+                          transition: 'all 0.18s ease',
+                          gap: '12px'
                         }}
                       >
-                        <span style={{ width: '28px', color: '#64748B', userSelect: 'none', fontSize: '0.82rem', fontWeight: 700 }}>
-                          {idx + 1}
+                        <span
+                          style={{
+                            width: '28px',
+                            color: isSelected ? '#00E5FF' : '#64748B',
+                            userSelect: 'none',
+                            fontSize: '0.84rem',
+                            fontWeight: 800
+                          }}
+                        >
+                          {String(idx + 1).padStart(2, '0')}
                         </span>
                         <code
                           style={{
                             color: isSelected
-                              ? '#FCA5A5'
+                              ? '#FFFFFF'
                               : isPeekBug
-                              ? '#D8B4FE'
+                              ? '#E9D5FF'
                               : isEliminated
-                              ? '#94A3B8'
+                              ? '#64748B'
                               : '#F8FAFC',
                             flex: 1,
                             whiteSpace: 'pre-wrap',
-                            textDecoration: isEliminated ? 'line-through' : 'none'
+                            textDecoration: isEliminated ? 'line-through' : 'none',
+                            fontWeight: isSelected ? 700 : 500
                           }}
                         >
                           {line}
                         </code>
+                        {isSelected && (
+                          <span
+                            style={{
+                              fontSize: '0.72rem',
+                              color: '#00E5FF',
+                              fontWeight: 900,
+                              padding: '3px 8px',
+                              background: 'rgba(0, 229, 255, 0.18)',
+                              border: '1px solid #00E5FF',
+                              borderRadius: '6px',
+                              display: 'inline-flex',
+                              alignItems: 'center',
+                              gap: '4px',
+                              flexShrink: 0
+                            }}
+                          >
+                            <CheckCircle2 size={12} strokeWidth={3} /> SELECCIONADA
+                          </span>
+                        )}
                         {isEliminated && (
-                          <span style={{ fontSize: '0.7rem', color: '#FFFFFF', fontWeight: 900, padding: '2px 6px', background: '#15803D', border: '1px solid #000000', borderRadius: '4px', display: 'inline-flex', alignItems: 'center', gap: '3px' }}>
-                            <Check size={11} strokeWidth={3} /> Correcta
+                          <span
+                            style={{
+                              fontSize: '0.7rem',
+                              color: '#10B981',
+                              fontWeight: 800,
+                              padding: '2px 6px',
+                              background: 'rgba(16, 185, 129, 0.12)',
+                              border: '1px solid #10B981',
+                              borderRadius: '4px',
+                              flexShrink: 0
+                            }}
+                          >
+                            Línea Correcta
                           </span>
                         )}
                         {isPeekBug && !isSelected && (
-                          <span style={{ fontSize: '0.7rem', color: '#FFFFFF', fontWeight: 900, padding: '2px 6px', background: '#7E22CE', border: '1px solid #000000', borderRadius: '4px' }}>
+                          <span
+                            style={{
+                              fontSize: '0.72rem',
+                              color: '#D8B4FE',
+                              fontWeight: 900,
+                              padding: '3px 8px',
+                              background: 'rgba(168, 85, 247, 0.25)',
+                              border: '1px solid #A855F7',
+                              borderRadius: '6px',
+                              flexShrink: 0
+                            }}
+                          >
                             ¡Error aquí!
                           </span>
                         )}
                       </div>
                     );
                   })}
+                </div>
+
+                {/* Barra inferior de estado con guía al usuario */}
+                <div
+                  style={{
+                    padding: '10px 16px',
+                    background: selectedBugLine !== null ? 'rgba(0, 229, 255, 0.08)' : '#101625',
+                    borderTop: '1.5px solid rgba(255, 255, 255, 0.07)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    fontSize: '0.82rem',
+                    color: selectedBugLine !== null ? '#38BDF8' : '#94A3B8'
+                  }}
+                >
+                  {selectedBugLine !== null ? (
+                    <span style={{ fontWeight: 800, display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+                      <CheckCircle2 size={15} color="#00E5FF" strokeWidth={2.8} />
+                      Has marcado la Línea {selectedBugLine + 1}. Ahora pulsa "COMPROBAR" abajo.
+                    </span>
+                  ) : (
+                    <span style={{ fontStyle: 'italic' }}>
+                      Haz clic sobre la línea que consideres que tiene el error.
+                    </span>
+                  )}
+                  {selectedBugLine !== null && (
+                    <button
+                      type="button"
+                      onClick={() => setSelectedBugLine(null)}
+                      style={{
+                        background: 'transparent',
+                        border: 'none',
+                        color: '#94A3B8',
+                        cursor: 'pointer',
+                        fontSize: '0.75rem',
+                        textDecoration: 'underline'
+                      }}
+                    >
+                      Desmarcar
+                    </button>
+                  )}
                 </div>
               </div>
             </div>
@@ -1992,9 +2330,24 @@ export default function App() {
             />
           )}
 
+          {/* EJERCICIO 8: DIAGRAMA DE FLUJO INTERACTIVO (FLOWCHART BUILDER) */}
+          {currentExercise.type === 'flowchart_builder' && (
+            <FlowchartExerciseComponent
+              exercise={currentExercise}
+              onOrderChange={(order) => setFlowchartOrder(order)}
+            />
+          )}
+
           {/* ═══ BARRA INFERIOR DE LECCIÓN NEO-BRUTAL (STICKY FOOTER CHECK/CONTINUE) ═══ */}
           {feedbackState === 'idle' ? (
-            <div className="duo-lesson-footer">
+            <div
+              className={`duo-lesson-footer ${currentExercise.type === 'flowchart_builder' ? 'footer-wide' : ''}`}
+              style={{
+                maxWidth: currentExercise.type === 'flowchart_builder' ? '100%' : undefined,
+                left: currentExercise.type === 'flowchart_builder' ? 0 : undefined,
+                transform: currentExercise.type === 'flowchart_builder' ? 'none' : undefined
+              }}
+            >
               <button
                 disabled={!isAnswerReady()}
                 onClick={handleCheckAnswer}
@@ -2017,7 +2370,14 @@ export default function App() {
               </button>
             </div>
           ) : (
-            <div className={`duo-lesson-footer ${feedbackState}`}>
+            <div
+              className={`duo-lesson-footer ${feedbackState} ${currentExercise.type === 'flowchart_builder' ? 'footer-wide' : ''}`}
+              style={{
+                maxWidth: currentExercise.type === 'flowchart_builder' ? '100%' : undefined,
+                left: currentExercise.type === 'flowchart_builder' ? 0 : undefined,
+                transform: currentExercise.type === 'flowchart_builder' ? 'none' : undefined
+              }}
+            >
               <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                   {feedbackState === 'success' ? (
@@ -2107,6 +2467,7 @@ export default function App() {
       {view === 'boss' && activeBossData && (
         <BossFightArena
           user={user}
+          bossId={activeBossData.bossId}
           unitId={activeBossData.unitId}
           pathId={currentPath}
           onVictory={async () => {
@@ -2162,68 +2523,7 @@ export default function App() {
         }}
       />
 
-      {view === 'profile' && (
-        <ProfilePage
-          user={user}
-          progress={progress}
-          hasPendingDiagnostic={Boolean(activePendingAssignment)}
-          onBack={() => setView('path')}
-          onUpdate={(updated) => setUser(updated)}
-          onOpenAuth={() => { setView('path'); setIsAuthOpen(true); }}
-          onOpenAcademic={() => setView('academic')}
-          onOpenLocker={() => {
-            soundService.playToken();
-            setView('store');
-          }}
-          onOpenDiagnostic={() => {
-            if (activePendingAssignment) {
-              const inst = getDiagnosticInstrumentById(activePendingAssignment.instrumentId);
-              if (inst) setActiveEvaluationInstrument(inst);
-              else setActiveEvaluationInstrument(getInstrument(currentPath, 'diagnostic'));
-            } else {
-              setActiveEvaluationInstrument(getInstrument(currentPath, 'diagnostic'));
-            }
-          }}
-          onOpenFinalTest={() => setActiveEvaluationInstrument(getInstrument(currentPath, 'final'))}
-          onSignOut={handleSignOut}
-        />
-      )}
 
-      {/* SECCIÓN PRIVADA DE SEGUIMIENTO ACADÉMICO (SOLO ADMIN CON CONTRASEÑA HASH) */}
-      {view === 'academic' && (
-        <AcademicDashboard
-          currentUser={user}
-          onBack={() => setView('path')}
-          onOpenLiveUsers={() => {
-            soundService.playToken();
-            setIsLiveUsersOpen(true);
-          }}
-          initialSelectedStudentUid={selectedAcademicStudentUid}
-        />
-      )}
-
-      {/* VISTA DE PÁGINA COMPLETA: CENTRO DE NOTIFICACIONES Y AVISOS */}
-      {view === 'notifications' && (
-        <NotificationsPage
-          user={user}
-          notifications={notifications}
-          onBack={() => setView('path')}
-          onMarkAsRead={handleMarkNotificationAsRead}
-          onMarkAllAsRead={handleMarkAllNotificationsAsRead}
-          onDismissNotification={handleDismissNotification}
-          onDismissAllRead={handleDismissAllRead}
-        />
-      )}
-
-      {/* VISTA DEDICADA 100% DUOLINGO 3D: TIENDA Y VESTIDOR DE BYTE (NO MODAL) */}
-      {view === 'store' && (
-        <StorePage
-          user={user}
-          totalStars={Object.values(progress).reduce((acc, curr) => acc + (curr?.starsEarned || 0), 0)}
-          onBack={() => setView('path')}
-          onUpdateUser={(updated) => setUser(updated)}
-        />
-      )}
 
       {/* MODAL DE OPINIÓN PEDAGÓGICA BREVE TRAS ENTREGAR PRÁCTICA */}
       {opinionActivityId && (
@@ -2235,20 +2535,6 @@ export default function App() {
           onClose={() => setOpinionActivityId(null)}
         />
       )}
-
-      <DailyQuestsModal
-        isOpen={isQuestsOpen}
-        onClose={() => setIsQuestsOpen(false)}
-        user={user}
-        progress={progress}
-        onRewardClaimed={async (xp, bytes, powerupKey) => {
-          let updated = await userService.rewardUser(user, xp, bytes);
-          if (powerupKey) {
-            updated = await userService.grantPowerUps(updated, { [powerupKey]: 1 });
-          }
-          setUser(updated);
-        }}
-      />
 
       <ChestModal
         isOpen={isChestOpen}
@@ -2489,6 +2775,23 @@ export default function App() {
           )}
         </div>
       )}
+
+      {/* Pantalla de carga animada con el nuevo ícono robot Byte */}
+      {showLoading && (
+        <LoadingScreen
+          isReady={isBootReady}
+          minDurationMs={2600}
+          title={loadingTitle}
+          onFinish={() => setShowLoading(false)}
+        />
+      )}
+
+      {/* Indicador de estado de red y sincronización en la nube */}
+      <NetworkStatusBadge />
+
+      {/* Banner / Modal de instalación en la pantalla de inicio (PWA) */}
+      <PWAInstallBanner />
     </>
   );
 }
+

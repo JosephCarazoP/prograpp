@@ -66,11 +66,7 @@ export const KOTLIN_UNIT_03_LESSONS: Lesson[] = [
         "id": "kt-u03-l01-e04",
         "type": "spot_the_bug",
         "prompt": "Identifica la operación que provocará un error crítico de ejecución (crash):",
-        "codeSnippet": [
-          "val x = 10",
-          "val y = 0",
-          "val z = x / y // Error: división entre cero"
-        ],
+        "codeSnippet": [ "val x = 10", "val y = 0", "val z = x / y" ],
         "bugLineIndex": 2,
         "explanation": "Dividir un entero entre cero causa una ArithmeticException: / by zero.",
         "xpReward": 15
@@ -157,11 +153,7 @@ export const KOTLIN_UNIT_03_LESSONS: Lesson[] = [
         "id": "kt-u03-l01-e09",
         "type": "spot_the_bug",
         "prompt": "Identifica el operador matemático no soportado en Kotlin para potencias:",
-        "codeSnippet": [
-          "val suma = 2 + 2",
-          "val potencia = 2 ^ 3 // Error: ^ es XOR a nivel de bits, no exponente",
-          "val mult = 2 * 3"
-        ],
+        "codeSnippet": [ "val suma = 2 + 2", "val potencia = 2 ^ 3", "val mult = 2 * 3" ],
         "bugLineIndex": 1,
         "explanation": "En Kotlin ^ es una operación binaria XOR; para potencias se usa Math.pow() o multiplicación.",
         "xpReward": 15
@@ -430,11 +422,7 @@ export const KOTLIN_UNIT_03_LESSONS: Lesson[] = [
         "id": "kt-u03-l03-e04",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea donde se confunde asignación con comparación:",
-        "codeSnippet": [
-          "val clave = 1234",
-          "if (clave = 1234) { // Error: = es asignación, debe ser ==",
-          "    println(\"Acceso correcto\")"
-        ],
+        "codeSnippet": [ "val clave = 1234", "if (clave = 1234) {", "    println(\"Acceso correcto\")" ],
         "bugLineIndex": 1,
         "explanation": "En las condiciones se debe usar == para comparar igualdad, nunca el operador =.",
         "xpReward": 15
@@ -521,11 +509,7 @@ export const KOTLIN_UNIT_03_LESSONS: Lesson[] = [
         "id": "kt-u03-l03-e09",
         "type": "spot_the_bug",
         "prompt": "Identifica la comparación relacional mal escrita:",
-        "codeSnippet": [
-          "val a = 5",
-          "val b = 10",
-          "println(a => b) // Error: el operador es >=, no =>"
-        ],
+        "codeSnippet": [ "val a = 5", "val b = 10", "println(a => b)" ],
         "bugLineIndex": 2,
         "explanation": "El operador mayor o igual se escribe >=; => no existe en Kotlin.",
         "xpReward": 15
@@ -614,11 +598,7 @@ export const KOTLIN_UNIT_03_LESSONS: Lesson[] = [
         "id": "kt-u03-l04-e04",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea con error en el operador lógico:",
-        "codeSnippet": [
-          "val a = true",
-          "val b = false",
-          "val c = a AND b // Error: en Kotlin se escribe &&, no la palabra AND"
-        ],
+        "codeSnippet": [ "val a = true", "val b = false", "val c = a AND b" ],
         "bugLineIndex": 2,
         "explanation": "El operador lógico Y se escribe && en Kotlin.",
         "xpReward": 15
@@ -699,11 +679,7 @@ export const KOTLIN_UNIT_03_LESSONS: Lesson[] = [
         "id": "kt-u03-l04-e09",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea con la condición lógica imposible de cumplirse:",
-        "codeSnippet": [
-          "val x = 10",
-          "val imposible = (x > 20 && x < 5) // Error lógico: ningún número puede ser mayor que 20 y menor que 5 a la vez",
-          "println(imposible)"
-        ],
+        "codeSnippet": [ "val x = 10", "val imposible = (x > 20 && x < 5)", "println(imposible)" ],
         "bugLineIndex": 1,
         "explanation": "Es una contradicción lógica; x no puede ser simultáneamente mayor que 20 y menor que 5.",
         "xpReward": 15
@@ -792,11 +768,7 @@ export const KOTLIN_UNIT_03_LESSONS: Lesson[] = [
         "id": "kt-u03-l05-e04",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea con paréntesis desbalanceados:",
-        "codeSnippet": [
-          "val a = (5 + 3) * 2",
-          "val b = ((10 - 2) * 3 // Error: falta cerrar un paréntesis )",
-          "val c = (4 + 4)"
-        ],
+        "codeSnippet": [ "val a = (5 + 3) * 2", "val b = ((10 - 2) * 3", "val c = (4 + 4)" ],
         "bugLineIndex": 1,
         "explanation": "Todo paréntesis abierto debe tener su correspondiente cierre; de lo contrario hay error de sintaxis.",
         "xpReward": 15
@@ -891,11 +863,7 @@ export const KOTLIN_UNIT_03_LESSONS: Lesson[] = [
         "id": "kt-u03-l05-e09",
         "type": "spot_the_bug",
         "prompt": "Identifica el error en la fórmula del promedio:",
-        "codeSnippet": [
-          "val n1 = 8",
-          "val n2 = 10",
-          "val prom = n1 + n2 / 2 // Error: divide solo n2 entre 2 dando 8 + 5 = 13"
-        ],
+        "codeSnippet": [ "val n1 = 8", "val n2 = 10", "val prom = n1 + n2 / 2" ],
         "bugLineIndex": 2,
         "explanation": "Faltan paréntesis: debe ser (n1 + n2) / 2 para sumar antes de dividir.",
         "xpReward": 15
@@ -976,11 +944,7 @@ export const KOTLIN_UNIT_03_LESSONS: Lesson[] = [
         "id": "kt-u03-l06-e04",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea con error al intentar usar una asignación compuesta:",
-        "codeSnippet": [
-          "val oro = 100",
-          "oro += 50 // Error: oro es val y no se puede reasignar",
-          "println(oro)"
-        ],
+        "codeSnippet": [ "val oro = 100", "oro += 50", "println(oro)" ],
         "bugLineIndex": 1,
         "explanation": "+= realiza una reasignación; por ende, requiere que la variable sea mutable (var).",
         "xpReward": 15
@@ -1148,11 +1112,7 @@ export const KOTLIN_UNIT_03_LESSONS: Lesson[] = [
         "id": "kt-u03-l07-e04",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea con error por intentar conversión implícita prohibida en Kotlin:",
-        "codeSnippet": [
-          "val a: Int = 10",
-          "val b: Double = a // Error: Kotlin no convierte Int a Double implícitamente",
-          "val c: Double = a.toDouble()"
-        ],
+        "codeSnippet": [ "val a: Int = 10", "val b: Double = a", "val c: Double = a.toDouble()" ],
         "bugLineIndex": 1,
         "explanation": "En Kotlin, asignar un Int directamente a una variable Double sin .toDouble() es ilegal.",
         "xpReward": 15
@@ -1235,11 +1195,7 @@ export const KOTLIN_UNIT_03_LESSONS: Lesson[] = [
         "id": "kt-u03-l07-e09",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea que provocará un error NumberFormatException al convertir:",
-        "codeSnippet": [
-          "val a = \"50\".toInt()",
-          "val b = \"cien\".toInt() // Error: \"cien\" no es un número válido en dígitos",
-          "val c = \"25\".toInt()"
-        ],
+        "codeSnippet": [ "val a = \"50\".toInt()", "val b = \"cien\".toInt()", "val c = \"25\".toInt()" ],
         "bugLineIndex": 1,
         "explanation": "\"cien\" no contiene dígitos numéricos; toInt() fallará con NumberFormatException.",
         "xpReward": 15

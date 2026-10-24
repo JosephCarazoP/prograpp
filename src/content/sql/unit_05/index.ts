@@ -74,10 +74,8 @@ export const SQL_UNIT_05_LESSONS: Lesson[] = [
         "id": "sql-u05-l01-e04",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea que contiene el error en este código de \"INSERT INTO con columnas explícitas\":",
-        "codeSnippet": [
-          "INSERT estudiantes VALUES (\"Ana\") // Falta la palabra INTO y la lista de columnas explícitas"
-        ],
-        "bugLineIndex": 0,
+        "codeSnippet": [ "-- Consulta sobre estudiantes", "INSERT estudiantes VALUES (\"Ana\")", "ORDER BY id ASC;" ],
+        "bugLineIndex": 1,
         "explanation": "Escribir `INSERT INTO tabla VALUES (...)` sin lista de columnas es peligroso ante cambios de esquema.",
         "xpReward": 15
       },
@@ -163,11 +161,7 @@ export const SQL_UNIT_05_LESSONS: Lesson[] = [
         "id": "sql-u05-l01-e09",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea con el error de diseño o sintaxis en \"INSERT INTO con columnas explícitas\":",
-        "codeSnippet": [
-          "-- Consulta sobre el esquema educativo",
-          "SELECT id, nombre FROM estudiantes",
-          "WHERE id == 10; // Error: en SQL la igualdad se escribe con un solo = (WHERE id = 10)"
-        ],
+        "codeSnippet": [ "-- Consulta sobre el esquema educativo", "SELECT id, nombre FROM estudiantes", "WHERE id == 10;" ],
         "bugLineIndex": 2,
         "explanation": "Escribir `INSERT INTO tabla VALUES (...)` sin lista de columnas es peligroso ante cambios de esquema.",
         "xpReward": 15
@@ -272,10 +266,8 @@ export const SQL_UNIT_05_LESSONS: Lesson[] = [
         "id": "sql-u05-l02-e04",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea que contiene el error en este código de \"Correspondencia entre columnas y valores\":",
-        "codeSnippet": [
-          "INSERT INTO t (col1, col2) VALUES (1) // Error: 2 columnas pero solo 1 valor"
-        ],
-        "bugLineIndex": 0,
+        "codeSnippet": [ "-- Consulta sobre estudiantes", "INSERT INTO t (col1, col2) VALUES (1)", "ORDER BY id ASC;" ],
+        "bugLineIndex": 1,
         "explanation": "Poner el texto en la posición de un entero causará fallo de afinidad o datos corruptos.",
         "xpReward": 15
       },
@@ -361,11 +353,7 @@ export const SQL_UNIT_05_LESSONS: Lesson[] = [
         "id": "sql-u05-l02-e09",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea con el error de diseño o sintaxis en \"Correspondencia entre columnas y valores\":",
-        "codeSnippet": [
-          "-- Consulta sobre el esquema educativo",
-          "SELECT id, nombre FROM estudiantes",
-          "WHERE id == 10; // Error: en SQL la igualdad se escribe con un solo = (WHERE id = 10)"
-        ],
+        "codeSnippet": [ "-- Consulta sobre el esquema educativo", "SELECT id, nombre FROM estudiantes", "WHERE id == 10;" ],
         "bugLineIndex": 2,
         "explanation": "Poner el texto en la posición de un entero causará fallo de afinidad o datos corruptos.",
         "xpReward": 15
@@ -474,10 +462,8 @@ export const SQL_UNIT_05_LESSONS: Lesson[] = [
         "id": "sql-u05-l03-e04",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea que contiene el error en este código de \"Insertar varios registros\":",
-        "codeSnippet": [
-          "VALUES (1, \"A\") (2, \"B\") // Falta la coma separadora entre tuplas"
-        ],
-        "bugLineIndex": 0,
+        "codeSnippet": [ "-- Consulta sobre estudiantes", "VALUES (1, \"A\") (2, \"B\")", "ORDER BY id ASC;" ],
+        "bugLineIndex": 1,
         "explanation": "Olvidar la coma entre cada grupo de paréntesis en la lista de tuplas de VALUES.",
         "xpReward": 15
       },
@@ -563,11 +549,7 @@ export const SQL_UNIT_05_LESSONS: Lesson[] = [
         "id": "sql-u05-l03-e09",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea con el error de diseño o sintaxis en \"Insertar varios registros\":",
-        "codeSnippet": [
-          "-- Consulta sobre el esquema educativo",
-          "SELECT id, nombre FROM estudiantes",
-          "WHERE id == 10; // Error: en SQL la igualdad se escribe con un solo = (WHERE id = 10)"
-        ],
+        "codeSnippet": [ "-- Consulta sobre el esquema educativo", "SELECT id, nombre FROM estudiantes", "WHERE id == 10;" ],
         "bugLineIndex": 2,
         "explanation": "Olvidar la coma entre cada grupo de paréntesis en la lista de tuplas de VALUES.",
         "xpReward": 15
@@ -664,10 +646,8 @@ export const SQL_UNIT_05_LESSONS: Lesson[] = [
         "id": "sql-u05-l04-e04",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea que contiene el error en este código de \"Textos, números y comillas\":",
-        "codeSnippet": [
-          "INSERT INTO t (precio) VALUES (19,99) // Error: usar coma en vez de punto para decimales"
-        ],
-        "bugLineIndex": 0,
+        "codeSnippet": [ "-- Consulta sobre estudiantes", "INSERT INTO t (precio) VALUES (19,99)", "ORDER BY id ASC;" ],
+        "bugLineIndex": 1,
         "explanation": "Si un texto contiene una comilla simple interna (como O'Connor), debes duplicarla para escaparla: 'O''Connor'.",
         "xpReward": 15
       },
@@ -753,11 +733,7 @@ export const SQL_UNIT_05_LESSONS: Lesson[] = [
         "id": "sql-u05-l04-e09",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea con el error de diseño o sintaxis en \"Textos, números y comillas\":",
-        "codeSnippet": [
-          "-- Consulta sobre el esquema educativo",
-          "SELECT id, nombre FROM estudiantes",
-          "WHERE id == 10; // Error: en SQL la igualdad se escribe con un solo = (WHERE id = 10)"
-        ],
+        "codeSnippet": [ "-- Consulta sobre el esquema educativo", "SELECT id, nombre FROM estudiantes", "WHERE id == 10;" ],
         "bugLineIndex": 2,
         "explanation": "Si un texto contiene una comilla simple interna (como O'Connor), debes duplicarla para escaparla: 'O''Connor'.",
         "xpReward": 15
@@ -858,10 +834,8 @@ export const SQL_UNIT_05_LESSONS: Lesson[] = [
         "id": "sql-u05-l05-e04",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea que contiene el error en este código de \"Valores nulos y predeterminados\":",
-        "codeSnippet": [
-          "INSERT INTO t (col_not_null) VALUES (NULL) // Error: viola restricción NOT NULL"
-        ],
-        "bugLineIndex": 0,
+        "codeSnippet": [ "-- Consulta sobre estudiantes", "INSERT INTO t (col_not_null) VALUES (NULL)", "ORDER BY id ASC;" ],
+        "bugLineIndex": 1,
         "explanation": "Intentar insertar NULL en una columna con restricción NOT NULL provocará un error inmediato.",
         "xpReward": 15
       },
@@ -947,11 +921,7 @@ export const SQL_UNIT_05_LESSONS: Lesson[] = [
         "id": "sql-u05-l05-e09",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea con el error de diseño o sintaxis en \"Valores nulos y predeterminados\":",
-        "codeSnippet": [
-          "-- Consulta sobre el esquema educativo",
-          "SELECT id, nombre FROM estudiantes",
-          "WHERE id == 10; // Error: en SQL la igualdad se escribe con un solo = (WHERE id = 10)"
-        ],
+        "codeSnippet": [ "-- Consulta sobre el esquema educativo", "SELECT id, nombre FROM estudiantes", "WHERE id == 10;" ],
         "bugLineIndex": 2,
         "explanation": "Intentar insertar NULL en una columna con restricción NOT NULL provocará un error inmediato.",
         "xpReward": 15
@@ -1048,10 +1018,8 @@ export const SQL_UNIT_05_LESSONS: Lesson[] = [
         "id": "sql-u05-l06-e04",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea que contiene el error en este código de \"Orden de inserción cuando hay relaciones\":",
-        "codeSnippet": [
-          "// Intentar insertar en matriculas con estudiante_id inexistente en tabla estudiantes"
-        ],
-        "bugLineIndex": 0,
+        "codeSnippet": [ "-- Consulta sobre estudiantes", "// Intentar insertar en matriculas con estudiante_id inexistente en tabla estudiantes", "ORDER BY id ASC;" ],
+        "bugLineIndex": 1,
         "explanation": "Insertar en matriculas con estudiante_id = 999 provocará `FOREIGN KEY constraint failed` si 999 no existe.",
         "xpReward": 15
       },
@@ -1137,11 +1105,7 @@ export const SQL_UNIT_05_LESSONS: Lesson[] = [
         "id": "sql-u05-l06-e09",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea con el error de diseño o sintaxis en \"Orden de inserción cuando hay relaciones\":",
-        "codeSnippet": [
-          "-- Consulta sobre el esquema educativo",
-          "SELECT id, nombre FROM estudiantes",
-          "WHERE id == 10; // Error: en SQL la igualdad se escribe con un solo = (WHERE id = 10)"
-        ],
+        "codeSnippet": [ "-- Consulta sobre el esquema educativo", "SELECT id, nombre FROM estudiantes", "WHERE id == 10;" ],
         "bugLineIndex": 2,
         "explanation": "Insertar en matriculas con estudiante_id = 999 provocará `FOREIGN KEY constraint failed` si 999 no existe.",
         "xpReward": 15
@@ -1234,10 +1198,8 @@ export const SQL_UNIT_05_LESSONS: Lesson[] = [
         "id": "sql-u05-l07-e04",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea que contiene el error en este código de \"Errores por restricciones\":",
-        "codeSnippet": [
-          "INSERT INTO estudiantes (id) VALUES (1) // Fallará por clave primaria id duplicada"
-        ],
-        "bugLineIndex": 0,
+        "codeSnippet": [ "-- Consulta sobre estudiantes", "INSERT INTO estudiantes (id) VALUES (1) // Fallará por clave primaria id duplicada", "ORDER BY id ASC;" ],
+        "bugLineIndex": 1,
         "explanation": "Desactivar restricciones de integridad para que \"no dé error\": destruye la fiabilidad de tu base de datos.",
         "xpReward": 15
       },
@@ -1323,11 +1285,7 @@ export const SQL_UNIT_05_LESSONS: Lesson[] = [
         "id": "sql-u05-l07-e09",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea con el error de diseño o sintaxis en \"Errores por restricciones\":",
-        "codeSnippet": [
-          "-- Consulta sobre el esquema educativo",
-          "SELECT id, nombre FROM estudiantes",
-          "WHERE id == 10; // Error: en SQL la igualdad se escribe con un solo = (WHERE id = 10)"
-        ],
+        "codeSnippet": [ "-- Consulta sobre el esquema educativo", "SELECT id, nombre FROM estudiantes", "WHERE id == 10;" ],
         "bugLineIndex": 2,
         "explanation": "Desactivar restricciones de integridad para que \"no dé error\": destruye la fiabilidad de tu base de datos.",
         "xpReward": 15

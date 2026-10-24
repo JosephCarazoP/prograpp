@@ -69,7 +69,7 @@ export const CoursesView: React.FC<CoursesViewProps> = ({
   const unitProgressPercent = totalUnitLessons > 0 ? Math.round((completedUnitLessons / totalUnitLessons) * 100) : 0;
 
   return (
-    <div style={{ padding: '8px 12px 100px 12px', maxWidth: '640px', margin: '0 auto', width: '100%', boxSizing: 'border-box' }}>
+    <div className="courses-view-container" style={{ padding: '8px 12px 100px 12px', maxWidth: '100%', margin: '0 auto', width: '100%', boxSizing: 'border-box' }}>
       {/* ═══ BANNER HERO NEO-BRUTALISM CON COLORES ORIGINALES ═══ */}
       <div style={{ position: 'relative', marginTop: '16px', marginBottom: '24px' }}>
         {/* Pestaña tipo folder sobresaliente superior */}

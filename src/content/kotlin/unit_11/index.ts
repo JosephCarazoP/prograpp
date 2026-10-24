@@ -76,10 +76,8 @@ export const KOTLIN_UNIT_11_LESSONS: Lesson[] = [
         "id": "kt-u11-l01-e04",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea que contiene el error en este código de \"Qué es una lambda y cómo leerla\":",
-        "codeSnippet": [
-          "val suma = (a: Int, b: Int) -> a + b // Error: las lambdas van entre llaves { }"
-        ],
-        "bugLineIndex": 0,
+        "codeSnippet": [ "fun main() {", "    val suma = (a: Int, b: Int) -> a + b", "    println(\"Ejecutando...\")", "}" ],
+        "bugLineIndex": 1,
         "explanation": "No confundir el cuerpo de una lambda { ... } con el bloque de una clase o función tradicional.",
         "xpReward": 15
       },
@@ -169,11 +167,7 @@ export const KOTLIN_UNIT_11_LESSONS: Lesson[] = [
         "id": "kt-u11-l01-e09",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea con el error de diseño o sintaxis en \"Qué es una lambda y cómo leerla\":",
-        "codeSnippet": [
-          "// Bloque de verificación",
-          "val datoValido = true",
-          "datoValido = false // Error: val es inmutable y no se puede reasignar"
-        ],
+        "codeSnippet": [ "// Bloque de verificación", "val datoValido = true", "datoValido = false" ],
         "bugLineIndex": 2,
         "explanation": "No confundir el cuerpo de una lambda { ... } con el bloque de una clase o función tradicional.",
         "xpReward": 15
@@ -280,10 +274,7 @@ export const KOTLIN_UNIT_11_LESSONS: Lesson[] = [
         "id": "kt-u11-l02-e04",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea que contiene el error en este código de \"Filtrar con filter\":",
-        "codeSnippet": [
-          "val nums = listOf(1, 2, 3)",
-          "val res = nums.filter { it * 2 } // Error: la lambda debe devolver Boolean"
-        ],
+        "codeSnippet": [ "val nums = listOf(1, 2, 3)", "val res = nums.filter { it * 2 }", "println(\"Resultado listo\")" ],
         "bugLineIndex": 1,
         "explanation": "Escribir una condición que no retorne Boolean dentro de filter causará error de compilación.",
         "xpReward": 15
@@ -374,11 +365,7 @@ export const KOTLIN_UNIT_11_LESSONS: Lesson[] = [
         "id": "kt-u11-l02-e09",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea con el error de diseño o sintaxis en \"Filtrar con filter\":",
-        "codeSnippet": [
-          "// Bloque de verificación",
-          "val datoValido = true",
-          "datoValido = false // Error: val es inmutable y no se puede reasignar"
-        ],
+        "codeSnippet": [ "// Bloque de verificación", "val datoValido = true", "datoValido = false" ],
         "bugLineIndex": 2,
         "explanation": "Escribir una condición que no retorne Boolean dentro de filter causará error de compilación.",
         "xpReward": 15
@@ -481,10 +468,7 @@ export const KOTLIN_UNIT_11_LESSONS: Lesson[] = [
         "id": "kt-u11-l03-e04",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea que contiene el error en este código de \"Transformar con map\":",
-        "codeSnippet": [
-          "val lista = listOf(\"1\", \"2\")",
-          "val enteros: List<Int> = lista.filter { it.toInt() } // Error: filter no transforma tipos, se usa map"
-        ],
+        "codeSnippet": [ "val lista = listOf(\"1\", \"2\")", "val enteros: List<Int> = lista.filter { it.toInt() }", "println(\"Resultado listo\")" ],
         "bugLineIndex": 1,
         "explanation": "Confundir filter con map: filter selecciona (puede reducir el tamaño), map transforma (mantiene el tamaño exacto).",
         "xpReward": 15
@@ -575,11 +559,7 @@ export const KOTLIN_UNIT_11_LESSONS: Lesson[] = [
         "id": "kt-u11-l03-e09",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea con el error de diseño o sintaxis en \"Transformar con map\":",
-        "codeSnippet": [
-          "// Bloque de verificación",
-          "val datoValido = true",
-          "datoValido = false // Error: val es inmutable y no se puede reasignar"
-        ],
+        "codeSnippet": [ "// Bloque de verificación", "val datoValido = true", "datoValido = false" ],
         "bugLineIndex": 2,
         "explanation": "Confundir filter con map: filter selecciona (puede reducir el tamaño), map transforma (mantiene el tamaño exacto).",
         "xpReward": 15
@@ -682,10 +662,7 @@ export const KOTLIN_UNIT_11_LESSONS: Lesson[] = [
         "id": "kt-u11-l04-e04",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea que contiene el error en este código de \"Buscar con find\":",
-        "codeSnippet": [
-          "val n = listOf(1, 2, 3)",
-          "val r: Int = n.find { it == 5 } // Error: tipo devuelto es Int?, no Int"
-        ],
+        "codeSnippet": [ "val n = listOf(1, 2, 3)", "val r: Int = n.find { it == 5 }", "println(\"Resultado listo\")" ],
         "bugLineIndex": 1,
         "explanation": "Recuerda que find siempre devuelve un tipo anulable (T?) porque el elemento podría no existir.",
         "xpReward": 15
@@ -776,11 +753,7 @@ export const KOTLIN_UNIT_11_LESSONS: Lesson[] = [
         "id": "kt-u11-l04-e09",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea con el error de diseño o sintaxis en \"Buscar con find\":",
-        "codeSnippet": [
-          "// Bloque de verificación",
-          "val datoValido = true",
-          "datoValido = false // Error: val es inmutable y no se puede reasignar"
-        ],
+        "codeSnippet": [ "// Bloque de verificación", "val datoValido = true", "datoValido = false" ],
         "bugLineIndex": 2,
         "explanation": "Recuerda que find siempre devuelve un tipo anulable (T?) porque el elemento podría no existir.",
         "xpReward": 15
@@ -883,12 +856,7 @@ export const KOTLIN_UNIT_11_LESSONS: Lesson[] = [
         "id": "kt-u11-l05-e04",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea que contiene el error en este código de \"Comprobar con any y all\":",
-        "codeSnippet": [
-          "val l = listOf(10, 20)",
-          "if (l.all) { // Faltan llaves de la lambda o condición",
-          "    println(\"Ok\")",
-          "}"
-        ],
+        "codeSnippet": [ "val l = listOf(10, 20)", "if (l.all) {", "    println(\"Ok\")", "}" ],
         "bugLineIndex": 1,
         "explanation": "all() sobre una lista vacía devuelve true por vacuidad lógica matemática.",
         "xpReward": 15
@@ -979,11 +947,7 @@ export const KOTLIN_UNIT_11_LESSONS: Lesson[] = [
         "id": "kt-u11-l05-e09",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea con el error de diseño o sintaxis en \"Comprobar con any y all\":",
-        "codeSnippet": [
-          "// Bloque de verificación",
-          "val datoValido = true",
-          "datoValido = false // Error: val es inmutable y no se puede reasignar"
-        ],
+        "codeSnippet": [ "// Bloque de verificación", "val datoValido = true", "datoValido = false" ],
         "bugLineIndex": 2,
         "explanation": "all() sobre una lista vacía devuelve true por vacuidad lógica matemática.",
         "xpReward": 15
@@ -1086,10 +1050,7 @@ export const KOTLIN_UNIT_11_LESSONS: Lesson[] = [
         "id": "kt-u11-l06-e04",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea que contiene el error en este código de \"Ordenar con sortedBy\":",
-        "codeSnippet": [
-          "val l = listOf(3, 1, 2)",
-          "l.sort() // Error: sort() solo existe en colecciones mutables"
-        ],
+        "codeSnippet": [ "val l = listOf(3, 1, 2)", "l.sort()", "println(\"Resultado listo\")" ],
         "bugLineIndex": 1,
         "explanation": "Recuerda que sortedBy devuelve una NUEVA lista ordenada; no muta la lista original.",
         "xpReward": 15
@@ -1180,11 +1141,7 @@ export const KOTLIN_UNIT_11_LESSONS: Lesson[] = [
         "id": "kt-u11-l06-e09",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea con el error de diseño o sintaxis en \"Ordenar con sortedBy\":",
-        "codeSnippet": [
-          "// Bloque de verificación",
-          "val datoValido = true",
-          "datoValido = false // Error: val es inmutable y no se puede reasignar"
-        ],
+        "codeSnippet": [ "// Bloque de verificación", "val datoValido = true", "datoValido = false" ],
         "bugLineIndex": 2,
         "explanation": "Recuerda que sortedBy devuelve una NUEVA lista ordenada; no muta la lista original.",
         "xpReward": 15
@@ -1287,10 +1244,7 @@ export const KOTLIN_UNIT_11_LESSONS: Lesson[] = [
         "id": "kt-u11-l07-e04",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea que contiene el error en este código de \"Resumir con count y sumOf\":",
-        "codeSnippet": [
-          "val articulos = listOf(10, 20)",
-          "val c = articulos.count(10) // Error: count recibe una lambda con condición"
-        ],
+        "codeSnippet": [ "val articulos = listOf(10, 20)", "val c = articulos.count(10)", "println(\"Resultado listo\")" ],
         "bugLineIndex": 1,
         "explanation": "Usar count() sin llaves devuelve el tamaño total; para filtrar debes pasar la lambda: count { it.rebajado }.",
         "xpReward": 15
@@ -1381,11 +1335,7 @@ export const KOTLIN_UNIT_11_LESSONS: Lesson[] = [
         "id": "kt-u11-l07-e09",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea con el error de diseño o sintaxis en \"Resumir con count y sumOf\":",
-        "codeSnippet": [
-          "// Bloque de verificación",
-          "val datoValido = true",
-          "datoValido = false // Error: val es inmutable y no se puede reasignar"
-        ],
+        "codeSnippet": [ "// Bloque de verificación", "val datoValido = true", "datoValido = false" ],
         "bugLineIndex": 2,
         "explanation": "Usar count() sin llaves devuelve el tamaño total; para filtrar debes pasar la lambda: count { it.rebajado }.",
         "xpReward": 15

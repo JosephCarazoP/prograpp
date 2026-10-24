@@ -62,10 +62,8 @@ export const SQL_UNIT_06_LESSONS: Lesson[] = [
         "id": "sql-u06-l01-e04",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea que contiene el error en este código de \"SELECT ... FROM\":",
-        "codeSnippet": [
-          "SELECT FROM estudiantes // Falta indicar las columnas a proyectar"
-        ],
-        "bugLineIndex": 0,
+        "codeSnippet": [ "-- Consulta sobre estudiantes", "SELECT FROM estudiantes", "ORDER BY id ASC;" ],
+        "bugLineIndex": 1,
         "explanation": "Escribir la cláusula FROM antes de SELECT o inventar nombres de columnas inexistentes.",
         "xpReward": 15
       },
@@ -151,11 +149,7 @@ export const SQL_UNIT_06_LESSONS: Lesson[] = [
         "id": "sql-u06-l01-e09",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea con el error de diseño o sintaxis en \"SELECT ... FROM\":",
-        "codeSnippet": [
-          "-- Consulta sobre el esquema educativo",
-          "SELECT id, nombre FROM estudiantes",
-          "WHERE id == 10; // Error: en SQL la igualdad se escribe con un solo = (WHERE id = 10)"
-        ],
+        "codeSnippet": [ "-- Consulta sobre el esquema educativo", "SELECT id, nombre FROM estudiantes", "WHERE id == 10;" ],
         "bugLineIndex": 2,
         "explanation": "Escribir la cláusula FROM antes de SELECT o inventar nombres de columnas inexistentes.",
         "xpReward": 15
@@ -248,10 +242,8 @@ export const SQL_UNIT_06_LESSONS: Lesson[] = [
         "id": "sql-u06-l02-e04",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea que contiene el error en este código de \"Seleccionar todas las columnas con *\":",
-        "codeSnippet": [
-          "SELECT ALL FROM estudiantes // En SQL el comodín universal es *"
-        ],
-        "bugLineIndex": 0,
+        "codeSnippet": [ "-- Consulta sobre estudiantes", "SELECT ALL FROM estudiantes", "ORDER BY id ASC;" ],
+        "bugLineIndex": 1,
         "explanation": "Evita SELECT * en aplicaciones de producción con millones de filas: transferir columnas que no necesitas satura la red.",
         "xpReward": 15
       },
@@ -337,11 +329,7 @@ export const SQL_UNIT_06_LESSONS: Lesson[] = [
         "id": "sql-u06-l02-e09",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea con el error de diseño o sintaxis en \"Seleccionar todas las columnas con *\":",
-        "codeSnippet": [
-          "-- Consulta sobre el esquema educativo",
-          "SELECT id, nombre FROM estudiantes",
-          "WHERE id == 10; // Error: en SQL la igualdad se escribe con un solo = (WHERE id = 10)"
-        ],
+        "codeSnippet": [ "-- Consulta sobre el esquema educativo", "SELECT id, nombre FROM estudiantes", "WHERE id == 10;" ],
         "bugLineIndex": 2,
         "explanation": "Evita SELECT * en aplicaciones de producción con millones de filas: transferir columnas que no necesitas satura la red.",
         "xpReward": 15
@@ -434,10 +422,8 @@ export const SQL_UNIT_06_LESSONS: Lesson[] = [
         "id": "sql-u06-l03-e04",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea que contiene el error en este código de \"Seleccionar columnas específicas\":",
-        "codeSnippet": [
-          "SELECT nombre, carrera, FROM estudiantes // Coma huérfana antes de FROM"
-        ],
-        "bugLineIndex": 0,
+        "codeSnippet": [ "-- Consulta sobre estudiantes", "SELECT nombre, carrera, FROM estudiantes // Coma huérfana antes de FROM", "ORDER BY id ASC;" ],
+        "bugLineIndex": 1,
         "explanation": "Poner una coma después de la última columna antes de la cláusula FROM (ej. `SELECT a, b, FROM t`).",
         "xpReward": 15
       },
@@ -523,11 +509,7 @@ export const SQL_UNIT_06_LESSONS: Lesson[] = [
         "id": "sql-u06-l03-e09",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea con el error de diseño o sintaxis en \"Seleccionar columnas específicas\":",
-        "codeSnippet": [
-          "-- Consulta sobre el esquema educativo",
-          "SELECT id, nombre FROM estudiantes",
-          "WHERE id == 10; // Error: en SQL la igualdad se escribe con un solo = (WHERE id = 10)"
-        ],
+        "codeSnippet": [ "-- Consulta sobre el esquema educativo", "SELECT id, nombre FROM estudiantes", "WHERE id == 10;" ],
         "bugLineIndex": 2,
         "explanation": "Poner una coma después de la última columna antes de la cláusula FROM (ej. `SELECT a, b, FROM t`).",
         "xpReward": 15
@@ -624,10 +606,8 @@ export const SQL_UNIT_06_LESSONS: Lesson[] = [
         "id": "sql-u06-l04-e04",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea que contiene el error en este código de \"Alias con AS\":",
-        "codeSnippet": [
-          "SELECT nombre TO estudiante FROM estudiantes // La palabra clave correcta es AS"
-        ],
-        "bugLineIndex": 0,
+        "codeSnippet": [ "-- Consulta sobre estudiantes", "SELECT nombre TO estudiante FROM estudiantes", "ORDER BY id ASC;" ],
+        "bugLineIndex": 1,
         "explanation": "El alias solo existe en el reporte final: en la cláusula WHERE no puedes filtrar usando el alias recién creado.",
         "xpReward": 15
       },
@@ -713,11 +693,7 @@ export const SQL_UNIT_06_LESSONS: Lesson[] = [
         "id": "sql-u06-l04-e09",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea con el error de diseño o sintaxis en \"Alias con AS\":",
-        "codeSnippet": [
-          "-- Consulta sobre el esquema educativo",
-          "SELECT id, nombre FROM estudiantes",
-          "WHERE id == 10; // Error: en SQL la igualdad se escribe con un solo = (WHERE id = 10)"
-        ],
+        "codeSnippet": [ "-- Consulta sobre el esquema educativo", "SELECT id, nombre FROM estudiantes", "WHERE id == 10;" ],
         "bugLineIndex": 2,
         "explanation": "El alias solo existe en el reporte final: en la cláusula WHERE no puedes filtrar usando el alias recién creado.",
         "xpReward": 15
@@ -810,10 +786,8 @@ export const SQL_UNIT_06_LESSONS: Lesson[] = [
         "id": "sql-u06-l05-e04",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea que contiene el error en este código de \"Columnas calculadas\":",
-        "codeSnippet": [
-          "SELECT nombre, creditos * FROM asignaturas // Falta el segundo operando"
-        ],
-        "bugLineIndex": 0,
+        "codeSnippet": [ "-- Consulta sobre estudiantes", "SELECT nombre, creditos * FROM asignaturas", "ORDER BY id ASC;" ],
+        "bugLineIndex": 1,
         "explanation": "Olvidar ponerle un alias con AS: si no pones alias, el encabezado de la columna será la fórmula cruda `creditos * 16`.",
         "xpReward": 15
       },
@@ -899,11 +873,7 @@ export const SQL_UNIT_06_LESSONS: Lesson[] = [
         "id": "sql-u06-l05-e09",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea con el error de diseño o sintaxis en \"Columnas calculadas\":",
-        "codeSnippet": [
-          "-- Consulta sobre el esquema educativo",
-          "SELECT id, nombre FROM estudiantes",
-          "WHERE id == 10; // Error: en SQL la igualdad se escribe con un solo = (WHERE id = 10)"
-        ],
+        "codeSnippet": [ "-- Consulta sobre el esquema educativo", "SELECT id, nombre FROM estudiantes", "WHERE id == 10;" ],
         "bugLineIndex": 2,
         "explanation": "Olvidar ponerle un alias con AS: si no pones alias, el encabezado de la columna será la fórmula cruda `creditos * 16`.",
         "xpReward": 15
@@ -998,10 +968,8 @@ export const SQL_UNIT_06_LESSONS: Lesson[] = [
         "id": "sql-u06-l06-e04",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea que contiene el error en este código de \"DISTINCT\":",
-        "codeSnippet": [
-          "SELECT departamento DISTINCT FROM asignaturas // DISTINCT va justo después de SELECT"
-        ],
-        "bugLineIndex": 0,
+        "codeSnippet": [ "-- Consulta sobre estudiantes", "SELECT departamento DISTINCT FROM asignaturas // DISTINCT va justo después de SELECT", "ORDER BY id ASC;" ],
+        "bugLineIndex": 1,
         "explanation": "Usar DISTINCT por pereza para tapar consultas con JOINs mal diseñados que generan duplicados indeseados.",
         "xpReward": 15
       },
@@ -1087,11 +1055,7 @@ export const SQL_UNIT_06_LESSONS: Lesson[] = [
         "id": "sql-u06-l06-e09",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea con el error de diseño o sintaxis en \"DISTINCT\":",
-        "codeSnippet": [
-          "-- Consulta sobre el esquema educativo",
-          "SELECT id, nombre FROM estudiantes",
-          "WHERE id == 10; // Error: en SQL la igualdad se escribe con un solo = (WHERE id = 10)"
-        ],
+        "codeSnippet": [ "-- Consulta sobre el esquema educativo", "SELECT id, nombre FROM estudiantes", "WHERE id == 10;" ],
         "bugLineIndex": 2,
         "explanation": "Usar DISTINCT por pereza para tapar consultas con JOINs mal diseñados que generan duplicados indeseados.",
         "xpReward": 15
@@ -1192,10 +1156,8 @@ export const SQL_UNIT_06_LESSONS: Lesson[] = [
         "id": "sql-u06-l07-e04",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea que contiene el error en este código de \"Interpretar el resultado de una consulta\":",
-        "codeSnippet": [
-          "SELECT * FROM estudiantes WHERE id = 999 // Devuelve 0 rows (no es error de sintaxis)"
-        ],
-        "bugLineIndex": 0,
+        "codeSnippet": [ "-- Consulta sobre estudiantes", "SELECT * FROM estudiantes WHERE id = 999 // Devuelve 0 rows (no es error de sintaxis)", "ORDER BY id ASC;" ],
+        "bugLineIndex": 1,
         "explanation": "Confundir un conjunto vacío (0 filas) con un valor NULL dentro de una fila.",
         "xpReward": 15
       },
@@ -1281,11 +1243,7 @@ export const SQL_UNIT_06_LESSONS: Lesson[] = [
         "id": "sql-u06-l07-e09",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea con el error de diseño o sintaxis en \"Interpretar el resultado de una consulta\":",
-        "codeSnippet": [
-          "-- Consulta sobre el esquema educativo",
-          "SELECT id, nombre FROM estudiantes",
-          "WHERE id == 10; // Error: en SQL la igualdad se escribe con un solo = (WHERE id = 10)"
-        ],
+        "codeSnippet": [ "-- Consulta sobre el esquema educativo", "SELECT id, nombre FROM estudiantes", "WHERE id == 10;" ],
         "bugLineIndex": 2,
         "explanation": "Confundir un conjunto vacío (0 filas) con un valor NULL dentro de una fila.",
         "xpReward": 15

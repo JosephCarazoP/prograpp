@@ -70,10 +70,8 @@ export const SQL_UNIT_07_LESSONS: Lesson[] = [
         "id": "sql-u07-l01-e04",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea que contiene el error en este código de \"WHERE y comparaciones\":",
-        "codeSnippet": [
-          "SELECT * FROM estudiantes WHERE promedio == 9.0 // En SQL se usa un solo ="
-        ],
-        "bugLineIndex": 0,
+        "codeSnippet": [ "-- Consulta sobre estudiantes", "SELECT * FROM estudiantes WHERE promedio == 9.0", "ORDER BY id ASC;" ],
+        "bugLineIndex": 1,
         "explanation": "Para desigualdad puedes usar != o <>, pero nunca uses !==.",
         "xpReward": 15
       },
@@ -159,11 +157,7 @@ export const SQL_UNIT_07_LESSONS: Lesson[] = [
         "id": "sql-u07-l01-e09",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea con el error de diseño o sintaxis en \"WHERE y comparaciones\":",
-        "codeSnippet": [
-          "-- Consulta sobre el esquema educativo",
-          "SELECT id, nombre FROM estudiantes",
-          "WHERE id == 10; // Error: en SQL la igualdad se escribe con un solo = (WHERE id = 10)"
-        ],
+        "codeSnippet": [ "-- Consulta sobre el esquema educativo", "SELECT id, nombre FROM estudiantes", "WHERE id == 10;" ],
         "bugLineIndex": 2,
         "explanation": "Para desigualdad puedes usar != o <>, pero nunca uses !==.",
         "xpReward": 15
@@ -264,10 +258,8 @@ export const SQL_UNIT_07_LESSONS: Lesson[] = [
         "id": "sql-u07-l02-e04",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea que contiene el error en este código de \"AND, OR y NOT\":",
-        "codeSnippet": [
-          "SELECT * FROM t WHERE col = 'A' && col = 'B' // En SQL se escribe la palabra AND, no &&"
-        ],
-        "bugLineIndex": 0,
+        "codeSnippet": [ "-- Consulta sobre estudiantes", "SELECT * FROM t WHERE col = 'A' && col = 'B'", "ORDER BY id ASC;" ],
+        "bugLineIndex": 1,
         "explanation": "Escribir `carrera = \"A\" OR \"B\"` es incorrecto: debes repetir la columna `carrera = \"A\" OR carrera = \"B\"`.",
         "xpReward": 15
       },
@@ -353,11 +345,7 @@ export const SQL_UNIT_07_LESSONS: Lesson[] = [
         "id": "sql-u07-l02-e09",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea con el error de diseño o sintaxis en \"AND, OR y NOT\":",
-        "codeSnippet": [
-          "-- Consulta sobre el esquema educativo",
-          "SELECT id, nombre FROM estudiantes",
-          "WHERE id == 10; // Error: en SQL la igualdad se escribe con un solo = (WHERE id = 10)"
-        ],
+        "codeSnippet": [ "-- Consulta sobre el esquema educativo", "SELECT id, nombre FROM estudiantes", "WHERE id == 10;" ],
         "bugLineIndex": 2,
         "explanation": "Escribir `carrera = \"A\" OR \"B\"` es incorrecto: debes repetir la columna `carrera = \"A\" OR carrera = \"B\"`.",
         "xpReward": 15
@@ -458,10 +446,8 @@ export const SQL_UNIT_07_LESSONS: Lesson[] = [
         "id": "sql-u07-l03-e04",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea que contiene el error en este código de \"Paréntesis en condiciones\":",
-        "codeSnippet": [
-          "WHERE (a AND b // Falta cerrar el paréntesis"
-        ],
-        "bugLineIndex": 0,
+        "codeSnippet": [ "-- Consulta sobre estudiantes", "WHERE (a AND b", "ORDER BY id ASC;" ],
+        "bugLineIndex": 1,
         "explanation": "Omitir los paréntesis cambiará el significado del filtro mostrando registros que no querías autorizar.",
         "xpReward": 15
       },
@@ -547,11 +533,7 @@ export const SQL_UNIT_07_LESSONS: Lesson[] = [
         "id": "sql-u07-l03-e09",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea con el error de diseño o sintaxis en \"Paréntesis en condiciones\":",
-        "codeSnippet": [
-          "-- Consulta sobre el esquema educativo",
-          "SELECT id, nombre FROM estudiantes",
-          "WHERE id == 10; // Error: en SQL la igualdad se escribe con un solo = (WHERE id = 10)"
-        ],
+        "codeSnippet": [ "-- Consulta sobre el esquema educativo", "SELECT id, nombre FROM estudiantes", "WHERE id == 10;" ],
         "bugLineIndex": 2,
         "explanation": "Omitir los paréntesis cambiará el significado del filtro mostrando registros que no querías autorizar.",
         "xpReward": 15
@@ -648,10 +630,8 @@ export const SQL_UNIT_07_LESSONS: Lesson[] = [
         "id": "sql-u07-l04-e04",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea que contiene el error en este código de \"BETWEEN\":",
-        "codeSnippet": [
-          "WHERE precio BETWEEN 100 // Falta la cláusula AND con el límite superior"
-        ],
-        "bugLineIndex": 0,
+        "codeSnippet": [ "-- Consulta sobre estudiantes", "WHERE precio BETWEEN 100", "ORDER BY id ASC;" ],
+        "bugLineIndex": 1,
         "explanation": "Escribir el valor mayor primero: `BETWEEN 9.5 AND 8.5` no devolverá ninguna fila porque el límite inferior debe ir primero.",
         "xpReward": 15
       },
@@ -737,11 +717,7 @@ export const SQL_UNIT_07_LESSONS: Lesson[] = [
         "id": "sql-u07-l04-e09",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea con el error de diseño o sintaxis en \"BETWEEN\":",
-        "codeSnippet": [
-          "-- Consulta sobre el esquema educativo",
-          "SELECT id, nombre FROM estudiantes",
-          "WHERE id == 10; // Error: en SQL la igualdad se escribe con un solo = (WHERE id = 10)"
-        ],
+        "codeSnippet": [ "-- Consulta sobre el esquema educativo", "SELECT id, nombre FROM estudiantes", "WHERE id == 10;" ],
         "bugLineIndex": 2,
         "explanation": "Escribir el valor mayor primero: `BETWEEN 9.5 AND 8.5` no devolverá ninguna fila porque el límite inferior debe ir primero.",
         "xpReward": 15
@@ -846,10 +822,8 @@ export const SQL_UNIT_07_LESSONS: Lesson[] = [
         "id": "sql-u07-l05-e04",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea que contiene el error en este código de \"IN\":",
-        "codeSnippet": [
-          "WHERE departamento IN \"Informática\", \"Matemáticas\" // Faltan los paréntesis alrededor de la lista"
-        ],
-        "bugLineIndex": 0,
+        "codeSnippet": [ "-- Consulta sobre estudiantes", "WHERE departamento IN \"Informática\", \"Matemáticas\"", "ORDER BY id ASC;" ],
+        "bugLineIndex": 1,
         "explanation": "Olvidar entrecomillar los elementos de texto dentro de los paréntesis del IN.",
         "xpReward": 15
       },
@@ -935,11 +909,7 @@ export const SQL_UNIT_07_LESSONS: Lesson[] = [
         "id": "sql-u07-l05-e09",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea con el error de diseño o sintaxis en \"IN\":",
-        "codeSnippet": [
-          "-- Consulta sobre el esquema educativo",
-          "SELECT id, nombre FROM estudiantes",
-          "WHERE id == 10; // Error: en SQL la igualdad se escribe con un solo = (WHERE id = 10)"
-        ],
+        "codeSnippet": [ "-- Consulta sobre el esquema educativo", "SELECT id, nombre FROM estudiantes", "WHERE id == 10;" ],
         "bugLineIndex": 2,
         "explanation": "Olvidar entrecomillar los elementos de texto dentro de los paréntesis del IN.",
         "xpReward": 15
@@ -1032,10 +1002,8 @@ export const SQL_UNIT_07_LESSONS: Lesson[] = [
         "id": "sql-u07-l06-e04",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea que contiene el error en este código de \"LIKE con % y _\":",
-        "codeSnippet": [
-          "WHERE nombre LIKE '*Val*' // En SQL el comodín de texto es % y no el asterisco"
-        ],
-        "bugLineIndex": 0,
+        "codeSnippet": [ "-- Consulta sobre estudiantes", "WHERE nombre LIKE '*Val*'", "ORDER BY id ASC;" ],
+        "bugLineIndex": 1,
         "explanation": "LIKE con % al inicio (ej. '%texto') no puede usar índices tradicionales en bases de datos enormes y será más lento.",
         "xpReward": 15
       },
@@ -1121,11 +1089,7 @@ export const SQL_UNIT_07_LESSONS: Lesson[] = [
         "id": "sql-u07-l06-e09",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea con el error de diseño o sintaxis en \"LIKE con % y _\":",
-        "codeSnippet": [
-          "-- Consulta sobre el esquema educativo",
-          "SELECT id, nombre FROM estudiantes",
-          "WHERE id == 10; // Error: en SQL la igualdad se escribe con un solo = (WHERE id = 10)"
-        ],
+        "codeSnippet": [ "-- Consulta sobre el esquema educativo", "SELECT id, nombre FROM estudiantes", "WHERE id == 10;" ],
         "bugLineIndex": 2,
         "explanation": "LIKE con % al inicio (ej. '%texto') no puede usar índices tradicionales en bases de datos enormes y será más lento.",
         "xpReward": 15
@@ -1220,10 +1184,8 @@ export const SQL_UNIT_07_LESSONS: Lesson[] = [
         "id": "sql-u07-l07-e04",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea que contiene el error en este código de \"IS NULL e IS NOT NULL\":",
-        "codeSnippet": [
-          "SELECT * FROM t WHERE email = NULL // Trampa: en SQL siempre se usa IS NULL"
-        ],
-        "bugLineIndex": 0,
+        "codeSnippet": [ "-- Consulta sobre estudiantes", "SELECT * FROM t WHERE email = NULL // Trampa: en SQL siempre se usa IS NULL", "ORDER BY id ASC;" ],
+        "bugLineIndex": 1,
         "explanation": "Intentar usar `!= NULL`: en SQL no existe, debes escribir obligatoriamente `IS NOT NULL`.",
         "xpReward": 15
       },
@@ -1309,11 +1271,7 @@ export const SQL_UNIT_07_LESSONS: Lesson[] = [
         "id": "sql-u07-l07-e09",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea con el error de diseño o sintaxis en \"IS NULL e IS NOT NULL\":",
-        "codeSnippet": [
-          "-- Consulta sobre el esquema educativo",
-          "SELECT id, nombre FROM estudiantes",
-          "WHERE id == 10; // Error: en SQL la igualdad se escribe con un solo = (WHERE id = 10)"
-        ],
+        "codeSnippet": [ "-- Consulta sobre el esquema educativo", "SELECT id, nombre FROM estudiantes", "WHERE id == 10;" ],
         "bugLineIndex": 2,
         "explanation": "Intentar usar `!= NULL`: en SQL no existe, debes escribir obligatoriamente `IS NOT NULL`.",
         "xpReward": 15
@@ -1414,10 +1372,8 @@ export const SQL_UNIT_07_LESSONS: Lesson[] = [
         "id": "sql-u07-l08-e04",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea que contiene el error en este código de \"ORDER BY\":",
-        "codeSnippet": [
-          "SELECT * FROM t SORT BY nombre // En SQL la cláusula es ORDER BY, no SORT BY"
-        ],
-        "bugLineIndex": 0,
+        "codeSnippet": [ "-- Consulta sobre estudiantes", "SELECT * FROM t SORT BY nombre", "ORDER BY id ASC;" ],
+        "bugLineIndex": 1,
         "explanation": "Asumir que los datos en una tabla relacional ya vienen ordenados: sin ORDER BY, el orden de las filas es impredecible.",
         "xpReward": 15
       },
@@ -1503,11 +1459,7 @@ export const SQL_UNIT_07_LESSONS: Lesson[] = [
         "id": "sql-u07-l08-e09",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea con el error de diseño o sintaxis en \"ORDER BY\":",
-        "codeSnippet": [
-          "-- Consulta sobre el esquema educativo",
-          "SELECT id, nombre FROM estudiantes",
-          "WHERE id == 10; // Error: en SQL la igualdad se escribe con un solo = (WHERE id = 10)"
-        ],
+        "codeSnippet": [ "-- Consulta sobre el esquema educativo", "SELECT id, nombre FROM estudiantes", "WHERE id == 10;" ],
         "bugLineIndex": 2,
         "explanation": "Asumir que los datos en una tabla relacional ya vienen ordenados: sin ORDER BY, el orden de las filas es impredecible.",
         "xpReward": 15
@@ -1604,10 +1556,8 @@ export const SQL_UNIT_07_LESSONS: Lesson[] = [
         "id": "sql-u07-l09-e04",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea que contiene el error en este código de \"LIMIT\":",
-        "codeSnippet": [
-          "LIMIT 5 SELECT * FROM t // LIMIT va al final de la consulta SQL"
-        ],
-        "bugLineIndex": 0,
+        "codeSnippet": [ "-- Consulta sobre estudiantes", "LIMIT 5 SELECT * FROM t // LIMIT va al final de la consulta SQL", "ORDER BY id ASC;" ],
+        "bugLineIndex": 1,
         "explanation": "Usar LIMIT sin ORDER BY te dará filas arbitrarias, porque el motor no sabrá cuáles son los \"primeros\".",
         "xpReward": 15
       },
@@ -1693,11 +1643,7 @@ export const SQL_UNIT_07_LESSONS: Lesson[] = [
         "id": "sql-u07-l09-e09",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea con el error de diseño o sintaxis en \"LIMIT\":",
-        "codeSnippet": [
-          "-- Consulta sobre el esquema educativo",
-          "SELECT id, nombre FROM estudiantes",
-          "WHERE id == 10; // Error: en SQL la igualdad se escribe con un solo = (WHERE id = 10)"
-        ],
+        "codeSnippet": [ "-- Consulta sobre el esquema educativo", "SELECT id, nombre FROM estudiantes", "WHERE id == 10;" ],
         "bugLineIndex": 2,
         "explanation": "Usar LIMIT sin ORDER BY te dará filas arbitrarias, porque el motor no sabrá cuáles son los \"primeros\".",
         "xpReward": 15

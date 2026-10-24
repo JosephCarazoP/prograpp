@@ -2,7 +2,6 @@ import React from 'react';
 import {
   Star,
   Gift,
-  ShieldAlert,
   CheckCircle2,
   Lock,
   BookOpen,
@@ -27,6 +26,8 @@ import {
   NodeSteppingPlatform,
   BiomeThemeType
 } from './BiomeScenery';
+import { BossAvatar3D } from './BossAvatar3D';
+import { getBossChallengeForUnit } from '../content/bossChallenges';
 
 interface LearningPathProps {
   units: Unit[];
@@ -207,7 +208,7 @@ const KOTLIN_BIOMES: Record<number, UnitBiome> = {
   1: {
     slug: 'kotlin-u01-pensamiento',
     name: 'Pensamiento lógico y primeros programas',
-    subtitle: 'Algoritmos, entrada, proceso, salida y estructura main()',
+    subtitle: 'Algoritmos, diagramas de flujo, pseudocódigo y secuencias',
     badgeTag: 'UNIDAD 1 • PENSAMIENTO LÓGICO',
     iconType: 'code',
     theme: 'valley',
@@ -286,9 +287,9 @@ const KOTLIN_BIOMES: Record<number, UnitBiome> = {
   },
   9: {
     slug: 'kotlin-u09-colecciones',
-    name: 'Colecciones',
-    subtitle: 'Estructuras de datos, mutabilidad, búsqueda e índices',
-    badgeTag: 'UNIDAD 9 • COLECCIONES',
+    name: 'Arreglos y Colecciones',
+    subtitle: 'Arreglos de tamaño fijo, matrices, listas, conjuntos y mapas',
+    badgeTag: 'UNIDAD 9 • ARREGLOS Y COLECCIONES',
     iconType: 'layers',
     theme: 'cavern',
     tabColor: '#F59E0B',
@@ -407,7 +408,7 @@ export const LearningPath: React.FC<LearningPathProps> = ({
               <div
                 style={{
                   width: '100%',
-                  maxWidth: '480px',
+                  maxWidth: '560px',
                   marginBottom: '16px',
                   padding: '10px 18px',
                   background: '#0F172A',
@@ -434,7 +435,7 @@ export const LearningPath: React.FC<LearningPathProps> = ({
               className="unit-card-banner"
               style={{
                 width: '100%',
-                maxWidth: '480px',
+                maxWidth: '560px',
                 boxSizing: 'border-box',
                 background: isUnitUnlocked ? biome.accentBg : '#F1F5F9',
                 padding: '20px 22px',
@@ -992,182 +993,243 @@ export const LearningPath: React.FC<LearningPathProps> = ({
                           />
                         </div>
 
-                        <div
-                          className="boss-trigger-node"
-                          style={{
-                            width: '100%',
-                            background: '#FFFFFF',
-                            border: '3px solid #000000',
-                            borderRadius: '20px',
-                            padding: '18px 20px',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'space-between',
-                            cursor: isUnlocked || (user.defeatedBosses || []).includes(node.id) ? 'pointer' : 'not-allowed',
-                            boxShadow: (user.defeatedBosses || []).includes(node.id)
-                              ? '4px 4px 0px #4ADE80, 4px 4px 0px #000000'
-                              : isUnlocked
-                              ? '5px 5px 0px #000000'
-                              : '3px 3px 0px #CBD5E1',
-                            boxSizing: 'border-box',
-                            position: 'relative',
-                            transition: 'all 0.15s ease'
-                          }}
-                          onClick={() => {
-                            const access = progressionEngine.canAccessNode(node.id, unit, user, safeProgress);
-                            if (access.allowed) {
-                              soundService.playToken();
-                              onOpenBoss(node.id, unit);
-                            } else {
-                              soundService.playError();
-                              if (onLockedNotice) {
-                                onLockedNotice('Jefe Bloqueado', access.reason || 'Completa todos los niveles y cofres previos.');
-                              }
-                            }
-                          }}
-                        >
-                          {/* Pestaña tipo folder del jefe */}
-                          <div
-                            style={{
-                              position: 'absolute',
-                              top: '-14px',
-                              left: '18px',
-                              background: (user.defeatedBosses || []).includes(node.id)
-                                ? '#4ADE80'
-                                : isUnlocked
-                                ? '#FF6584'
-                                : '#E2E8F0',
-                              border: '2px solid #000000',
-                              borderBottom: 'none',
-                              borderRadius: '7px 7px 0 0',
-                              padding: '2px 12px',
-                              fontSize: '0.68rem',
-                              fontWeight: 900,
-                              color: '#000000',
-                              letterSpacing: '0.5px',
-                              display: 'inline-flex',
-                              alignItems: 'center',
-                              gap: '5px'
-                            }}
-                          >
-                            <Swords size={12} color="#000000" strokeWidth={2.5} />
-                            <span>
-                              {(user.defeatedBosses || []).includes(node.id)
-                                ? 'JEFE DERROTADO'
-                                : isUnlocked
-                                ? 'BATALLA FINAL'
-                                : 'JEFE BLOQUEADO'}
-                            </span>
-                          </div>
+                        {(() => {
+                          const bossChallenge = getBossChallengeForUnit(user.currentPath || 'kotlin', unit.id);
+                          const isDefeated = (user.defeatedBosses || []).includes(node.id);
 
-                          <div style={{ display: 'flex', alignItems: 'center', gap: '14px', minWidth: 0 }}>
-                            {/* Token Neo-brutalista de batalla */}
+                          return (
                             <div
+                              className="boss-trigger-node"
                               style={{
-                                width: '48px',
-                                height: '48px',
-                                borderRadius: '14px',
-                                background: (user.defeatedBosses || []).includes(node.id)
-                                  ? '#4ADE80'
-                                  : isUnlocked
-                                  ? '#FF6584'
-                                  : '#E2E8F0',
-                                border: '2.5px solid #000000',
-                                boxShadow: '2.5px 2.5px 0px #000000',
+                                width: '100%',
+                                background: isDefeated ? '#F0FDF4' : isUnlocked ? '#FFFDF0' : '#F8FAFC',
+                                border: '3.5px solid #000000',
+                                borderRadius: '24px',
+                                padding: '16px 18px',
                                 display: 'flex',
                                 alignItems: 'center',
-                                justifyContent: 'center',
-                                flexShrink: 0
+                                justifyContent: 'space-between',
+                                cursor: isUnlocked || isDefeated ? 'pointer' : 'not-allowed',
+                                boxShadow: isDefeated
+                                  ? '6px 6px 0px #000000'
+                                  : isUnlocked
+                                  ? '6px 6px 0px #000000'
+                                  : '3px 3px 0px #000000',
+                                boxSizing: 'border-box',
+                                position: 'relative',
+                                transition: 'all 0.15s ease',
+                                opacity: isUnlocked || isDefeated ? 1 : 0.82
+                              }}
+                              onClick={() => {
+                                const access = progressionEngine.canAccessNode(node.id, unit, user, safeProgress);
+                                if (access.allowed) {
+                                  soundService.playToken();
+                                  onOpenBoss(node.id, unit);
+                                } else {
+                                  soundService.playError();
+                                  if (onLockedNotice) {
+                                    onLockedNotice(
+                                      'Jefe Bloqueado',
+                                      access.reason || 'Completa todos los niveles y cofres previos para desafiar al Jefe.'
+                                    );
+                                  }
+                                }
                               }}
                             >
-                              {(user.defeatedBosses || []).includes(node.id) ? (
-                                <Trophy size={26} color="#000000" strokeWidth={2.5} />
-                              ) : isUnlocked ? (
-                                <Swords size={26} color="#000000" strokeWidth={2.5} />
-                              ) : (
-                                <ShieldAlert size={26} color="#64748B" strokeWidth={2} />
-                              )}
-                            </div>
-
-                            <div style={{ minWidth: 0 }}>
+                              {/* Pestaña tipo folder del jefe Neo-Brutal */}
                               <div
                                 style={{
-                                  fontSize: '0.72rem',
+                                  position: 'absolute',
+                                  top: '-14px',
+                                  left: '18px',
+                                  background: isDefeated
+                                    ? '#4ADE80'
+                                    : isUnlocked
+                                    ? '#FF4365'
+                                    : '#CBD5E1',
+                                  border: '2.5px solid #000000',
+                                  borderBottom: 'none',
+                                  borderRadius: '8px 8px 0 0',
+                                  padding: '3px 12px',
+                                  fontSize: '0.7rem',
                                   fontWeight: 900,
-                                  color: '#64748B',
-                                  textTransform: 'uppercase',
-                                  letterSpacing: '0.5px'
-                                }}
-                              >
-                                {(user.defeatedBosses || []).includes(node.id)
-                                  ? '¡Superado con éxito!'
-                                  : isUnlocked
-                                  ? '¡Reto desbloqueado!'
-                                  : 'Jefe de Unidad'}
-                              </div>
-                              <div
-                                style={{
-                                  fontSize: '1.05rem',
-                                  fontWeight: 900,
-                                  color: '#000000'
-                                }}
-                              >
-                                {node.title}
-                              </div>
-                            </div>
-                          </div>
-
-                          <div style={{ flexShrink: 0 }}>
-                            {(user.defeatedBosses || []).includes(node.id) ? (
-                              <div
-                                style={{
-                                  background: '#4ADE80',
-                                  border: '2px solid #000000',
-                                  boxShadow: '2px 2px 0px #000000',
-                                  borderRadius: '999px',
-                                  padding: '6px',
-                                  display: 'flex',
+                                  color: isUnlocked && !isDefeated ? '#FFFFFF' : '#000000',
+                                  letterSpacing: '0.5px',
+                                  display: 'inline-flex',
                                   alignItems: 'center',
-                                  justifyContent: 'center'
+                                  gap: '6px'
                                 }}
                               >
-                                <CheckCircle2 size={20} color="#000000" strokeWidth={2.8} />
+                                {isDefeated ? (
+                                  <>
+                                    <Trophy size={13} color="#000000" strokeWidth={3} />
+                                    <span>JEFE SUPERADO · CORONA GANADA</span>
+                                  </>
+                                ) : isUnlocked ? (
+                                  <>
+                                    <Swords size={13} color="#FFFFFF" strokeWidth={3} />
+                                    <span>BATALLA FINAL DE UNIDAD</span>
+                                  </>
+                                ) : (
+                                  <>
+                                    <Lock size={13} color="#000000" strokeWidth={2.8} />
+                                    <span>JEFE BLOQUEADO</span>
+                                  </>
+                                )}
                               </div>
-                            ) : isUnlocked ? (
-                              <div
-                                style={{
-                                  background: '#FFE600',
-                                  border: '2px solid #000000',
-                                  boxShadow: '2.5px 2.5px 0px #000000',
-                                  color: '#000000',
-                                  borderRadius: '12px',
-                                  padding: '6px 14px',
-                                  fontSize: '0.78rem',
-                                  fontWeight: 900,
-                                  display: 'flex',
-                                  alignItems: 'center',
-                                  gap: '5px'
-                                }}
-                              >
-                                <span>LUCHAR</span>
-                                <Swords size={14} color="#000000" strokeWidth={2.5} />
+
+                              <div style={{ display: 'flex', alignItems: 'center', gap: '14px', minWidth: 0, flex: 1 }}>
+                                {/* Frame Neo-Brutalista con el Avatar 3D del Jefe */}
+                                <div
+                                  style={{
+                                    width: '64px',
+                                    height: '64px',
+                                    borderRadius: '16px',
+                                    background: isDefeated ? '#DCFCE7' : isUnlocked ? '#FEF3C7' : '#E2E8F0',
+                                    border: '3px solid #000000',
+                                    boxShadow: '3px 3px 0px #000000',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    flexShrink: 0,
+                                    overflow: 'visible',
+                                    position: 'relative'
+                                  }}
+                                >
+                                  <BossAvatar3D
+                                    avatarType={bossChallenge.avatarType}
+                                    primaryColor={bossChallenge.primaryColor}
+                                    accentColor={bossChallenge.accentColor}
+                                    pose={isDefeated ? 'defeated' : 'idle'}
+                                    size={58}
+                                    showPedestal={false}
+                                  />
+                                </div>
+
+                                <div style={{ minWidth: 0, flex: 1 }}>
+                                  <div
+                                    style={{
+                                      fontSize: '0.72rem',
+                                      fontWeight: 900,
+                                      color: isDefeated ? '#15803D' : isUnlocked ? '#B45309' : '#64748B',
+                                      textTransform: 'uppercase',
+                                      letterSpacing: '0.5px'
+                                    }}
+                                  >
+                                    UNIDAD {unit.id} · RETO DE INTEGRACIÓN
+                                  </div>
+                                  <div
+                                    style={{
+                                      fontSize: '1.08rem',
+                                      fontWeight: 900,
+                                      color: '#0F172A',
+                                      whiteSpace: 'nowrap',
+                                      overflow: 'hidden',
+                                      textOverflow: 'ellipsis'
+                                    }}
+                                  >
+                                    {bossChallenge.name}
+                                  </div>
+                                  <div
+                                    style={{
+                                      fontSize: '0.74rem',
+                                      fontWeight: 800,
+                                      color: '#475569',
+                                      marginTop: '3px',
+                                      display: 'flex',
+                                      alignItems: 'center',
+                                      gap: '6px'
+                                    }}
+                                  >
+                                    <span
+                                      style={{
+                                        background: '#FFE600',
+                                        padding: '1px 6px',
+                                        borderRadius: '5px',
+                                        border: '1.5px solid #000000',
+                                        color: '#000000',
+                                        fontWeight: 900,
+                                        fontSize: '0.68rem'
+                                      }}
+                                    >
+                                      +120 XP
+                                    </span>
+                                    <span
+                                      style={{
+                                        background: '#00E5FF',
+                                        padding: '1px 6px',
+                                        borderRadius: '5px',
+                                        border: '1.5px solid #000000',
+                                        color: '#000000',
+                                        fontWeight: 900,
+                                        fontSize: '0.68rem'
+                                      }}
+                                    >
+                                      +60 Bytes
+                                    </span>
+                                  </div>
+                                </div>
                               </div>
-                            ) : (
-                              <div
-                                style={{
-                                  background: '#E2E8F0',
-                                  border: '1.5px solid #000000',
-                                  borderRadius: '8px',
-                                  padding: '5px 8px',
-                                  display: 'flex',
-                                  alignItems: 'center'
-                                }}
-                              >
-                                <Lock size={18} color="#64748B" strokeWidth={2.5} />
+
+                              <div style={{ flexShrink: 0, marginLeft: '12px' }}>
+                                {isDefeated ? (
+                                  <div
+                                    style={{
+                                      background: '#4ADE80',
+                                      border: '2.5px solid #000000',
+                                      boxShadow: '3px 3px 0px #000000',
+                                      borderRadius: '12px',
+                                      padding: '8px 14px',
+                                      display: 'flex',
+                                      alignItems: 'center',
+                                      gap: '6px',
+                                      fontSize: '0.78rem',
+                                      fontWeight: 900,
+                                      color: '#000000'
+                                    }}
+                                  >
+                                    <CheckCircle2 size={16} strokeWidth={3} />
+                                    <span>VENCIDO</span>
+                                  </div>
+                                ) : isUnlocked ? (
+                                  <div
+                                    style={{
+                                      background: '#FFE600',
+                                      border: '2.5px solid #000000',
+                                      boxShadow: '3px 3px 0px #000000',
+                                      color: '#000000',
+                                      borderRadius: '14px',
+                                      padding: '8px 16px',
+                                      fontSize: '0.84rem',
+                                      fontWeight: 900,
+                                      display: 'flex',
+                                      alignItems: 'center',
+                                      gap: '6px'
+                                    }}
+                                  >
+                                    <span>PELEAR</span>
+                                    <Swords size={16} color="#000000" strokeWidth={3} />
+                                  </div>
+                                ) : (
+                                  <div
+                                    style={{
+                                      background: '#E2E8F0',
+                                      border: '2px solid #000000',
+                                      boxShadow: '2px 2px 0px #000000',
+                                      borderRadius: '10px',
+                                      padding: '6px 10px',
+                                      display: 'flex',
+                                      alignItems: 'center',
+                                      color: '#64748B'
+                                    }}
+                                  >
+                                    <Lock size={18} color="#000000" strokeWidth={2.5} />
+                                  </div>
+                                )}
                               </div>
-                            )}
-                          </div>
-                        </div>
+                            </div>
+                          );
+                        })()}
                       </div>
                     )}
 

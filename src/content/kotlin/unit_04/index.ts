@@ -72,11 +72,7 @@ export const KOTLIN_UNIT_04_LESSONS: Lesson[] = [
         "id": "kt-u04-l01-e04",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea con el error común de punto y coma tras el if:",
-        "codeSnippet": [
-          "val x = 10",
-          "if (x > 5); { // Error: el punto y coma termina prematuramente la condición",
-          "    println(\"Mayor\")"
-        ],
+        "codeSnippet": [ "val x = 10", "if (x > 5); {", "    println(\"Mayor\")" ],
         "bugLineIndex": 1,
         "explanation": "El punto y coma ; tras los paréntesis del if desvincula el bloque de código subsiguiente.",
         "xpReward": 15
@@ -169,11 +165,7 @@ export const KOTLIN_UNIT_04_LESSONS: Lesson[] = [
         "id": "kt-u04-l01-e09",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea con error de asignación dentro de la condición:",
-        "codeSnippet": [
-          "val pass = \"123\"",
-          "if (pass = \"123\") { // Error: debe ser == para comparar",
-          "    println(\"Login exitoso\")"
-        ],
+        "codeSnippet": [ "val pass = \"123\"", "if (pass = \"123\") {", "    println(\"Login exitoso\")" ],
         "bugLineIndex": 1,
         "explanation": "= es operador de asignación; para comparar cadenas se requiere ==.",
         "xpReward": 15
@@ -266,11 +258,7 @@ export const KOTLIN_UNIT_04_LESSONS: Lesson[] = [
         "id": "kt-u04-l02-e04",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea con el error de sintaxis en el else:",
-        "codeSnippet": [
-          "if (edad >= 18) {",
-          "    println(\"Mayor\")",
-          "} else (edad < 18) { // Error: else no lleva condición entre paréntesis"
-        ],
+        "codeSnippet": [ "if (edad >= 18) {", "    println(\"Mayor\")", "} else (edad < 18) {" ],
         "bugLineIndex": 2,
         "explanation": "else nunca lleva condición; si necesitas una condición alternativa debes usar else if.",
         "xpReward": 15
@@ -353,11 +341,7 @@ export const KOTLIN_UNIT_04_LESSONS: Lesson[] = [
         "id": "kt-u04-l02-e09",
         "type": "spot_the_bug",
         "prompt": "Identifica el error en la secuencia de palabras clave:",
-        "codeSnippet": [
-          "else { // Error: else no puede existir sin un if previo",
-          "    println(\"Error de flujo\")",
-          "}"
-        ],
+        "codeSnippet": [ "else {", "    println(\"Error de flujo\")", "}" ],
         "bugLineIndex": 0,
         "explanation": "Una cláusula else es un complemento; no puede declararse sin un bloque if anterior.",
         "xpReward": 15
@@ -450,11 +434,7 @@ export const KOTLIN_UNIT_04_LESSONS: Lesson[] = [
         "id": "kt-u04-l03-e04",
         "type": "spot_the_bug",
         "prompt": "Identifica el error de sintaxis de lenguaje extranjero:",
-        "codeSnippet": [
-          "if (nivel == 1) { println(\"Principiante\") }",
-          "elif (nivel == 2) { // Error: en Kotlin no existe elif (es de Python)",
-          "    println(\"Intermedio\")"
-        ],
+        "codeSnippet": [ "if (nivel == 1) { println(\"Principiante\") }", "elif (nivel == 2) {", "    println(\"Intermedio\")" ],
         "bugLineIndex": 1,
         "explanation": "Kotlin no usa elif; la sintaxis oficial es else if.",
         "xpReward": 15
@@ -622,11 +602,7 @@ export const KOTLIN_UNIT_04_LESSONS: Lesson[] = [
         "id": "kt-u04-l04-e04",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea con error de sintaxis en el when:",
-        "codeSnippet": [
-          "when (opcion) {",
-          "    1: println(\"Uno\") // Error: se debe usar -> en vez de dos puntos :",
-          "    else -> println(\"Otro\")"
-        ],
+        "codeSnippet": [ "when (opcion) {", "    1: println(\"Uno\")", "    else -> println(\"Otro\")" ],
         "bugLineIndex": 1,
         "explanation": "En Kotlin se utiliza la flecha ->, no los dos puntos : del switch de otros lenguajes.",
         "xpReward": 15
@@ -707,11 +683,7 @@ export const KOTLIN_UNIT_04_LESSONS: Lesson[] = [
         "id": "kt-u04-l04-e09",
         "type": "spot_the_bug",
         "prompt": "Identifica el error de concepto respecto al break en Kotlin:",
-        "codeSnippet": [
-          "when (x) {",
-          "    1 -> { println(\"Uno\"); break } // Error: break no es necesario ni válido aquí",
-          "    else -> println(\"Otro\")"
-        ],
+        "codeSnippet": [ "when (x) {", "    1 -> { println(\"Uno\"); break }", "    else -> println(\"Otro\")" ],
         "bugLineIndex": 1,
         "explanation": "A diferencia del switch de C/Java, when en Kotlin no sufre de fall-through; el break es innecesario.",
         "xpReward": 15
@@ -792,11 +764,7 @@ export const KOTLIN_UNIT_04_LESSONS: Lesson[] = [
         "id": "kt-u04-l05-e04",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea con el error al intentar crear un rango:",
-        "codeSnippet": [
-          "val a = 5 in 1..10",
-          "val b = 5 in 1...10 // Error: los rangos se definen con dos puntos .., no tres",
-          "val c = 15 !in 1..10"
-        ],
+        "codeSnippet": [ "val a = 5 in 1..10", "val b = 5 in 1...10", "val c = 15 !in 1..10" ],
         "bugLineIndex": 1,
         "explanation": "En Kotlin los rangos se escriben con dos puntos .. (ej. 1..10).",
         "xpReward": 15
@@ -974,11 +942,7 @@ export const KOTLIN_UNIT_04_LESSONS: Lesson[] = [
         "id": "kt-u04-l06-e04",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea con error por omitir el else obligatorio en una expresión:",
-        "codeSnippet": [
-          "val activo = true",
-          "val texto = if (activo) \"Activo\" // Error: if como expresión requiere rama else",
-          "println(texto)"
-        ],
+        "codeSnippet": [ "val activo = true", "val texto = if (activo) \"Activo\"", "println(texto)" ],
         "bugLineIndex": 1,
         "explanation": "Si activo fuera false, la variable texto se quedaría sin valor; el compilador exige else.",
         "xpReward": 15
@@ -1069,11 +1033,7 @@ export const KOTLIN_UNIT_04_LESSONS: Lesson[] = [
         "id": "kt-u04-l06-e09",
         "type": "spot_the_bug",
         "prompt": "Identifica la rama de tipos incompatibles en la expresión:",
-        "codeSnippet": [
-          "val condicion = true",
-          "val resultado: Int = if (condicion) 100 else \"Cien\" // Error: \"Cien\" es String, no Int",
-          "println(resultado)"
-        ],
+        "codeSnippet": [ "val condicion = true", "val resultado: Int = if (condicion) 100 else \"Cien\"", "println(resultado)" ],
         "bugLineIndex": 1,
         "explanation": "Ambas ramas deben devolver un tipo compatible con el tipo esperado (Int).",
         "xpReward": 15

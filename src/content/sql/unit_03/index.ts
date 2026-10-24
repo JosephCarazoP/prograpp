@@ -160,11 +160,7 @@ export const SQL_UNIT_03_LESSONS: Lesson[] = [
         "id": "sql-u03-l01-e09",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea con el error de diseño o sintaxis en \"Estructura de CREATE TABLE\":",
-        "codeSnippet": [
-          "-- Consulta sobre el esquema educativo",
-          "SELECT id, nombre FROM estudiantes",
-          "WHERE id == 10; // Error: en SQL la igualdad se escribe con un solo = (WHERE id = 10)"
-        ],
+        "codeSnippet": [ "-- Consulta sobre el esquema educativo", "SELECT id, nombre FROM estudiantes", "WHERE id == 10;" ],
         "bugLineIndex": 2,
         "explanation": "Olvidar la coma entre columnas o poner una coma de más después de la última columna antes del paréntesis de cierre.",
         "xpReward": 15
@@ -257,11 +253,7 @@ export const SQL_UNIT_03_LESSONS: Lesson[] = [
         "id": "sql-u03-l02-e04",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea que contiene el error en este código de \"Nombres de tablas y columnas\":",
-        "codeSnippet": [
-          "CREATE TABLE usuarios (",
-          "    primer nombre TEXT // Error: no se permiten espacios en el nombre",
-          ")"
-        ],
+        "codeSnippet": [ "CREATE TABLE usuarios (", "    primer nombre TEXT", ")" ],
         "bugLineIndex": 1,
         "explanation": "Usar palabras reservadas de SQL como nombres de columnas (ej. llamar a una columna \"select\", \"where\" o \"table\").",
         "xpReward": 15
@@ -348,11 +340,7 @@ export const SQL_UNIT_03_LESSONS: Lesson[] = [
         "id": "sql-u03-l02-e09",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea con el error de diseño o sintaxis en \"Nombres de tablas y columnas\":",
-        "codeSnippet": [
-          "-- Consulta sobre el esquema educativo",
-          "SELECT id, nombre FROM estudiantes",
-          "WHERE id == 10; // Error: en SQL la igualdad se escribe con un solo = (WHERE id = 10)"
-        ],
+        "codeSnippet": [ "-- Consulta sobre el esquema educativo", "SELECT id, nombre FROM estudiantes", "WHERE id == 10;" ],
         "bugLineIndex": 2,
         "explanation": "Usar palabras reservadas de SQL como nombres de columnas (ej. llamar a una columna \"select\", \"where\" o \"table\").",
         "xpReward": 15
@@ -538,11 +526,7 @@ export const SQL_UNIT_03_LESSONS: Lesson[] = [
         "id": "sql-u03-l03-e09",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea con el error de diseño o sintaxis en \"INTEGER, REAL y TEXT\":",
-        "codeSnippet": [
-          "-- Consulta sobre el esquema educativo",
-          "SELECT id, nombre FROM estudiantes",
-          "WHERE id == 10; // Error: en SQL la igualdad se escribe con un solo = (WHERE id = 10)"
-        ],
+        "codeSnippet": [ "-- Consulta sobre el esquema educativo", "SELECT id, nombre FROM estudiantes", "WHERE id == 10;" ],
         "bugLineIndex": 2,
         "explanation": "Usar TEXT para números que vas a sumar o promediar: la comparación alfabética hará que \"10\" sea menor que \"2\".",
         "xpReward": 15
@@ -637,11 +621,7 @@ export const SQL_UNIT_03_LESSONS: Lesson[] = [
         "id": "sql-u03-l04-e04",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea que contiene el error en este código de \"Reconocimiento de BLOB\":",
-        "codeSnippet": [
-          "CREATE TABLE img (",
-          "    foto IMAGE // En SQLite estándar el tipo binario se llama BLOB",
-          ")"
-        ],
+        "codeSnippet": [ "CREATE TABLE img (", "    foto IMAGE", ")" ],
         "bugLineIndex": 1,
         "explanation": "Guardar archivos de video de 500 MB en columnas BLOB ralentizará enormemente las copias de seguridad de la base de datos.",
         "xpReward": 15
@@ -728,11 +708,7 @@ export const SQL_UNIT_03_LESSONS: Lesson[] = [
         "id": "sql-u03-l04-e09",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea con el error de diseño o sintaxis en \"Reconocimiento de BLOB\":",
-        "codeSnippet": [
-          "-- Consulta sobre el esquema educativo",
-          "SELECT id, nombre FROM estudiantes",
-          "WHERE id == 10; // Error: en SQL la igualdad se escribe con un solo = (WHERE id = 10)"
-        ],
+        "codeSnippet": [ "-- Consulta sobre el esquema educativo", "SELECT id, nombre FROM estudiantes", "WHERE id == 10;" ],
         "bugLineIndex": 2,
         "explanation": "Guardar archivos de video de 500 MB en columnas BLOB ralentizará enormemente las copias de seguridad de la base de datos.",
         "xpReward": 15
@@ -825,10 +801,8 @@ export const SQL_UNIT_03_LESSONS: Lesson[] = [
         "id": "sql-u03-l05-e04",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea que contiene el error en este código de \"Representación de valores lógicos y fechas\":",
-        "codeSnippet": [
-          "// Guardar fecha como \"15 de marzo de 2024\": imposible de ordenar con ORDER BY"
-        ],
-        "bugLineIndex": 0,
+        "codeSnippet": [ "-- Consulta sobre estudiantes", "// Guardar fecha como \"15 de marzo de 2024\": imposible de ordenar con ORDER BY", "ORDER BY id ASC;" ],
+        "bugLineIndex": 1,
         "explanation": "Guardar fechas en formato \"DD/MM/AAAA\": si ordenas alfabéticamente, \"01/12/2024\" saldrá antes que \"02/01/2020\", ¡lo cual es un desastre!",
         "xpReward": 15
       },
@@ -914,11 +888,7 @@ export const SQL_UNIT_03_LESSONS: Lesson[] = [
         "id": "sql-u03-l05-e09",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea con el error de diseño o sintaxis en \"Representación de valores lógicos y fechas\":",
-        "codeSnippet": [
-          "-- Consulta sobre el esquema educativo",
-          "SELECT id, nombre FROM estudiantes",
-          "WHERE id == 10; // Error: en SQL la igualdad se escribe con un solo = (WHERE id = 10)"
-        ],
+        "codeSnippet": [ "-- Consulta sobre el esquema educativo", "SELECT id, nombre FROM estudiantes", "WHERE id == 10;" ],
         "bugLineIndex": 2,
         "explanation": "Guardar fechas en formato \"DD/MM/AAAA\": si ordenas alfabéticamente, \"01/12/2024\" saldrá antes que \"02/01/2020\", ¡lo cual es un desastre!",
         "xpReward": 15
@@ -1017,10 +987,8 @@ export const SQL_UNIT_03_LESSONS: Lesson[] = [
         "id": "sql-u03-l06-e04",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea que contiene el error en este código de \"Flexibilidad de tipos en SQLite\":",
-        "codeSnippet": [
-          "SELECT type(columna) // Error: en SQLite la función es typeof()"
-        ],
-        "bugLineIndex": 0,
+        "codeSnippet": [ "-- Consulta sobre estudiantes", "SELECT type(columna)", "ORDER BY id ASC;" ],
+        "bugLineIndex": 1,
         "explanation": "Aprovecharse del tipado flexible para meter texto en una columna INTEGER: arruinará tus funciones AVG() o SUM().",
         "xpReward": 15
       },
@@ -1106,11 +1074,7 @@ export const SQL_UNIT_03_LESSONS: Lesson[] = [
         "id": "sql-u03-l06-e09",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea con el error de diseño o sintaxis en \"Flexibilidad de tipos en SQLite\":",
-        "codeSnippet": [
-          "-- Consulta sobre el esquema educativo",
-          "SELECT id, nombre FROM estudiantes",
-          "WHERE id == 10; // Error: en SQL la igualdad se escribe con un solo = (WHERE id = 10)"
-        ],
+        "codeSnippet": [ "-- Consulta sobre el esquema educativo", "SELECT id, nombre FROM estudiantes", "WHERE id == 10;" ],
         "bugLineIndex": 2,
         "explanation": "Aprovecharse del tipado flexible para meter texto en una columna INTEGER: arruinará tus funciones AVG() o SUM().",
         "xpReward": 15

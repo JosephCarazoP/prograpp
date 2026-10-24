@@ -64,11 +64,7 @@ export const KOTLIN_UNIT_06_LESSONS: Lesson[] = [
         "id": "kt-u06-l01-e04",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea donde la función no se ejecuta por olvidar los paréntesis:",
-        "codeSnippet": [
-          "fun conectar() { println(\"Conectado\") }",
-          "conectar // Error: falta () para invocar la función",
-          "println(\"Fin\")"
-        ],
+        "codeSnippet": [ "fun conectar() { println(\"Conectado\") }", "conectar", "println(\"Fin\")" ],
         "bugLineIndex": 1,
         "explanation": "Escribir solo conectar no ejecuta la función; se requiere conectar().",
         "xpReward": 15
@@ -149,11 +145,7 @@ export const KOTLIN_UNIT_06_LESSONS: Lesson[] = [
         "id": "kt-u06-l01-e09",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea con error en la cabecera de la función:",
-        "codeSnippet": [
-          "fun mostrarMenu { // Error: faltan los paréntesis () en la declaración",
-          "    println(\"1. Jugar\")",
-          "}"
-        ],
+        "codeSnippet": [ "fun mostrarMenu {", "    println(\"1. Jugar\")", "}" ],
         "bugLineIndex": 0,
         "explanation": "Toda declaración de función requiere paréntesis para su lista de parámetros: fun mostrarMenu().",
         "xpReward": 15
@@ -244,11 +236,7 @@ export const KOTLIN_UNIT_06_LESSONS: Lesson[] = [
         "id": "kt-u06-l02-e04",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea donde se intenta modificar un parámetro inmutable:",
-        "codeSnippet": [
-          "fun incrementar(x: Int) {",
-          "    x = x + 1 // Error: los parámetros son val inmutables en Kotlin",
-          "    println(x)"
-        ],
+        "codeSnippet": [ "fun incrementar(x: Int) {", "    x = x + 1", "    println(x)" ],
         "bugLineIndex": 1,
         "explanation": "En Kotlin los parámetros son inmutables de solo lectura; no pueden ser reasignados.",
         "xpReward": 15
@@ -331,11 +319,7 @@ export const KOTLIN_UNIT_06_LESSONS: Lesson[] = [
         "id": "kt-u06-l02-e09",
         "type": "spot_the_bug",
         "prompt": "Identifica el error por omisión del tipo de dato en el parámetro:",
-        "codeSnippet": [
-          "fun calcular(base) { // Error: falta especificar el tipo (ej. base: Int)",
-          "    println(base * 2)",
-          "}"
-        ],
+        "codeSnippet": [ "fun calcular(base) {", "    println(base * 2)", "}" ],
         "bugLineIndex": 0,
         "explanation": "En Kotlin no hay inferencia en los parámetros de funciones; el tipo debe ser explícito.",
         "xpReward": 15
@@ -426,11 +410,7 @@ export const KOTLIN_UNIT_06_LESSONS: Lesson[] = [
         "id": "kt-u06-l03-e04",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea con error por omitir el return requerido:",
-        "codeSnippet": [
-          "fun multiplicar(a: Int, b: Int): Int {",
-          "    a * b // Error: falta la palabra clave return",
-          "}"
-        ],
+        "codeSnippet": [ "fun multiplicar(a: Int, b: Int): Int {", "    a * b", "}" ],
         "bugLineIndex": 1,
         "explanation": "En funciones con bloque de llaves { }, el valor devuelto debe ir precedido de return.",
         "xpReward": 15
@@ -509,11 +489,7 @@ export const KOTLIN_UNIT_06_LESSONS: Lesson[] = [
         "id": "kt-u06-l03-e09",
         "type": "spot_the_bug",
         "prompt": "Identifica el código inalcanzable tras el return:",
-        "codeSnippet": [
-          "fun test(): Int {",
-          "    return 10",
-          "    println(\"Fin\") // Error: código inalcanzable tras return"
-        ],
+        "codeSnippet": [ "fun test(): Int {", "    return 10", "    println(\"Fin\")" ],
         "bugLineIndex": 2,
         "explanation": "Al ejecutarse return 10, la función sale y la línea println jamás se alcanzará.",
         "xpReward": 15
@@ -600,11 +576,7 @@ export const KOTLIN_UNIT_06_LESSONS: Lesson[] = [
         "id": "kt-u06-l04-e04",
         "type": "spot_the_bug",
         "prompt": "Identifica el error por usar void (de Java) en vez de Unit en Kotlin:",
-        "codeSnippet": [
-          "fun limpiar(): void { // Error: en Kotlin no existe void, es Unit o se omite",
-          "    println(\"Limpio\")",
-          "}"
-        ],
+        "codeSnippet": [ "fun limpiar(): void {", "    println(\"Limpio\")", "}" ],
         "bugLineIndex": 0,
         "explanation": "void pertenece a lenguajes como Java o C; en Kotlin se utiliza Unit.",
         "xpReward": 15
@@ -693,11 +665,7 @@ export const KOTLIN_UNIT_06_LESSONS: Lesson[] = [
         "id": "kt-u06-l04-e09",
         "type": "spot_the_bug",
         "prompt": "Identifica la incoherencia de tipo en el retorno:",
-        "codeSnippet": [
-          "fun saludar(): Unit {",
-          "    return \"Hola\" // Error: la función está declarada como Unit pero devuelve un String",
-          "}"
-        ],
+        "codeSnippet": [ "fun saludar(): Unit {", "    return \"Hola\"", "}" ],
         "bugLineIndex": 1,
         "explanation": "Si una función es Unit, no puede retornar una cadena con return \"Hola\".",
         "xpReward": 15
@@ -784,10 +752,7 @@ export const KOTLIN_UNIT_06_LESSONS: Lesson[] = [
         "id": "kt-u06-l05-e04",
         "type": "spot_the_bug",
         "prompt": "Identifica el error en la invocación mezclada:",
-        "codeSnippet": [
-          "fun ventana(ancho: Int, alto: Int, titulo: String) { }",
-          "ventana(ancho = 800, 600, \"App\") // Error: argumento posicional tras argumento con nombre"
-        ],
+        "codeSnippet": [ "fun ventana(ancho: Int, alto: Int, titulo: String) { }", "ventana(ancho = 800, 600, \"App\")", "println(\"Resultado listo\")" ],
         "bugLineIndex": 1,
         "explanation": "Una vez que usas un argumento con nombre, todos los argumentos subsiguientes deben ser nombrados.",
         "xpReward": 15
@@ -870,10 +835,7 @@ export const KOTLIN_UNIT_06_LESSONS: Lesson[] = [
         "id": "kt-u06-l05-e09",
         "type": "spot_the_bug",
         "prompt": "Identifica el nombre de parámetro inexistente en la invocación:",
-        "codeSnippet": [
-          "fun registrar(usuario: String, clave: String) { }",
-          "registrar(usuario = \"admin\", password = \"123\") // Error: el parámetro se llama \"clave\", no \"password\""
-        ],
+        "codeSnippet": [ "fun registrar(usuario: String, clave: String) { }", "registrar(usuario = \"admin\", password = \"123\")", "println(\"Resultado listo\")" ],
         "bugLineIndex": 1,
         "explanation": "El nombre del argumento en la llamada debe coincidir exactamente con el nombre en la función.",
         "xpReward": 15
@@ -964,12 +926,7 @@ export const KOTLIN_UNIT_06_LESSONS: Lesson[] = [
         "id": "kt-u06-l06-e04",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea donde se intenta usar una variable fuera de su bloque de vida:",
-        "codeSnippet": [
-          "if (true) {",
-          "    val resultado = 100",
-          "}",
-          "println(resultado) // Error: resultado solo existe dentro del if anterior"
-        ],
+        "codeSnippet": [ "if (true) {", "    val resultado = 100", "}", "println(resultado)" ],
         "bugLineIndex": 3,
         "explanation": "Al cerrarse la llave } del if, la variable resultado es destruida de la memoria.",
         "xpReward": 15
@@ -1060,11 +1017,7 @@ export const KOTLIN_UNIT_06_LESSONS: Lesson[] = [
         "id": "kt-u06-l06-e09",
         "type": "spot_the_bug",
         "prompt": "Identifica el error de redeclaración en el mismo alcance:",
-        "codeSnippet": [
-          "val id = 1",
-          "val id = 2 // Error: no se puede redeclarar la misma variable en el mismo ámbito",
-          "println(id)"
-        ],
+        "codeSnippet": [ "val id = 1", "val id = 2", "println(id)" ],
         "bugLineIndex": 1,
         "explanation": "Dentro del mismo scope no pueden coexistir dos variables con el mismo identificador.",
         "xpReward": 15

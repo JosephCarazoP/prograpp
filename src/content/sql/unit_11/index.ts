@@ -62,10 +62,8 @@ export const SQL_UNIT_11_LESSONS: Lesson[] = [
         "id": "sql-u11-l01-e04",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea que contiene el error en este código de \"Funciones de texto: LENGTH, TRIM, UPPER, LOWER\":",
-        "codeSnippet": [
-          "SELECT LEN(nombre) FROM estudiantes // En SQLite la función es LENGTH(), no LEN()"
-        ],
-        "bugLineIndex": 0,
+        "codeSnippet": [ "-- Consulta sobre estudiantes", "SELECT LEN(nombre) FROM estudiantes", "ORDER BY id ASC;" ],
+        "bugLineIndex": 1,
         "explanation": "Recuerda que en SQLite LENGTH() devuelve la cantidad de caracteres para texto y bytes para BLOB.",
         "xpReward": 15
       },
@@ -151,11 +149,7 @@ export const SQL_UNIT_11_LESSONS: Lesson[] = [
         "id": "sql-u11-l01-e09",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea con el error de diseño o sintaxis en \"Funciones de texto: LENGTH, TRIM, UPPER, LOWER\":",
-        "codeSnippet": [
-          "-- Consulta sobre el esquema educativo",
-          "SELECT id, nombre FROM estudiantes",
-          "WHERE id == 10; // Error: en SQL la igualdad se escribe con un solo = (WHERE id = 10)"
-        ],
+        "codeSnippet": [ "-- Consulta sobre el esquema educativo", "SELECT id, nombre FROM estudiantes", "WHERE id == 10;" ],
         "bugLineIndex": 2,
         "explanation": "Recuerda que en SQLite LENGTH() devuelve la cantidad de caracteres para texto y bytes para BLOB.",
         "xpReward": 15
@@ -248,10 +242,8 @@ export const SQL_UNIT_11_LESSONS: Lesson[] = [
         "id": "sql-u11-l02-e04",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea que contiene el error en este código de \"Funciones numéricas: ROUND\":",
-        "codeSnippet": [
-          "SELECT ROUND(promedio, -1) // Valores negativos no son estándar"
-        ],
-        "bugLineIndex": 0,
+        "codeSnippet": [ "-- Consulta sobre estudiantes", "SELECT ROUND(promedio, -1) // Valores negativos no son estándar", "ORDER BY id ASC;" ],
+        "bugLineIndex": 1,
         "explanation": "Omitir el segundo parámetro en ROUND(): en SQLite redondeará a 0 decimales por defecto.",
         "xpReward": 15
       },
@@ -337,11 +329,7 @@ export const SQL_UNIT_11_LESSONS: Lesson[] = [
         "id": "sql-u11-l02-e09",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea con el error de diseño o sintaxis en \"Funciones numéricas: ROUND\":",
-        "codeSnippet": [
-          "-- Consulta sobre el esquema educativo",
-          "SELECT id, nombre FROM estudiantes",
-          "WHERE id == 10; // Error: en SQL la igualdad se escribe con un solo = (WHERE id = 10)"
-        ],
+        "codeSnippet": [ "-- Consulta sobre el esquema educativo", "SELECT id, nombre FROM estudiantes", "WHERE id == 10;" ],
         "bugLineIndex": 2,
         "explanation": "Omitir el segundo parámetro en ROUND(): en SQLite redondeará a 0 decimales por defecto.",
         "xpReward": 15
@@ -438,10 +426,8 @@ export const SQL_UNIT_11_LESSONS: Lesson[] = [
         "id": "sql-u11-l03-e04",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea que contiene el error en este código de \"COALESCE\":",
-        "codeSnippet": [
-          "SELECT COALESCE() // Requiere al menos un argumento"
-        ],
-        "bugLineIndex": 0,
+        "codeSnippet": [ "-- Consulta sobre estudiantes", "SELECT COALESCE() // Requiere al menos un argumento", "ORDER BY id ASC;" ],
+        "bugLineIndex": 1,
         "explanation": "Si todos los argumentos pasados a COALESCE son NULL, la función devolverá NULL.",
         "xpReward": 15
       },
@@ -527,11 +513,7 @@ export const SQL_UNIT_11_LESSONS: Lesson[] = [
         "id": "sql-u11-l03-e09",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea con el error de diseño o sintaxis en \"COALESCE\":",
-        "codeSnippet": [
-          "-- Consulta sobre el esquema educativo",
-          "SELECT id, nombre FROM estudiantes",
-          "WHERE id == 10; // Error: en SQL la igualdad se escribe con un solo = (WHERE id = 10)"
-        ],
+        "codeSnippet": [ "-- Consulta sobre el esquema educativo", "SELECT id, nombre FROM estudiantes", "WHERE id == 10;" ],
         "bugLineIndex": 2,
         "explanation": "Si todos los argumentos pasados a COALESCE son NULL, la función devolverá NULL.",
         "xpReward": 15
@@ -632,10 +614,8 @@ export const SQL_UNIT_11_LESSONS: Lesson[] = [
         "id": "sql-u11-l04-e04",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea que contiene el error en este código de \"CASE\":",
-        "codeSnippet": [
-          "SELECT CASE WHEN x > 0 THEN \"Positivo\" // Olvidó la palabra END al final"
-        ],
-        "bugLineIndex": 0,
+        "codeSnippet": [ "-- Consulta sobre estudiantes", "SELECT CASE WHEN x > 0 THEN \"Positivo\" // Olvidó la palabra END al final", "ORDER BY id ASC;" ],
+        "bugLineIndex": 1,
         "explanation": "Olvidar la palabra END para cerrar la estructura del CASE provocará un error de sintaxis.",
         "xpReward": 15
       },
@@ -721,11 +701,7 @@ export const SQL_UNIT_11_LESSONS: Lesson[] = [
         "id": "sql-u11-l04-e09",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea con el error de diseño o sintaxis en \"CASE\":",
-        "codeSnippet": [
-          "-- Consulta sobre el esquema educativo",
-          "SELECT id, nombre FROM estudiantes",
-          "WHERE id == 10; // Error: en SQL la igualdad se escribe con un solo = (WHERE id = 10)"
-        ],
+        "codeSnippet": [ "-- Consulta sobre el esquema educativo", "SELECT id, nombre FROM estudiantes", "WHERE id == 10;" ],
         "bugLineIndex": 2,
         "explanation": "Olvidar la palabra END para cerrar la estructura del CASE provocará un error de sintaxis.",
         "xpReward": 15
@@ -820,10 +796,8 @@ export const SQL_UNIT_11_LESSONS: Lesson[] = [
         "id": "sql-u11-l05-e04",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea que contiene el error en este código de \"Funciones básicas de fecha\":",
-        "codeSnippet": [
-          "SELECT CURDATE() // En SQLite no existe CURDATE, se usa DATE(\"now\")"
-        ],
-        "bugLineIndex": 0,
+        "codeSnippet": [ "-- Consulta sobre estudiantes", "SELECT CURDATE()", "ORDER BY id ASC;" ],
+        "bugLineIndex": 1,
         "explanation": "Intentar restar fechas directamente con `-`: las fechas son cadenas ISO, debes usar julianday() o DATE().",
         "xpReward": 15
       },
@@ -909,11 +883,7 @@ export const SQL_UNIT_11_LESSONS: Lesson[] = [
         "id": "sql-u11-l05-e09",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea con el error de diseño o sintaxis en \"Funciones básicas de fecha\":",
-        "codeSnippet": [
-          "-- Consulta sobre el esquema educativo",
-          "SELECT id, nombre FROM estudiantes",
-          "WHERE id == 10; // Error: en SQL la igualdad se escribe con un solo = (WHERE id = 10)"
-        ],
+        "codeSnippet": [ "-- Consulta sobre el esquema educativo", "SELECT id, nombre FROM estudiantes", "WHERE id == 10;" ],
         "bugLineIndex": 2,
         "explanation": "Intentar restar fechas directamente con `-`: las fechas son cadenas ISO, debes usar julianday() o DATE().",
         "xpReward": 15
@@ -1016,10 +986,8 @@ export const SQL_UNIT_11_LESSONS: Lesson[] = [
         "id": "sql-u11-l06-e04",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea que contiene el error en este código de \"Subconsultas con IN\":",
-        "codeSnippet": [
-          "WHERE id IN (SELECT * FROM matriculas) // Error: subconsulta devuelve más de 1 columna"
-        ],
-        "bugLineIndex": 0,
+        "codeSnippet": [ "-- Consulta sobre estudiantes", "WHERE id IN (SELECT * FROM matriculas)", "ORDER BY id ASC;" ],
+        "bugLineIndex": 1,
         "explanation": "Poner `SELECT *` en la subconsulta del IN causará error de operandos múltiples: `sub-select returns 5 columns - only 1 expected`.",
         "xpReward": 15
       },
@@ -1105,11 +1073,7 @@ export const SQL_UNIT_11_LESSONS: Lesson[] = [
         "id": "sql-u11-l06-e09",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea con el error de diseño o sintaxis en \"Subconsultas con IN\":",
-        "codeSnippet": [
-          "-- Consulta sobre el esquema educativo",
-          "SELECT id, nombre FROM estudiantes",
-          "WHERE id == 10; // Error: en SQL la igualdad se escribe con un solo = (WHERE id = 10)"
-        ],
+        "codeSnippet": [ "-- Consulta sobre el esquema educativo", "SELECT id, nombre FROM estudiantes", "WHERE id == 10;" ],
         "bugLineIndex": 2,
         "explanation": "Poner `SELECT *` en la subconsulta del IN causará error de operandos múltiples: `sub-select returns 5 columns - only 1 expected`.",
         "xpReward": 15
@@ -1212,10 +1176,8 @@ export const SQL_UNIT_11_LESSONS: Lesson[] = [
         "id": "sql-u11-l07-e04",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea que contiene el error en este código de \"Comparar contra un resultado agregado\":",
-        "codeSnippet": [
-          "WHERE promedio > SELECT AVG(promedio) // Faltan los paréntesis alrededor de la subconsulta"
-        ],
-        "bugLineIndex": 0,
+        "codeSnippet": [ "-- Consulta sobre estudiantes", "WHERE promedio > SELECT AVG(promedio)", "ORDER BY id ASC;" ],
+        "bugLineIndex": 1,
         "explanation": "Si la subconsulta escalar devolviera múltiples filas, el operador > fallará.",
         "xpReward": 15
       },
@@ -1301,11 +1263,7 @@ export const SQL_UNIT_11_LESSONS: Lesson[] = [
         "id": "sql-u11-l07-e09",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea con el error de diseño o sintaxis en \"Comparar contra un resultado agregado\":",
-        "codeSnippet": [
-          "-- Consulta sobre el esquema educativo",
-          "SELECT id, nombre FROM estudiantes",
-          "WHERE id == 10; // Error: en SQL la igualdad se escribe con un solo = (WHERE id = 10)"
-        ],
+        "codeSnippet": [ "-- Consulta sobre el esquema educativo", "SELECT id, nombre FROM estudiantes", "WHERE id == 10;" ],
         "bugLineIndex": 2,
         "explanation": "Si la subconsulta escalar devolviera múltiples filas, el operador > fallará.",
         "xpReward": 15

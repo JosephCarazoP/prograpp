@@ -74,11 +74,7 @@ export const KOTLIN_UNIT_12_LESSONS: Lesson[] = [
         "id": "kt-u12-l01-e04",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea que contiene el error en este código de \"Errores de sintaxis, ejecución y lógica\":",
-        "codeSnippet": [
-          "val precio = 100",
-          "val desc = 10",
-          "val total = precio + desc // Error lógico: suma en vez de restar"
-        ],
+        "codeSnippet": [ "val precio = 100", "val desc = 10", "val total = precio + desc" ],
         "bugLineIndex": 2,
         "explanation": "Confiar ciegamente en que \"si compila, está bien\". Siempre debes verificar con casos de prueba.",
         "xpReward": 15
@@ -169,11 +165,7 @@ export const KOTLIN_UNIT_12_LESSONS: Lesson[] = [
         "id": "kt-u12-l01-e09",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea con el error de diseño o sintaxis en \"Errores de sintaxis, ejecución y lógica\":",
-        "codeSnippet": [
-          "// Bloque de verificación",
-          "val datoValido = true",
-          "datoValido = false // Error: val es inmutable y no se puede reasignar"
-        ],
+        "codeSnippet": [ "// Bloque de verificación", "val datoValido = true", "datoValido = false" ],
         "bugLineIndex": 2,
         "explanation": "Confiar ciegamente en que \"si compila, está bien\". Siempre debes verificar con casos de prueba.",
         "xpReward": 15
@@ -272,10 +264,8 @@ export const KOTLIN_UNIT_12_LESSONS: Lesson[] = [
         "id": "kt-u12-l02-e04",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea que contiene el error en este código de \"Lectura de mensajes de error\":",
-        "codeSnippet": [
-          "val x: Int = \"100\" // Error: Type mismatch (String no puede asignarse a Int)"
-        ],
-        "bugLineIndex": 0,
+        "codeSnippet": [ "fun main() {", "    val x: Int = \"100\"", "    println(\"Ejecutando...\")", "}" ],
+        "bugLineIndex": 1,
         "explanation": "Asustarse con un stack trace de 50 líneas: busca la línea que apunta a TU propio código (.kt).",
         "xpReward": 15
       },
@@ -365,11 +355,7 @@ export const KOTLIN_UNIT_12_LESSONS: Lesson[] = [
         "id": "kt-u12-l02-e09",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea con el error de diseño o sintaxis en \"Lectura de mensajes de error\":",
-        "codeSnippet": [
-          "// Bloque de verificación",
-          "val datoValido = true",
-          "datoValido = false // Error: val es inmutable y no se puede reasignar"
-        ],
+        "codeSnippet": [ "// Bloque de verificación", "val datoValido = true", "datoValido = false" ],
         "bugLineIndex": 2,
         "explanation": "Asustarse con un stack trace de 50 líneas: busca la línea que apunta a TU propio código (.kt).",
         "xpReward": 15
@@ -462,11 +448,7 @@ export const KOTLIN_UNIT_12_LESSONS: Lesson[] = [
         "id": "kt-u12-l03-e04",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea que contiene el error en este código de \"Seguimiento de variables paso a paso\":",
-        "codeSnippet": [
-          "var a = 1",
-          "a = 2",
-          "a = a + b // Error: variable b no declarada"
-        ],
+        "codeSnippet": [ "var a = 1", "a = 2", "a = a + b" ],
         "bugLineIndex": 2,
         "explanation": "Dejar impresiones de debug temporales (println(\"llego aqui 1\")) en el código de producción final.",
         "xpReward": 15
@@ -557,11 +539,7 @@ export const KOTLIN_UNIT_12_LESSONS: Lesson[] = [
         "id": "kt-u12-l03-e09",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea con el error de diseño o sintaxis en \"Seguimiento de variables paso a paso\":",
-        "codeSnippet": [
-          "// Bloque de verificación",
-          "val datoValido = true",
-          "datoValido = false // Error: val es inmutable y no se puede reasignar"
-        ],
+        "codeSnippet": [ "// Bloque de verificación", "val datoValido = true", "datoValido = false" ],
         "bugLineIndex": 2,
         "explanation": "Dejar impresiones de debug temporales (println(\"llego aqui 1\")) en el código de producción final.",
         "xpReward": 15
@@ -668,11 +646,7 @@ export const KOTLIN_UNIT_12_LESSONS: Lesson[] = [
         "id": "kt-u12-l04-e04",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea que contiene el error en este código de \"Excepciones con try y catch\":",
-        "codeSnippet": [
-          "try {",
-          "    val n = 10 / 0",
-          "} // Error: try requiere al menos un bloque catch o finally"
-        ],
+        "codeSnippet": [ "try {", "    val n = 10 / 0", "}" ],
         "bugLineIndex": 2,
         "explanation": "Atrapar excepciones genéricas (catch (e: Exception)) y dejarlas vacías: oculta bugs graves del sistema.",
         "xpReward": 15
@@ -763,11 +737,7 @@ export const KOTLIN_UNIT_12_LESSONS: Lesson[] = [
         "id": "kt-u12-l04-e09",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea con el error de diseño o sintaxis en \"Excepciones con try y catch\":",
-        "codeSnippet": [
-          "// Bloque de verificación",
-          "val datoValido = true",
-          "datoValido = false // Error: val es inmutable y no se puede reasignar"
-        ],
+        "codeSnippet": [ "// Bloque de verificación", "val datoValido = true", "datoValido = false" ],
         "bugLineIndex": 2,
         "explanation": "Atrapar excepciones genéricas (catch (e: Exception)) y dejarlas vacías: oculta bugs graves del sistema.",
         "xpReward": 15
@@ -874,11 +844,7 @@ export const KOTLIN_UNIT_12_LESSONS: Lesson[] = [
         "id": "kt-u12-l05-e04",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea que contiene el error en este código de \"Validar una entrada frente a capturar una excepción\":",
-        "codeSnippet": [
-          "fun procesar(d: Int) {",
-          "    // Falta validar si d es negativo antes de operar",
-          "}"
-        ],
+        "codeSnippet": [ "fun procesar(d: Int) {", "", "}" ],
         "bugLineIndex": 1,
         "explanation": "Usar try-catch para controlar el flujo normal del programa en lugar de reservarlo para fallos excepcionales.",
         "xpReward": 15
@@ -969,11 +935,7 @@ export const KOTLIN_UNIT_12_LESSONS: Lesson[] = [
         "id": "kt-u12-l05-e09",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea con el error de diseño o sintaxis en \"Validar una entrada frente a capturar una excepción\":",
-        "codeSnippet": [
-          "// Bloque de verificación",
-          "val datoValido = true",
-          "datoValido = false // Error: val es inmutable y no se puede reasignar"
-        ],
+        "codeSnippet": [ "// Bloque de verificación", "val datoValido = true", "datoValido = false" ],
         "bugLineIndex": 2,
         "explanation": "Usar try-catch para controlar el flujo normal del programa en lugar de reservarlo para fallos excepcionales.",
         "xpReward": 15
@@ -1165,11 +1127,7 @@ export const KOTLIN_UNIT_12_LESSONS: Lesson[] = [
         "id": "kt-u12-l06-e09",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea con el error de diseño o sintaxis en \"Casos normales, límite e incorrectos\":",
-        "codeSnippet": [
-          "// Bloque de verificación",
-          "val datoValido = true",
-          "datoValido = false // Error: val es inmutable y no se puede reasignar"
-        ],
+        "codeSnippet": [ "// Bloque de verificación", "val datoValido = true", "datoValido = false" ],
         "bugLineIndex": 2,
         "explanation": "Probar solo con \"el camino feliz\" (happy path) donde el usuario siempre ingresa los datos correctos.",
         "xpReward": 15
@@ -1367,11 +1325,7 @@ export const KOTLIN_UNIT_12_LESSONS: Lesson[] = [
         "id": "kt-u12-l07-e09",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea con el error de diseño o sintaxis en \"Resultado esperado frente a resultado obtenido\":",
-        "codeSnippet": [
-          "// Bloque de verificación",
-          "val datoValido = true",
-          "datoValido = false // Error: val es inmutable y no se puede reasignar"
-        ],
+        "codeSnippet": [ "// Bloque de verificación", "val datoValido = true", "datoValido = false" ],
         "bugLineIndex": 2,
         "explanation": "Calcular el valor esperado usando la misma fórmula errónea de la función que estás probando.",
         "xpReward": 15

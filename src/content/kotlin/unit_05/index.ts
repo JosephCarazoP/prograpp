@@ -70,11 +70,7 @@ export const KOTLIN_UNIT_05_LESSONS: Lesson[] = [
         "id": "kt-u05-l01-e04",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea con error al intentar alterar la variable del bucle:",
-        "codeSnippet": [
-          "for (i in 1..5) {",
-          "    println(i)",
-          "    i = i + 1 // Error: la variable del for es inmutable (val implícito)"
-        ],
+        "codeSnippet": [ "for (i in 1..5) {", "    println(i)", "    i = i + 1" ],
         "bugLineIndex": 2,
         "explanation": "La variable de iteración del for en Kotlin es inmutable y no se puede reasignar manualmente.",
         "xpReward": 15
@@ -159,11 +155,7 @@ export const KOTLIN_UNIT_05_LESSONS: Lesson[] = [
         "id": "kt-u05-l01-e09",
         "type": "spot_the_bug",
         "prompt": "Identifica el error en la sintaxis de los paréntesis del for:",
-        "codeSnippet": [
-          "for i in 1..5 { // Error: faltan los paréntesis obligatorios ( )",
-          "    println(i)",
-          "}"
-        ],
+        "codeSnippet": [ "for i in 1..5 {", "    println(i)", "}" ],
         "bugLineIndex": 0,
         "explanation": "En Kotlin, la cabecera del for debe ir obligatoriamente entre paréntesis: for (i in 1..5).",
         "xpReward": 15
@@ -254,11 +246,7 @@ export const KOTLIN_UNIT_05_LESSONS: Lesson[] = [
         "id": "kt-u05-l02-e04",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea que no ejecutará ninguna vuelta por rango ascendente inválido:",
-        "codeSnippet": [
-          "for (i in 1..5) { println(i) }",
-          "for (i in 5..1) { println(i) } // Error: 5..1 genera un rango vacío",
-          "for (i in 5 downTo 1) { println(i) }"
-        ],
+        "codeSnippet": [ "for (i in 1..5) { println(i) }", "for (i in 5..1) { println(i) }", "for (i in 5 downTo 1) { println(i) }" ],
         "bugLineIndex": 1,
         "explanation": "El operador .. solo avanza hacia arriba; para contar hacia atrás debe usarse downTo.",
         "xpReward": 15
@@ -349,11 +337,7 @@ export const KOTLIN_UNIT_05_LESSONS: Lesson[] = [
         "id": "kt-u05-l02-e09",
         "type": "spot_the_bug",
         "prompt": "Identifica el error en el valor del salto de step:",
-        "codeSnippet": [
-          "for (i in 1..10 step 2) { }",
-          "for (i in 10 downTo 1 step -1) { } // Error: step debe ser positivo (ej. step 1)",
-          "for (i in 10 downTo 1 step 2) { }"
-        ],
+        "codeSnippet": [ "for (i in 1..10 step 2) { }", "for (i in 10 downTo 1 step -1) { }", "for (i in 10 downTo 1 step 2) { }" ],
         "bugLineIndex": 1,
         "explanation": "El argumento de step debe ser siempre estrictamente positivo; la dirección la da downTo.",
         "xpReward": 15
@@ -446,11 +430,7 @@ export const KOTLIN_UNIT_05_LESSONS: Lesson[] = [
         "id": "kt-u05-l03-e04",
         "type": "spot_the_bug",
         "prompt": "Identifica la omisión que provocará un ciclo infinito destructivo:",
-        "codeSnippet": [
-          "var x = 1",
-          "while (x <= 5) {",
-          "    println(x) // Falta x++ o actualizar la variable de control"
-        ],
+        "codeSnippet": [ "var x = 1", "while (x <= 5) {", "    println(x)" ],
         "bugLineIndex": 2,
         "explanation": "Si x nunca se incrementa, x <= 5 será siempre true y el programa se colgará en un bucle infinito.",
         "xpReward": 15
@@ -537,11 +517,7 @@ export const KOTLIN_UNIT_05_LESSONS: Lesson[] = [
         "id": "kt-u05-l03-e09",
         "type": "spot_the_bug",
         "prompt": "Identifica el error en la condición del while:",
-        "codeSnippet": [
-          "var seguir = true",
-          "while seguir { // Error: la condición debe ir obligatoriamente entre paréntesis ( )",
-          "    seguir = false"
-        ],
+        "codeSnippet": [ "var seguir = true", "while seguir {", "    seguir = false" ],
         "bugLineIndex": 1,
         "explanation": "En Kotlin, la condición de while debe encerrarse entre paréntesis: while (seguir).",
         "xpReward": 15
@@ -626,11 +602,7 @@ export const KOTLIN_UNIT_05_LESSONS: Lesson[] = [
         "id": "kt-u05-l04-e04",
         "type": "spot_the_bug",
         "prompt": "Identifica el error fatal de alcance (scope) donde el acumulador se reinicia:",
-        "codeSnippet": [
-          "for (i in 1..5) {",
-          "    var total = 0 // Error: debe declararse afuera antes del for, aquí se reinicia en cada vuelta",
-          "    total += i"
-        ],
+        "codeSnippet": [ "for (i in 1..5) {", "    var total = 0", "    total += i" ],
         "bugLineIndex": 1,
         "explanation": "Declarar el acumulador dentro del bucle provoca que se reinicie a cero en cada iteración.",
         "xpReward": 15
@@ -711,11 +683,7 @@ export const KOTLIN_UNIT_05_LESSONS: Lesson[] = [
         "id": "kt-u05-l04-e09",
         "type": "spot_the_bug",
         "prompt": "Identifica la variable que debió ser var para poder contar:",
-        "codeSnippet": [
-          "val conteo = 0 // Error: val es inmutable y no se puede incrementar",
-          "for (i in 1..3) {",
-          "    conteo++"
-        ],
+        "codeSnippet": [ "val conteo = 0", "for (i in 1..3) {", "    conteo++" ],
         "bugLineIndex": 0,
         "explanation": "Los contadores deben declararse con var para poder mutar su valor.",
         "xpReward": 15
@@ -889,11 +857,7 @@ export const KOTLIN_UNIT_05_LESSONS: Lesson[] = [
         "id": "kt-u05-l05-e09",
         "type": "spot_the_bug",
         "prompt": "Identifica el error en el paso de avance que aleja de la meta en lugar de acercar:",
-        "codeSnippet": [
-          "var i = 1",
-          "while (i <= 10) {",
-          "    i-- // Error: resta en lugar de sumar; se aleja del 10 indefinidamente"
-        ],
+        "codeSnippet": [ "var i = 1", "while (i <= 10) {", "    i--" ],
         "bugLineIndex": 2,
         "explanation": "Restar aleja a i del límite superior 10, causando un bucle infinito negativo.",
         "xpReward": 15
@@ -974,11 +938,7 @@ export const KOTLIN_UNIT_05_LESSONS: Lesson[] = [
         "id": "kt-u05-l06-e04",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea con código inalcanzable tras un break incondicional:",
-        "codeSnippet": [
-          "for (i in 1..5) {",
-          "    break // Error: el bucle siempre se detendrá en la primera línea",
-          "    println(i) // Código inalcanzable (unreachable code)"
-        ],
+        "codeSnippet": [ "for (i in 1..5) {", "    break", "    println(i) // Código inalcanzable (unreachable code)" ],
         "bugLineIndex": 1,
         "explanation": "Un break sin condición previa condena a que el resto del bucle jamás se ejecute.",
         "xpReward": 15
@@ -1067,11 +1027,7 @@ export const KOTLIN_UNIT_05_LESSONS: Lesson[] = [
         "id": "kt-u05-l06-e09",
         "type": "spot_the_bug",
         "prompt": "Identifica el error al colocar break fuera de un ciclo:",
-        "codeSnippet": [
-          "val x = 10",
-          "if (x > 5) break // Error: break solo es válido dentro de bucles for, while o do-while",
-          "println(x)"
-        ],
+        "codeSnippet": [ "val x = 10", "if (x > 5) break", "println(x)" ],
         "bugLineIndex": 1,
         "explanation": "break no puede utilizarse dentro de un if simple aislado; debe estar dentro de un bucle.",
         "xpReward": 15
@@ -1156,11 +1112,7 @@ export const KOTLIN_UNIT_05_LESSONS: Lesson[] = [
         "id": "kt-u05-l07-e04",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea que provoca que el bucle se ejecute 11 veces en vez de 10:",
-        "codeSnippet": [
-          "// Se requerían exactamente 10 repeticiones (de 0 a 9)",
-          "for (i in 0..10) { // Error: 0..10 genera 11 vueltas (debe ser 0 until 10 o 0..9)",
-          "    println(i)"
-        ],
+        "codeSnippet": [ "// Se requerían exactamente 10 repeticiones (de 0 a 9)", "for (i in 0..10) {", "    println(i)" ],
         "bugLineIndex": 1,
         "explanation": "0..10 contiene 11 elementos (del 0 al 10 inclusive), clásico error off-by-one.",
         "xpReward": 15
@@ -1239,11 +1191,7 @@ export const KOTLIN_UNIT_05_LESSONS: Lesson[] = [
         "id": "kt-u05-l07-e09",
         "type": "spot_the_bug",
         "prompt": "Identifica el error donde la variable de avance no coincide con la condición:",
-        "codeSnippet": [
-          "var i = 1",
-          "var j = 1",
-          "while (i <= 5) { j++ } // Error: se incrementa j, pero la condición evalúa i (bucle infinito)"
-        ],
+        "codeSnippet": [ "var i = 1", "var j = 1", "while (i <= 5) { j++ }" ],
         "bugLineIndex": 2,
         "explanation": "Como i nunca cambia, la condición i <= 5 se mantiene true eternamente.",
         "xpReward": 15

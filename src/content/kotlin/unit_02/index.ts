@@ -62,11 +62,7 @@ export const KOTLIN_UNIT_02_LESSONS: Lesson[] = [
         "id": "kt-u02-l01-e04",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea donde se intenta usar una variable no declarada:",
-        "codeSnippet": [
-          "1. val base = 10",
-          "2. println(altura) // Error: altura no ha sido declarada",
-          "3. val altura = 5"
-        ],
+        "codeSnippet": [ "val base = 10", "println(altura)", "val altura = 5" ],
         "bugLineIndex": 1,
         "explanation": "En Kotlin no puedes acceder a una variable antes de su declaración.",
         "xpReward": 15
@@ -149,11 +145,7 @@ export const KOTLIN_UNIT_02_LESSONS: Lesson[] = [
         "id": "kt-u02-l01-e09",
         "type": "spot_the_bug",
         "prompt": "Identifica el error en la sintaxis de asignación:",
-        "codeSnippet": [
-          "val edad = 25",
-          "50 = val puntos // Error: el valor no puede ir a la izquierda",
-          "val activo = true"
-        ],
+        "codeSnippet": [ "val edad = 25", "50 = val puntos", "val activo = true" ],
         "bugLineIndex": 1,
         "explanation": "La variable de destino siempre debe ir a la izquierda del operador =.",
         "xpReward": 15
@@ -236,11 +228,7 @@ export const KOTLIN_UNIT_02_LESSONS: Lesson[] = [
         "id": "kt-u02-l02-e04",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea que provocará un error de reasignación prohibida:",
-        "codeSnippet": [
-          "1. val dni = \"12345678\"",
-          "2. dni = \"87654321\" // Error: val no puede ser reasignado",
-          "3. println(dni)"
-        ],
+        "codeSnippet": [ "val dni = \"12345678\"", "dni = \"87654321\"", "println(dni)" ],
         "bugLineIndex": 1,
         "explanation": "dni se declaró con val, por lo que reasignarle un nuevo valor es ilegal en Kotlin.",
         "xpReward": 15
@@ -412,11 +400,7 @@ export const KOTLIN_UNIT_02_LESSONS: Lesson[] = [
         "id": "kt-u02-l03-e04",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea con error en el delimitador de caracteres:",
-        "codeSnippet": [
-          "val edad: Int = 20",
-          "val inicial: Char = \"M\" // Error: Char usa comillas simples 'M'",
-          "val activo: Boolean = false"
-        ],
+        "codeSnippet": [ "val edad: Int = 20", "val inicial: Char = \"M\"", "val activo: Boolean = false" ],
         "bugLineIndex": 1,
         "explanation": "En Kotlin, las comillas dobles \"\" son exclusivas de String; Char requiere comillas simples ''.",
         "xpReward": 15
@@ -501,11 +485,7 @@ export const KOTLIN_UNIT_02_LESSONS: Lesson[] = [
         "id": "kt-u02-l03-e09",
         "type": "spot_the_bug",
         "prompt": "Identifica el error de asignación de tipo incompatible:",
-        "codeSnippet": [
-          "val altura: Double = 1.75",
-          "val cantidad: Int = 10.5 // Error: 10.5 es Double, no Int",
-          "val mensaje: String = \"OK\""
-        ],
+        "codeSnippet": [ "val altura: Double = 1.75", "val cantidad: Int = 10.5", "val mensaje: String = \"OK\"" ],
         "bugLineIndex": 1,
         "explanation": "No se puede asignar un decimal 10.5 directamente a una variable de tipo entero Int.",
         "xpReward": 15
@@ -590,11 +570,7 @@ export const KOTLIN_UNIT_02_LESSONS: Lesson[] = [
         "id": "kt-u02-l04-e04",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea que provoca error de compilación por falta de tipo o valor:",
-        "codeSnippet": [
-          "1. val a = 10 // Válido: infiere Int",
-          "2. val b // Error: falta valor inicial o tipo explícito",
-          "3. val c: String = \"Hola\" // Válido"
-        ],
+        "codeSnippet": [ "val a = 10 // Válido: infiere Int", "val b", "val c: String = \"Hola\" // Válido" ],
         "bugLineIndex": 1,
         "explanation": "Si no hay valor inicial, el compilador no puede inferir el tipo y exige : Tipo explícito.",
         "xpReward": 15
@@ -679,11 +655,7 @@ export const KOTLIN_UNIT_02_LESSONS: Lesson[] = [
         "id": "kt-u02-l04-e09",
         "type": "spot_the_bug",
         "prompt": "Identifica el error de incompatibilidad de tipos:",
-        "codeSnippet": [
-          "val id: Int = 100",
-          "val total: Int = \"200\" // Error: texto asignado a entero",
-          "val ok: Boolean = true"
-        ],
+        "codeSnippet": [ "val id: Int = 100", "val total: Int = \"200\"", "val ok: Boolean = true" ],
         "bugLineIndex": 1,
         "explanation": "\"200\" es un String; no se puede asignar a una variable declarada explícitamente como Int.",
         "xpReward": 15
@@ -768,11 +740,7 @@ export const KOTLIN_UNIT_02_LESSONS: Lesson[] = [
         "id": "kt-u02-l05-e04",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea donde se comete un error de tipo al actualizar:",
-        "codeSnippet": [
-          "var edad = 20",
-          "edad = 21 // Válido",
-          "edad = \"veintidós\" // Error: no se puede cambiar de Int a String"
-        ],
+        "codeSnippet": [ "var edad = 20", "edad = 21 // Válido", "edad = \"veintidós\"" ],
         "bugLineIndex": 2,
         "explanation": "En Kotlin, una variable no puede cambiar de tipo de dato tras haber sido declarada.",
         "xpReward": 15
@@ -857,11 +825,7 @@ export const KOTLIN_UNIT_02_LESSONS: Lesson[] = [
         "id": "kt-u02-l05-e09",
         "type": "spot_the_bug",
         "prompt": "Identifica el error al intentar actualizar una constante:",
-        "codeSnippet": [
-          "val limite = 100",
-          "limite = 150 // Error: limite es val y no se puede actualizar",
-          "println(limite)"
-        ],
+        "codeSnippet": [ "val limite = 100", "limite = 150", "println(limite)" ],
         "bugLineIndex": 1,
         "explanation": "val impide la actualización; si necesitas cambiar su valor, declárala con var.",
         "xpReward": 15
@@ -944,11 +908,7 @@ export const KOTLIN_UNIT_02_LESSONS: Lesson[] = [
         "id": "kt-u02-l06-e04",
         "type": "spot_the_bug",
         "prompt": "Identifica la variable con un nombre prohibido por usar espacios:",
-        "codeSnippet": [
-          "val edadUsuario = 25",
-          "val sueldo mensual = 1200.0 // Error: no se permiten espacios en los identificadores",
-          "val activo = true"
-        ],
+        "codeSnippet": [ "val edadUsuario = 25", "val sueldo mensual = 1200.0", "val activo = true" ],
         "bugLineIndex": 1,
         "explanation": "Los identificadores no pueden contener espacios en blanco; debe ser sueldoMensual.",
         "xpReward": 15
@@ -1031,11 +991,7 @@ export const KOTLIN_UNIT_02_LESSONS: Lesson[] = [
         "id": "kt-u02-l06-e09",
         "type": "spot_the_bug",
         "prompt": "Identifica el nombre de variable que comienza con un número prohibido:",
-        "codeSnippet": [
-          "val primerPuesto = \"Oro\"",
-          "val 2doPuesto = \"Plata\" // Error: los nombres no pueden iniciar con números",
-          "val tercerPuesto = \"Bronce\""
-        ],
+        "codeSnippet": [ "val primerPuesto = \"Oro\"", "val 2doPuesto = \"Plata\"", "val tercerPuesto = \"Bronce\"" ],
         "bugLineIndex": 1,
         "explanation": "En Kotlin y la mayoría de lenguajes, un identificador nunca puede comenzar con un dígito numérico.",
         "xpReward": 15
@@ -1118,11 +1074,7 @@ export const KOTLIN_UNIT_02_LESSONS: Lesson[] = [
         "id": "kt-u02-l07-e04",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea donde falta ${} para evaluar la suma dentro del texto:",
-        "codeSnippet": [
-          "val a = 5",
-          "val b = 3",
-          "println(\"Total: $a + b\") // Error: imprime \"5 + b\" en lugar de 8"
-        ],
+        "codeSnippet": [ "val a = 5", "val b = 3", "println(\"Total: $a + b\")" ],
         "bugLineIndex": 2,
         "explanation": "Para evaluar una expresión matemática se requieren llaves: \"${a + b}\".",
         "xpReward": 15
@@ -1205,11 +1157,7 @@ export const KOTLIN_UNIT_02_LESSONS: Lesson[] = [
         "id": "kt-u02-l07-e09",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea con error tipográfico en la sintaxis de template:",
-        "codeSnippet": [
-          "val user = \"Ana\"",
-          "println(\"Bienvenido #{user}\") // Error: en Kotlin se usa $, no #",
-          "println(\"Conectado\")"
-        ],
+        "codeSnippet": [ "val user = \"Ana\"", "println(\"Bienvenido #{user}\")", "println(\"Conectado\")" ],
         "bugLineIndex": 1,
         "explanation": "Kotlin utiliza el prefijo $, no el símbolo # (utilizado en lenguajes como Ruby).",
         "xpReward": 15

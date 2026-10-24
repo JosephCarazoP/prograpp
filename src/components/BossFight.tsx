@@ -1,33 +1,32 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import {
-  ShieldAlert,
-  CheckCircle2,
   ArrowLeft,
   Sparkles,
-  Swords,
+  Trophy,
+  CheckCircle2,
+  AlertTriangle,
+  Target,
   RefreshCw,
-  Trophy
+  Swords,
+  HelpCircle,
+  Heart,
+  ChevronRight,
+  Zap,
+  Terminal,
+  Check
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { soundService } from '../services/soundService';
 import { UserProfile, UserPowerUps } from '../types/user';
-import { DevAvatar } from './Avatars';
 import { PowerUpsBar } from './PowerUpsBar';
-import { VSCodeSnippet } from './VSCodeSnippet';
 import { FormattedText } from './FormattedText';
-
-interface BossStage {
-  id: string;
-  bossAttackName: string;
-  prompt: string;
-  codeSnippet: string;
-  options: string[];
-  correctOptionIndex: number;
-  explanation: string;
-  playerDamage: number;
-  bossDamage: number;
-  teacherHint: string;
-}
+import { BossAvatar3D, BossPose } from './BossAvatar3D';
+import {
+  getBossChallengeForUnit,
+  BossData,
+  BossStageChallenge,
+  BossPatchOption
+} from '../content/bossChallenges';
 
 interface BossFightProps {
   user: UserProfile;
@@ -39,158 +38,90 @@ interface BossFightProps {
   onUsePowerUp?: (key: keyof UserPowerUps) => void;
 }
 
-// Ilustración SVG de Bugzilla animado con glitch y antenas cibernéticas (Sin Emojis)
-const BugzillaBattleSprite: React.FC<{ hp: number; isAttacking: boolean; isHurt: boolean }> = ({
-  hp,
-  isAttacking,
-  isHurt
-}) => (
-  <div
-    style={{
-      width: '130px',
-      height: '130px',
-      position: 'relative',
-      filter:
-        hp <= 0
-          ? 'grayscale(1) opacity(0.35)'
-          : isHurt
-          ? 'drop-shadow(0 0 20px #EF4444) brightness(1.6)'
-          : 'drop-shadow(0 0 16px rgba(239, 68, 68, 0.65))',
-      transform: isAttacking
-        ? 'translate(-24px, 20px) scale(1.15)'
-        : isHurt
-        ? 'translate(10px, -6px) scale(0.92)'
-        : 'none',
-      transition: 'transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), filter 0.2s ease'
-    }}
-  >
-    <svg width="130" height="130" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-      {/* Halo de Corrupción Glitch */}
-      <circle
-        cx="50"
-        cy="50"
-        r="44"
-        fill="rgba(239, 68, 68, 0.12)"
-        stroke="#EF4444"
-        strokeWidth="1.2"
-        strokeDasharray="4 3"
-      />
-
-      {/* Antenas de Excepción */}
-      <line x1="35" y1="22" x2="20" y2="6" stroke="#EF4444" strokeWidth="4.5" strokeLinecap="round" />
-      <circle cx="18" cy="5" r="5" fill="#F87171" />
-      <line x1="65" y1="22" x2="80" y2="6" stroke="#EF4444" strokeWidth="4.5" strokeLinecap="round" />
-      <circle cx="82" cy="5" r="5" fill="#F87171" />
-
-      {/* Patas cibernéticas de insecto glitch */}
-      <path d="M16 45 L4 38 M14 60 L3 64 M16 75 L5 84" stroke="#991B1B" strokeWidth="4" strokeLinecap="round" />
-      <path d="M84 45 L96 38 M86 60 L97 64 M84 75 L95 84" stroke="#991B1B" strokeWidth="4" strokeLinecap="round" />
-
-      {/* Caparazón blindado de Bug */}
-      <rect x="20" y="24" width="60" height="64" rx="20" fill="#7F1D1D" stroke="#EF4444" strokeWidth="3.2" />
-
-      {/* Núcleo de Fallo Terminal */}
-      <rect x="28" y="44" width="44" height="28" rx="8" fill="#450A0A" stroke="#F87171" strokeWidth="2" />
-      <text x="32" y="62" fill="#FCA5A5" fontSize="10" fontFamily="JetBrains Mono" fontWeight="bold">
-        0xCRASH
-      </text>
-
-      {/* Ojos enfurecidos en ángulo */}
-      <polygon points="31,34 44,38 33,42" fill="#F87171" />
-      <polygon points="69,34 56,38 67,42" fill="#F87171" />
-      <circle cx="37" cy="37" r="2.2" fill="#FFFFFF" />
-      <circle cx="63" cy="37" r="2.2" fill="#FFFFFF" />
-
-      {/* Mandíbula de colmillos de error */}
-      <path
-        d="M38 78 L44 85 L50 78 L56 85 L62 78"
-        stroke="#EF4444"
-        strokeWidth="2.8"
-        strokeLinecap="round"
+/**
+ * Avatar 3D de la Terminal / Servidor del Jugador (Duolingo 3D + Neo-Brutalism)
+ */
+const PlayerServerAvatar3D: React.FC<{
+  isHurt: boolean;
+  isAttacking: boolean;
+  hasShield: boolean;
+  size?: number;
+}> = ({ isHurt, isAttacking, hasShield, size = 68 }) => {
+  return (
+    <div
+      className={`boss-player-avatar-wrap ${isHurt ? 'is-hurt' : ''} ${isAttacking ? 'is-attacking' : ''}`}
+      style={{
+        width: size,
+        height: size,
+        position: 'relative',
+        display: 'inline-flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        flexShrink: 0
+      }}
+    >
+      <svg
+        width={size}
+        height={size}
+        viewBox="0 0 80 80"
         fill="none"
-      />
-    </svg>
-  </div>
-);
+        style={{
+          overflow: 'visible',
+          filter: isHurt
+            ? 'drop-shadow(0 0 10px #FF2A6D)'
+            : 'drop-shadow(3px 3px 0px #000000)'
+        }}
+      >
+        {/* Antena 3D */}
+        <rect x="37" y="6" width="6" height="12" rx="3" fill="#0284C7" stroke="#000000" strokeWidth="2.5" />
+        <circle cx="40" cy="6" r="5.5" fill="#FFE600" stroke="#000000" strokeWidth="2" />
+        <circle cx="39" cy="4.5" r="1.5" fill="#FFFFFF" />
 
-// Banco de Fases de Combate para el Jefe (Variedad entre intentos - Requerimiento 6)
-const BOSS_CHALLENGE_POOL: BossStage[] = [
-  {
-    id: 'b-stage-01',
-    bossAttackName: 'Inyección de Loop Infinito',
-    prompt: 'Bugzilla desata un bucle while sin condición de escape. ¿Qué instrucción restaura el ciclo?',
-    codeSnippet: 'var iterador = 1\nwhile (iterador <= 5) {\n    println("Sobrecarga...")\n    // ¡Instrucción faltante aquí!\n}',
-    options: ['iterador++', 'iterador = 0', 'val iterador = 5', 'break while'],
-    correctOptionIndex: 0,
-    explanation: '¡Golpe Directo! Con iterador++, la condición alcanza el límite y el servidor no colapsa.',
-    bossDamage: 35,
-    playerDamage: 25,
-    teacherHint: 'Un bucle while necesita que la variable de control se incremente en cada vuelta para alcanzar el fin.'
-  },
-  {
-    id: 'b-stage-02',
-    bossAttackName: 'Corrupción de Memoria Inmutable',
-    prompt: 'Bugzilla intenta reescribir un valor \'val\' protegido. ¿Cómo neutralizar el intento?',
-    codeSnippet: 'val LLAVE_SEGURA = "0xA9"\nLLAVE_SEGURA = "0x00" // ¡Violación de inmutabilidad!',
-    options: [
-      'Conservar \'val\' y eliminar la reasignación indebida',
-      'Renombrar la variable a minúsculas',
-      'Agregar llaves {} alrededor de la variable',
-      'Reemplazar val por function'
-    ],
-    correctOptionIndex: 0,
-    explanation: '¡Impacto Crítico! En Kotlin, \'val\' garantiza la integridad inmutable del sistema.',
-    bossDamage: 35,
-    playerDamage: 25,
-    teacherHint: 'Las variables declaradas con \'val\' son de solo lectura y no pueden modificarse jamás.'
-  },
-  {
-    id: 'b-stage-03',
-    bossAttackName: 'Disparo de Excepción NullPointer',
-    prompt: 'Bugzilla envía un dato nulo inesperado. ¿Qué operador de Kotlin evita el crash en tiempo de ejecución?',
-    codeSnippet: 'val respuesta: String? = null\nval longitud = respuesta?.length ?: 0',
-    options: [
-      'El operador Elvis ?: que provee un valor por defecto si es nulo',
-      'El operador !! que fuerza la ejecución sin importar nada',
-      'El punto y coma ; al final de la línea',
-      'Un bucle for para recorrer los caracteres'
-    ],
-    correctOptionIndex: 0,
-    explanation: '¡Defensa Impecable! El operador Elvis ?: neutraliza los NullPointerExceptions con elegancia.',
-    bossDamage: 35,
-    playerDamage: 25,
-    teacherHint: 'El operador Elvis ?: toma el valor de la izquierda si no es nulo, o el de la derecha como salvaguarda.'
-  },
-  {
-    id: 'b-stage-04',
-    bossAttackName: 'Sobrecarga de Concatenación',
-    prompt: 'Bugzilla distorsiona la salida de texto. ¿Cuál es la forma moderna de inyectar variables en texto en Kotlin?',
-    codeSnippet: 'val puntuacion = 100\nval texto = "Tu récord es: $puntuacion"',
-    options: [
-      'String Templates con el símbolo $',
-      'Concatenar con operador +',
-      'Encerrar en corchetes [puntuacion]',
-      'Usar la palabra reservada import'
-    ],
-    correctOptionIndex: 0,
-    explanation: '¡Acierto! Los String Templates con $ incrustan variables limpiamente sin conversiones manuales.',
-    bossDamage: 35,
-    playerDamage: 25,
-    teacherHint: 'En Kotlin se usa el prefijo $ antes del nombre de la variable dentro de las comillas dobles.'
-  },
-  {
-    id: 'b-stage-05',
-    bossAttackName: 'Desfase de Precedencia Aritmética',
-    prompt: 'Bugzilla altera el orden de cálculo matemático: val res = 2 + 3 * 4. ¿Qué valor resulta?',
-    codeSnippet: 'val a = 2\nval b = 3\nval c = 4\nval res = a + b * c\nprintln(res)',
-    options: ['14', '20', '24', '10'],
-    correctOptionIndex: 0,
-    explanation: '¡Golpe Certero! La multiplicación (*) tiene mayor precedencia que la suma: 3 * 4 = 12, y 12 + 2 = 14.',
-    bossDamage: 35,
-    playerDamage: 25,
-    teacherHint: 'Recuerda el orden de operaciones: primero multiplicaciones y divisiones, luego sumas y restas.'
-  }
-];
+        {/* Chasis 3D del Robot / Servidor */}
+        <rect x="12" y="16" width="56" height="50" rx="14" fill="#00E5FF" stroke="#000000" strokeWidth="3" />
+        <line x1="20" y1="20" x2="60" y2="20" stroke="#FFFFFF" strokeWidth="2.5" strokeLinecap="round" strokeOpacity="0.85" />
+
+        {/* Visor / Pantalla CRT */}
+        <rect x="18" y="24" width="44" height="30" rx="8" fill="#0F172A" stroke="#000000" strokeWidth="2.5" />
+
+        {/* Expresión facial del jugador */}
+        {isHurt ? (
+          <g stroke="#FF2A6D" strokeWidth="2.5" strokeLinecap="round">
+            <line x1="26" y1="34" x2="33" y2="41" />
+            <line x1="33" y1="34" x2="26" y2="41" />
+            <line x1="47" y1="34" x2="54" y2="41" />
+            <line x1="54" y1="34" x2="47" y2="41" />
+            <path d="M36 47 Q40 43 44 47" stroke="#FF2A6D" strokeWidth="2" strokeLinecap="round" fill="none" />
+          </g>
+        ) : (
+          <g>
+            <ellipse cx="29" cy="37" rx="4.5" ry="5.5" fill="#4ADE80" />
+            <circle cx="31" cy="35" r="1.8" fill="#FFFFFF" />
+            <ellipse cx="51" cy="37" rx="4.5" ry="5.5" fill="#4ADE80" />
+            <circle cx="53" cy="35" r="1.8" fill="#FFFFFF" />
+            <path d="M35 45 Q40 50 45 45" stroke="#4ADE80" strokeWidth="2.8" strokeLinecap="round" fill="none" />
+          </g>
+        )}
+
+        {/* Pedestal base del servidor */}
+        <rect x="22" y="64" width="36" height="8" rx="3" fill="#0F172A" stroke="#000000" strokeWidth="2.5" />
+      </svg>
+
+      {hasShield && (
+        <div
+          className="boss-quantum-shield-badge"
+          title="Escudo Cuántico Activo: Tu próximo fallo será protegido"
+        >
+          🛡️
+        </div>
+      )}
+    </div>
+  );
+};
+
+// ─────────────────────────────────────────────────────────────
+// ARENA DE COMBATE 100% NEO-BRUTALISM CON DUOLINGO 3D
+// ─────────────────────────────────────────────────────────────
 
 export const BossFightArena: React.FC<BossFightProps> = ({
   user,
@@ -200,50 +131,211 @@ export const BossFightArena: React.FC<BossFightProps> = ({
   onExit,
   onUsePowerUp
 }) => {
-  // Transición inicial
-  const [isTeleporting, setIsTeleporting] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
 
-  // Salud del Jugador y del Jefe
+  // Datos del Jefe según la ruta y la unidad
+  const bossData: BossData = useMemo(() => {
+    return getBossChallengeForUnit(pathId, unitId);
+  }, [pathId, unitId]);
+
+  // Salud del Jugador y del Jefe (100 HP base)
   const [playerHp, setPlayerHp] = useState(100);
   const [bossHp, setBossHp] = useState(100);
 
-  // Selección de 3 fases aleatorias para que cada intento sea distinto (Requerimiento 6)
-  const [stages, setStages] = useState<BossStage[]>(() => {
-    const pool = [...BOSS_CHALLENGE_POOL];
-    for (let i = pool.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [pool[i], pool[j]] = [pool[j], pool[i]];
-    }
-    return pool.slice(0, 3);
-  });
-
+  // Asalto actual (0, 1, 2)
   const [currentStageIndex, setCurrentStageIndex] = useState(0);
-  const [selectedOption, setSelectedOption] = useState<number | null>(null);
-  const [disabledOptions, setDisabledOptions] = useState<number[]>([]);
-  const [isSecondChanceActive, setIsSecondChanceActive] = useState(false);
-  const [hintMessage, setHintMessage] = useState<string | null>(null);
-  const [highlightCode, setHighlightCode] = useState(false);
+  const currentStage: BossStageChallenge = bossData.stages[currentStageIndex] || bossData.stages[0];
 
+  // Opciones barajadas con índices estables
+  const [shuffledOptions, setShuffledOptions] = useState<{ originalIndex: number; option: BossPatchOption }[]>([]);
+  const [selectedPatchIndex, setSelectedPatchIndex] = useState<number | null>(null);
+
+  // Estados de combate
   const [turnState, setTurnState] = useState<
     'player_turn' | 'player_attacking' | 'boss_attacking' | 'round_end' | 'game_over' | 'victory'
   >('player_turn');
 
-  const [combatLog, setCombatLog] = useState(
-    '¡Bugzilla el Desbordador bloquea el compilador! Selecciona una acción de contraataque.'
-  );
-  const [lastDamageDealt, setLastDamageDealt] = useState<number | null>(null);
-  const [lastDamageTaken, setLastDamageTaken] = useState<number | null>(null);
+  const [feedbackMessage, setFeedbackMessage] = useState<{
+    text: string;
+    isError: boolean;
+  } | null>(null);
 
-  // Efecto de teletransporte
+  // Comodines activos
+  const [disabledOptions, setDisabledOptions] = useState<number[]>([]);
+  const [isSecondChanceActive, setIsSecondChanceActive] = useState(false);
+  const [teacherHintActive, setTeacherHintActive] = useState<string | null>(null);
+
+  // Barajar opciones al cambiar de asalto
   useEffect(() => {
-    soundService.playToken();
-    const timer = setTimeout(() => setIsTeleporting(false), 600);
-    return () => clearTimeout(timer);
+    if (!currentStage) return;
+    const mapped = currentStage.options.map((opt, idx) => ({ originalIndex: idx, option: opt }));
+    for (let i = mapped.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [mapped[i], mapped[j]] = [mapped[j], mapped[i]];
+    }
+    setShuffledOptions(mapped);
+    setSelectedPatchIndex(null);
+    setDisabledOptions([]);
+    setTeacherHintActive(null);
+    setFeedbackMessage(null);
+  }, [currentStageIndex, currentStage]);
+
+  // Onboarding / Introducción cinemática del combate
+  const [showIntroModal, setShowIntroModal] = useState(true);
+  const [introStep, setIntroStep] = useState<1 | 2>(1);
+
+  useEffect(() => {
+    const t = setTimeout(() => {
+      setIsLoading(false);
+      soundService.playBossAlert();
+    }, 400);
+    return () => clearTimeout(t);
   }, []);
 
-  const currentStage = stages[currentStageIndex];
+  // Atajos de teclado (1, 2, 3 para elegir opción, Enter para atacar o avanzar en intro)
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (showIntroModal) {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          if (introStep === 1) {
+            soundService.playToken();
+            setIntroStep(2);
+          } else {
+            soundService.playCorrect();
+            setShowIntroModal(false);
+          }
+        } else if (e.key === 'Escape') {
+          soundService.playCorrect();
+          setShowIntroModal(false);
+        }
+        return;
+      }
 
-  // Manejo de Comodines en el Combate
+      if (turnState !== 'player_turn') {
+        if (turnState === 'round_end' && (e.key === 'Enter' || e.key === ' ')) {
+          e.preventDefault();
+          handleNextRound();
+        }
+        return;
+      }
+
+      if (e.key === '1' && shuffledOptions[0] && !disabledOptions.includes(0)) {
+        handleSelectOption(0);
+      } else if (e.key === '2' && shuffledOptions[1] && !disabledOptions.includes(1)) {
+        handleSelectOption(1);
+      } else if (e.key === '3' && shuffledOptions[2] && !disabledOptions.includes(2)) {
+        handleSelectOption(2);
+      } else if (e.key === 'Enter' && selectedPatchIndex !== null) {
+        handleLaunchAttack();
+      } else if (e.key === 'Escape') {
+        onExit();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [showIntroModal, introStep, turnState, shuffledOptions, disabledOptions, selectedPatchIndex]);
+
+  // Selección de opción de parche
+  const handleSelectOption = (idx: number) => {
+    if (disabledOptions.includes(idx) || turnState !== 'player_turn') return;
+    soundService.playToken();
+    setSelectedPatchIndex(idx);
+    setFeedbackMessage(null);
+  };
+
+  // Ataque del jugador
+  const handleLaunchAttack = () => {
+    if (selectedPatchIndex === null || turnState !== 'player_turn') return;
+
+    const chosen = shuffledOptions[selectedPatchIndex];
+
+    if (chosen.originalIndex === currentStage.correctOptionIndex) {
+      // ✅ ACIERTO: Impacto crítico en el jefe
+      soundService.playCorrect();
+      setTurnState('player_attacking');
+      setFeedbackMessage({
+        text: `💥 ¡GOLPE CRÍTICO! Aplicaste la solución adecuada y ${bossData.name} recibe -${currentStage.damageToBoss}% de daño.`,
+        isError: false
+      });
+
+      setTimeout(() => {
+        const nextBossHp = Math.max(0, bossHp - currentStage.damageToBoss);
+        setBossHp(nextBossHp);
+
+        if (nextBossHp <= 0) {
+          soundService.playWin();
+          confetti({
+            particleCount: 180,
+            spread: 120,
+            origin: { y: 0.5 },
+            colors: ['#00E5FF', '#4ADE80', '#FFE600', '#FF2A6D', '#A855F7']
+          });
+          setTurnState('victory');
+        } else {
+          setTurnState('round_end');
+        }
+      }, 650);
+    } else {
+      // ❌ ERROR: Parche equivocado
+      if (isSecondChanceActive) {
+        soundService.playWin();
+        setIsSecondChanceActive(false);
+        setDisabledOptions((prev) => [...prev, selectedPatchIndex]);
+        setSelectedPatchIndex(null);
+        setFeedbackMessage({
+          text: '🛡️ ¡Escudo Cuántico activado! Absorbió el contraataque del jefe sin daños a tu servidor. Elige otra alternativa.',
+          isError: false
+        });
+        return;
+      }
+
+      soundService.playError();
+      setTurnState('boss_attacking');
+      setFeedbackMessage({
+        text: `⚠️ ¡Esa no es la solución correcta! ${bossData.name} contraatacó y perdiste -${currentStage.counterDamageToPlayer} HP de tu servidor.`,
+        isError: true
+      });
+
+      setTimeout(() => {
+        const nextPlayerHp = Math.max(0, playerHp - currentStage.counterDamageToPlayer);
+        setPlayerHp(nextPlayerHp);
+
+        if (nextPlayerHp <= 0) {
+          soundService.playError();
+          setTurnState('game_over');
+        } else {
+          setTurnState('player_turn');
+          setDisabledOptions((prev) => [...prev, selectedPatchIndex]);
+          setSelectedPatchIndex(null);
+        }
+      }, 650);
+    }
+  };
+
+  // Pasar al siguiente asalto
+  const handleNextRound = () => {
+    if (currentStageIndex < bossData.stages.length - 1 && bossHp > 0) {
+      soundService.playToken();
+      setCurrentStageIndex((prev) => prev + 1);
+      setTurnState('player_turn');
+      setFeedbackMessage(null);
+    } else if (bossHp <= 0) {
+      onVictory();
+    }
+  };
+
+  // Reiniciar combate
+  const handleRestartBattle = () => {
+    soundService.playToken();
+    setPlayerHp(100);
+    setBossHp(100);
+    setCurrentStageIndex(0);
+    setTurnState('player_turn');
+    setFeedbackMessage(null);
+  };
+
+  // Uso de comodines
   const handlePowerUp = (key: keyof UserPowerUps) => {
     if (!user.powerups || user.powerups[key] <= 0) {
       soundService.playError();
@@ -256,691 +348,562 @@ export const BossFightArena: React.FC<BossFightProps> = ({
 
     if (key === 'teacherHint') {
       soundService.playCorrect();
-      setHintMessage(currentStage.teacherHint);
-      setCombatLog(`Pista del Profesor: ${currentStage.teacherHint}`);
+      setTeacherHintActive(currentStage.teacherHint);
     } else if (key === 'eliminateOptions') {
       soundService.playCorrect();
-      const wrong = currentStage.options
-        .map((_, idx) => idx)
-        .filter((idx) => idx !== currentStage.correctOptionIndex);
-      const toDisable = wrong.slice(0, 2);
+      const wrongIndices = shuffledOptions
+        .map((item, idx) => ({ ...item, currentIdx: idx }))
+        .filter((item) => item.originalIndex !== currentStage.correctOptionIndex)
+        .map((item) => item.currentIdx);
+      const toDisable = wrongIndices.slice(0, 1);
       setDisabledOptions((prev) => Array.from(new Set([...prev, ...toDisable])));
-      setCombatLog('¡50/50 activado! Se han neutralizado 2 opciones erróneas.');
+      setFeedbackMessage({
+        text: '✂️ 50/50: Se descartó una opción errónea.',
+        isError: false
+      });
     } else if (key === 'secondChance') {
       soundService.playCorrect();
       setIsSecondChanceActive(true);
-      setCombatLog('¡Escudo de Segunda Oportunidad activado! Tu próximo fallo será absorbido.');
-    } else if (key === 'codePeek') {
-      soundService.playCorrect();
-      setHighlightCode(true);
-      setCombatLog('¡Inspección de código activa! Observa la sintaxis resaltada.');
+      setFeedbackMessage({
+        text: '🛡️ Escudo Cuántico activo: Tu próximo fallo será protegido contra daño.',
+        isError: false
+      });
     }
   };
 
-  // Ejecución de turno de combate estilo Pokémon
-  const handleExecuteTurn = () => {
-    if (selectedOption === null || turnState !== 'player_turn') return;
+  // Determinar pose del jefe según el estado del turno
+  const currentBossPose: BossPose =
+    bossHp <= 0
+      ? 'defeated'
+      : turnState === 'player_attacking'
+      ? 'hurt'
+      : turnState === 'boss_attacking'
+      ? 'attack'
+      : 'idle';
 
-    if (selectedOption === currentStage.correctOptionIndex) {
-      // 1. Acierto del Jugador: Ataca al Jefe
-      soundService.playCorrect();
-      setTurnState('player_attacking');
-      setLastDamageDealt(currentStage.bossDamage);
-      setCombatLog(`¡Golpe certero! Has aplicado el parche correcto. Bugzilla recibe -${currentStage.bossDamage} HP.`);
-
-      setTimeout(() => {
-        const nextBossHp = Math.max(0, bossHp - currentStage.bossDamage);
-        setBossHp(nextBossHp);
-        setLastDamageDealt(null);
-
-        if (nextBossHp <= 0) {
-          // Victoria definitiva
-          soundService.playWin();
-          confetti({
-            particleCount: 180,
-            spread: 110,
-            origin: { y: 0.5 },
-            colors: ['#38BDF8', '#10B981', '#F59E0B', '#A855F7']
-          });
-          setTurnState('victory');
-          setCombatLog('¡Bugzilla ha sido neutralizado por completo! Has liberado la unidad.');
-        } else {
-          setTurnState('round_end');
-        }
-      }, 700);
-    } else {
-      // Fallo: Comprobar si el escudo de segunda oportunidad está activo
-      if (isSecondChanceActive) {
-        soundService.playWin();
-        setIsSecondChanceActive(false);
-        setDisabledOptions((prev) => [...prev, selectedOption]);
-        setSelectedOption(null);
-        setCombatLog('¡Tu Escudo absorbió el impacto de Bugzilla! Tienes una segunda oportunidad.');
-        return;
-      }
-
-      // 2. Turno del Jefe: Contraataca al Jugador
-      soundService.playError();
-      setTurnState('boss_attacking');
-      setLastDamageTaken(currentStage.playerDamage);
-      setCombatLog(`¡Ataque fallido! Bugzilla ejecutó '${currentStage.bossAttackName}'. Recibes -${currentStage.playerDamage} HP.`);
-
-      setTimeout(() => {
-        const nextPlayerHp = Math.max(0, playerHp - currentStage.playerDamage);
-        setPlayerHp(nextPlayerHp);
-        setLastDamageTaken(null);
-
-        if (nextPlayerHp <= 0) {
-          soundService.playError();
-          setTurnState('game_over');
-          setCombatLog('¡Tu consola de ejecución ha colapsado! Recarga tu lógica y vuelve a intentarlo.');
-        } else {
-          setTurnState('round_end');
-        }
-      }, 700);
-    }
-  };
-
-  const handleNextRound = () => {
-    if (currentStageIndex < stages.length - 1 && bossHp > 0) {
-      setCurrentStageIndex((prev) => prev + 1);
-      setSelectedOption(null);
-      setDisabledOptions([]);
-      setHintMessage(null);
-      setHighlightCode(false);
-      setTurnState('player_turn');
-      setCombatLog(`¡Fase ${currentStageIndex + 2}! Bugzilla prepara '${stages[currentStageIndex + 1].bossAttackName}'.`);
-    } else if (bossHp <= 0) {
-      onVictory();
-    }
-  };
-
-  const handleRestartBattle = () => {
-    soundService.playToken();
-    const pool = [...BOSS_CHALLENGE_POOL];
-    for (let i = pool.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [pool[i], pool[j]] = [pool[j], pool[i]];
-    }
-    setStages(pool.slice(0, 3));
-    setPlayerHp(100);
-    setBossHp(100);
-    setCurrentStageIndex(0);
-    setSelectedOption(null);
-    setDisabledOptions([]);
-    setHintMessage(null);
-    setHighlightCode(false);
-    setTurnState('player_turn');
-    setCombatLog('¡Combate reiniciado! Analiza la sintaxis con máxima concentración.');
-  };
+  const codeLines = currentStage ? currentStage.codeSnippet.split('\n') : [];
 
   return (
-    <div
-      style={{
-        position: 'fixed',
-        inset: 0,
-        width: '100vw',
-        height: '100vh',
-        zIndex: 1000,
-        background: 'linear-gradient(180deg, #090D1A 0%, #030712 100%)',
-        display: 'flex',
-        flexDirection: 'column',
-        overflowY: 'auto',
-        color: '#FFFFFF'
-      }}
-    >
-      {/* Transición inicial de teletransporte */}
-      {isTeleporting ? (
-        <div
-          style={{
-            flex: 1,
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: '16px'
-          }}
-        >
-          <Swords size={68} color="#EF4444" style={{ animation: 'spin 1.2s linear infinite' }} />
-          <h2 style={{ fontSize: '1.5rem', fontWeight: 900, color: '#FFFFFF', letterSpacing: '0.05em' }}>
-            TELETRANSPORTANDO AL COLISEO...
-          </h2>
-          <span style={{ fontSize: '0.9rem', color: '#94A3B8', fontWeight: 700 }}>
-            Iniciando protocolo de combate por turnos
-          </span>
+    <div className="boss-arena-clean-screen">
+      {isLoading ? (
+        <div className="boss-arena-loading">
+          <div className="boss-arena-loading-icon">
+            <Swords size={42} color="#000000" strokeWidth={2.8} />
+          </div>
+          <span className="boss-arena-loading-text">Cargando Arena de Combate...</span>
         </div>
       ) : (
-        <div
-          style={{
-            flex: 1,
-            display: 'flex',
-            flexDirection: 'column',
-            maxWidth: '800px',
-            margin: '0 auto',
-            width: '100%',
-            padding: '12px 16px 32px 16px',
-            boxSizing: 'border-box',
-            gap: '12px'
-          }}
-        >
-          {/* Header Superior del Coliseo */}
-          <div
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              paddingBottom: '6px'
-            }}
-          >
-            <button
-              onClick={onExit}
-              style={{
-                color: '#94A3B8',
-                background: 'rgba(255, 255, 255, 0.06)',
-                border: '1px solid rgba(255, 255, 255, 0.12)',
-                borderRadius: '10px',
-                padding: '6px 12px',
-                cursor: 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '6px',
-                fontSize: '0.82rem',
-                fontWeight: 800
-              }}
-            >
-              <ArrowLeft size={16} />
-              <span>Retirarse</span>
+        <div className="boss-arena-clean-container">
+          {/* ════ 1. BARRA SUPERIOR NEO-BRUTALISTA ════ */}
+          <header className="boss-arena-clean-topbar">
+            <button type="button" onClick={onExit} className="boss-clean-back-btn" title="Volver al mapa">
+              <ArrowLeft size={16} strokeWidth={3} />
+              <span>Salir</span>
             </button>
 
-            <div
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '6px',
-                background: 'rgba(239, 68, 68, 0.15)',
-                padding: '5px 12px',
-                borderRadius: '12px',
-                border: '1.5px solid rgba(239, 68, 68, 0.35)'
-              }}
-            >
-              <ShieldAlert size={16} color="#EF4444" />
-              <span style={{ color: '#EF4444', fontWeight: 900, fontSize: '0.82rem' }}>
-                COLISEO DE JEFE • FASE {currentStageIndex + 1}/{stages.length}
+            <div className="boss-clean-header-title">
+              <span className="boss-clean-unit-tag">
+                UNIDAD {unitId} · {pathId === 'sql' ? 'BASE DE DATOS SQL' : 'KOTLIN'}
               </span>
+              <h1 className="boss-clean-name">{bossData.name}</h1>
             </div>
 
-            <div style={{ width: '80px' }} />
-          </div>
-
-          {/* CAMPO DE BATALLA CON PERSPECTIVA LATERAL POKÉMON (REQUERIMIENTO 5) */}
-          <div
-            className={turnState === 'boss_attacking' ? 'screen-shake' : ''}
-            style={{
-              background: 'radial-gradient(ellipse at 50% 65%, #1E1B4B 0%, #060B18 100%)',
-              border: '2px solid #2D3748',
-              borderRadius: '24px',
-              padding: '16px 20px',
-              position: 'relative',
-              overflow: 'hidden',
-              minHeight: '260px',
-              display: 'flex',
-              flexDirection: 'column',
-              justifyContent: 'space-between',
-              boxShadow: '0 12px 36px rgba(0, 0, 0, 0.6)'
-            }}
-          >
-            {/* LADO SUPERIOR DERECHO: JEFE BUGZILLA */}
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-              {/* Tarjeta HUD de Estadísticas del Jefe */}
-              <div
-                style={{
-                  background: 'rgba(15, 23, 42, 0.95)',
-                  border: '1.5px solid #EF4444',
-                  borderRadius: '14px',
-                  padding: '10px 14px',
-                  minWidth: '180px',
-                  boxShadow: '0 6px 16px rgba(0, 0, 0, 0.6)'
+            <div className="boss-clean-top-actions">
+              <button
+                type="button"
+                onClick={() => {
+                  soundService.playToken();
+                  setIntroStep(2);
+                  setShowIntroModal(true);
                 }}
+                className="boss-clean-help-btn"
+                title="Ver reglas y mecánicas de combate"
               >
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <span style={{ fontSize: '0.92rem', fontWeight: 900, color: '#FFFFFF' }}>Bugzilla</span>
-                  <span style={{ fontSize: '0.74rem', fontWeight: 800, color: '#EF4444' }}>Nv. 10</span>
-                </div>
+                <HelpCircle size={15} strokeWidth={2.8} />
+                <span className="boss-btn-text-desktop">Reglas</span>
+              </button>
 
-                {/* Barra de Vida HP del Jefe */}
-                <div
-                  style={{
-                    height: '10px',
-                    background: '#030712',
-                    borderRadius: '6px',
-                    overflow: 'hidden',
-                    border: '1px solid #334155',
-                    margin: '6px 0 4px 0'
-                  }}
-                >
-                  <div
-                    style={{
-                      height: '100%',
-                      width: `${bossHp}%`,
-                      background: bossHp > 50 ? '#10B981' : bossHp > 25 ? '#F59E0B' : '#EF4444',
-                      transition: 'width 0.4s ease'
-                    }}
-                  />
-                </div>
+              <div className="boss-clean-round-badge">
+                <Target size={14} strokeWidth={2.8} />
+                <span>
+                  Asalto {currentStageIndex + 1}/{bossData.stages.length}
+                </span>
+              </div>
+            </div>
+          </header>
 
-                <div
-                  style={{
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    fontSize: '0.72rem',
-                    fontWeight: 800,
-                    color: '#94A3B8'
-                  }}
-                >
-                  <span>HP</span>
-                  <span>{bossHp} / 100</span>
-                </div>
+          {/* ════ 2. DUAL FIGHTER HUD: DUOLINGO 3D + NEO-BRUTALISM ════ */}
+          <section className="boss-clean-dual-hud" aria-label="Marcador de combate">
+            {/* LADO JEFE */}
+            <div className="boss-hud-fighter-side boss">
+              <div className="boss-hud-avatar-box">
+                <BossAvatar3D
+                  avatarType={bossData.avatarType}
+                  primaryColor={bossData.primaryColor}
+                  accentColor={bossData.accentColor}
+                  pose={currentBossPose}
+                  size={76}
+                  showPedestal={true}
+                />
               </div>
 
-              {/* Sprite del Jefe con plataforma 3D */}
-              <div style={{ position: 'relative', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                <BugzillaBattleSprite
-                  hp={bossHp}
-                  isAttacking={turnState === 'boss_attacking'}
-                  isHurt={turnState === 'player_attacking'}
-                />
-
-                {/* Plataforma 3D del Jefe */}
-                <div
-                  style={{
-                    width: '120px',
-                    height: '16px',
-                    borderRadius: '50%',
-                    background: 'rgba(239, 68, 68, 0.25)',
-                    border: '1.5px solid #EF4444',
-                    marginTop: '-8px'
-                  }}
-                />
-
-                {lastDamageDealt !== null && (
+              <div className="boss-hud-info">
+                <div className="boss-hud-name-row">
+                  <span className="boss-hud-fighter-name">{bossData.name}</span>
+                  <span className="boss-hud-hp-num boss">{Math.round(bossHp)}% HP</span>
+                </div>
+                <div className="boss-clean-hp-track">
                   <div
-                    style={{
-                      position: 'absolute',
-                      top: '10px',
-                      left: '50%',
-                      transform: 'translateX(-50%)',
-                      color: '#EF4444',
-                      fontSize: '1.6rem',
-                      fontWeight: 900,
-                      textShadow: '0 0 12px #000',
-                      animation: 'scale-up 0.3s ease-out'
-                    }}
-                  >
-                    -{lastDamageDealt} HP!
-                  </div>
-                )}
+                    className="boss-clean-hp-fill boss"
+                    style={{ width: `${Math.max(0, Math.min(100, bossHp))}%` }}
+                  />
+                </div>
               </div>
             </div>
 
-            {/* LADO INFERIOR IZQUIERDO: JUGADOR */}
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginTop: '12px' }}>
-              {/* Sprite y plataforma del Jugador */}
-              <div style={{ position: 'relative', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                <div
-                  style={{
-                    transform:
-                      turnState === 'player_attacking'
-                        ? 'translate(24px, -20px) scale(1.15)'
-                        : turnState === 'boss_attacking'
-                        ? 'translate(-10px, 6px) scale(0.92)'
-                        : 'none',
-                    transition: 'transform 0.2s cubic-bezier(0.16, 1, 0.3, 1)',
-                    filter:
-                      turnState === 'boss_attacking'
-                        ? 'drop-shadow(0 0 16px #EF4444)'
-                        : 'drop-shadow(0 0 14px rgba(56, 189, 248, 0.6))'
-                  }}
-                >
-                  <DevAvatar
-                    avatarId={user.avatarId || 'robot_byte'}
-                    skinId={user.equippedSkin}
-                    size={76}
-                  />
-                </div>
+            {/* BADGE CENTRAL VS */}
+            <div className="boss-clean-vs-badge" aria-hidden="true">
+              <span>VS</span>
+            </div>
 
-                {/* Plataforma holográfica de batalla del Jugador */}
-                <div
-                  style={{
-                    width: '90px',
-                    height: '14px',
-                    borderRadius: '50%',
-                    background: 'rgba(56, 189, 248, 0.25)',
-                    border: '1.5px solid #38BDF8',
-                    marginTop: '-4px'
-                  }}
+            {/* LADO JUGADOR */}
+            <div className="boss-hud-fighter-side player">
+              <div className="boss-hud-avatar-box player">
+                <PlayerServerAvatar3D
+                  isHurt={turnState === 'boss_attacking'}
+                  isAttacking={turnState === 'player_attacking'}
+                  hasShield={isSecondChanceActive}
+                  size={64}
                 />
-
-                {lastDamageTaken !== null && (
-                  <div
-                    style={{
-                      position: 'absolute',
-                      top: '-18px',
-                      left: '50%',
-                      transform: 'translateX(-50%)',
-                      color: '#F87171',
-                      fontSize: '1.5rem',
-                      fontWeight: 900,
-                      textShadow: '0 0 10px #000',
-                      animation: 'scale-up 0.3s ease-out'
-                    }}
-                  >
-                    -{lastDamageTaken} HP!
-                  </div>
-                )}
               </div>
 
-              {/* Tarjeta HUD de Estadísticas del Jugador */}
-              <div
-                style={{
-                  background: 'rgba(15, 23, 42, 0.95)',
-                  border: '1.5px solid #38BDF8',
-                  borderRadius: '14px',
-                  padding: '10px 14px',
-                  minWidth: '180px',
-                  boxShadow: '0 6px 16px rgba(0, 0, 0, 0.6)'
-                }}
-              >
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <span style={{ fontSize: '0.92rem', fontWeight: 900, color: '#FFFFFF' }}>
-                    {user.displayName || 'Dev'}
-                  </span>
-                  <span style={{ fontSize: '0.74rem', fontWeight: 800, color: '#38BDF8' }}>
-                    Nv. {Math.floor((user.totalXp || 0) / 100) + 1}
-                  </span>
+              <div className="boss-hud-info">
+                <div className="boss-hud-name-row">
+                  <span className="boss-hud-fighter-name">TU SERVIDOR</span>
+                  <span className="boss-hud-hp-num player">{playerHp}/100 HP</span>
                 </div>
-
-                {/* Barra de Vida HP del Jugador */}
-                <div
-                  style={{
-                    height: '10px',
-                    background: '#030712',
-                    borderRadius: '6px',
-                    overflow: 'hidden',
-                    border: '1px solid #334155',
-                    margin: '6px 0 4px 0'
-                  }}
-                >
+                <div className="boss-clean-hp-track">
                   <div
-                    style={{
-                      height: '100%',
-                      width: `${playerHp}%`,
-                      background: playerHp > 50 ? '#10B981' : playerHp > 25 ? '#F59E0B' : '#EF4444',
-                      transition: 'width 0.4s ease'
-                    }}
+                    className="boss-clean-hp-fill player"
+                    style={{ width: `${Math.max(0, Math.min(100, playerHp))}%` }}
                   />
-                </div>
-
-                <div
-                  style={{
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    fontSize: '0.72rem',
-                    fontWeight: 800,
-                    color: '#94A3B8'
-                  }}
-                >
-                  <span>HP</span>
-                  <span>{playerHp} / 100</span>
                 </div>
               </div>
             </div>
-          </div>
+          </section>
 
-          {/* CUADRO DE REGISTRO DE COMBATE / LOG RPG */}
-          <div
-            style={{
-              background: '#0F172A',
-              border: '1.5px solid #1E293B',
-              borderRadius: '14px',
-              padding: '10px 14px',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '10px',
-              minHeight: '42px'
-            }}
-          >
-            <Sparkles size={18} color="#F59E0B" style={{ flexShrink: 0 }} />
-            <span style={{ fontSize: '0.88rem', color: '#E2E8F0', fontWeight: 700, lineHeight: 1.4 }}>
-              {combatLog}
-            </span>
-          </div>
+          {/* ════ 3. TARJETA MAESTRA DEL DESAFÍO: NEO-BRUTALISM ════ */}
+          <main className="boss-clean-challenge-card">
+            {/* ENCABEZADO DE SITUACIÓN Y FALLA DETECTADA */}
+            <div className="boss-clean-prompt-header">
+              <div className="boss-clean-alert-pill">
+                <AlertTriangle size={14} color="#000000" strokeWidth={3} />
+                <span>FALLA CRÍTICA EN PRODUCCIÓN · ASALTO {currentStageIndex + 1} DE {bossData.stages.length}</span>
+              </div>
+              <h2 className="boss-clean-prompt-text">{currentStage.prompt}</h2>
+            </div>
 
-          {/* CONSOLA DE ACCIÓN INTEGRADA */}
-          {turnState !== 'victory' && turnState !== 'game_over' ? (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-              {/* Barra de Comodines en Combate */}
-              <PowerUpsBar
-                powerups={user.powerups}
-                onUsePowerUp={handlePowerUp}
-                isSecondChanceActive={isSecondChanceActive}
-                disabled={turnState !== 'player_turn'}
-                compact={true}
-                showSecondChance={true}
-              />
-
-              {/* Mensaje de Pista si se activó */}
-              {hintMessage && (
-                <div
-                  style={{
-                    background: 'rgba(56, 189, 248, 0.15)',
-                    border: '1px solid #38BDF8',
-                    borderRadius: '12px',
-                    padding: '8px 12px',
-                    fontSize: '0.85rem',
-                    color: '#38BDF8',
-                    fontWeight: 700
-                  }}
-                >
-                  Profesor: {hintMessage}
+            {/* PISTA DEL DOCENTE (SI FUE ACTIVADA POR COMODÍN) */}
+            {teacherHintActive && (
+              <div className="boss-clean-hint-banner">
+                <span className="hint-icon">💡</span>
+                <div>
+                  <strong className="hint-label">Pista del Docente:</strong> {teacherHintActive}
                 </div>
-              )}
+              </div>
+            )}
 
-              {/* Pregunta del Jefe */}
-              <div style={{ fontSize: '0.96rem', fontWeight: 800, color: '#FFFFFF' }}>
-                <FormattedText text={currentStage.prompt} inline dark />
+            {/* CONSOLA DE CÓDIGO (TERMINAL ESTILO NEO-BRUTAL CON PREVIEW EN VIVO) */}
+            <div className="boss-clean-code-wrapper">
+              <div className="boss-clean-code-header">
+                <div className="boss-clean-code-dots">
+                  <span className="boss-clean-code-dot red" />
+                  <span className="boss-clean-code-dot yellow" />
+                  <span className="boss-clean-code-dot green" />
+                </div>
+                <span className="boss-clean-code-filename">
+                  servidor_{pathId}.{pathId === 'sql' ? 'sql' : 'kt'}
+                </span>
+                <span className="boss-clean-code-lang">
+                  {pathId === 'sql' ? 'SQLite v3.45' : 'Kotlin 2.0'}
+                </span>
               </div>
 
-              {/* Bloque de Código estilo VS Code */}
-              <VSCodeSnippet
-                code={currentStage.codeSnippet}
-                language={pathId}
-                filename="bugzilla_exploit.kt"
-                highlightLine={highlightCode ? 3 : undefined}
-                showLineNumbers={true}
-              />
+              <div className="boss-clean-code-body">
+                {codeLines.map((line, idx) => {
+                  const lineNum = idx + 1;
+                  const isTarget = lineNum === currentStage.targetLine;
+                  const isPreviewing = isTarget && selectedPatchIndex !== null;
 
-              {/* Opciones de Contraataque (Movimientos Pokémon) */}
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '8px' }}>
-                {currentStage.options.map((opt, idx) => {
+                  return (
+                    <div
+                      key={idx}
+                      className={`boss-clean-code-row ${isTarget ? 'is-target-line' : ''} ${
+                        isPreviewing ? 'is-previewing' : ''
+                      }`}
+                    >
+                      <span className="boss-clean-code-num">{String(lineNum).padStart(2, '0')}</span>
+                      <span className="boss-clean-code-text">
+                        {isPreviewing ? shuffledOptions[selectedPatchIndex].option.code : line}
+                      </span>
+                      {isPreviewing ? (
+                        <span className="boss-clean-preview-tag">⚡ PARCHE APLICADO</span>
+                      ) : isTarget ? (
+                        <span className="boss-clean-bug-tag">⚠️ LÍNEA CON ERROR</span>
+                      ) : null}
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* SECCIÓN DE OPCIONES DE PARCHE (A, B, C) */}
+            <div className="boss-clean-options-section">
+              <div className="boss-clean-options-header">
+                <span className="boss-clean-options-instruction">
+                  Selecciona la corrección adecuada:
+                </span>
+                <span className="boss-clean-options-shortcut-hint">
+                  [Presiona 1, 2 o 3 en tu teclado]
+                </span>
+              </div>
+
+              <div className="boss-clean-options-list">
+                {shuffledOptions.map((item, idx) => {
+                  const letter = String.fromCharCode(65 + idx); // A, B, C
+                  const isSelected = selectedPatchIndex === idx;
                   const isDisabled = disabledOptions.includes(idx);
-                  const isSelected = selectedOption === idx;
 
                   return (
                     <button
                       key={idx}
-                      disabled={turnState !== 'player_turn' || isDisabled}
-                      onClick={() => {
-                        soundService.playToken();
-                        setSelectedOption(idx);
-                      }}
-                      style={{
-                        background: isSelected
-                          ? 'var(--orange-surface)'
-                          : isDisabled
-                          ? '#0B131B'
-                          : '#1E293B',
-                        border: `2px solid ${
-                          isSelected ? 'var(--orange-main)' : isDisabled ? '#1E293B' : '#334155'
-                        }`,
-                        borderRadius: '14px',
-                        padding: '12px 14px',
-                        color: isDisabled ? '#475569' : '#FFFFFF',
-                        fontSize: '0.86rem',
-                        fontWeight: 800,
-                        cursor: isDisabled ? 'not-allowed' : 'pointer',
-                        textAlign: 'left',
-                        lineHeight: 1.3,
-                        boxShadow: isSelected ? '0 4px 0 #C27100' : '0 2px 0 #0F172A',
-                        opacity: isDisabled ? 0.35 : 1,
-                        transition: 'all 0.15s ease'
-                      }}
+                      type="button"
+                      disabled={isDisabled || turnState !== 'player_turn'}
+                      onClick={() => handleSelectOption(idx)}
+                      className={`boss-clean-option-btn ${isSelected ? 'selected' : ''} ${
+                        isDisabled ? 'disabled' : ''
+                      }`}
                     >
-                      <span
-                        style={{
-                          color: isSelected ? '#FDE047' : '#94A3B8',
-                          fontSize: '0.72rem',
-                          display: 'block',
-                          marginBottom: '2px'
-                        }}
-                      >
-                        ACCIÓN {idx + 1}
-                      </span>
-                      <FormattedText text={opt} inline dark />
+                      <div className="boss-clean-option-badge">
+                        {isSelected ? <Check size={16} strokeWidth={3.5} /> : letter}
+                      </div>
+                      <div className="boss-clean-option-content">
+                        <div className="boss-clean-option-code">
+                          <FormattedText text={item.option.code} inline dark={false} />
+                        </div>
+                        <span className="boss-clean-option-desc">{item.option.description}</span>
+                      </div>
                     </button>
                   );
                 })}
               </div>
-
-              {/* Botón de Ejecutar Contraataque */}
-              {turnState === 'player_turn' && (
-                <button
-                  className="btn-3d btn-orange"
-                  disabled={selectedOption === null}
-                  onClick={handleExecuteTurn}
-                  style={{ padding: '14px 20px', fontSize: '1rem', marginTop: '6px' }}
-                >
-                  <Swords size={20} /> ¡Ejecutar Contraataque!
-                </button>
-              )}
-
-              {turnState === 'round_end' && (
-                <button
-                  className="btn-3d btn-green"
-                  onClick={handleNextRound}
-                  style={{ padding: '14px 20px', fontSize: '1rem', marginTop: '6px' }}
-                >
-                  Siguiente Asalto de Combate <ArrowLeft size={18} style={{ transform: 'rotate(180deg)' }} />
-                </button>
-              )}
             </div>
-          ) : turnState === 'victory' ? (
-            /* PANTALLA DE VICTORIA TOTAL */
-            <div
-              style={{
-                textAlign: 'center',
-                padding: '24px 16px',
-                background: '#0F172A',
-                borderRadius: '24px',
-                border: '2px solid #10B981',
-                boxShadow: '0 0 35px rgba(16, 185, 129, 0.4)'
-              }}
-            >
-              <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '12px' }}>
-                <div
-                  style={{
-                    width: '72px',
-                    height: '72px',
-                    borderRadius: '50%',
-                    background: 'rgba(16, 185, 129, 0.2)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    border: '2px solid #10B981'
-                  }}
-                >
-                  <Trophy size={40} color="#34D399" />
-                </div>
-              </div>
 
-              <h3 style={{ fontSize: '1.6rem', fontWeight: 900, color: '#34D399', marginBottom: '8px' }}>
-                ¡VICTORIA EN EL COLISEO!
-              </h3>
-              <p style={{ color: '#CBD5E1', fontSize: '0.96rem', marginBottom: '20px', lineHeight: 1.5 }}>
-                Has neutralizado a Bugzilla aplicando los parches de código con maestría. La Unidad {unitId + 1} ha
-                quedado completamente desbloqueada.
-              </p>
-
-              <div style={{ display: 'flex', gap: '12px', justifyContent: 'center', marginBottom: '24px' }}>
-                <div
-                  style={{
-                    background: '#1E293B',
-                    padding: '10px 20px',
-                    borderRadius: '14px',
-                    border: '1.5px solid #334155'
-                  }}
-                >
-                  <span style={{ fontSize: '0.74rem', color: '#94A3B8', display: 'block' }}>RECOMPENSA</span>
-                  <span style={{ fontSize: '1.2rem', fontWeight: 900, color: '#FBBF24' }}>+100 XP</span>
-                </div>
-                <div
-                  style={{
-                    background: '#1E293B',
-                    padding: '10px 20px',
-                    borderRadius: '14px',
-                    border: '1.5px solid #334155'
-                  }}
-                >
-                  <span style={{ fontSize: '0.74rem', color: '#94A3B8', display: 'block' }}>BYTES</span>
-                  <span style={{ fontSize: '1.2rem', fontWeight: 900, color: '#38BDF8' }}>+50 Bytes</span>
-                </div>
-              </div>
-
-              <button
-                className="btn-3d btn-green"
-                onClick={onVictory}
-                style={{ width: '100%', padding: '16px', fontSize: '1.05rem' }}
+            {/* BANNER DE IMPACTO Y FEEDBACK */}
+            {feedbackMessage && (
+              <div
+                className={`boss-clean-feedback-banner ${feedbackMessage.isError ? 'error' : 'success'}`}
+                role="alert"
               >
-                <CheckCircle2 size={20} /> Reclamar Corona y Continuar
-              </button>
-            </div>
-          ) : (
-            /* PANTALLA DE DERROTA CON REINTENTO */
-            <div
-              style={{
-                textAlign: 'center',
-                padding: '24px 16px',
-                background: '#0F172A',
-                borderRadius: '24px',
-                border: '2px solid #EF4444',
-                boxShadow: '0 0 35px rgba(239, 68, 68, 0.4)'
-              }}
-            >
-              <h3 style={{ fontSize: '1.5rem', fontWeight: 900, color: '#F87171', marginBottom: '8px' }}>
-                ¡DESCONEXIÓN POR DAÑO CRÍTICO!
-              </h3>
-              <p style={{ color: '#CBD5E1', fontSize: '0.94rem', marginBottom: '22px', lineHeight: 1.5 }}>
-                Tus defensas no resistieron las excepciones de Bugzilla. Usa tus comodines tácticamente o refuerza tus
-                conceptos y vuelve al combate.
-              </p>
+                <div className="feedback-icon-box">
+                  {feedbackMessage.isError ? (
+                    <AlertTriangle size={20} strokeWidth={3} />
+                  ) : (
+                    <Sparkles size={20} strokeWidth={3} />
+                  )}
+                </div>
+                <span className="feedback-text">{feedbackMessage.text}</span>
+              </div>
+            )}
 
-              <div style={{ display: 'flex', gap: '12px' }}>
+            {/* BOTÓN PRINCIPAL DE ACCIÓN: ATACAR O SIGUIENTE ASALTO */}
+            {turnState === 'round_end' ? (
+              <button
+                type="button"
+                onClick={handleNextRound}
+                className="boss-clean-attack-btn next-round"
+              >
+                <span>Siguiente Asalto ({currentStageIndex + 2}/{bossData.stages.length})</span>
+                <ChevronRight size={22} strokeWidth={3} />
+              </button>
+            ) : (
+              <button
+                type="button"
+                disabled={selectedPatchIndex === null || turnState !== 'player_turn'}
+                onClick={handleLaunchAttack}
+                className="boss-clean-attack-btn"
+              >
+                <Swords size={22} strokeWidth={3} />
+                <span>
+                  {selectedPatchIndex === null
+                    ? 'Elige una opción arriba para atacar'
+                    : '⚔️ Compilar y Atacar al Jefe'}
+                </span>
+              </button>
+            )}
+          </main>
+
+          {/* ════ 4. BARRA DE COMODINES INFERIOR ════ */}
+          <footer className="boss-clean-powerups-wrap">
+            <PowerUpsBar
+              powerups={user.powerups}
+              onUsePowerUp={handlePowerUp}
+              isSecondChanceActive={isSecondChanceActive}
+              disabled={turnState !== 'player_turn'}
+              compact={true}
+              showSecondChance={true}
+            />
+          </footer>
+
+          {/* ════ 5. MODAL DE VICTORIA TOTAL ════ */}
+          {turnState === 'victory' && (
+            <div className="boss-clean-modal-overlay">
+              <div className="boss-clean-result-card victory">
+                <div className="boss-clean-trophy-circle">
+                  <Trophy size={48} color="#000000" strokeWidth={3} />
+                </div>
+                <div className="boss-clean-badge-pill victory">SISTEMA RESTAURADO</div>
+                <h3 className="boss-clean-result-title">¡JEFE DERROTADO!</h3>
+                <p className="boss-clean-result-p">
+                  Has neutralizado con maestría a <strong>{bossData.name}</strong> aplicando la lógica correcta en cada
+                  asalto. ¡El servidor de la Unidad {unitId} está completamente a salvo!
+                </p>
+
+                <div className="boss-clean-rewards-row">
+                  <div className="boss-clean-reward-item xp">
+                    <span className="label">EXPERIENCIA</span>
+                    <span className="value">+120 XP</span>
+                  </div>
+                  <div className="boss-clean-reward-item bytes">
+                    <span className="label">BYTES</span>
+                    <span className="value">+60 Bytes</span>
+                  </div>
+                  <div className="boss-clean-reward-item crown">
+                    <span className="label">CORONA</span>
+                    <span className="value">Unidad {unitId}</span>
+                  </div>
+                </div>
+
                 <button
-                  className="btn-3d btn-orange"
-                  style={{ flex: 1, padding: '14px', fontSize: '0.95rem' }}
-                  onClick={handleRestartBattle}
+                  type="button"
+                  onClick={onVictory}
+                  className="boss-clean-action-btn victory"
                 >
-                  <RefreshCw size={18} /> Reintentar Combate
-                </button>
-                <button
-                  className="btn-3d btn-outline"
-                  style={{ flex: 1, padding: '14px', fontSize: '0.95rem' }}
-                  onClick={onExit}
-                >
-                  Retirarse a Estudiar
+                  <CheckCircle2 size={22} strokeWidth={3} />
+                  <span>Continuar y Reclamar Victoria</span>
                 </button>
               </div>
             </div>
           )}
+
+          {/* ════ 6. MODAL DE DERROTA ════ */}
+          {turnState === 'game_over' && (
+            <div className="boss-clean-modal-overlay">
+              <div className="boss-clean-result-card defeat">
+                <div className="boss-clean-defeat-circle">
+                  <AlertTriangle size={44} color="#000000" strokeWidth={3} />
+                </div>
+                <div className="boss-clean-badge-pill defeat">CONSOLA DAÑADA</div>
+                <h3 className="boss-clean-result-title">¡SERVIDOR COLAPSADO!</h3>
+                <p className="boss-clean-result-p">
+                  Las excepciones de <strong>{bossData.name}</strong> agotaron los recursos de tu servidor.
+                  ¡No te rindas! Analiza detenidamente el código o utiliza tus comodines para protegerte.
+                </p>
+
+                <div className="boss-clean-btn-duo">
+                  <button
+                    type="button"
+                    onClick={handleRestartBattle}
+                    className="boss-clean-action-btn retry"
+                  >
+                    <RefreshCw size={18} strokeWidth={3} />
+                    <span>Reintentar Combate</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={onExit}
+                    className="boss-clean-action-btn exit"
+                  >
+                    <span>Volver al Mapa</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* ════ 7. MODAL DE INTRODUCCIÓN Y REGLAS (ONBOARDING CINEMÁTICO) ════ */}
+      {showIntroModal && (
+        <div className="boss-intro-backdrop">
+          <div className="boss-intro-card">
+            {/* Cabecera del aviso */}
+            <div className="boss-intro-header">
+              <div className={`boss-intro-alert-pill ${introStep === 2 ? 'green' : ''}`}>
+                {introStep === 1 ? (
+                  <>
+                    <AlertTriangle size={15} color="#000000" strokeWidth={3} />
+                    <span>¡AMENAZA DETECTADA EN EL SISTEMA!</span>
+                  </>
+                ) : (
+                  <>
+                    <Zap size={15} color="#000000" strokeWidth={3} />
+                    <span>MANUAL RÁPIDO DE COMBATE</span>
+                  </>
+                )}
+              </div>
+              <span className="boss-intro-step-pill">Paso {introStep} de 2</span>
+            </div>
+
+            {introStep === 1 ? (
+              /* PASO 1: PRESENTACIÓN DEL JEFE */
+              <>
+                <div className="boss-intro-hero-section">
+                  <div
+                    className="boss-intro-avatar-frame"
+                    style={{ borderColor: bossData.primaryColor }}
+                  >
+                    <BossAvatar3D
+                      avatarType={bossData.avatarType}
+                      primaryColor={bossData.primaryColor}
+                      accentColor={bossData.accentColor}
+                      pose="idle"
+                      size={118}
+                      showPedestal={true}
+                    />
+                  </div>
+
+                  <h2 className="boss-intro-title">
+                    ¡Se ha manifestado{' '}
+                    <span style={{ color: bossData.primaryColor }}>{bossData.name}</span>!
+                  </h2>
+
+                  <span className="boss-intro-threat-badge">
+                    AMENAZA DE UNIDAD {unitId} · {pathId.toUpperCase()}
+                  </span>
+                </div>
+
+                <div className="boss-intro-lore-box">
+                  <p className="boss-intro-lore-text">"{bossData.description}"</p>
+                  <p className="boss-intro-mission-text">
+                    👾 Ha corrompido el servidor de{' '}
+                    <strong>{pathId === 'sql' ? 'Base de Datos SQL' : 'Aplicación Kotlin'}</strong>. Debes neutralizarlo
+                    encontrando los bugs en el código y aplicando los parches adecuados antes de que destruya tu sistema.
+                  </p>
+                </div>
+
+                <div className="boss-intro-actions">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      soundService.playToken();
+                      setIntroStep(2);
+                    }}
+                    className="boss-intro-btn-primary"
+                  >
+                    <span>¿Cómo jugar y ganar?</span>
+                    <ChevronRight size={18} strokeWidth={3} />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      soundService.playCorrect();
+                      setShowIntroModal(false);
+                    }}
+                    className="boss-intro-btn-secondary"
+                  >
+                    Saltar al combate ⚔️
+                  </button>
+                </div>
+              </>
+            ) : (
+              /* PASO 2: REGLAS DE COMBATE (VIDA, SERVIDOR Y PARCHES) */
+              <>
+                <div className="boss-intro-hero-section" style={{ gap: '4px' }}>
+                  <h2 className="boss-intro-title" style={{ fontSize: '1.35rem' }}>
+                    ¿Cómo Funciona la Batalla?
+                  </h2>
+                  <p style={{ margin: 0, fontSize: '0.86rem', color: '#475569', fontWeight: 800 }}>
+                    Aprende a gestionar las barras de vida y el sistema de parches:
+                  </p>
+                </div>
+
+                <div className="boss-intro-rules-list">
+                  {/* REGLA 1: VIDA DEL JEFE */}
+                  <div className="boss-intro-rule-card">
+                    <div className="boss-intro-rule-icon boss">
+                      <Target size={20} color="#000000" strokeWidth={3} />
+                    </div>
+                    <div className="boss-intro-rule-content">
+                      <div className="boss-intro-rule-title-row">
+                        <span className="boss-intro-rule-title">1. Derrota al Jefe (100% HP)</span>
+                        <span className="boss-intro-rule-tag boss">Objetivo</span>
+                      </div>
+                      <span className="boss-intro-rule-desc">
+                        Cada parche correcto daña al jefe (-35% HP). Tienes 3 asaltos para reducir su vida a 0% y salvar el sistema.
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* REGLA 2: TU SERVIDOR / TU VIDA */}
+                  <div className="boss-intro-rule-card">
+                    <div className="boss-intro-rule-icon player">
+                      <Heart size={20} color="#000000" strokeWidth={3} />
+                    </div>
+                    <div className="boss-intro-rule-content">
+                      <div className="boss-intro-rule-title-row">
+                        <span className="boss-intro-rule-title">2. Protege tu Servidor (100 HP)</span>
+                        <span className="boss-intro-rule-tag player">Tu Vida</span>
+                      </div>
+                      <span className="boss-intro-rule-desc">
+                        ¡Cuidado! Si eliges una opción con errores, el jefe contraatacará (-25 HP). ¡Si tu vida llega a 0 HP, perderás!
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* REGLA 3: MECÁNICA DE PARCHEO */}
+                  <div className="boss-intro-rule-card">
+                    <div className="boss-intro-rule-icon action">
+                      <Terminal size={20} color="#000000" strokeWidth={3} />
+                    </div>
+                    <div className="boss-intro-rule-content">
+                      <div className="boss-intro-rule-title-row">
+                        <span className="boss-intro-rule-title">3. Inspecciona, Elige y Ataca</span>
+                        <span className="boss-intro-rule-tag action">Mecánica</span>
+                      </div>
+                      <span className="boss-intro-rule-desc">
+                        Toca las opciones (A, B o C) para ver el parche propuesto en vivo en el código. Luego presiona "Compilar y Atacar".
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="boss-intro-actions">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      soundService.playCorrect();
+                      setShowIntroModal(false);
+                    }}
+                    className="boss-intro-btn-primary"
+                  >
+                    <Swords size={20} strokeWidth={3} />
+                    <span>¡ENTENDIDO, A PELEAR!</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      soundService.playToken();
+                      setIntroStep(1);
+                    }}
+                    className="boss-intro-btn-secondary"
+                  >
+                    ← Volver a ver al jefe
+                  </button>
+                </div>
+              </>
+            )}
+          </div>
         </div>
       )}
     </div>

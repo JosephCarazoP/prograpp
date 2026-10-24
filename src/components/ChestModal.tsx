@@ -7,7 +7,8 @@ import {
   ShieldCheck,
   Code2,
   Award,
-  X
+  X,
+  Hand
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { soundService } from '../services/soundService';
@@ -22,6 +23,13 @@ interface ChestModalProps {
   onClose: () => void;
   onClaim: (chestId: string, rewards: ProgressionChestRewards) => void;
 }
+
+// Texto tipo cómic que aparece con cada toque (Neo-brutalism)
+const IMPACT_WORDS: Record<number, { text: string; bg: string; rot: number }> = {
+  2: { text: '¡TOC!', bg: '#38BDF8', rot: -8 },
+  1: { text: '¡CRACK!', bg: '#FF6B6B', rot: 7 },
+  0: { text: '¡BOOM!', bg: '#FFE600', rot: -5 }
+};
 
 export const ChestModal: React.FC<ChestModalProps> = ({
   isOpen,
@@ -50,17 +58,17 @@ export const ChestModal: React.FC<ChestModalProps> = ({
     if (animTimerRef.current) clearTimeout(animTimerRef.current);
 
     if (tapsRemaining === 3) {
-      soundService.playToken();
+      soundService.playChestTap1();
       setAnimState('wobble');
       setTapsRemaining(2);
-      animTimerRef.current = setTimeout(() => setAnimState('idle'), 350);
+      animTimerRef.current = setTimeout(() => setAnimState('idle'), 420);
     } else if (tapsRemaining === 2) {
-      soundService.playToken();
+      soundService.playChestTap2();
       setAnimState('shake');
       setTapsRemaining(1);
-      animTimerRef.current = setTimeout(() => setAnimState('idle'), 400);
+      animTimerRef.current = setTimeout(() => setAnimState('idle'), 500);
     } else if (tapsRemaining === 1) {
-      soundService.playChest();
+      soundService.playChestBurst();
       setAnimState('open');
       setTapsRemaining(0);
       try {
@@ -68,7 +76,7 @@ export const ChestModal: React.FC<ChestModalProps> = ({
           particleCount: 120,
           spread: 80,
           origin: { y: 0.5 },
-          colors: ['#FF9500', '#38BDF8', '#22C55E', '#8B5CF6', '#FACC15']
+          colors: ['#FFE600', '#FF6B6B', '#38BDF8', '#4ADE80', '#C084FC', '#000000']
         });
       } catch {
         // Ignorar si canvas-confetti falla
@@ -84,14 +92,12 @@ export const ChestModal: React.FC<ChestModalProps> = ({
     onClose();
   };
 
-  // Recompensas con el EXACTO estilo visual de Ajustes -> Comodines (Tokens 3D y Tarjetas Duolingo)
+  // Recompensas como "stickers" Neo-brutalistas
   const powerupRewardItems: {
     id: string;
     title: string;
     badge: string;
     tokenBg: string;
-    tokenBorder: string;
-    tokenShadow: string;
     icon: React.ReactNode;
   }[] = [];
 
@@ -100,10 +106,8 @@ export const ChestModal: React.FC<ChestModalProps> = ({
       id: 'hint',
       title: 'Profesor',
       badge: `+${rewards.powerups.teacherHint} PISTA`,
-      tokenBg: '#0284C7',
-      tokenBorder: '#38BDF8',
-      tokenShadow: '#0369A1',
-      icon: <GraduationCap size={24} color="#FFFFFF" strokeWidth={2.4} />
+      tokenBg: '#38BDF8',
+      icon: <GraduationCap size={24} color="#000000" strokeWidth={2.4} />
     });
   }
 
@@ -112,10 +116,8 @@ export const ChestModal: React.FC<ChestModalProps> = ({
       id: '5050',
       title: '50 / 50',
       badge: `+${rewards.powerups.eliminateOptions} DESCARTE`,
-      tokenBg: '#D97706',
-      tokenBorder: '#FCD34D',
-      tokenShadow: '#B45309',
-      icon: <EyeOff size={24} color="#FFFFFF" strokeWidth={2.4} />
+      tokenBg: '#FB923C',
+      icon: <EyeOff size={24} color="#000000" strokeWidth={2.4} />
     });
   }
 
@@ -124,10 +126,8 @@ export const ChestModal: React.FC<ChestModalProps> = ({
       id: 'shield',
       title: 'Escudo',
       badge: `+${rewards.powerups.secondChance} CHANCE`,
-      tokenBg: '#15803D',
-      tokenBorder: '#4ADE80',
-      tokenShadow: '#166534',
-      icon: <ShieldCheck size={24} color="#FFFFFF" strokeWidth={2.4} />
+      tokenBg: '#4ADE80',
+      icon: <ShieldCheck size={24} color="#000000" strokeWidth={2.4} />
     });
   }
 
@@ -136,10 +136,8 @@ export const ChestModal: React.FC<ChestModalProps> = ({
       id: 'code',
       title: 'Pista Código',
       badge: `+${rewards.powerups.codePeek} SINTAXIS`,
-      tokenBg: '#7E22CE',
-      tokenBorder: '#C084FC',
-      tokenShadow: '#6B21A8',
-      icon: <Code2 size={24} color="#FFFFFF" strokeWidth={2.4} />
+      tokenBg: '#C084FC',
+      icon: <Code2 size={24} color="#000000" strokeWidth={2.4} />
     });
   }
 
@@ -148,10 +146,8 @@ export const ChestModal: React.FC<ChestModalProps> = ({
       id: 'bytes',
       title: 'Bytes',
       badge: `+${rewards.bytes} BYTES`,
-      tokenBg: '#0284C7',
-      tokenBorder: '#38BDF8',
-      tokenShadow: '#0369A1',
-      icon: <Sparkles size={24} color="#FFFFFF" strokeWidth={2.4} />
+      tokenBg: '#22D3EE',
+      icon: <Sparkles size={24} color="#000000" strokeWidth={2.4} />
     });
   }
 
@@ -160,222 +156,134 @@ export const ChestModal: React.FC<ChestModalProps> = ({
       id: 'xp',
       title: 'Experiencia',
       badge: `+${rewards.xp} XP`,
-      tokenBg: '#D97706',
-      tokenBorder: '#FCD34D',
-      tokenShadow: '#B45309',
-      icon: <Award size={24} color="#FFFFFF" strokeWidth={2.4} />
+      tokenBg: '#FFE600',
+      icon: <Award size={24} color="#000000" strokeWidth={2.4} />
     });
   }
 
+  const isOpened = tapsRemaining === 0;
+  const impact = tapsRemaining < 3 ? IMPACT_WORDS[tapsRemaining] : null;
+
   return (
-    <div
-      className="modal-backdrop"
-      style={{
-        position: 'fixed',
-        inset: 0,
-        backgroundColor: 'rgba(15, 23, 42, 0.65)',
-        backdropFilter: 'blur(6px)',
-        zIndex: 9999,
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        padding: '16px'
-      }}
-      onClick={tapsRemaining === 0 ? handleClaim : undefined}
-    >
+    <div className="nb-chest-backdrop" onClick={isOpened ? handleClaim : undefined}>
       <div
-        className="modal-card"
+        className="nb-chest-card"
         onClick={(e) => e.stopPropagation()}
-        style={{
-          textAlign: 'center',
-          maxWidth: '430px',
-          width: '100%',
-          maxHeight: '90vh',
-          overflowY: 'auto',
-          background: '#FFFFFF',
-          border: '3px solid #F59E0B',
-          boxShadow: '0 8px 0 #D97706, 0 16px 36px rgba(0, 0, 0, 0.16)',
-          borderRadius: '24px',
-          padding: '24px 20px',
-          boxSizing: 'border-box',
-          position: 'relative'
-        }}
+        role="dialog"
+        aria-label="Abrir cofre del camino"
       >
         {/* Botón cerrar si aún no se ha abierto */}
-        {tapsRemaining > 0 && (
+        {!isOpened && (
           <button
+            type="button"
+            id="chest-close-btn"
+            className="nb-chest-close-btn"
             onClick={onClose}
-            style={{
-              position: 'absolute',
-              top: '14px',
-              right: '14px',
-              background: '#F1F5F9',
-              border: '1.5px solid #CBD5E1',
-              borderRadius: '999px',
-              width: '32px',
-              height: '32px',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              color: '#64748B',
-              cursor: 'pointer'
-            }}
+            title="Cerrar"
           >
-            <X size={18} />
+            <X size={18} strokeWidth={3} />
           </button>
         )}
 
         {/* Encabezado */}
-        <div style={{ marginBottom: '14px' }}>
-          <span
-            style={{
-              fontSize: '0.76rem',
-              fontWeight: 900,
-              textTransform: 'uppercase',
-              letterSpacing: '0.7px',
-              color: tapsRemaining > 0 ? '#B45309' : '#15803D',
-              background: tapsRemaining > 0 ? '#FEF3C7' : '#DCFCE7',
-              padding: '4px 12px',
-              borderRadius: '999px',
-              border: `1.5px solid ${tapsRemaining > 0 ? '#FCD34D' : '#86EFAC'}`
-            }}
-          >
-            {tapsRemaining > 0 ? 'Cofre del Camino' : '¡Cofre Abierto!'}
+        <div className="nb-chest-header">
+          <span className={`nb-chest-sticker ${isOpened ? 'is-opened' : ''}`}>
+            {isOpened ? '¡Cofre Abierto!' : 'Cofre del Camino'}
           </span>
-          <h2
-            style={{
-              fontSize: '1.45rem',
-              fontWeight: 900,
-              marginTop: '8px',
-              marginBottom: '2px',
-              color: '#1E293B'
-            }}
-          >
-            {tapsRemaining > 0 ? '¡Toca para Abrir!' : '¡Botín Obtenido!'}
+          <h2 className="nb-chest-title">
+            {isOpened ? '¡Botín Obtenido!' : '¡Toca para Abrir!'}
           </h2>
-          <p style={{ color: '#64748B', fontSize: '0.86rem', margin: 0 }}>
-            {tapsRemaining > 0
-              ? 'Toca el cofre para romper la cerradura'
-              : 'Los comodines se han añadido a tu inventario'}
+          <p className="nb-chest-subtitle">
+            {isOpened
+              ? 'Los comodines se han añadido a tu inventario'
+              : 'Toca el cofre para romper la cerradura'}
           </p>
         </div>
 
-        {/* Zona Interactiva del Cofre 3D Caricaturesco */}
+        {/* Escenario interactivo del cofre */}
         <div
           id="chest-tap-zone"
+          className={`nb-chest-stage ${isOpened ? 'is-opened' : ''}`}
           onClick={handleChestTap}
-          style={{
-            position: 'relative',
-            cursor: tapsRemaining > 0 ? 'pointer' : 'default',
-            margin: tapsRemaining === 0 ? '4px auto 10px auto' : '10px auto',
-            width: '130px',
-            height: tapsRemaining === 0 ? '110px' : '130px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            userSelect: 'none'
-          }}
         >
-          {/* Ilustración SVG del Cofre Dinámico 3D Estilo Duolingo */}
-          <div
-            className={`chest-interactive-box ${animState}`}
-            style={{
-              width: '120px',
-              height: '120px',
-              position: 'relative',
-              transition: 'transform 0.15s ease'
-            }}
-          >
-            <svg width="120" height="120" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <defs>
-                {/* Madera cálida Duolingo */}
-                <linearGradient id="chestWood3d" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor="#F59E0B" />
-                  <stop offset="35%" stopColor="#D97706" />
-                  <stop offset="100%" stopColor="#B45309" />
-                </linearGradient>
+          {/* Rayos de explosión al abrir */}
+          {isOpened && <div className="nb-chest-burst" aria-hidden="true" />}
 
-                {/* Bandas doradas */}
-                <linearGradient id="chestGold3d" x1="0" y1="0" x2="1" y2="0">
-                  <stop offset="0%" stopColor="#FEF08A" />
-                  <stop offset="50%" stopColor="#FBBF24" />
-                  <stop offset="100%" stopColor="#D97706" />
-                </linearGradient>
+          {/* Onomatopeya tipo cómic por cada toque */}
+          {impact && (
+            <span
+              key={`impact-${tapsRemaining}`}
+              className="nb-chest-impact"
+              style={{ background: impact.bg, ['--nb-rot' as string]: `${impact.rot}deg` } as React.CSSProperties}
+              aria-hidden="true"
+            >
+              {impact.text}
+            </span>
+          )}
 
-                {/* Resplandor interior al abrir */}
-                <radialGradient id="chestTreasureGlow" cx="50%" cy="50%" r="50%">
-                  <stop offset="0%" stopColor="#FFFFFF" />
-                  <stop offset="40%" stopColor="#FEF08A" />
-                  <stop offset="100%" stopColor="#F59E0B" />
-                </radialGradient>
-              </defs>
+          {/* Indicación de toque */}
+          {tapsRemaining === 3 && (
+            <span className="nb-chest-tap-hint" aria-hidden="true">
+              <Hand size={18} color="#000000" strokeWidth={2.6} />
+            </span>
+          )}
 
-              {/* Sombra de apoyo */}
-              <ellipse cx="50" cy="85" rx="36" ry="6" fill="#000000" fillOpacity="0.14" />
+          <div className={`nb-chest-box ${animState}`}>
+            <svg width="132" height="132" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+              {/* Interior del cofre abierto con botín saliendo */}
+              {isOpened && (
+                <g>
+                  <path d="M20 46 L80 46 L76 40 L24 40 Z" fill="#7C2D12" stroke="#000000" strokeWidth="2.6" strokeLinejoin="round" />
+                  <g className="nb-chest-loot nb-loot-1">
+                    <circle cx="38" cy="38" r="6" fill="#FFE600" stroke="#000000" strokeWidth="2.2" />
+                    <path d="M36 36 L36 40" stroke="#000000" strokeWidth="1.6" strokeLinecap="round" />
+                  </g>
+                  <g className="nb-chest-loot nb-loot-2">
+                    <polygon points="50,24 57,33 50,42 43,33" fill="#38BDF8" stroke="#000000" strokeWidth="2.2" strokeLinejoin="round" />
+                    <path d="M50 24 L50 42" stroke="#000000" strokeWidth="1.2" />
+                  </g>
+                  <g className="nb-chest-loot nb-loot-3">
+                    <circle cx="63" cy="37" r="6.5" fill="#FFE600" stroke="#000000" strokeWidth="2.2" />
+                    <path d="M61 35 L61 39" stroke="#000000" strokeWidth="1.6" strokeLinecap="round" />
+                  </g>
+                  <g className="nb-chest-loot nb-loot-4">
+                    <polygon points="28,40 32,35 36,40 32,44" fill="#4ADE80" stroke="#000000" strokeWidth="1.8" strokeLinejoin="round" />
+                  </g>
+                </g>
+              )}
 
               {/* Tapa del cofre */}
-              {tapsRemaining === 0 ? (
-                // Tapa Abierta hacia atrás
-                <g style={{ transform: 'rotate(-36deg) translate(-14px, -18px)', transformOrigin: '22px 42px' }}>
-                  <path d="M16 42 C16 25, 84 25, 84 42 Z" fill="#92400E" stroke="#451A03" strokeWidth="2.5" />
-                  <rect x="35" y="27" width="9" height="15" fill="url(#chestGold3d)" stroke="#451A03" strokeWidth="1.2" />
-                  <rect x="56" y="27" width="9" height="15" fill="url(#chestGold3d)" stroke="#451A03" strokeWidth="1.2" />
-                </g>
-              ) : (
-                // Tapa Cerrada
-                <g>
-                  <path d="M16 44 C16 26, 84 26, 84 44 Z" fill="url(#chestWood3d)" stroke="#451A03" strokeWidth="2.6" />
-                  <path d="M22 36 C30 30, 70 30, 78 36" stroke="#FEF08A" strokeWidth="1.5" strokeLinecap="round" opacity="0.65" />
-                  <rect x="35" y="28" width="9" height="16" fill="url(#chestGold3d)" stroke="#451A03" strokeWidth="1.5" />
-                  <rect x="56" y="28" width="9" height="16" fill="url(#chestGold3d)" stroke="#451A03" strokeWidth="1.5" />
-                  <circle cx="39.5" cy="34" r="1.5" fill="#FEF08A" />
-                  <circle cx="60.5" cy="34" r="1.5" fill="#FEF08A" />
-                </g>
-              )}
-
-              {/* Interior del cofre abierto con gemas y monedas */}
-              {tapsRemaining === 0 && (
-                <g>
-                  <ellipse cx="50" cy="45" rx="30" ry="11" fill="#78350F" stroke="#451A03" strokeWidth="2" />
-                  <ellipse cx="50" cy="44" rx="27" ry="9" fill="url(#chestTreasureGlow)" />
-                  {/* Monedas de oro */}
-                  <circle cx="42" cy="43" r="5" fill="#FDE047" stroke="#B45309" strokeWidth="1" />
-                  <circle cx="58" cy="42" r="5.5" fill="#FDE047" stroke="#B45309" strokeWidth="1" />
-                  {/* Diamante Cyan */}
-                  <polygon points="50,37 54,43 50,48 46,43" fill="#38BDF8" stroke="#0284C7" strokeWidth="1" />
-                  <polygon points="50,37 52,43 50,48" fill="#E0F2FE" />
-                  {/* Esmeralda Verde */}
-                  <polygon points="34,44 37,41 40,44 37,47" fill="#22C55E" stroke="#15803D" strokeWidth="0.8" />
-                </g>
-              )}
+              <g className={`nb-chest-lid ${isOpened ? 'is-open' : ''}`}>
+                <path d="M16 46 C16 26, 84 26, 84 46 Z" fill="#FB923C" stroke="#000000" strokeWidth="3" strokeLinejoin="round" />
+                <path d="M24 37 C32 31, 68 31, 76 37" stroke="#FFFFFF" strokeWidth="2.2" strokeLinecap="round" />
+                <rect x="34" y="29" width="10" height="17" fill="#FFE600" stroke="#000000" strokeWidth="2.4" />
+                <rect x="56" y="29" width="10" height="17" fill="#FFE600" stroke="#000000" strokeWidth="2.4" />
+              </g>
 
               {/* Base del cofre */}
-              <rect x="18" y="44" width="64" height="38" rx="8" fill="url(#chestWood3d)" stroke="#451A03" strokeWidth="2.6" />
-              <rect x="35" y="44" width="9" height="38" fill="url(#chestGold3d)" stroke="#451A03" strokeWidth="1.5" />
-              <rect x="56" y="44" width="9" height="38" fill="url(#chestGold3d)" stroke="#451A03" strokeWidth="1.5" />
+              <rect x="18" y="46" width="64" height="38" rx="6" fill="#F97316" stroke="#000000" strokeWidth="3" />
+              <path d="M18 60 L82 60" stroke="#000000" strokeWidth="2" />
+              <rect x="34" y="46" width="10" height="38" fill="#FFE600" stroke="#000000" strokeWidth="2.4" />
+              <rect x="56" y="46" width="10" height="38" fill="#FFE600" stroke="#000000" strokeWidth="2.4" />
 
-              {/* Remaches de la base */}
-              <circle cx="39.5" cy="51" r="1.5" fill="#FEF08A" />
-              <circle cx="39.5" cy="73" r="1.5" fill="#FEF08A" />
-              <circle cx="60.5" cy="51" r="1.5" fill="#FEF08A" />
-              <circle cx="60.5" cy="73" r="1.5" fill="#FEF08A" />
-
-              {/* Bisagras laterales */}
-              <rect x="15" y="42" width="4" height="8" rx="1.5" fill="url(#chestGold3d)" stroke="#451A03" strokeWidth="1" />
-              <rect x="81" y="42" width="4" height="8" rx="1.5" fill="url(#chestGold3d)" stroke="#451A03" strokeWidth="1" />
+              {/* Remaches */}
+              <circle cx="39" cy="53" r="1.8" fill="#000000" />
+              <circle cx="39" cy="76" r="1.8" fill="#000000" />
+              <circle cx="61" cy="53" r="1.8" fill="#000000" />
+              <circle cx="61" cy="76" r="1.8" fill="#000000" />
 
               {/* Candado frontal */}
-              {tapsRemaining > 0 && (
-                <g>
-                  <rect x="42" y="38" width="16" height="18" rx="4" fill="url(#chestGold3d)" stroke="#451A03" strokeWidth="2" />
-                  <circle cx="50" cy="45" r="3" fill="#451A03" />
-                  <polygon points="48.5,45 51.5,45 50.8,51 49.2,51" fill="#451A03" />
-                  {/* Grietas de toques */}
+              {!isOpened && (
+                <g className={tapsRemaining <= 1 ? 'nb-chest-lock-loose' : ''}>
+                  <rect x="41" y="39" width="18" height="19" rx="4" fill="#FFE600" stroke="#000000" strokeWidth="2.8" />
+                  <circle cx="50" cy="46.5" r="3" fill="#000000" />
+                  <polygon points="48.5,47 51.5,47 50.8,53 49.2,53" fill="#000000" />
+                  {/* Grietas por toque */}
                   {tapsRemaining <= 2 && (
-                    <path d="M44 42 L48 46 L46 51" stroke="#FFFFFF" strokeWidth="1.6" strokeLinecap="round" />
+                    <path d="M43.5 41.5 L47.5 46 L45 51" stroke="#000000" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
                   )}
                   {tapsRemaining <= 1 && (
-                    <path d="M56 42 L52 46 L54 52" stroke="#FFFFFF" strokeWidth="1.6" strokeLinecap="round" />
+                    <path d="M56.5 41.5 L52.5 46 L55 52.5" stroke="#000000" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
                   )}
                 </g>
               )}
@@ -383,186 +291,59 @@ export const ChestModal: React.FC<ChestModalProps> = ({
           </div>
         </div>
 
-        {/* Indicador de Toques Restantes */}
-        {tapsRemaining > 0 ? (
+        {/* Indicador de toques restantes */}
+        {!isOpened ? (
           <div>
-            <div
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '6px',
-                background: '#FEF3C7',
-                border: '1.5px solid #FCD34D',
-                padding: '6px 14px',
-                borderRadius: '12px',
-                fontSize: '0.85rem',
-                fontWeight: 900,
-                color: '#B45309',
-                marginBottom: '14px'
-              }}
-            >
-              <Sparkles size={16} color="#D97706" />
-              {tapsRemaining === 3 && 'Toca 3 veces para abrir la cerradura'}
-              {tapsRemaining === 2 && '¡Crack! Faltan 2 toques'}
-              {tapsRemaining === 1 && '¡Cerradura rota! 1 toque final'}
+            <div className="nb-chest-hint-pill">
+              <Sparkles size={16} color="#000000" strokeWidth={2.6} />
+              <span>
+                {tapsRemaining === 3 && 'Toca 3 veces para abrir la cerradura'}
+                {tapsRemaining === 2 && '¡Crack! Faltan 2 toques'}
+                {tapsRemaining === 1 && '¡Cerradura rota! 1 toque final'}
+              </span>
             </div>
 
-            {/* Puntos de progreso de toques */}
-            <div style={{ display: 'flex', justifyContent: 'center', gap: '8px' }}>
-              <div
-                style={{
-                  width: '12px',
-                  height: '12px',
-                  borderRadius: '50%',
-                  background: tapsRemaining <= 2 ? '#F59E0B' : '#E2E8F0',
-                  boxShadow: tapsRemaining <= 2 ? '0 0 6px #F59E0B' : 'none'
-                }}
-              />
-              <div
-                style={{
-                  width: '12px',
-                  height: '12px',
-                  borderRadius: '50%',
-                  background: tapsRemaining <= 1 ? '#F59E0B' : '#E2E8F0',
-                  boxShadow: tapsRemaining <= 1 ? '0 0 6px #F59E0B' : 'none'
-                }}
-              />
-              <div
-                style={{
-                  width: '12px',
-                  height: '12px',
-                  borderRadius: '50%',
-                  background: tapsRemaining === 0 ? '#10B981' : '#E2E8F0',
-                  boxShadow: tapsRemaining === 0 ? '0 0 6px #10B981' : 'none'
-                }}
-              />
+            {/* Bloques de progreso de toques */}
+            <div className="nb-chest-progress" aria-label={`Toques restantes: ${tapsRemaining}`}>
+              {[2, 1, 0].map((threshold) => (
+                <span
+                  key={threshold}
+                  className={`nb-chest-progress-block ${tapsRemaining <= threshold ? 'is-filled' : ''} ${threshold === 0 ? 'is-final' : ''}`}
+                />
+              ))}
             </div>
           </div>
         ) : (
-          /* ═══ RECOMPENSAS: IDÉNTICAS A AJUSTES -> COMODINES (REQUERIMIENTO 10) ═══ */
           <div>
-            <div
-              style={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(2, 1fr)',
-                gap: '10px',
-                marginBottom: '18px',
-                marginTop: '6px'
-              }}
-            >
-              {powerupRewardItems.map((item) => (
+            <div className="nb-chest-rewards-grid">
+              {powerupRewardItems.map((item, index) => (
                 <div
                   key={item.id}
-                  style={{
-                    background: '#FFFFFF',
-                    border: '2px solid #E2E8F0',
-                    boxShadow: '0 4px 0 #CBD5E1',
-                    borderRadius: '18px',
-                    padding: '14px 10px',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                    textAlign: 'center',
-                    position: 'relative'
-                  }}
+                  className="nb-chest-reward-card"
+                  style={{ animationDelay: `${180 + index * 80}ms` }}
                 >
-                  {/* Token de Icono 3D (Exacto a Ajustes -> Comodines) */}
-                  <div
-                    style={{
-                      width: '52px',
-                      height: '48px',
-                      borderRadius: '14px',
-                      background: item.tokenBg,
-                      border: `2px solid ${item.tokenBorder}`,
-                      boxShadow: `0 4px 0 ${item.tokenShadow}`,
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      marginBottom: '8px'
-                    }}
-                  >
+                  <div className="nb-chest-reward-token" style={{ background: item.tokenBg }}>
                     {item.icon}
                   </div>
-
-                  <div
-                    style={{
-                      fontSize: '0.9rem',
-                      fontWeight: 900,
-                      color: '#1E293B',
-                      marginBottom: '4px'
-                    }}
-                  >
-                    {item.title}
-                  </div>
-
-                  <div
-                    style={{
-                      background: '#F1F5F9',
-                      border: '1.5px solid #CBD5E1',
-                      boxShadow: '0 2px 0 #94A3B8',
-                      color: '#475569',
-                      borderRadius: '999px',
-                      padding: '2px 8px',
-                      fontSize: '0.7rem',
-                      fontWeight: 900,
-                      textTransform: 'uppercase'
-                    }}
-                  >
-                    {item.badge}
-                  </div>
+                  <div className="nb-chest-reward-title">{item.title}</div>
+                  <div className="nb-chest-reward-badge">{item.badge}</div>
                 </div>
               ))}
             </div>
 
-            {/* Botón Táctil 3D Duolingo para equipar y continuar */}
             <button
-              className="btn-3d btn-green"
+              type="button"
+              id="chest-claim-btn"
+              className="nb-chest-claim-btn"
               onClick={handleClaim}
-              style={{
-                width: '100%',
-                padding: '14px 18px',
-                fontSize: '1rem',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: '8px'
-              }}
+              style={{ animationDelay: `${220 + powerupRewardItems.length * 80}ms` }}
             >
-              <Check size={20} strokeWidth={2.8} />
+              <Check size={20} strokeWidth={3} />
               <span>Equipar Botín y Continuar</span>
             </button>
           </div>
         )}
       </div>
-
-      <style>{`
-        .chest-interactive-box.wobble {
-          animation: chestWobble 0.35s ease-in-out;
-        }
-        .chest-interactive-box.shake {
-          animation: chestShake 0.4s ease-in-out;
-        }
-        .chest-interactive-box.open {
-          animation: chestPop 0.5s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-        @keyframes chestWobble {
-          0%, 100% { transform: rotate(0deg) scale(1); }
-          25% { transform: rotate(-5deg) scale(1.05); }
-          75% { transform: rotate(5deg) scale(1.05); }
-        }
-        @keyframes chestShake {
-          0%, 100% { transform: translateX(0); }
-          20% { transform: translateX(-6px) rotate(-3deg); }
-          40% { transform: translateX(6px) rotate(3deg); }
-          60% { transform: translateX(-4px) rotate(-2deg); }
-          80% { transform: translateX(4px) rotate(2deg); }
-        }
-        @keyframes chestPop {
-          0% { transform: scale(0.95); }
-          50% { transform: scale(1.15); }
-          100% { transform: scale(1); }
-        }
-      `}</style>
     </div>
   );
 };

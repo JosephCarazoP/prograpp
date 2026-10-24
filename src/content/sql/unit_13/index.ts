@@ -64,10 +64,8 @@ export const SQL_UNIT_13_LESSONS: Lesson[] = [
         "id": "sql-u13-l01-e04",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea que contiene el error en este código de \"Duplicación de datos y anomalías\":",
-        "codeSnippet": [
-          "// Diseñar una tabla con columnas: telefono1, telefono2, telefono3 (mala práctica)"
-        ],
-        "bugLineIndex": 0,
+        "codeSnippet": [ "-- Consulta sobre estudiantes", "// Diseñar una tabla con columnas: telefono1, telefono2, telefono3 (mala práctica)", "ORDER BY id ASC;" ],
+        "bugLineIndex": 1,
         "explanation": "Tener tablas desnormalizadas donde el nombre de un profesor se repite en 200 filas de materias.",
         "xpReward": 15
       },
@@ -153,11 +151,7 @@ export const SQL_UNIT_13_LESSONS: Lesson[] = [
         "id": "sql-u13-l01-e09",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea con el error de diseño o sintaxis en \"Duplicación de datos y anomalías\":",
-        "codeSnippet": [
-          "-- Consulta sobre el esquema educativo",
-          "SELECT id, nombre FROM estudiantes",
-          "WHERE id == 10; // Error: en SQL la igualdad se escribe con un solo = (WHERE id = 10)"
-        ],
+        "codeSnippet": [ "-- Consulta sobre el esquema educativo", "SELECT id, nombre FROM estudiantes", "WHERE id == 10;" ],
         "bugLineIndex": 2,
         "explanation": "Tener tablas desnormalizadas donde el nombre de un profesor se repite en 200 filas de materias.",
         "xpReward": 15
@@ -254,10 +248,8 @@ export const SQL_UNIT_13_LESSONS: Lesson[] = [
         "id": "sql-u13-l02-e04",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea que contiene el error en este código de \"Normalización básica: 1FN, 2FN y 3FN\":",
-        "codeSnippet": [
-          "// Guardar \"8888-1111 / 2222-3333\" en una sola celda viola la 1FN"
-        ],
-        "bugLineIndex": 0,
+        "codeSnippet": [ "-- Consulta sobre estudiantes", "// Guardar \"8888-1111 / 2222-3333\" en una sola celda viola la 1FN", "ORDER BY id ASC;" ],
+        "bugLineIndex": 1,
         "explanation": "Sobre-normalizar a niveles extremos innecesarios para aplicaciones pequeñas: la 3FN es el equilibrio profesional perfecto.",
         "xpReward": 15
       },
@@ -343,11 +335,7 @@ export const SQL_UNIT_13_LESSONS: Lesson[] = [
         "id": "sql-u13-l02-e09",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea con el error de diseño o sintaxis en \"Normalización básica: 1FN, 2FN y 3FN\":",
-        "codeSnippet": [
-          "-- Consulta sobre el esquema educativo",
-          "SELECT id, nombre FROM estudiantes",
-          "WHERE id == 10; // Error: en SQL la igualdad se escribe con un solo = (WHERE id = 10)"
-        ],
+        "codeSnippet": [ "-- Consulta sobre el esquema educativo", "SELECT id, nombre FROM estudiantes", "WHERE id == 10;" ],
         "bugLineIndex": 2,
         "explanation": "Sobre-normalizar a niveles extremos innecesarios para aplicaciones pequeñas: la 3FN es el equilibrio profesional perfecto.",
         "xpReward": 15
@@ -450,10 +438,8 @@ export const SQL_UNIT_13_LESSONS: Lesson[] = [
         "id": "sql-u13-l03-e04",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea que contiene el error en este código de \"ALTER TABLE\":",
-        "codeSnippet": [
-          "MODIFY TABLE estudiantes ADD COLUMN edad INT // En SQL la sentencia es ALTER TABLE"
-        ],
-        "bugLineIndex": 0,
+        "codeSnippet": [ "-- Definición de tabla", "MODIFY TABLE estudiantes ADD COLUMN edad INT", "-- Fin de sentencia" ],
+        "bugLineIndex": 1,
         "explanation": "En versiones antiguas de SQLite no se permitía borrar columnas (DROP COLUMN); siempre planifica bien tus adiciones.",
         "xpReward": 15
       },
@@ -539,11 +525,7 @@ export const SQL_UNIT_13_LESSONS: Lesson[] = [
         "id": "sql-u13-l03-e09",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea con el error de diseño o sintaxis en \"ALTER TABLE\":",
-        "codeSnippet": [
-          "-- Consulta sobre el esquema educativo",
-          "SELECT id, nombre FROM estudiantes",
-          "WHERE id == 10; // Error: en SQL la igualdad se escribe con un solo = (WHERE id = 10)"
-        ],
+        "codeSnippet": [ "-- Consulta sobre el esquema educativo", "SELECT id, nombre FROM estudiantes", "WHERE id == 10;" ],
         "bugLineIndex": 2,
         "explanation": "En versiones antiguas de SQLite no se permitía borrar columnas (DROP COLUMN); siempre planifica bien tus adiciones.",
         "xpReward": 15
@@ -638,10 +620,8 @@ export const SQL_UNIT_13_LESSONS: Lesson[] = [
         "id": "sql-u13-l04-e04",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea que contiene el error en este código de \"DROP TABLE\":",
-        "codeSnippet": [
-          "DELETE TABLE demo // Error: para eliminar tablas completas se usa DROP TABLE"
-        ],
-        "bugLineIndex": 0,
+        "codeSnippet": [ "-- Definición de tabla", "DELETE TABLE demo", "-- Fin de sentencia" ],
+        "bugLineIndex": 1,
         "explanation": "DROP TABLE es irreversible: no hay \"papelera de reciclaje\" en SQL; si no tienes backup, los datos se pierden para siempre.",
         "xpReward": 15
       },
@@ -727,11 +707,7 @@ export const SQL_UNIT_13_LESSONS: Lesson[] = [
         "id": "sql-u13-l04-e09",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea con el error de diseño o sintaxis en \"DROP TABLE\":",
-        "codeSnippet": [
-          "-- Consulta sobre el esquema educativo",
-          "SELECT id, nombre FROM estudiantes",
-          "WHERE id == 10; // Error: en SQL la igualdad se escribe con un solo = (WHERE id = 10)"
-        ],
+        "codeSnippet": [ "-- Consulta sobre el esquema educativo", "SELECT id, nombre FROM estudiantes", "WHERE id == 10;" ],
         "bugLineIndex": 2,
         "explanation": "DROP TABLE es irreversible: no hay \"papelera de reciclaje\" en SQL; si no tienes backup, los datos se pierden para siempre.",
         "xpReward": 15
@@ -832,10 +808,8 @@ export const SQL_UNIT_13_LESSONS: Lesson[] = [
         "id": "sql-u13-l05-e04",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea que contiene el error en este código de \"Introducción a vistas e índices\":",
-        "codeSnippet": [
-          "CREATE POINTER idx_carrera ON estudiantes // La sentencia oficial es CREATE INDEX"
-        ],
-        "bugLineIndex": 0,
+        "codeSnippet": [ "-- Definición de tabla", "CREATE POINTER idx_carrera ON estudiantes // La sentencia oficial es CREATE INDEX", "-- Fin de sentencia" ],
+        "bugLineIndex": 1,
         "explanation": "No crees índices en todas las columnas por capricho: cada índice hace los INSERT y UPDATE un poco más lentos porque debe reindexarse.",
         "xpReward": 15
       },
@@ -921,11 +895,7 @@ export const SQL_UNIT_13_LESSONS: Lesson[] = [
         "id": "sql-u13-l05-e09",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea con el error de diseño o sintaxis en \"Introducción a vistas e índices\":",
-        "codeSnippet": [
-          "-- Consulta sobre el esquema educativo",
-          "SELECT id, nombre FROM estudiantes",
-          "WHERE id == 10; // Error: en SQL la igualdad se escribe con un solo = (WHERE id = 10)"
-        ],
+        "codeSnippet": [ "-- Consulta sobre el esquema educativo", "SELECT id, nombre FROM estudiantes", "WHERE id == 10;" ],
         "bugLineIndex": 2,
         "explanation": "No crees índices en todas las columnas por capricho: cada índice hace los INSERT y UPDATE un poco más lentos porque debe reindexarse.",
         "xpReward": 15
@@ -1034,10 +1004,8 @@ export const SQL_UNIT_13_LESSONS: Lesson[] = [
         "id": "sql-u13-l06-e04",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea que contiene el error en este código de \"Inyección SQL y consultas parametrizadas (concepto)\":",
-        "codeSnippet": [
-          "val sql = \"SELECT * FROM u WHERE id = \" + id // Peligro crítico: vulnerable a SQL Injection"
-        ],
-        "bugLineIndex": 0,
+        "codeSnippet": [ "-- Consulta sobre estudiantes", "val sql = \"SELECT * FROM u WHERE id = \" + id", "ORDER BY id ASC;" ],
+        "bugLineIndex": 1,
         "explanation": "Creer que un filtro manual reemplazando comillas te protegerá: los atacantes conocen decenas de formas de evadir filtros manuales.",
         "xpReward": 15
       },
@@ -1123,11 +1091,7 @@ export const SQL_UNIT_13_LESSONS: Lesson[] = [
         "id": "sql-u13-l06-e09",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea con el error de diseño o sintaxis en \"Inyección SQL y consultas parametrizadas (concepto)\":",
-        "codeSnippet": [
-          "-- Consulta sobre el esquema educativo",
-          "SELECT id, nombre FROM estudiantes",
-          "WHERE id == 10; // Error: en SQL la igualdad se escribe con un solo = (WHERE id = 10)"
-        ],
+        "codeSnippet": [ "-- Consulta sobre el esquema educativo", "SELECT id, nombre FROM estudiantes", "WHERE id == 10;" ],
         "bugLineIndex": 2,
         "explanation": "Creer que un filtro manual reemplazando comillas te protegerá: los atacantes conocen decenas de formas de evadir filtros manuales.",
         "xpReward": 15

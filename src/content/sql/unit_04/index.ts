@@ -62,10 +62,8 @@ export const SQL_UNIT_04_LESSONS: Lesson[] = [
         "id": "sql-u04-l01-e04",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea que contiene el error en este código de \"PRIMARY KEY\":",
-        "codeSnippet": [
-          "CREATE TABLE x (id INT PRIMARY KEY, cod INT PRIMARY KEY) // Error: solo una PK por tabla"
-        ],
-        "bugLineIndex": 0,
+        "codeSnippet": [ "-- Definición de tabla", "CREATE TABLE x (id INT PRIMARY KEY, cod INT PRIMARY KEY)", "-- Fin de sentencia" ],
+        "bugLineIndex": 1,
         "explanation": "Intentar insertar dos filas con la misma PRIMARY KEY provocará el error: `UNIQUE constraint failed`.",
         "xpReward": 15
       },
@@ -151,11 +149,7 @@ export const SQL_UNIT_04_LESSONS: Lesson[] = [
         "id": "sql-u04-l01-e09",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea con el error de diseño o sintaxis en \"PRIMARY KEY\":",
-        "codeSnippet": [
-          "-- Consulta sobre el esquema educativo",
-          "SELECT id, nombre FROM estudiantes",
-          "WHERE id == 10; // Error: en SQL la igualdad se escribe con un solo = (WHERE id = 10)"
-        ],
+        "codeSnippet": [ "-- Consulta sobre el esquema educativo", "SELECT id, nombre FROM estudiantes", "WHERE id == 10;" ],
         "bugLineIndex": 2,
         "explanation": "Intentar insertar dos filas con la misma PRIMARY KEY provocará el error: `UNIQUE constraint failed`.",
         "xpReward": 15
@@ -248,10 +242,8 @@ export const SQL_UNIT_04_LESSONS: Lesson[] = [
         "id": "sql-u04-l02-e04",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea que contiene el error en este código de \"INTEGER PRIMARY KEY\":",
-        "codeSnippet": [
-          "id INT AUTO_INCREMENT // Sintaxis de MySQL no nativa en SQLite"
-        ],
-        "bugLineIndex": 0,
+        "codeSnippet": [ "-- Consulta sobre estudiantes", "id INT AUTO_INCREMENT // Sintaxis de MySQL no nativa en SQLite", "ORDER BY id ASC;" ],
+        "bugLineIndex": 1,
         "explanation": "Usar la palabra AUTOINCREMENT innecesariamente: en SQLite, INTEGER PRIMARY KEY ya es autoincremental sin recargar el algoritmo.",
         "xpReward": 15
       },
@@ -337,11 +329,7 @@ export const SQL_UNIT_04_LESSONS: Lesson[] = [
         "id": "sql-u04-l02-e09",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea con el error de diseño o sintaxis en \"INTEGER PRIMARY KEY\":",
-        "codeSnippet": [
-          "-- Consulta sobre el esquema educativo",
-          "SELECT id, nombre FROM estudiantes",
-          "WHERE id == 10; // Error: en SQL la igualdad se escribe con un solo = (WHERE id = 10)"
-        ],
+        "codeSnippet": [ "-- Consulta sobre el esquema educativo", "SELECT id, nombre FROM estudiantes", "WHERE id == 10;" ],
         "bugLineIndex": 2,
         "explanation": "Usar la palabra AUTOINCREMENT innecesariamente: en SQLite, INTEGER PRIMARY KEY ya es autoincremental sin recargar el algoritmo.",
         "xpReward": 15
@@ -446,10 +434,8 @@ export const SQL_UNIT_04_LESSONS: Lesson[] = [
         "id": "sql-u04-l03-e04",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea que contiene el error en este código de \"FOREIGN KEY y REFERENCES\":",
-        "codeSnippet": [
-          "FOREIGN KEY (user_id) // Falta la cláusula REFERENCES tabla(id)"
-        ],
-        "bugLineIndex": 0,
+        "codeSnippet": [ "-- Consulta sobre estudiantes", "FOREIGN KEY (user_id)", "ORDER BY id ASC;" ],
+        "bugLineIndex": 1,
         "explanation": "Olvidar el nombre de la tabla padre o la columna referenciada dentro de REFERENCES.",
         "xpReward": 15
       },
@@ -535,11 +521,7 @@ export const SQL_UNIT_04_LESSONS: Lesson[] = [
         "id": "sql-u04-l03-e09",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea con el error de diseño o sintaxis en \"FOREIGN KEY y REFERENCES\":",
-        "codeSnippet": [
-          "-- Consulta sobre el esquema educativo",
-          "SELECT id, nombre FROM estudiantes",
-          "WHERE id == 10; // Error: en SQL la igualdad se escribe con un solo = (WHERE id = 10)"
-        ],
+        "codeSnippet": [ "-- Consulta sobre el esquema educativo", "SELECT id, nombre FROM estudiantes", "WHERE id == 10;" ],
         "bugLineIndex": 2,
         "explanation": "Olvidar el nombre de la tabla padre o la columna referenciada dentro de REFERENCES.",
         "xpReward": 15
@@ -632,10 +614,8 @@ export const SQL_UNIT_04_LESSONS: Lesson[] = [
         "id": "sql-u04-l04-e04",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea que contiene el error en este código de \"NOT NULL\":",
-        "codeSnippet": [
-          "INSERT INTO contactos (id) VALUES (1) // Fallará si nombre tiene restricción NOT NULL"
-        ],
-        "bugLineIndex": 0,
+        "codeSnippet": [ "-- Consulta sobre estudiantes", "INSERT INTO contactos (id) VALUES (1) // Fallará si nombre tiene restricción NOT NULL", "ORDER BY id ASC;" ],
+        "bugLineIndex": 1,
         "explanation": "Intentar insertar una fila omitiendo un campo NOT NULL causará el error: `NOT NULL constraint failed`.",
         "xpReward": 15
       },
@@ -721,11 +701,7 @@ export const SQL_UNIT_04_LESSONS: Lesson[] = [
         "id": "sql-u04-l04-e09",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea con el error de diseño o sintaxis en \"NOT NULL\":",
-        "codeSnippet": [
-          "-- Consulta sobre el esquema educativo",
-          "SELECT id, nombre FROM estudiantes",
-          "WHERE id == 10; // Error: en SQL la igualdad se escribe con un solo = (WHERE id = 10)"
-        ],
+        "codeSnippet": [ "-- Consulta sobre el esquema educativo", "SELECT id, nombre FROM estudiantes", "WHERE id == 10;" ],
         "bugLineIndex": 2,
         "explanation": "Intentar insertar una fila omitiendo un campo NOT NULL causará el error: `NOT NULL constraint failed`.",
         "xpReward": 15
@@ -820,10 +796,8 @@ export const SQL_UNIT_04_LESSONS: Lesson[] = [
         "id": "sql-u04-l05-e04",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea que contiene el error en este código de \"UNIQUE\":",
-        "codeSnippet": [
-          "CREATE TABLE u (email TEXT ONLY_ONE) // Error: en SQL la palabra clave es UNIQUE"
-        ],
-        "bugLineIndex": 0,
+        "codeSnippet": [ "-- Definición de tabla", "CREATE TABLE u (email TEXT ONLY_ONE)", "-- Fin de sentencia" ],
+        "bugLineIndex": 1,
         "explanation": "En SQL estándar, las columnas UNIQUE sí permiten múltiples valores NULL (a menos que añadas también NOT NULL).",
         "xpReward": 15
       },
@@ -909,11 +883,7 @@ export const SQL_UNIT_04_LESSONS: Lesson[] = [
         "id": "sql-u04-l05-e09",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea con el error de diseño o sintaxis en \"UNIQUE\":",
-        "codeSnippet": [
-          "-- Consulta sobre el esquema educativo",
-          "SELECT id, nombre FROM estudiantes",
-          "WHERE id == 10; // Error: en SQL la igualdad se escribe con un solo = (WHERE id = 10)"
-        ],
+        "codeSnippet": [ "-- Consulta sobre el esquema educativo", "SELECT id, nombre FROM estudiantes", "WHERE id == 10;" ],
         "bugLineIndex": 2,
         "explanation": "En SQL estándar, las columnas UNIQUE sí permiten múltiples valores NULL (a menos que añadas también NOT NULL).",
         "xpReward": 15
@@ -1014,10 +984,8 @@ export const SQL_UNIT_04_LESSONS: Lesson[] = [
         "id": "sql-u04-l06-e04",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea que contiene el error en este código de \"CHECK\":",
-        "codeSnippet": [
-          "INSERT INTO evaluaciones (nota) VALUES (15.0) // Fallará si hay CHECK (nota <= 10.0)"
-        ],
-        "bugLineIndex": 0,
+        "codeSnippet": [ "-- Consulta sobre estudiantes", "INSERT INTO evaluaciones (nota) VALUES (15.0) // Fallará si hay CHECK (nota <= 10.0)", "ORDER BY id ASC;" ],
+        "bugLineIndex": 1,
         "explanation": "Intentar insertar una nota de 11.5 causará el error: `CHECK constraint failed: nota >= 0.0 AND nota <= 10.0`.",
         "xpReward": 15
       },
@@ -1103,11 +1071,7 @@ export const SQL_UNIT_04_LESSONS: Lesson[] = [
         "id": "sql-u04-l06-e09",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea con el error de diseño o sintaxis en \"CHECK\":",
-        "codeSnippet": [
-          "-- Consulta sobre el esquema educativo",
-          "SELECT id, nombre FROM estudiantes",
-          "WHERE id == 10; // Error: en SQL la igualdad se escribe con un solo = (WHERE id = 10)"
-        ],
+        "codeSnippet": [ "-- Consulta sobre el esquema educativo", "SELECT id, nombre FROM estudiantes", "WHERE id == 10;" ],
         "bugLineIndex": 2,
         "explanation": "Intentar insertar una nota de 11.5 causará el error: `CHECK constraint failed: nota >= 0.0 AND nota <= 10.0`.",
         "xpReward": 15
@@ -1200,10 +1164,8 @@ export const SQL_UNIT_04_LESSONS: Lesson[] = [
         "id": "sql-u04-l07-e04",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea que contiene el error en este código de \"DEFAULT\":",
-        "codeSnippet": [
-          "CREATE TABLE t (estado TEXT PRESET \"ok\") // Error: la palabra clave es DEFAULT"
-        ],
-        "bugLineIndex": 0,
+        "codeSnippet": [ "-- Definición de tabla", "CREATE TABLE t (estado TEXT PRESET \"ok\")", "-- Fin de sentencia" ],
+        "bugLineIndex": 1,
         "explanation": "Si pasas explícitamente `NULL` en el INSERT, el valor predeterminado DEFAULT no se aplicará.",
         "xpReward": 15
       },
@@ -1289,11 +1251,7 @@ export const SQL_UNIT_04_LESSONS: Lesson[] = [
         "id": "sql-u04-l07-e09",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea con el error de diseño o sintaxis en \"DEFAULT\":",
-        "codeSnippet": [
-          "-- Consulta sobre el esquema educativo",
-          "SELECT id, nombre FROM estudiantes",
-          "WHERE id == 10; // Error: en SQL la igualdad se escribe con un solo = (WHERE id = 10)"
-        ],
+        "codeSnippet": [ "-- Consulta sobre el esquema educativo", "SELECT id, nombre FROM estudiantes", "WHERE id == 10;" ],
         "bugLineIndex": 2,
         "explanation": "Si pasas explícitamente `NULL` en el INSERT, el valor predeterminado DEFAULT no se aplicará.",
         "xpReward": 15
@@ -1386,10 +1344,8 @@ export const SQL_UNIT_04_LESSONS: Lesson[] = [
         "id": "sql-u04-l08-e04",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea que contiene el error en este código de \"Diferencia entre NULL, cero, texto vacío y valor predeterminado\":",
-        "codeSnippet": [
-          "SELECT * FROM estudiantes WHERE telefono = NULL // Error: con NULL siempre se usa IS NULL"
-        ],
-        "bugLineIndex": 0,
+        "codeSnippet": [ "-- Consulta sobre estudiantes", "SELECT * FROM estudiantes WHERE telefono = NULL", "ORDER BY id ASC;" ],
+        "bugLineIndex": 1,
         "explanation": "Calcular el promedio de salarios con ceros en vez de nulos: los ceros bajan el promedio; los nulos son ignorados.",
         "xpReward": 15
       },
@@ -1475,11 +1431,7 @@ export const SQL_UNIT_04_LESSONS: Lesson[] = [
         "id": "sql-u04-l08-e09",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea con el error de diseño o sintaxis en \"Diferencia entre NULL, cero, texto vacío y valor predeterminado\":",
-        "codeSnippet": [
-          "-- Consulta sobre el esquema educativo",
-          "SELECT id, nombre FROM estudiantes",
-          "WHERE id == 10; // Error: en SQL la igualdad se escribe con un solo = (WHERE id = 10)"
-        ],
+        "codeSnippet": [ "-- Consulta sobre el esquema educativo", "SELECT id, nombre FROM estudiantes", "WHERE id == 10;" ],
         "bugLineIndex": 2,
         "explanation": "Calcular el promedio de salarios con ceros en vez de nulos: los ceros bajan el promedio; los nulos son ignorados.",
         "xpReward": 15

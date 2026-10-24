@@ -62,11 +62,7 @@ export const SQL_UNIT_01_LESSONS: Lesson[] = [
         "id": "sql-u01-l01-e04",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea que contiene el error en este código de \"Datos e información\":",
-        "codeSnippet": [
-          "SELECT nombre",
-          "IN estudiantes // Error: en SQL la cláusula es FROM",
-          "WHERE id = 1"
-        ],
+        "codeSnippet": [ "SELECT nombre", "IN estudiantes", "WHERE id = 1" ],
         "bugLineIndex": 1,
         "explanation": "Almacenar datos desordenados en hojas de cálculo sin validaciones provoca duplicados e inconsistencias.",
         "xpReward": 15
@@ -153,11 +149,7 @@ export const SQL_UNIT_01_LESSONS: Lesson[] = [
         "id": "sql-u01-l01-e09",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea con el error de diseño o sintaxis en \"Datos e información\":",
-        "codeSnippet": [
-          "-- Consulta sobre el esquema educativo",
-          "SELECT id, nombre FROM estudiantes",
-          "WHERE id == 10; // Error: en SQL la igualdad se escribe con un solo = (WHERE id = 10)"
-        ],
+        "codeSnippet": [ "-- Consulta sobre el esquema educativo", "SELECT id, nombre FROM estudiantes", "WHERE id == 10;" ],
         "bugLineIndex": 2,
         "explanation": "Almacenar datos desordenados en hojas de cálculo sin validaciones provoca duplicados e inconsistencias.",
         "xpReward": 15
@@ -252,10 +244,8 @@ export const SQL_UNIT_01_LESSONS: Lesson[] = [
         "id": "sql-u01-l02-e04",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea que contiene el error en este código de \"Qué es una base de datos y para qué sirve\":",
-        "codeSnippet": [
-          "GET * FROM asignaturas // Error: en SQL la instrucción de consulta es SELECT"
-        ],
-        "bugLineIndex": 0,
+        "codeSnippet": [ "-- Consulta sobre estudiantes", "GET * FROM asignaturas", "ORDER BY id ASC;" ],
+        "bugLineIndex": 1,
         "explanation": "Usar archivos de texto plano (.txt) para sistemas multiusuario: provocarán bloqueos y pérdida de datos ante caídas.",
         "xpReward": 15
       },
@@ -341,11 +331,7 @@ export const SQL_UNIT_01_LESSONS: Lesson[] = [
         "id": "sql-u01-l02-e09",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea con el error de diseño o sintaxis en \"Qué es una base de datos y para qué sirve\":",
-        "codeSnippet": [
-          "-- Consulta sobre el esquema educativo",
-          "SELECT id, nombre FROM estudiantes",
-          "WHERE id == 10; // Error: en SQL la igualdad se escribe con un solo = (WHERE id = 10)"
-        ],
+        "codeSnippet": [ "-- Consulta sobre el esquema educativo", "SELECT id, nombre FROM estudiantes", "WHERE id == 10;" ],
         "bugLineIndex": 2,
         "explanation": "Usar archivos de texto plano (.txt) para sistemas multiusuario: provocarán bloqueos y pérdida de datos ante caídas.",
         "xpReward": 15
@@ -438,10 +424,8 @@ export const SQL_UNIT_01_LESSONS: Lesson[] = [
         "id": "sql-u01-l03-e04",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea que contiene el error en este código de \"Bases de datos relacionales\":",
-        "codeSnippet": [
-          "SELECT * TABLE estudiantes // Error: la cláusula FROM se omitió"
-        ],
-        "bugLineIndex": 0,
+        "codeSnippet": [ "-- Consulta sobre estudiantes", "SELECT * TABLE estudiantes", "ORDER BY id ASC;" ],
+        "bugLineIndex": 1,
         "explanation": "Repetir la carrera o el email en todas las tablas: si cambia la carrera, tendrías que actualizar cientos de filas.",
         "xpReward": 15
       },
@@ -527,11 +511,7 @@ export const SQL_UNIT_01_LESSONS: Lesson[] = [
         "id": "sql-u01-l03-e09",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea con el error de diseño o sintaxis en \"Bases de datos relacionales\":",
-        "codeSnippet": [
-          "-- Consulta sobre el esquema educativo",
-          "SELECT id, nombre FROM estudiantes",
-          "WHERE id == 10; // Error: en SQL la igualdad se escribe con un solo = (WHERE id = 10)"
-        ],
+        "codeSnippet": [ "-- Consulta sobre el esquema educativo", "SELECT id, nombre FROM estudiantes", "WHERE id == 10;" ],
         "bugLineIndex": 2,
         "explanation": "Repetir la carrera o el email en todas las tablas: si cambia la carrera, tendrías que actualizar cientos de filas.",
         "xpReward": 15
@@ -624,10 +604,8 @@ export const SQL_UNIT_01_LESSONS: Lesson[] = [
         "id": "sql-u01-l04-e04",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea que contiene el error en este código de \"Tablas, columnas y filas\":",
-        "codeSnippet": [
-          "SELECT FROM estudiantes // Error: falta especificar columnas o *"
-        ],
-        "bugLineIndex": 0,
+        "codeSnippet": [ "-- Consulta sobre estudiantes", "SELECT FROM estudiantes", "ORDER BY id ASC;" ],
+        "bugLineIndex": 1,
         "explanation": "Guardar múltiples valores dentro de una sola celda (ej. \"Juan, Pedro, Ana\") viola la primera forma normal.",
         "xpReward": 15
       },
@@ -713,11 +691,7 @@ export const SQL_UNIT_01_LESSONS: Lesson[] = [
         "id": "sql-u01-l04-e09",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea con el error de diseño o sintaxis en \"Tablas, columnas y filas\":",
-        "codeSnippet": [
-          "-- Consulta sobre el esquema educativo",
-          "SELECT id, nombre FROM estudiantes",
-          "WHERE id == 10; // Error: en SQL la igualdad se escribe con un solo = (WHERE id = 10)"
-        ],
+        "codeSnippet": [ "-- Consulta sobre el esquema educativo", "SELECT id, nombre FROM estudiantes", "WHERE id == 10;" ],
         "bugLineIndex": 2,
         "explanation": "Guardar múltiples valores dentro de una sola celda (ej. \"Juan, Pedro, Ana\") viola la primera forma normal.",
         "xpReward": 15
@@ -816,10 +790,8 @@ export const SQL_UNIT_01_LESSONS: Lesson[] = [
         "id": "sql-u01-l05-e04",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea que contiene el error en este código de \"Estructura de una tabla frente a sus registros\":",
-        "codeSnippet": [
-          "CREATE RECORD estudiantes // Error: en SQL la sentencia DDL es CREATE TABLE"
-        ],
-        "bugLineIndex": 0,
+        "codeSnippet": [ "-- Definición de tabla", "CREATE RECORD estudiantes", "-- Fin de sentencia" ],
+        "bugLineIndex": 1,
         "explanation": "Confundir DROP TABLE (destruye la estructura completa) con DELETE FROM (borra los registros manteniendo la tabla).",
         "xpReward": 15
       },
@@ -905,11 +877,7 @@ export const SQL_UNIT_01_LESSONS: Lesson[] = [
         "id": "sql-u01-l05-e09",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea con el error de diseño o sintaxis en \"Estructura de una tabla frente a sus registros\":",
-        "codeSnippet": [
-          "-- Consulta sobre el esquema educativo",
-          "SELECT id, nombre FROM estudiantes",
-          "WHERE id == 10; // Error: en SQL la igualdad se escribe con un solo = (WHERE id = 10)"
-        ],
+        "codeSnippet": [ "-- Consulta sobre el esquema educativo", "SELECT id, nombre FROM estudiantes", "WHERE id == 10;" ],
         "bugLineIndex": 2,
         "explanation": "Confundir DROP TABLE (destruye la estructura completa) con DELETE FROM (borra los registros manteniendo la tabla).",
         "xpReward": 15
@@ -1002,10 +970,8 @@ export const SQL_UNIT_01_LESSONS: Lesson[] = [
         "id": "sql-u01-l06-e04",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea que contiene el error en este código de \"Diferencia entre SQL y SQLite\":",
-        "codeSnippet": [
-          "CONNECT SERVER sqlite.server.net // SQLite es serverless, no usa servidores de red"
-        ],
-        "bugLineIndex": 0,
+        "codeSnippet": [ "-- Consulta sobre estudiantes", "CONNECT SERVER sqlite.server.net", "ORDER BY id ASC;" ],
+        "bugLineIndex": 1,
         "explanation": "Creer que necesitas instalar un servidor pesado como MySQL para aprender: SQLite corre directamente en memoria o en un archivo local.",
         "xpReward": 15
       },
@@ -1091,11 +1057,7 @@ export const SQL_UNIT_01_LESSONS: Lesson[] = [
         "id": "sql-u01-l06-e09",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea con el error de diseño o sintaxis en \"Diferencia entre SQL y SQLite\":",
-        "codeSnippet": [
-          "-- Consulta sobre el esquema educativo",
-          "SELECT id, nombre FROM estudiantes",
-          "WHERE id == 10; // Error: en SQL la igualdad se escribe con un solo = (WHERE id = 10)"
-        ],
+        "codeSnippet": [ "-- Consulta sobre el esquema educativo", "SELECT id, nombre FROM estudiantes", "WHERE id == 10;" ],
         "bugLineIndex": 2,
         "explanation": "Creer que necesitas instalar un servidor pesado como MySQL para aprender: SQLite corre directamente en memoria o en un archivo local.",
         "xpReward": 15

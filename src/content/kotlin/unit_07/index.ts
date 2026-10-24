@@ -70,10 +70,7 @@ export const KOTLIN_UNIT_07_LESSONS: Lesson[] = [
         "id": "kt-u07-l01-e04",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea que contiene el error en este código de \"Diferencia entre texto y valor numérico\":",
-        "codeSnippet": [
-          "val texto = \"100\"",
-          "val suma = texto * 2 // Error: no se puede multiplicar un String"
-        ],
+        "codeSnippet": [ "val texto = \"100\"", "val suma = texto * 2", "println(\"Resultado listo\")" ],
         "bugLineIndex": 1,
         "explanation": "Asumir que lo que escribe el usuario en un formulario ya es un número: ¡siempre entra como String!",
         "xpReward": 15
@@ -164,11 +161,7 @@ export const KOTLIN_UNIT_07_LESSONS: Lesson[] = [
         "id": "kt-u07-l01-e09",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea con el error de diseño o sintaxis en \"Diferencia entre texto y valor numérico\":",
-        "codeSnippet": [
-          "// Bloque de verificación",
-          "val datoValido = true",
-          "datoValido = false // Error: val es inmutable y no se puede reasignar"
-        ],
+        "codeSnippet": [ "// Bloque de verificación", "val datoValido = true", "datoValido = false" ],
         "bugLineIndex": 2,
         "explanation": "Asumir que lo que escribe el usuario en un formulario ya es un número: ¡siempre entra como String!",
         "xpReward": 15
@@ -269,10 +262,7 @@ export const KOTLIN_UNIT_07_LESSONS: Lesson[] = [
         "id": "kt-u07-l02-e04",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea que contiene el error en este código de \"Conversiones con toIntOrNull() y toDoubleOrNull()\":",
-        "codeSnippet": [
-          "val entrada = \"cien\"",
-          "val valor: Int = entrada.toIntOrNull() // Error: tipo es Int?, no Int"
-        ],
+        "codeSnippet": [ "val entrada = \"cien\"", "val valor: Int = entrada.toIntOrNull()", "println(\"Resultado listo\")" ],
         "bugLineIndex": 1,
         "explanation": "Usar toInt() directamente provocará un cierre forzoso (crash) si el texto contiene espacios o letras.",
         "xpReward": 15
@@ -363,11 +353,7 @@ export const KOTLIN_UNIT_07_LESSONS: Lesson[] = [
         "id": "kt-u07-l02-e09",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea con el error de diseño o sintaxis en \"Conversiones con toIntOrNull() y toDoubleOrNull()\":",
-        "codeSnippet": [
-          "// Bloque de verificación",
-          "val datoValido = true",
-          "datoValido = false // Error: val es inmutable y no se puede reasignar"
-        ],
+        "codeSnippet": [ "// Bloque de verificación", "val datoValido = true", "datoValido = false" ],
         "bugLineIndex": 2,
         "explanation": "Usar toInt() directamente provocará un cierre forzoso (crash) si el texto contiene espacios o letras.",
         "xpReward": 15
@@ -462,10 +448,8 @@ export const KOTLIN_UNIT_07_LESSONS: Lesson[] = [
         "id": "kt-u07-l03-e04",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea que contiene el error en este código de \"Significado de null\":",
-        "codeSnippet": [
-          "var nombre: String = null // Error: String normal no admite null"
-        ],
-        "bugLineIndex": 0,
+        "codeSnippet": [ "fun main() {", "    var nombre: String = null", "    println(\"Ejecutando...\")", "}" ],
+        "bugLineIndex": 1,
         "explanation": "En lenguajes antiguos, intentar acceder a métodos de null causa el famoso NullPointerException (NPE).",
         "xpReward": 15
       },
@@ -555,11 +539,7 @@ export const KOTLIN_UNIT_07_LESSONS: Lesson[] = [
         "id": "kt-u07-l03-e09",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea con el error de diseño o sintaxis en \"Significado de null\":",
-        "codeSnippet": [
-          "// Bloque de verificación",
-          "val datoValido = true",
-          "datoValido = false // Error: val es inmutable y no se puede reasignar"
-        ],
+        "codeSnippet": [ "// Bloque de verificación", "val datoValido = true", "datoValido = false" ],
         "bugLineIndex": 2,
         "explanation": "En lenguajes antiguos, intentar acceder a métodos de null causa el famoso NullPointerException (NPE).",
         "xpReward": 15
@@ -654,10 +634,8 @@ export const KOTLIN_UNIT_07_LESSONS: Lesson[] = [
         "id": "kt-u07-l04-e04",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea que contiene el error en este código de \"Tipos anulables: String?, Int?\":",
-        "codeSnippet": [
-          "val codigo: Int = null // Error: Int no anulable no admite null"
-        ],
-        "bugLineIndex": 0,
+        "codeSnippet": [ "fun main() {", "    val codigo: Int = null", "    println(\"Ejecutando...\")", "}" ],
+        "bugLineIndex": 1,
         "explanation": "Asignar null a un tipo sin ? provocará un error de compilación inmediato.",
         "xpReward": 15
       },
@@ -747,11 +725,7 @@ export const KOTLIN_UNIT_07_LESSONS: Lesson[] = [
         "id": "kt-u07-l04-e09",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea con el error de diseño o sintaxis en \"Tipos anulables: String?, Int?\":",
-        "codeSnippet": [
-          "// Bloque de verificación",
-          "val datoValido = true",
-          "datoValido = false // Error: val es inmutable y no se puede reasignar"
-        ],
+        "codeSnippet": [ "// Bloque de verificación", "val datoValido = true", "datoValido = false" ],
         "bugLineIndex": 2,
         "explanation": "Asignar null a un tipo sin ? provocará un error de compilación inmediato.",
         "xpReward": 15
@@ -854,10 +828,7 @@ export const KOTLIN_UNIT_07_LESSONS: Lesson[] = [
         "id": "kt-u07-l05-e04",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea que contiene el error en este código de \"Comprobación de nulos\":",
-        "codeSnippet": [
-          "val nombre: String? = null",
-          "println(nombre.length) // Error: solo se puede acceder con ?. o tras if != null"
-        ],
+        "codeSnippet": [ "val nombre: String? = null", "println(nombre.length)", "println(\"Resultado listo\")" ],
         "bugLineIndex": 1,
         "explanation": "El Smart Cast solo funciona si la variable no puede haber sido modificada por otro hilo en el intermedio (funciona con val).",
         "xpReward": 15
@@ -948,11 +919,7 @@ export const KOTLIN_UNIT_07_LESSONS: Lesson[] = [
         "id": "kt-u07-l05-e09",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea con el error de diseño o sintaxis en \"Comprobación de nulos\":",
-        "codeSnippet": [
-          "// Bloque de verificación",
-          "val datoValido = true",
-          "datoValido = false // Error: val es inmutable y no se puede reasignar"
-        ],
+        "codeSnippet": [ "// Bloque de verificación", "val datoValido = true", "datoValido = false" ],
         "bugLineIndex": 2,
         "explanation": "El Smart Cast solo funciona si la variable no puede haber sido modificada por otro hilo en el intermedio (funciona con val).",
         "xpReward": 15
@@ -1049,10 +1016,7 @@ export const KOTLIN_UNIT_07_LESSONS: Lesson[] = [
         "id": "kt-u07-l06-e04",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea que contiene el error en este código de \"Acceso seguro ?. y operador Elvis ?:\":",
-        "codeSnippet": [
-          "val s: String? = null",
-          "val len: Int = s?.length // Error: s?.length devuelve Int?, no Int"
-        ],
+        "codeSnippet": [ "val s: String? = null", "val len: Int = s?.length", "println(\"Resultado listo\")" ],
         "bugLineIndex": 1,
         "explanation": "Olvidar que ?. devuelve un tipo anulable si el objeto era null.",
         "xpReward": 15
@@ -1143,11 +1107,7 @@ export const KOTLIN_UNIT_07_LESSONS: Lesson[] = [
         "id": "kt-u07-l06-e09",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea con el error de diseño o sintaxis en \"Acceso seguro ?. y operador Elvis ?:\":",
-        "codeSnippet": [
-          "// Bloque de verificación",
-          "val datoValido = true",
-          "datoValido = false // Error: val es inmutable y no se puede reasignar"
-        ],
+        "codeSnippet": [ "// Bloque de verificación", "val datoValido = true", "datoValido = false" ],
         "bugLineIndex": 2,
         "explanation": "Olvidar que ?. devuelve un tipo anulable si el objeto era null.",
         "xpReward": 15
@@ -1244,10 +1204,7 @@ export const KOTLIN_UNIT_07_LESSONS: Lesson[] = [
         "id": "kt-u07-l07-e04",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea que contiene el error en este código de \"Riesgos de usar !!\":",
-        "codeSnippet": [
-          "val nulo: String? = null",
-          "println(nulo!!.length) // Lanza NullPointerException"
-        ],
+        "codeSnippet": [ "val nulo: String? = null", "println(nulo!!.length)", "println(\"Resultado listo\")" ],
         "bugLineIndex": 1,
         "explanation": "Usar !! desactiva la protección de Kotlin y reintroduce los temidos crashes de NullPointerException.",
         "xpReward": 15
@@ -1338,11 +1295,7 @@ export const KOTLIN_UNIT_07_LESSONS: Lesson[] = [
         "id": "kt-u07-l07-e09",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea con el error de diseño o sintaxis en \"Riesgos de usar !!\":",
-        "codeSnippet": [
-          "// Bloque de verificación",
-          "val datoValido = true",
-          "datoValido = false // Error: val es inmutable y no se puede reasignar"
-        ],
+        "codeSnippet": [ "// Bloque de verificación", "val datoValido = true", "datoValido = false" ],
         "bugLineIndex": 2,
         "explanation": "Usar !! desactiva la protección de Kotlin y reintroduce los temidos crashes de NullPointerException.",
         "xpReward": 15

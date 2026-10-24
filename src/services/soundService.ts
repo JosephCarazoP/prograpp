@@ -140,31 +140,110 @@ class SoundService {
     });
   }
 
-  // Cascada de gemas al abrir cofre
-  public playChest() {
+  // Toque 1 del cofre: Impacto sordo de madera maciza (golpe inicial)
+  public playChestTap1() {
     if (this.isMuted) return;
     this.initCtx();
     if (!this.ctx) return;
 
-    const freqs = [659.25, 783.99, 987.77, 1174.66, 1318.51, 1567.98];
-    let t = this.ctx.currentTime;
+    const now = this.ctx.currentTime;
+    // Golpe grave de madera
+    const oscThump = this.ctx.createOscillator();
+    const gainThump = this.ctx.createGain();
+    oscThump.type = 'triangle';
+    oscThump.frequency.setValueAtTime(160, now);
+    oscThump.frequency.exponentialRampToValueAtTime(70, now + 0.14);
+    gainThump.gain.setValueAtTime(0.35, now);
+    gainThump.gain.exponentialRampToValueAtTime(0.001, now + 0.14);
+    oscThump.connect(gainThump);
+    gainThump.connect(this.ctx.destination);
+    oscThump.start(now);
+    oscThump.stop(now + 0.14);
+
+    // Resonancia de cerradura metálica pesada
+    const oscLatch = this.ctx.createOscillator();
+    const gainLatch = this.ctx.createGain();
+    oscLatch.type = 'sine';
+    oscLatch.frequency.setValueAtTime(320, now);
+    oscLatch.frequency.exponentialRampToValueAtTime(180, now + 0.08);
+    gainLatch.gain.setValueAtTime(0.18, now);
+    gainLatch.gain.exponentialRampToValueAtTime(0.001, now + 0.08);
+    oscLatch.connect(gainLatch);
+    gainLatch.connect(this.ctx.destination);
+    oscLatch.start(now);
+    oscLatch.stop(now + 0.08);
+  }
+
+  // Toque 2 del cofre: Crujido de tensión creciente y pestillo forzado (doble chasquido vibrante)
+  public playChestTap2() {
+    if (this.isMuted) return;
+    this.initCtx();
+    if (!this.ctx) return;
+
+    const now = this.ctx.currentTime;
+    // Doble chasquido de crujido
+    [0, 0.055].forEach((offset, idx) => {
+      if (!this.ctx) return;
+      const t = now + offset;
+      const osc = this.ctx.createOscillator();
+      const gain = this.ctx.createGain();
+      osc.type = 'sawtooth';
+      const baseFreq = idx === 0 ? 280 : 440;
+      osc.frequency.setValueAtTime(baseFreq, t);
+      osc.frequency.exponentialRampToValueAtTime(baseFreq * 1.6, t + 0.1);
+      gain.gain.setValueAtTime(0.22, t);
+      gain.gain.exponentialRampToValueAtTime(0.001, t + 0.1);
+      osc.connect(gain);
+      gain.connect(this.ctx.destination);
+      osc.start(t);
+      osc.stop(t + 0.1);
+    });
+  }
+
+  // Toque 3 del cofre: Gran estallido festivo y cascada de gemas mágicas
+  public playChest() {
+    this.playChestBurst();
+  }
+
+  public playChestBurst() {
+    if (this.isMuted) return;
+    this.initCtx();
+    if (!this.ctx) return;
+
+    const now = this.ctx.currentTime;
+
+    // Boom de apertura
+    const oscBoom = this.ctx.createOscillator();
+    const gainBoom = this.ctx.createGain();
+    oscBoom.type = 'triangle';
+    oscBoom.frequency.setValueAtTime(220, now);
+    oscBoom.frequency.exponentialRampToValueAtTime(45, now + 0.35);
+    gainBoom.gain.setValueAtTime(0.4, now);
+    gainBoom.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
+    oscBoom.connect(gainBoom);
+    gainBoom.connect(this.ctx.destination);
+    oscBoom.start(now);
+    oscBoom.stop(now + 0.35);
+
+    // Cascada de campanillas doradas (acorde triunfal expandido)
+    const freqs = [523.25, 659.25, 783.99, 1046.50, 1318.51, 1567.98, 2093.00];
     freqs.forEach((freq, idx) => {
       if (!this.ctx) return;
       const osc = this.ctx.createOscillator();
       const gain = this.ctx.createGain();
-      const noteTime = t + idx * 0.05;
+      const noteTime = now + 0.05 + idx * 0.045;
 
       osc.type = 'sine';
       osc.frequency.setValueAtTime(freq, noteTime);
 
-      gain.gain.setValueAtTime(0.15, noteTime);
-      gain.gain.exponentialRampToValueAtTime(0.001, noteTime + 0.12);
+      gain.gain.setValueAtTime(0.2, noteTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, noteTime + 0.22);
 
       osc.connect(gain);
       gain.connect(this.ctx.destination);
 
       osc.start(noteTime);
-      osc.stop(noteTime + 0.12);
+      osc.stop(noteTime + 0.22);
     });
   }
 
@@ -251,6 +330,32 @@ class SoundService {
       osc.start(noteTime);
       osc.stop(noteTime + 0.35);
     });
+  }
+
+  // Alerta retro-arcade de aparición de jefe
+  public playBossAlert() {
+    if (this.isMuted) return;
+    this.initCtx();
+    if (!this.ctx) return;
+
+    const now = this.ctx.currentTime;
+    const osc = this.ctx.createOscillator();
+    const gain = this.ctx.createGain();
+
+    osc.type = 'sawtooth';
+    osc.frequency.setValueAtTime(320, now);
+    osc.frequency.linearRampToValueAtTime(640, now + 0.14);
+    osc.frequency.linearRampToValueAtTime(320, now + 0.28);
+    osc.frequency.linearRampToValueAtTime(720, now + 0.44);
+
+    gain.gain.setValueAtTime(0.2, now);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.5);
+
+    osc.connect(gain);
+    gain.connect(this.ctx.destination);
+
+    osc.start(now);
+    osc.stop(now + 0.5);
   }
 }
 

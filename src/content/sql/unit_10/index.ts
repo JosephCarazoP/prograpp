@@ -62,10 +62,8 @@ export const SQL_UNIT_10_LESSONS: Lesson[] = [
         "id": "sql-u10-l01-e04",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea que contiene el error en este código de \"COUNT, SUM, AVG, MIN y MAX\":",
-        "codeSnippet": [
-          "SELECT AVERAGE(promedio) FROM estudiantes // En SQL la función es AVG(), no AVERAGE()"
-        ],
-        "bugLineIndex": 0,
+        "codeSnippet": [ "-- Consulta sobre estudiantes", "SELECT AVERAGE(promedio) FROM estudiantes", "ORDER BY id ASC;" ],
+        "bugLineIndex": 1,
         "explanation": "Intentar proyectar una columna individual no agrupada (como `nombre`) junto a `AVG(promedio)` sin GROUP BY.",
         "xpReward": 15
       },
@@ -151,11 +149,7 @@ export const SQL_UNIT_10_LESSONS: Lesson[] = [
         "id": "sql-u10-l01-e09",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea con el error de diseño o sintaxis en \"COUNT, SUM, AVG, MIN y MAX\":",
-        "codeSnippet": [
-          "-- Consulta sobre el esquema educativo",
-          "SELECT id, nombre FROM estudiantes",
-          "WHERE id == 10; // Error: en SQL la igualdad se escribe con un solo = (WHERE id = 10)"
-        ],
+        "codeSnippet": [ "-- Consulta sobre el esquema educativo", "SELECT id, nombre FROM estudiantes", "WHERE id == 10;" ],
         "bugLineIndex": 2,
         "explanation": "Intentar proyectar una columna individual no agrupada (como `nombre`) junto a `AVG(promedio)` sin GROUP BY.",
         "xpReward": 15
@@ -248,10 +242,8 @@ export const SQL_UNIT_10_LESSONS: Lesson[] = [
         "id": "sql-u10-l02-e04",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea que contiene el error en este código de \"COUNT(*) frente a COUNT(columna)\":",
-        "codeSnippet": [
-          "SELECT COUNT() FROM estudiantes // Faltó el asterisco o la columna dentro de COUNT"
-        ],
-        "bugLineIndex": 0,
+        "codeSnippet": [ "-- Consulta sobre estudiantes", "SELECT COUNT() FROM estudiantes // Faltó el asterisco o la columna dentro de COUNT", "ORDER BY id ASC;" ],
+        "bugLineIndex": 1,
         "explanation": "Usar COUNT(columna) y sorprenderte de que el número sea menor al total de registros si la columna contenía valores NULL.",
         "xpReward": 15
       },
@@ -337,11 +329,7 @@ export const SQL_UNIT_10_LESSONS: Lesson[] = [
         "id": "sql-u10-l02-e09",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea con el error de diseño o sintaxis en \"COUNT(*) frente a COUNT(columna)\":",
-        "codeSnippet": [
-          "-- Consulta sobre el esquema educativo",
-          "SELECT id, nombre FROM estudiantes",
-          "WHERE id == 10; // Error: en SQL la igualdad se escribe con un solo = (WHERE id = 10)"
-        ],
+        "codeSnippet": [ "-- Consulta sobre el esquema educativo", "SELECT id, nombre FROM estudiantes", "WHERE id == 10;" ],
         "bugLineIndex": 2,
         "explanation": "Usar COUNT(columna) y sorprenderte de que el número sea menor al total de registros si la columna contenía valores NULL.",
         "xpReward": 15
@@ -434,10 +422,8 @@ export const SQL_UNIT_10_LESSONS: Lesson[] = [
         "id": "sql-u10-l03-e04",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea que contiene el error en este código de \"NULL en las agregaciones\":",
-        "codeSnippet": [
-          "// Asumir que AVG(columna) divide entre el total de filas cuando hay nulos"
-        ],
-        "bugLineIndex": 0,
+        "codeSnippet": [ "-- Consulta sobre estudiantes", "// Asumir que AVG(columna) divide entre el total de filas cuando hay nulos", "ORDER BY id ASC;" ],
+        "bugLineIndex": 1,
         "explanation": "Si una columna solo contiene valores NULL, SUM() y AVG() devolverán NULL, no cero.",
         "xpReward": 15
       },
@@ -523,11 +509,7 @@ export const SQL_UNIT_10_LESSONS: Lesson[] = [
         "id": "sql-u10-l03-e09",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea con el error de diseño o sintaxis en \"NULL en las agregaciones\":",
-        "codeSnippet": [
-          "-- Consulta sobre el esquema educativo",
-          "SELECT id, nombre FROM estudiantes",
-          "WHERE id == 10; // Error: en SQL la igualdad se escribe con un solo = (WHERE id = 10)"
-        ],
+        "codeSnippet": [ "-- Consulta sobre el esquema educativo", "SELECT id, nombre FROM estudiantes", "WHERE id == 10;" ],
         "bugLineIndex": 2,
         "explanation": "Si una columna solo contiene valores NULL, SUM() y AVG() devolverán NULL, no cero.",
         "xpReward": 15
@@ -626,10 +608,8 @@ export const SQL_UNIT_10_LESSONS: Lesson[] = [
         "id": "sql-u10-l04-e04",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea que contiene el error en este código de \"GROUP BY\":",
-        "codeSnippet": [
-          "SELECT carrera, COUNT(*) FROM estudiantes // Falta la cláusula GROUP BY carrera"
-        ],
-        "bugLineIndex": 0,
+        "codeSnippet": [ "-- Consulta sobre estudiantes", "SELECT carrera, COUNT(*) FROM estudiantes", "ORDER BY id ASC;" ],
+        "bugLineIndex": 1,
         "explanation": "Incluir columnas arbitrarias que varían dentro del grupo causará resultados inconsistentes o errores.",
         "xpReward": 15
       },
@@ -715,11 +695,7 @@ export const SQL_UNIT_10_LESSONS: Lesson[] = [
         "id": "sql-u10-l04-e09",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea con el error de diseño o sintaxis en \"GROUP BY\":",
-        "codeSnippet": [
-          "-- Consulta sobre el esquema educativo",
-          "SELECT id, nombre FROM estudiantes",
-          "WHERE id == 10; // Error: en SQL la igualdad se escribe con un solo = (WHERE id = 10)"
-        ],
+        "codeSnippet": [ "-- Consulta sobre el esquema educativo", "SELECT id, nombre FROM estudiantes", "WHERE id == 10;" ],
         "bugLineIndex": 2,
         "explanation": "Incluir columnas arbitrarias que varían dentro del grupo causará resultados inconsistentes o errores.",
         "xpReward": 15
@@ -818,10 +794,8 @@ export const SQL_UNIT_10_LESSONS: Lesson[] = [
         "id": "sql-u10-l05-e04",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea que contiene el error en este código de \"HAVING\":",
-        "codeSnippet": [
-          "WHERE COUNT(*) > 1 // Error: las funciones de agregación se filtran con HAVING"
-        ],
-        "bugLineIndex": 0,
+        "codeSnippet": [ "-- Consulta sobre estudiantes", "WHERE COUNT(*) > 1", "ORDER BY id ASC;" ],
+        "bugLineIndex": 1,
         "explanation": "Intentar usar funciones agregadas dentro del WHERE: `WHERE COUNT(*) > 1` causará un error de sintaxis inmediato.",
         "xpReward": 15
       },
@@ -907,11 +881,7 @@ export const SQL_UNIT_10_LESSONS: Lesson[] = [
         "id": "sql-u10-l05-e09",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea con el error de diseño o sintaxis en \"HAVING\":",
-        "codeSnippet": [
-          "-- Consulta sobre el esquema educativo",
-          "SELECT id, nombre FROM estudiantes",
-          "WHERE id == 10; // Error: en SQL la igualdad se escribe con un solo = (WHERE id = 10)"
-        ],
+        "codeSnippet": [ "-- Consulta sobre el esquema educativo", "SELECT id, nombre FROM estudiantes", "WHERE id == 10;" ],
         "bugLineIndex": 2,
         "explanation": "Intentar usar funciones agregadas dentro del WHERE: `WHERE COUNT(*) > 1` causará un error de sintaxis inmediato.",
         "xpReward": 15
@@ -1010,10 +980,8 @@ export const SQL_UNIT_10_LESSONS: Lesson[] = [
         "id": "sql-u10-l06-e04",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea que contiene el error en este código de \"Diferencia entre WHERE y HAVING\":",
-        "codeSnippet": [
-          "HAVING semestre > 2 // Error: filtros sobre columnas individuales deben ir en WHERE"
-        ],
-        "bugLineIndex": 0,
+        "codeSnippet": [ "-- Consulta sobre estudiantes", "HAVING semestre > 2", "ORDER BY id ASC;" ],
+        "bugLineIndex": 1,
         "explanation": "Poner condiciones que no son de agregación en el HAVING: ralentiza la consulta innecesariamente.",
         "xpReward": 15
       },
@@ -1099,11 +1067,7 @@ export const SQL_UNIT_10_LESSONS: Lesson[] = [
         "id": "sql-u10-l06-e09",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea con el error de diseño o sintaxis en \"Diferencia entre WHERE y HAVING\":",
-        "codeSnippet": [
-          "-- Consulta sobre el esquema educativo",
-          "SELECT id, nombre FROM estudiantes",
-          "WHERE id == 10; // Error: en SQL la igualdad se escribe con un solo = (WHERE id = 10)"
-        ],
+        "codeSnippet": [ "-- Consulta sobre el esquema educativo", "SELECT id, nombre FROM estudiantes", "WHERE id == 10;" ],
         "bugLineIndex": 2,
         "explanation": "Poner condiciones que no son de agregación en el HAVING: ralentiza la consulta innecesariamente.",
         "xpReward": 15
@@ -1202,10 +1166,8 @@ export const SQL_UNIT_10_LESSONS: Lesson[] = [
         "id": "sql-u10-l07-e04",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea que contiene el error en este código de \"Agrupaciones con JOIN\":",
-        "codeSnippet": [
-          "SELECT a.nombre, COUNT(*) FROM asignaturas a JOIN matriculas m // Falta ON y GROUP BY"
-        ],
-        "bugLineIndex": 0,
+        "codeSnippet": [ "-- Consulta sobre estudiantes", "SELECT a.nombre, COUNT(*) FROM asignaturas a JOIN matriculas m", "ORDER BY id ASC;" ],
+        "bugLineIndex": 1,
         "explanation": "Si quieres ver materias con 0 matriculados, debes usar LEFT JOIN en lugar de INNER JOIN.",
         "xpReward": 15
       },
@@ -1291,11 +1253,7 @@ export const SQL_UNIT_10_LESSONS: Lesson[] = [
         "id": "sql-u10-l07-e09",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea con el error de diseño o sintaxis en \"Agrupaciones con JOIN\":",
-        "codeSnippet": [
-          "-- Consulta sobre el esquema educativo",
-          "SELECT id, nombre FROM estudiantes",
-          "WHERE id == 10; // Error: en SQL la igualdad se escribe con un solo = (WHERE id = 10)"
-        ],
+        "codeSnippet": [ "-- Consulta sobre el esquema educativo", "SELECT id, nombre FROM estudiantes", "WHERE id == 10;" ],
         "bugLineIndex": 2,
         "explanation": "Si quieres ver materias con 0 matriculados, debes usar LEFT JOIN en lugar de INNER JOIN.",
         "xpReward": 15

@@ -7,7 +7,6 @@ import {
   Check,
   RotateCcw,
   RotateCw,
-  Sparkles,
   Award,
   CheckCircle2,
   MoveHorizontal,
@@ -320,7 +319,6 @@ export const StorePage: React.FC<StorePageProps> = ({
             setActiveTab('skins');
           }}
         >
-          <Sparkles size={16} />
           <span>VESTIDOR ({BYTE_SKINS.length})</span>
         </button>
 
@@ -332,7 +330,6 @@ export const StorePage: React.FC<StorePageProps> = ({
             setActiveTab('powerups');
           }}
         >
-          <Zap size={16} />
           <span>POTENCIADORES</span>
         </button>
       </div>
@@ -377,163 +374,165 @@ export const StorePage: React.FC<StorePageProps> = ({
           </div>
 
           <div className="duo-store-skins-layout">
-            {/* LADO IZQUIERDO: PODIO 3D CON GIRO 360° Y ACCIÓN DUOLINGO */}
-            <div className="duo-store-stage-card">
-              <div className="duo-stage-header">
-                <div
-                  className="duo-rank-chip"
-                  style={{
-                    color: currentRank.color
-                  }}
-                >
-                  <Award size={13} strokeWidth={2.6} />
-                  <span>RANGO {currentRank.name.toUpperCase()}</span>
-                </div>
-
-                <div className="duo-turntable-indicator">
-                  <MoveHorizontal size={13} />
-                  <span>{isDragging ? 'GIRANDO...' : getViewAngleLabel().toUpperCase()}</span>
-                </div>
-              </div>
-
-              {/* Viewport Interactivo con Drag & Touch */}
-              <div
-                className={`duo-stage-viewport ${isDragging ? 'dragging' : ''}`}
-                onPointerDown={handlePointerDown}
-                onPointerMove={handlePointerMove}
-                onPointerUp={handlePointerUp}
-                onPointerCancel={handlePointerUp}
-                title="Arrastra con el dedo o mouse para girar el avatar 360°"
-              >
-                <ByteFullBody3D
-                  avatarId={selectedAvatarId}
-                  skinId={previewSkinId}
-                  pose={currentPose}
-                  rotation={rotationAngle}
-                  size={isMobile ? 105 : 155}
-                  showPedestal={true}
-                  isDragging={isDragging}
-                />
-              </div>
-
-            {/* Botones de Control de Giro y Poses Duolingo 3D */}
-            <div className="duo-stage-controls-wrap">
-              <div className="duo-rotation-btn-group">
-                <button
-                  type="button"
-                  className="duo-3d-icon-btn"
-                  onClick={() => handleRotateStep('left')}
-                  title="Girar 45° a la izquierda"
-                >
-                  <RotateCcw size={15} strokeWidth={2.5} />
-                </button>
-                <button
-                  type="button"
-                  className={`duo-3d-angle-chip ${Math.abs(rotationAngle % 360) < 20 ? 'active' : ''}`}
-                  onClick={() => handleSetAngle(0)}
-                >
-                  FRENTE
-                </button>
-                <button
-                  type="button"
-                  className={`duo-3d-angle-chip ${Math.abs((rotationAngle % 360) - 180) < 20 ? 'active' : ''}`}
-                  onClick={() => handleSetAngle(180)}
-                >
-                  ESPALDA
-                </button>
-                <button
-                  type="button"
-                  className="duo-3d-icon-btn"
-                  onClick={() => handleRotateStep('right')}
-                  title="Girar 45° a la derecha"
-                >
-                  <RotateCw size={15} strokeWidth={2.5} />
-                </button>
-              </div>
-
-              {/* Selector de Poses Duolingo 3D */}
-              <div className="duo-poses-chip-row">
-                {(['idle', 'salute', 'cheer', 'hero'] as BytePose[]).map((pName) => (
-                  <button
-                    key={pName}
-                    type="button"
-                    className={`duo-3d-pose-chip ${currentPose === pName ? 'active' : ''}`}
-                    onClick={() => handlePoseChange(pName)}
+            {/* LADO IZQUIERDO: PREVIEW 3D Y FICHA DE ACCIÓN (STICKY EN DESKTOP) */}
+            <div className="duo-store-preview-col">
+              <div className="duo-store-stage-card">
+                <div className="duo-stage-header">
+                  <div
+                    className="duo-rank-chip"
+                    style={{
+                      color: currentRank.color
+                    }}
                   >
-                    {pName === 'idle' ? 'REPOSO' : pName === 'salute' ? 'SALUDO' : pName === 'cheer' ? 'FESTEJO' : 'HÉROE'}
-                  </button>
-                ))}
-              </div>
-            </div>
+                    <Award size={13} strokeWidth={2.6} />
+                    <span>RANGO {currentRank.name.toUpperCase()}</span>
+                  </div>
 
-            {/* Ficha de la Skin Seleccionada y Botón de Acción */}
-            <div className="duo-skin-meta-box">
-              <div className="duo-skin-meta-header">
-                <div>
-                  <h2 className="duo-skin-name">{selectedSkin.name}</h2>
-                  <p className="duo-skin-sub">{selectedSkin.subtitle}</p>
+                  <div className="duo-turntable-indicator">
+                    <MoveHorizontal size={13} />
+                    <span>{isDragging ? 'GIRANDO...' : getViewAngleLabel().toUpperCase()}</span>
+                  </div>
                 </div>
+
+                {/* Viewport Interactivo con Drag & Touch */}
                 <div
-                  className="duo-3d-rarity-badge"
-                  style={{
-                    background: getRarityBadgeColor(selectedSkin.rarity).bg,
-                    borderColor: getRarityBadgeColor(selectedSkin.rarity).border,
-                    color: getRarityBadgeColor(selectedSkin.rarity).text
-                  }}
+                  className={`duo-stage-viewport ${isDragging ? 'dragging' : ''}`}
+                  onPointerDown={handlePointerDown}
+                  onPointerMove={handlePointerMove}
+                  onPointerUp={handlePointerUp}
+                  onPointerCancel={handlePointerUp}
+                  title="Arrastra con el dedo o mouse para girar el avatar 360°"
                 >
-                  {selectedSkin.badgeText.toUpperCase()}
+                  <ByteFullBody3D
+                    avatarId={selectedAvatarId}
+                    skinId={previewSkinId}
+                    pose={currentPose}
+                    rotation={rotationAngle}
+                    size={isMobile ? 105 : 155}
+                    showPedestal={true}
+                    isDragging={isDragging}
+                  />
+                </div>
+
+                {/* Botones de Control de Giro y Poses Duolingo 3D */}
+                <div className="duo-stage-controls-wrap">
+                  <div className="duo-rotation-btn-group">
+                    <button
+                      type="button"
+                      className="duo-3d-icon-btn"
+                      onClick={() => handleRotateStep('left')}
+                      title="Girar 45° a la izquierda"
+                    >
+                      <RotateCcw size={15} strokeWidth={2.5} />
+                    </button>
+                    <button
+                      type="button"
+                      className={`duo-3d-angle-chip ${Math.abs(rotationAngle % 360) < 20 ? 'active' : ''}`}
+                      onClick={() => handleSetAngle(0)}
+                    >
+                      FRENTE
+                    </button>
+                    <button
+                      type="button"
+                      className={`duo-3d-angle-chip ${Math.abs((rotationAngle % 360) - 180) < 20 ? 'active' : ''}`}
+                      onClick={() => handleSetAngle(180)}
+                    >
+                      ESPALDA
+                    </button>
+                    <button
+                      type="button"
+                      className="duo-3d-icon-btn"
+                      onClick={() => handleRotateStep('right')}
+                      title="Girar 45° a la derecha"
+                    >
+                      <RotateCw size={15} strokeWidth={2.5} />
+                    </button>
+                  </div>
+
+                  {/* Selector de Poses Duolingo 3D */}
+                  <div className="duo-poses-chip-row">
+                    {(['idle', 'salute', 'cheer', 'hero'] as BytePose[]).map((pName) => (
+                      <button
+                        key={pName}
+                        type="button"
+                        className={`duo-3d-pose-chip ${currentPose === pName ? 'active' : ''}`}
+                        onClick={() => handlePoseChange(pName)}
+                      >
+                        {pName === 'idle' ? 'REPOSO' : pName === 'salute' ? 'SALUDO' : pName === 'cheer' ? 'FESTEJO' : 'HÉROE'}
+                      </button>
+                    ))}
+                  </div>
                 </div>
               </div>
 
-              <p className="duo-skin-desc">{selectedSkin.description}</p>
+              {/* Ficha de la Skin Seleccionada y Botón de Acción */}
+              <div className="duo-skin-meta-box">
+                <div className="duo-skin-meta-header">
+                  <div>
+                    <h2 className="duo-skin-name">{selectedSkin.name}</h2>
+                    <p className="duo-skin-sub">{selectedSkin.subtitle}</p>
+                  </div>
+                  <div
+                    className="duo-3d-rarity-badge"
+                    style={{
+                      background: getRarityBadgeColor(selectedSkin.rarity).bg,
+                      borderColor: getRarityBadgeColor(selectedSkin.rarity).border,
+                      color: getRarityBadgeColor(selectedSkin.rarity).text
+                    }}
+                  >
+                    {selectedSkin.badgeText.toUpperCase()}
+                  </div>
+                </div>
 
-              {/* BOTÓN DE ACCIÓN DUOLINGO 3D */}
-              <div className="duo-skin-action-area">
-                {isSelectedUnlocked ? (
-                  isSelectedEquipped ? (
-                    <div className="duo-equipped-badge">
-                      <CheckCircle2 size={18} strokeWidth={3} />
-                      <span>EQUIPADO ACTUALMENTE</span>
-                    </div>
+                <p className="duo-skin-desc">{selectedSkin.description}</p>
+
+                {/* BOTÓN DE ACCIÓN DUOLINGO 3D */}
+                <div className="duo-skin-action-area">
+                  {isSelectedUnlocked ? (
+                    isSelectedEquipped ? (
+                      <div className="duo-equipped-badge">
+                        <CheckCircle2 size={18} strokeWidth={3} />
+                        <span>EQUIPADO ACTUALMENTE</span>
+                      </div>
+                    ) : (
+                      <button
+                        type="button"
+                        className="duo-3d-btn green full-width"
+                        onClick={() => handleEquipSkin(selectedSkin)}
+                      >
+                        <Check size={18} strokeWidth={3} /> EQUIPAR ESTA SKIN
+                      </button>
+                    )
                   ) : (
                     <button
                       type="button"
-                      className="duo-3d-btn green full-width"
-                      onClick={() => handleEquipSkin(selectedSkin)}
+                      disabled={!canUnlockSkin}
+                      className={`duo-3d-btn ${canUnlockSkin ? 'orange' : 'gray'} full-width`}
+                      onClick={() => handleUnlockSkin(selectedSkin)}
+                      title={selectedSkin.requirementText}
                     >
-                      <Check size={18} strokeWidth={3} /> EQUIPAR ESTA SKIN
+                      {canUnlockSkin ? (
+                        <>
+                          <Zap size={18} fill="#FFFFFF" strokeWidth={2.5} />
+                          DESBLOQUEAR ({selectedSkin.costBytes.toLocaleString()} B)
+                        </>
+                      ) : (
+                        <>
+                          <Lock size={16} strokeWidth={2.5} />
+                          BLOQUEADO ({selectedSkin.costBytes.toLocaleString()} B)
+                        </>
+                      )}
                     </button>
-                  )
-                ) : (
-                  <button
-                    type="button"
-                    disabled={!canUnlockSkin}
-                    className={`duo-3d-btn ${canUnlockSkin ? 'orange' : 'gray'} full-width`}
-                    onClick={() => handleUnlockSkin(selectedSkin)}
-                    title={selectedSkin.requirementText}
-                  >
-                    {canUnlockSkin ? (
-                      <>
-                        <Zap size={18} fill="#FFFFFF" strokeWidth={2.5} />
-                        DESBLOQUEAR ({selectedSkin.costBytes.toLocaleString()} B)
-                      </>
-                    ) : (
-                      <>
-                        <Lock size={16} strokeWidth={2.5} />
-                        BLOQUEADO ({selectedSkin.costBytes.toLocaleString()} B)
-                      </>
-                    )}
-                  </button>
-                )}
+                  )}
 
-                {!isSelectedUnlocked && !canUnlockSkin && (
-                  <div className="duo-skin-requirement-hint">
-                    <Lock size={12} /> {selectedSkin.requirementText}
-                  </div>
-                )}
+                  {!isSelectedUnlocked && !canUnlockSkin && (
+                    <div className="duo-skin-requirement-hint">
+                      <Lock size={12} /> {selectedSkin.requirementText}
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
-          </div>
 
           {/* LADO DERECHO: CATÁLOGO DE SKINS DUOLINGO 3D (AUTO-FILL RESPONSIVE) */}
           <div className="duo-store-catalog-card">

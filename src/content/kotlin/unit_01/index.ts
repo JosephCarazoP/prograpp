@@ -1,4 +1,5 @@
 import { Lesson } from '../../../types/lesson';
+import { LESSON_FLOWCHART, LESSON_PSEUDOCODE, LESSON_SEQUENCES } from './logic_flow_lessons';
 
 export const KOTLIN_UNIT_01_LESSONS: Lesson[] = [
   {
@@ -64,11 +65,7 @@ export const KOTLIN_UNIT_01_LESSONS: Lesson[] = [
         "id": "kt-u01-l01-e04",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea con la afirmación errónea sobre los programas:",
-        "codeSnippet": [
-          "1. Las instrucciones se ejecutan secuencialmente de arriba hacia abajo.",
-          "2. La computadora adivina automáticamente las instrucciones que faltan.",
-          "3. El procesador ejecuta las directivas especificadas por el programador."
-        ],
+        "codeSnippet": [ "Las instrucciones se ejecutan secuencialmente de arriba hacia abajo.", "La computadora adivina automáticamente las instrucciones que faltan.", "El procesador ejecuta las directivas especificadas por el programador." ],
         "bugLineIndex": 1,
         "explanation": "La computadora nunca adivina; si falta un paso, el programa falla o produce un resultado erróneo.",
         "xpReward": 15
@@ -240,11 +237,7 @@ export const KOTLIN_UNIT_01_LESSONS: Lesson[] = [
         "id": "kt-u01-l02-e04",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea donde se invierte incorrectamente el flujo Entrada-Proceso-Salida:",
-        "codeSnippet": [
-          "1. val nota1 = 9",
-          "2. println(promedio) // Error: promedio aún no ha sido calculado",
-          "3. val promedio = (nota1 + 7) / 2"
-        ],
+        "codeSnippet": [ "val nota1 = 9", "println(promedio)", "val promedio = (nota1 + 7) / 2" ],
         "bugLineIndex": 1,
         "explanation": "No se puede emitir la salida antes de procesar y calcular la variable.",
         "xpReward": 15
@@ -512,11 +505,7 @@ export const KOTLIN_UNIT_01_LESSONS: Lesson[] = [
         "id": "kt-u01-l03-e09",
         "type": "spot_the_bug",
         "prompt": "Identifica el paso con orden erróneo en el algoritmo:",
-        "codeSnippet": [
-          "1. Mojar las manos con agua limpia.",
-          "2. Secarse las manos con la toalla.",
-          "3. Aplicar jabón y frotar durante 20 segundos."
-        ],
+        "codeSnippet": [ "Mojar las manos con agua limpia.", "Secarse las manos con la toalla.", "Aplicar jabón y frotar durante 20 segundos." ],
         "bugLineIndex": 1,
         "explanation": "El secado con toalla debe ocurrir al final, después del lavado y enjuague.",
         "xpReward": 15
@@ -538,12 +527,15 @@ export const KOTLIN_UNIT_01_LESSONS: Lesson[] = [
       }
     ]
   },
+  LESSON_FLOWCHART,
+  LESSON_PSEUDOCODE,
+  LESSON_SEQUENCES,
   {
     "id": "kotlin-u01-l04",
     "path": "kotlin",
     "unit": 1,
-    "level": 4,
-    "title": "4. Seguimiento manual de instrucciones",
+    "level": 7,
+    "title": "7. Seguimiento manual de instrucciones",
     "description": "Aprende a realizar la prueba de escritorio: rastrear paso a paso en una tabla de variables el valor exacto de la memoria a medida que avanza cada instrucción.",
     "exercises": [
       {
@@ -720,8 +712,8 @@ export const KOTLIN_UNIT_01_LESSONS: Lesson[] = [
     "id": "kotlin-u01-l05",
     "path": "kotlin",
     "unit": 1,
-    "level": 5,
-    "title": "5. Estructura básica: fun main()",
+    "level": 8,
+    "title": "8. Estructura básica: fun main()",
     "description": "La función main() es el punto de entrada oficial y obligatorio donde el sistema operativo inicia la ejecución de cualquier aplicación Kotlin.",
     "exercises": [
       {
@@ -781,11 +773,7 @@ export const KOTLIN_UNIT_01_LESSONS: Lesson[] = [
         "id": "kt-u01-l05-e04",
         "type": "spot_the_bug",
         "prompt": "Identifica el error de sintaxis en la declaración de la función:",
-        "codeSnippet": [
-          "1. // Declaración principal",
-          "2. function main() { // Error: en Kotlin no se usa \"function\"",
-          "3.     println(\"Hola\")"
-        ],
+        "codeSnippet": [ "// Declaración principal", "function main() {", "println(\"Hola\")" ],
         "bugLineIndex": 1,
         "explanation": "En Kotlin se usa \"fun\", no \"function\" (que pertenece a lenguajes como JavaScript).",
         "xpReward": 15
@@ -870,11 +858,7 @@ export const KOTLIN_UNIT_01_LESSONS: Lesson[] = [
         "id": "kt-u01-l05-e09",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea con el error de sintaxis en el nombre:",
-        "codeSnippet": [
-          "fun Main() { // Error: en Kotlin se escribe con minúscula",
-          "    println(\"Prueba\")",
-          "}"
-        ],
+        "codeSnippet": [ "fun Main() {", "    println(\"Prueba\")", "}" ],
         "bugLineIndex": 0,
         "explanation": "Kotlin es sensible a mayúsculas y minúsculas (case-sensitive); debe ser main(), no Main().",
         "xpReward": 15
@@ -900,8 +884,8 @@ export const KOTLIN_UNIT_01_LESSONS: Lesson[] = [
     "id": "kotlin-u01-l06",
     "path": "kotlin",
     "unit": 1,
-    "level": 6,
-    "title": "6. Mostrar información con print() y println()",
+    "level": 9,
+    "title": "9. Mostrar información con print() y println()",
     "description": "Comprende la diferencia entre print() (muestra texto en el mismo renglón) y println() (muestra texto y añade un salto de línea al final).",
     "exercises": [
       {
@@ -955,11 +939,7 @@ export const KOTLIN_UNIT_01_LESSONS: Lesson[] = [
         "id": "kt-u01-l06-e04",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea con error tipográfico en la función de impresión:",
-        "codeSnippet": [
-          "1. print(\"Cargando: \")",
-          "2. printline(\"100%\") // Error: no existe printline",
-          "3. println(\"Completado\")"
-        ],
+        "codeSnippet": [ "print(\"Cargando: \")", "printline(\"100%\")", "println(\"Completado\")" ],
         "bugLineIndex": 1,
         "explanation": "El nombre correcto es println(), no printline().",
         "xpReward": 15
@@ -1042,11 +1022,7 @@ export const KOTLIN_UNIT_01_LESSONS: Lesson[] = [
         "id": "kt-u01-l06-e09",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea que provocará un error de sintaxis:",
-        "codeSnippet": [
-          "println(\"Mensaje 1\")",
-          "println(\"Mensaje 2\" // Falta cerrar el paréntesis )",
-          "println(\"Mensaje 3\")"
-        ],
+        "codeSnippet": [ "println(\"Mensaje 1\")", "println(\"Mensaje 2\"", "println(\"Mensaje 3\")" ],
         "bugLineIndex": 1,
         "explanation": "Toda llamada a función debe cerrar sus paréntesis () correctamente.",
         "xpReward": 15
@@ -1072,8 +1048,8 @@ export const KOTLIN_UNIT_01_LESSONS: Lesson[] = [
     "id": "kotlin-u01-l07",
     "path": "kotlin",
     "unit": 1,
-    "level": 7,
-    "title": "7. Comentarios en el código",
+    "level": 10,
+    "title": "10. Comentarios en el código",
     "description": "Los comentarios son anotaciones para humanos que el compilador ignora por completo. Se usan para documentar la intención, explicar lógica difícil o desactivar código temporalmente.",
     "exercises": [
       {
@@ -1130,11 +1106,7 @@ export const KOTLIN_UNIT_01_LESSONS: Lesson[] = [
         "id": "kt-u01-l07-e04",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea con el error al intentar comentar:",
-        "codeSnippet": [
-          "1. // Inicializar sistema",
-          "2. /* Este comentario no tiene cierre // Falta */",
-          "3. println(\"Fin\")"
-        ],
+        "codeSnippet": [ "// Inicializar sistema", "/* Este comentario no tiene cierre", "println(\"Fin\")" ],
         "bugLineIndex": 1,
         "explanation": "Los comentarios de bloque abiertos con /* deben cerrarse obligatoriamente con */.",
         "xpReward": 15

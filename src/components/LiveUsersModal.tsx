@@ -154,7 +154,7 @@ export const LiveUsersModal: React.FC<LiveUsersModalProps> = ({
         icon: <span style={{ width: 8, height: 8, borderRadius: '50%', background: '#94A3B8' }} />,
         color: '#64748B',
         bg: '#F1F5F9',
-        border: '#E2E8F0'
+        border: '#000000'
       };
     }
 
@@ -166,7 +166,7 @@ export const LiveUsersModal: React.FC<LiveUsersModalProps> = ({
           icon: <Code2 size={13} color="#2563EB" />,
           color: '#1D4ED8',
           bg: '#EFF6FF',
-          border: '#BFDBFE'
+          border: '#000000'
         };
       case 'theory':
         return {
@@ -174,7 +174,7 @@ export const LiveUsersModal: React.FC<LiveUsersModalProps> = ({
           icon: <BookOpen size={13} color="#0D9488" />,
           color: '#0F766E',
           bg: '#F0FDFA',
-          border: '#99F6E4'
+          border: '#000000'
         };
       case 'playing':
         return {
@@ -182,7 +182,7 @@ export const LiveUsersModal: React.FC<LiveUsersModalProps> = ({
           icon: <Gamepad2 size={13} color="#7C3AED" />,
           color: '#6D28D9',
           bg: '#F5F3FF',
-          border: '#DDD6FE'
+          border: '#000000'
         };
       case 'boss':
         return {
@@ -190,7 +190,7 @@ export const LiveUsersModal: React.FC<LiveUsersModalProps> = ({
           icon: <Sparkles size={13} color="#D97706" />,
           color: '#B45309',
           bg: '#FFFBEB',
-          border: '#FDE68A'
+          border: '#000000'
         };
       case 'practice':
         return {
@@ -198,7 +198,7 @@ export const LiveUsersModal: React.FC<LiveUsersModalProps> = ({
           icon: <Zap size={13} color="#F59E0B" fill="#F59E0B" />,
           color: '#B45309',
           bg: '#FFFBEB',
-          border: '#FDE68A'
+          border: '#000000'
         };
       case 'evaluation':
         return {
@@ -206,7 +206,7 @@ export const LiveUsersModal: React.FC<LiveUsersModalProps> = ({
           icon: <FileCheck2 size={13} color="#DC2626" />,
           color: '#B91C1C',
           bg: '#FEF2F2',
-          border: '#FECACA'
+          border: '#000000'
         };
       default:
         return {
@@ -214,7 +214,7 @@ export const LiveUsersModal: React.FC<LiveUsersModalProps> = ({
           icon: <span className="live-pulsing-dot-small" />,
           color: '#15803D',
           bg: '#F0FDF4',
-          border: '#BBF7D0'
+          border: '#000000'
         };
     }
   };
@@ -406,8 +406,8 @@ export const LiveUsersModal: React.FC<LiveUsersModalProps> = ({
           ) : filteredList.length === 0 ? (
             <div className="live-users-empty-state">
               <div className="live-empty-icon" style={{ display: 'flex', justifyContent: 'center', marginBottom: 10 }}>
-                <div style={{ width: 60, height: 60, borderRadius: 18, background: '#F1F5F9', border: '2px solid #E2E8F0', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  <Users size={30} color="#64748B" />
+                <div style={{ width: 60, height: 60, borderRadius: 16, background: '#FEF08A', border: '3px solid #000000', boxShadow: '3px 3px 0px #000000', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <Users size={30} color="#000000" />
                 </div>
               </div>
               <h3>
@@ -423,8 +423,7 @@ export const LiveUsersModal: React.FC<LiveUsersModalProps> = ({
               {filterType === 'online' && students.length > 0 && (
                 <button
                   type="button"
-                  className="btn-3d btn-blue"
-                  style={{ marginTop: 12, padding: '7px 16px', fontSize: '0.82rem' }}
+                  style={{ marginTop: 12, padding: '8px 18px', fontSize: '0.82rem', fontWeight: 900, background: '#FFE600', color: '#000000', border: '2.5px solid #000000', boxShadow: '2.5px 2.5px 0px #000000', borderRadius: '12px', cursor: 'pointer' }}
                   onClick={() => setFilterType('all')}
                 >
                   Ver todos los {students.length} estudiantes registrados
@@ -504,8 +503,9 @@ export const LiveUsersModal: React.FC<LiveUsersModalProps> = ({
                           <span
                             className="live-card-path-tag"
                             style={{
-                              background: st.currentPath === 'kotlin' ? '#EDE9FE' : '#E0F2FE',
-                              color: st.currentPath === 'kotlin' ? '#6D28D9' : '#0284C7'
+                              background: st.currentPath === 'kotlin' ? '#FEF08A' : '#BAE6FD',
+                              color: '#000000',
+                              border: '1.5px solid #000000'
                             }}
                           >
                             {st.currentPath === 'kotlin' ? 'Kotlin' : 'SQL'}

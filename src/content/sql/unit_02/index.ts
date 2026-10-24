@@ -62,10 +62,8 @@ export const SQL_UNIT_02_LESSONS: Lesson[] = [
         "id": "sql-u02-l01-e04",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea que contiene el error en este código de \"Entidades y atributos\":",
-        "codeSnippet": [
-          "SELECT id, nombre FROM // Falta el nombre de la tabla entidad"
-        ],
-        "bugLineIndex": 0,
+        "codeSnippet": [ "-- Consulta sobre estudiantes", "SELECT id, nombre FROM", "ORDER BY id ASC;" ],
+        "bugLineIndex": 1,
         "explanation": "Crear entidades con atributos irrelevantes que el sistema nunca utilizará (ej. color favorito de zapatos del alumno).",
         "xpReward": 15
       },
@@ -151,11 +149,7 @@ export const SQL_UNIT_02_LESSONS: Lesson[] = [
         "id": "sql-u02-l01-e09",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea con el error de diseño o sintaxis en \"Entidades y atributos\":",
-        "codeSnippet": [
-          "-- Consulta sobre el esquema educativo",
-          "SELECT id, nombre FROM estudiantes",
-          "WHERE id == 10; // Error: en SQL la igualdad se escribe con un solo = (WHERE id = 10)"
-        ],
+        "codeSnippet": [ "-- Consulta sobre el esquema educativo", "SELECT id, nombre FROM estudiantes", "WHERE id == 10;" ],
         "bugLineIndex": 2,
         "explanation": "Crear entidades con atributos irrelevantes que el sistema nunca utilizará (ej. color favorito de zapatos del alumno).",
         "xpReward": 15
@@ -248,10 +242,8 @@ export const SQL_UNIT_02_LESSONS: Lesson[] = [
         "id": "sql-u02-l02-e04",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea que contiene el error en este código de \"Selección de los datos necesarios\":",
-        "codeSnippet": [
-          "SELECT * FROM estudiantes WHERE semestre == 4 // En SQL estándar es = simple"
-        ],
-        "bugLineIndex": 0,
+        "codeSnippet": [ "-- Consulta sobre estudiantes", "SELECT * FROM estudiantes WHERE semestre == 4", "ORDER BY id ASC;" ],
+        "bugLineIndex": 1,
         "explanation": "Guardar datos que cambian con el tiempo sin auditoría (como precios volátiles sin historial).",
         "xpReward": 15
       },
@@ -337,11 +329,7 @@ export const SQL_UNIT_02_LESSONS: Lesson[] = [
         "id": "sql-u02-l02-e09",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea con el error de diseño o sintaxis en \"Selección de los datos necesarios\":",
-        "codeSnippet": [
-          "-- Consulta sobre el esquema educativo",
-          "SELECT id, nombre FROM estudiantes",
-          "WHERE id == 10; // Error: en SQL la igualdad se escribe con un solo = (WHERE id = 10)"
-        ],
+        "codeSnippet": [ "-- Consulta sobre el esquema educativo", "SELECT id, nombre FROM estudiantes", "WHERE id == 10;" ],
         "bugLineIndex": 2,
         "explanation": "Guardar datos que cambian con el tiempo sin auditoría (como precios volátiles sin historial).",
         "xpReward": 15
@@ -526,11 +514,7 @@ export const SQL_UNIT_02_LESSONS: Lesson[] = [
         "id": "sql-u02-l03-e09",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea con el error de diseño o sintaxis en \"Llave primaria (PK)\":",
-        "codeSnippet": [
-          "-- Consulta sobre el esquema educativo",
-          "SELECT id, nombre FROM estudiantes",
-          "WHERE id == 10; // Error: en SQL la igualdad se escribe con un solo = (WHERE id = 10)"
-        ],
+        "codeSnippet": [ "-- Consulta sobre el esquema educativo", "SELECT id, nombre FROM estudiantes", "WHERE id == 10;" ],
         "bugLineIndex": 2,
         "explanation": "Nunca uses datos mutables como Llave Primaria (como el correo o el teléfono que el usuario puede cambiar).",
         "xpReward": 15
@@ -635,10 +619,8 @@ export const SQL_UNIT_02_LESSONS: Lesson[] = [
         "id": "sql-u02-l04-e04",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea que contiene el error en este código de \"Llave foránea (FK)\":",
-        "codeSnippet": [
-          "FOREIGN KEY estudiante_id // Faltan paréntesis y la cláusula REFERENCES"
-        ],
-        "bugLineIndex": 0,
+        "codeSnippet": [ "-- Consulta sobre estudiantes", "FOREIGN KEY estudiante_id", "ORDER BY id ASC;" ],
+        "bugLineIndex": 1,
         "explanation": "Crear relaciones lógicas sin declarar formalmente la FOREIGN KEY permite que queden registros huérfanos.",
         "xpReward": 15
       },
@@ -724,11 +706,7 @@ export const SQL_UNIT_02_LESSONS: Lesson[] = [
         "id": "sql-u02-l04-e09",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea con el error de diseño o sintaxis en \"Llave foránea (FK)\":",
-        "codeSnippet": [
-          "-- Consulta sobre el esquema educativo",
-          "SELECT id, nombre FROM estudiantes",
-          "WHERE id == 10; // Error: en SQL la igualdad se escribe con un solo = (WHERE id = 10)"
-        ],
+        "codeSnippet": [ "-- Consulta sobre el esquema educativo", "SELECT id, nombre FROM estudiantes", "WHERE id == 10;" ],
         "bugLineIndex": 2,
         "explanation": "Crear relaciones lógicas sin declarar formalmente la FOREIGN KEY permite que queden registros huérfanos.",
         "xpReward": 15
@@ -821,10 +799,8 @@ export const SQL_UNIT_02_LESSONS: Lesson[] = [
         "id": "sql-u02-l05-e04",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea que contiene el error en este código de \"Relaciones uno a uno y uno a muchos\":",
-        "codeSnippet": [
-          "// Error de diseño: colocar lista de asignaturas separadas por coma en tabla departamento"
-        ],
-        "bugLineIndex": 0,
+        "codeSnippet": [ "-- Consulta sobre estudiantes", "", "ORDER BY id ASC;" ],
+        "bugLineIndex": 1,
         "explanation": "Poner la llave foránea en la tabla del lado 1 limitaría a ese departamento a tener una sola asignatura.",
         "xpReward": 15
       },
@@ -910,11 +886,7 @@ export const SQL_UNIT_02_LESSONS: Lesson[] = [
         "id": "sql-u02-l05-e09",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea con el error de diseño o sintaxis en \"Relaciones uno a uno y uno a muchos\":",
-        "codeSnippet": [
-          "-- Consulta sobre el esquema educativo",
-          "SELECT id, nombre FROM estudiantes",
-          "WHERE id == 10; // Error: en SQL la igualdad se escribe con un solo = (WHERE id = 10)"
-        ],
+        "codeSnippet": [ "-- Consulta sobre el esquema educativo", "SELECT id, nombre FROM estudiantes", "WHERE id == 10;" ],
         "bugLineIndex": 2,
         "explanation": "Poner la llave foránea en la tabla del lado 1 limitaría a ese departamento a tener una sola asignatura.",
         "xpReward": 15
@@ -1019,10 +991,8 @@ export const SQL_UNIT_02_LESSONS: Lesson[] = [
         "id": "sql-u02-l06-e04",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea que contiene el error en este código de \"Relaciones muchos a muchos y tablas intermedias\":",
-        "codeSnippet": [
-          "// Intentar vincular directamente Estudiante <-> Asignatura sin tabla intermedia"
-        ],
-        "bugLineIndex": 0,
+        "codeSnippet": [ "-- Consulta sobre estudiantes", "// Intentar vincular directamente Estudiante <-> Asignatura sin tabla intermedia", "ORDER BY id ASC;" ],
+        "bugLineIndex": 1,
         "explanation": "Intentar guardar múltiples IDs en una sola columna: \"asignaturas: 101,102,103\". Esto imposibilita hacer búsquedas y sumas.",
         "xpReward": 15
       },
@@ -1108,11 +1078,7 @@ export const SQL_UNIT_02_LESSONS: Lesson[] = [
         "id": "sql-u02-l06-e09",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea con el error de diseño o sintaxis en \"Relaciones muchos a muchos y tablas intermedias\":",
-        "codeSnippet": [
-          "-- Consulta sobre el esquema educativo",
-          "SELECT id, nombre FROM estudiantes",
-          "WHERE id == 10; // Error: en SQL la igualdad se escribe con un solo = (WHERE id = 10)"
-        ],
+        "codeSnippet": [ "-- Consulta sobre el esquema educativo", "SELECT id, nombre FROM estudiantes", "WHERE id == 10;" ],
         "bugLineIndex": 2,
         "explanation": "Intentar guardar múltiples IDs en una sola columna: \"asignaturas: 101,102,103\". Esto imposibilita hacer búsquedas y sumas.",
         "xpReward": 15
@@ -1205,10 +1171,8 @@ export const SQL_UNIT_02_LESSONS: Lesson[] = [
         "id": "sql-u02-l07-e04",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea que contiene el error en este código de \"Lectura de diagramas sencillos\":",
-        "codeSnippet": [
-          "SELECT * FROM estudiantes, // Coma huérfana en la cláusula FROM"
-        ],
-        "bugLineIndex": 0,
+        "codeSnippet": [ "-- Consulta sobre estudiantes", "SELECT * FROM estudiantes, // Coma huérfana en la cláusula FROM", "ORDER BY id ASC;" ],
+        "bugLineIndex": 1,
         "explanation": "Interpretar al revés el sentido de una flecha o relación confundiendo quién es el padre y quién el hijo.",
         "xpReward": 15
       },
@@ -1294,11 +1258,7 @@ export const SQL_UNIT_02_LESSONS: Lesson[] = [
         "id": "sql-u02-l07-e09",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea con el error de diseño o sintaxis en \"Lectura de diagramas sencillos\":",
-        "codeSnippet": [
-          "-- Consulta sobre el esquema educativo",
-          "SELECT id, nombre FROM estudiantes",
-          "WHERE id == 10; // Error: en SQL la igualdad se escribe con un solo = (WHERE id = 10)"
-        ],
+        "codeSnippet": [ "-- Consulta sobre el esquema educativo", "SELECT id, nombre FROM estudiantes", "WHERE id == 10;" ],
         "bugLineIndex": 2,
         "explanation": "Interpretar al revés el sentido de una flecha o relación confundiendo quién es el padre y quién el hijo.",
         "xpReward": 15

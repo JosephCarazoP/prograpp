@@ -8,6 +8,7 @@ export type ExerciseType =
   | 'code_cloze'        // Completar huecos con opciones o teclado de símbolos
   | 'trace_step'        // Trazabilidad de variables en bucles
   | 'parsons_puzzle'    // Reordenar bloques de código desordenados
+  | 'flowchart_builder' // Diseñar/acomodar diagramas de flujo con arrastrar o tocar
   | 'boss_fight';       // Jefe de unidad (depuración integral)
 
 export type DifficultyLevel = 'easy' | 'medium' | 'hard';
@@ -80,7 +81,26 @@ export interface ParsonsPuzzleExercise extends BaseExercise {
   correctOrder: number[]; // Índices en orden correcto
 }
 
-// 8. Jefe de unidad
+// 8. Diagrama de flujo interactivo (arrastrar o tocar para ordenar/construir el flujo)
+export type FlowchartShape = 'terminal' | 'io' | 'process' | 'decision';
+
+export interface FlowchartBlock {
+  id: string;
+  text: string;
+  shape: FlowchartShape;
+  branchLabel?: string; // ej: 'Sí', 'No', o 'Verdadero'
+  detail?: string;       // subtítulo descriptivo (ej: 'Entrada de datos', 'Operación de cálculo')
+}
+
+export interface FlowchartExercise extends BaseExercise {
+  type: 'flowchart_builder';
+  flowTitle?: string;
+  blocks: FlowchartBlock[];
+  correctOrder: number[]; // Índices en blocks en orden correcto
+  targetProblem?: string; // Descripción del problema a modelar
+}
+
+// 9. Jefe de unidad
 export interface BossFightExercise extends BaseExercise {
   type: 'boss_fight';
   bossName: string;
@@ -96,6 +116,7 @@ export type Exercise =
   | CodeClozeExercise
   | TraceStepExercise
   | ParsonsPuzzleExercise
+  | FlowchartExercise
   | BossFightExercise;
 
 export interface Lesson {

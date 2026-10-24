@@ -61,6 +61,7 @@ interface DailyQuestsModalProps {
   user: UserProfile;
   progress: Record<string, LessonProgress>;
   onRewardClaimed: (xp: number, bytes: number, powerupKey?: PowerUpKey) => void;
+  onOpenSeason?: () => void;
 }
 
 const BATTLE_PASS_TIERS: BattlePassTier[] = [
@@ -178,7 +179,8 @@ export const DailyQuestsModal: React.FC<DailyQuestsModalProps> = ({
   onClose,
   user,
   progress,
-  onRewardClaimed
+  onRewardClaimed,
+  onOpenSeason
 }) => {
   // Pestaña activa estilo Fortnite: 'pass' (Pase de Batalla) o 'quests' (Misiones)
   const [activeTab, setActiveTab] = useState<'pass' | 'quests'>('pass');
@@ -674,6 +676,40 @@ export const DailyQuestsModal: React.FC<DailyQuestsModalProps> = ({
           {/* VISTA 1: PASE DE BATALLA (SHOWCASE + CAMINO HORIZONTAL) */}
           {activeTab === 'pass' && (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+              {/* ACCESO DIRECTO A PANTALLA COMPLETA DE 100 NIVELES */}
+              {onOpenSeason && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    soundService.playToken();
+                    onClose();
+                    onOpenSeason();
+                  }}
+                  style={{
+                    background: '#FEF08A',
+                    color: '#000000',
+                    border: '2px solid #000000',
+                    boxShadow: '3px 3px 0px #000000',
+                    borderRadius: '12px',
+                    padding: '9px 12px',
+                    fontSize: '0.8rem',
+                    fontWeight: 900,
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    gap: '8px',
+                    width: '100%',
+                    boxSizing: 'border-box'
+                  }}
+                >
+                  <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                    <Flame size={16} color="#D97706" fill="#F59E0B" />
+                    <span>¡Abrir Camino de Temporada Completo (100 Niveles)!</span>
+                  </span>
+                  <span style={{ fontSize: '0.72rem', color: '#B45309', fontWeight: 900 }}>PANTALLA COMPLETA →</span>
+                </button>
+              )}
               {/* ESCAPARATE PRINCIPAL (HERO SHOWCASE DE FORTNITE) */}
               <div
                 className="pass-hero-card"

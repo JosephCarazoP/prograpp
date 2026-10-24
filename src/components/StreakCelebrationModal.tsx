@@ -27,157 +27,134 @@ function getLocalDateString(d: Date): string {
   return `${year}-${month}-${day}`;
 }
 
+// 16-point comic starburst polygon vertices
+const STARBURST_POINTS = Array.from({ length: 32 }, (_, i) => {
+  const angle = (i * Math.PI) / 16 - Math.PI / 2;
+  const r = i % 2 === 0 ? 98 : 72;
+  const x = Math.round((100 + r * Math.cos(angle)) * 10) / 10;
+  const y = Math.round((100 + r * Math.sin(angle)) * 10) / 10;
+  return `${x},${y}`;
+}).join(' ');
+
 /**
  * ═════════════════════════════════════════════════════════════════════════════
- * FUEGUITO 3D OFICIAL ESTILO DUOLINGO (100% Vector 3D Duolingo / 0% IA)
+ * FUEGUITO NEO-BRUTALISM OFICIAL PROGRAPP (100% Vector Comic Neo-brutalism)
  * ═════════════════════════════════════════════════════════════════════════════
- * Mascota viva de la racha: silueta suave y orgánica de gota con cresta
- * curvada a la derecha, brazos festivos en alto, iluminación volumétrica
- * esférica en el vientre, reflejos glossy de juguete de vinilo 3D,
- * ojitos expresivos con animación de parpadeo y mejillas sonrosadas.
+ * Contornos negros sólidos gruesos (stroke 4px), paleta vibrante de alto
+ * impacto (Naranja Eléctrico, Amarillo Canario), brazos celebrando en alto,
+ * ojos comic expresivos y sombra sólida de contacto.
  */
-const DuolingoFlame3D: React.FC<{ isIgniting?: boolean }> = ({ isIgniting = false }) => (
-  <div className={`duo-flame-wrapper ${isIgniting ? 'ignite-pop' : ''}`}>
+const NeoBrutalFlame: React.FC<{ isIgniting?: boolean }> = ({ isIgniting = false }) => (
+  <div className={`neo-flame-wrapper ${isIgniting ? 'ignite-pop' : ''}`}>
     <svg
       viewBox="0 0 190 210"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
-      className="duo-flame-svg"
-      aria-label="Fueguito de Racha Duolingo 3D"
+      className="neo-flame-svg"
+      aria-label="Fueguito de Racha Neo-brutalism"
     >
-      <defs>
-        {/* Degradado Volumétrico del Cuerpo 3D */}
-        <linearGradient id="duoFlameBodyGrad" x1="95" y1="16" x2="95" y2="188" gradientUnits="userSpaceOnUse">
-          <stop offset="0%" stopColor="#FFA600" />
-          <stop offset="28%" stopColor="#FF7A00" />
-          <stop offset="68%" stopColor="#EA580C" />
-          <stop offset="100%" stopColor="#C2410C" />
-        </linearGradient>
+      {/* 1. Sombra de contacto en el piso estilo neo-brutal (sólido negro animado) */}
+      <ellipse cx="95" cy="195" rx="55" ry="8" fill="#000000" className="flame-ground-shadow" />
 
-        {/* Núcleo Iluminado / Esfera de Energía en el Vientre */}
-        <radialGradient id="duoFlameBellyGlow" cx="50%" cy="58%" r="48%">
-          <stop offset="0%" stopColor="#FFFFFF" />
-          <stop offset="35%" stopColor="#FFF275" />
-          <stop offset="70%" stopColor="#FFB703" />
-          <stop offset="100%" stopColor="#FB8500" stopOpacity="0" />
-        </radialGradient>
-
-        {/* Degradado para los Brazos 3D */}
-        <linearGradient id="duoFlameArmGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stopColor="#FFA600" />
-          <stop offset="60%" stopColor="#FF7A00" />
-          <stop offset="100%" stopColor="#C2410C" />
-        </linearGradient>
-
-        {/* Reflejo Glossy Curvo (Efecto Vinilo / Muñeco 3D) */}
-        <linearGradient id="duoFlameGlossSheen" x1="42" y1="30" x2="82" y2="105" gradientUnits="userSpaceOnUse">
-          <stop offset="0%" stopColor="#FFFFFF" stopOpacity="0.85" />
-          <stop offset="35%" stopColor="#FFFFFF" stopOpacity="0.35" />
-          <stop offset="100%" stopColor="#FFFFFF" stopOpacity="0" />
-        </linearGradient>
-
-        {/* Sombra de Suelo 3D en Fondo Blanco */}
-        <radialGradient id="duoFlameGroundShadow" cx="50%" cy="50%" r="50%">
-          <stop offset="0%" stopColor="#94A3B8" stopOpacity="0.55" />
-          <stop offset="65%" stopColor="#CBD5E1" stopOpacity="0.25" />
-          <stop offset="100%" stopColor="#E2E8F0" stopOpacity="0" />
-        </radialGradient>
-      </defs>
-
-      {/* 1. Sombra de contacto en el piso 3D (se aplasta y estira con el salto) */}
-      <ellipse cx="95" cy="194" rx="58" ry="9" fill="url(#duoFlameGroundShadow)" className="flame-ground-shadow" />
-
-      {/* 2. Brazos Festivos 3D Celebrando en Alto ("\o/") */}
-      <g className="duo-flame-arms">
+      {/* 2. Brazos Festivos Celebrando en Alto ("\o/") */}
+      <g className="neo-flame-arms">
         {/* Brazo Izquierdo */}
         <path
           d="M 44 126 C 28 120 18 106 20 92 C 24 78 38 88 44 104 C 47 112 46 122 44 126 Z"
-          fill="url(#duoFlameArmGrad)"
-          stroke="#C2410C"
-          strokeWidth="2.8"
+          fill="#FF8500"
+          stroke="#000000"
+          strokeWidth="3.8"
           strokeLinejoin="round"
         />
-        {/* Mano izquierda redondeada */}
-        <circle cx="21" cy="91" r="5" fill="#FFA600" stroke="#C2410C" strokeWidth="2" />
+        {/* Mano izquierda */}
+        <circle cx="21" cy="91" r="5.5" fill="#FFE600" stroke="#000000" strokeWidth="3" />
 
         {/* Brazo Derecho */}
         <path
           d="M 146 126 C 162 120 172 106 170 92 C 166 78 152 88 146 104 C 143 112 144 122 146 126 Z"
-          fill="url(#duoFlameArmGrad)"
-          stroke="#C2410C"
-          strokeWidth="2.8"
+          fill="#FF8500"
+          stroke="#000000"
+          strokeWidth="3.8"
           strokeLinejoin="round"
         />
-        {/* Mano derecha redondeada */}
-        <circle cx="169" cy="91" r="5" fill="#FFA600" stroke="#C2410C" strokeWidth="2" />
+        {/* Mano derecha */}
+        <circle cx="169" cy="91" r="5.5" fill="#FFE600" stroke="#000000" strokeWidth="3" />
       </g>
 
-      {/* 3. Bisel 3D Inferior (Capa de relieve y profundidad sólida Duolingo) */}
+      {/* 3. Sombra de profundidad sólida inferior estilo Neo-brutalism */}
       <path
-        d="M 95 18 C 101 44 122 60 138 80 C 156 102 165 124 165 150 C 165 182 133 194 95 194 C 57 194 25 182 25 150 C 25 124 34 102 52 80 C 68 60 89 44 95 18 Z"
-        fill="#9A3412"
+        d="M 95 18 C 101 44 122 60 138 80 C 156 102 165 124 165 152 C 165 184 133 196 95 196 C 57 196 25 184 25 152 C 25 124 34 102 52 80 C 68 60 89 44 95 18 Z"
+        fill="#000000"
       />
 
-      {/* 4. Cuerpo Principal de la Llama (Silueta de gota orgánica volumétrica) */}
+      {/* 4. Cuerpo Principal de la Llama (Naranja Eléctrico Neo-brutalism con contorno negro) */}
       <path
         d="M 95 18 C 101 44 122 60 138 80 C 156 102 165 124 165 146 C 165 178 133 190 95 190 C 57 190 25 178 25 146 C 25 124 34 102 52 80 C 68 60 89 44 95 18 Z"
-        fill="url(#duoFlameBodyGrad)"
-        stroke="#C2410C"
-        strokeWidth="3.6"
+        fill="#FF5722"
+        stroke="#000000"
+        strokeWidth="4"
         strokeLinejoin="round"
       />
 
-      {/* 5. Vientre Volumétrico Cálido Esférico */}
-      <ellipse cx="95" cy="144" rx="46" ry="38" fill="url(#duoFlameBellyGlow)" />
-
-      {/* 6. Reflejo Glossy Curvo en el hombro izquierdo (Brillo de vinilo 3D) */}
+      {/* 5. Núcleo/Vientre de Fuego Amarillo Canario con Contorno Negro */}
       <path
-        d="M 87 28 C 80 48 62 68 50 86 C 39 104 35 122 37 136 C 33 124 35 106 46 90 C 57 74 76 52 87 28 Z"
-        fill="url(#duoFlameGlossSheen)"
+        d="M 95 72 C 103 92 122 108 126 126 C 130 144 124 168 95 168 C 66 168 60 144 64 126 C 68 108 87 92 95 72 Z"
+        fill="#FFE600"
+        stroke="#000000"
+        strokeWidth="3.2"
+        strokeLinejoin="round"
       />
 
-      {/* 7. Destello Especular en la Punta de la Llama */}
-      <ellipse cx="93" cy="34" rx="4" ry="9" transform="rotate(-16 93 34)" fill="#FFFFFF" fillOpacity="0.75" />
-
-      {/* 8. CARITA DUOLINGO 3D — EXPRESIVA, TIERNA Y RADIANTE */}
-      {/* Cejas Expresivas */}
-      <path d="M 68 106 Q 77 101 85 107" stroke="#2E1102" strokeWidth="3.4" strokeLinecap="round" fill="none" />
-      <path d="M 105 107 Q 113 101 122 106" stroke="#2E1102" strokeWidth="3.4" strokeLinecap="round" fill="none" />
-
-      {/* Ojo Izquierdo 3D */}
-      <g className="duo-eye duo-eye-left">
-        <ellipse cx="77" cy="122" rx="7.5" ry="11" fill="#2E1102" />
-        {/* Brillo ocular superior grande */}
-        <circle cx="80" cy="118.5" r="3.4" fill="#FFFFFF" />
-        {/* Micro-brillo inferior */}
-        <circle cx="74.5" cy="126.5" r="1.5" fill="#FFFFFF" fillOpacity="0.9" />
-      </g>
-
-      {/* Ojo Derecho 3D */}
-      <g className="duo-eye duo-eye-right">
-        <ellipse cx="113" cy="122" rx="7.5" ry="11" fill="#2E1102" />
-        {/* Brillo ocular superior grande */}
-        <circle cx="116" cy="118.5" r="3.4" fill="#FFFFFF" />
-        {/* Micro-brillo inferior */}
-        <circle cx="110.5" cy="126.5" r="1.5" fill="#FFFFFF" fillOpacity="0.9" />
-      </g>
-
-      {/* Mejillas Sonrosadas Dulces 3D */}
-      <ellipse cx="61" cy="132" rx="6.5" ry="4.5" fill="#FF5C7A" fillOpacity="0.88" />
-      <ellipse cx="129" cy="132" rx="6.5" ry="4.5" fill="#FF5C7A" fillOpacity="0.88" />
-
-      {/* Sonrisa Alegre Abierta con Lengüita Rosa */}
+      {/* 6. Reflejo Comic Blanco en el hombro */}
       <path
-        d="M 83 132 C 83 147 107 147 107 132"
-        fill="#4A1504"
-        stroke="#2E1102"
+        d="M 87 28 C 80 48 64 68 52 86 C 42 102 38 120 40 132 C 35 122 36 106 46 90 C 57 74 76 52 87 28 Z"
+        fill="#FFFFFF"
+        stroke="#000000"
+        strokeWidth="2.2"
+        strokeLinejoin="round"
+      />
+
+      {/* 7. Destello de Chispa Blanca */}
+      <ellipse cx="93" cy="34" rx="4" ry="9" transform="rotate(-16 93 34)" fill="#FFFFFF" />
+
+      {/* 8. CARITA NEO-BRUTALISM — EXPRESIVA, VIBRANTE Y PUNCHY */}
+      {/* Cejas Marcadas */}
+      <path d="M 67 105 Q 77 98 86 105" stroke="#000000" strokeWidth="4.2" strokeLinecap="round" fill="none" />
+      <path d="M 104 105 Q 113 98 123 105" stroke="#000000" strokeWidth="4.2" strokeLinecap="round" fill="none" />
+
+      {/* Ojo Izquierdo */}
+      <g className="neo-eye neo-eye-left">
+        <ellipse cx="77" cy="122" rx="8" ry="12" fill="#000000" />
+        <circle cx="80" cy="118.5" r="3.6" fill="#FFFFFF" />
+        <circle cx="74.5" cy="126.5" r="1.6" fill="#FFFFFF" />
+      </g>
+
+      {/* Ojo Derecho */}
+      <g className="neo-eye neo-eye-right">
+        <ellipse cx="113" cy="122" rx="8" ry="12" fill="#000000" />
+        <circle cx="116" cy="118.5" r="3.6" fill="#FFFFFF" />
+        <circle cx="110.5" cy="126.5" r="1.6" fill="#FFFFFF" />
+      </g>
+
+      {/* Mejillas Sonrosadas Comic */}
+      <ellipse cx="61" cy="132" rx="7.2" ry="5.2" fill="#FF3366" stroke="#000000" strokeWidth="2.2" />
+      <ellipse cx="129" cy="132" rx="7.2" ry="5.2" fill="#FF3366" stroke="#000000" strokeWidth="2.2" />
+
+      {/* Sonrisa Alegre Abierta */}
+      <path
+        d="M 83 131 C 83 148 107 148 107 131 Z"
+        fill="#000000"
+        stroke="#000000"
         strokeWidth="3.6"
         strokeLinejoin="round"
       />
-      {/* Lengüita sonriente */}
+      {/* Lengüita Rosa */}
       <path
-        d="M 88 139 C 91 144 99 144 102 139 C 100 135 90 135 88 139 Z"
+        d="M 87 138 C 90 144 100 144 103 138 C 101 135 89 135 87 138 Z"
         fill="#FF4572"
+        stroke="#000000"
+        strokeWidth="1.8"
+        strokeLinejoin="round"
       />
     </svg>
   </div>
@@ -185,96 +162,95 @@ const DuolingoFlame3D: React.FC<{ isIgniting?: boolean }> = ({ isIgniting = fals
 
 /**
  * ═════════════════════════════════════════════════════════════════════════════
- * FUEGUITO DORMILÓN 3D PARA RACHA 0 (100% Vector 3D Duolingo / 0% IA)
+ * FUEGUITO DORMILÓN NEO-BRUTALISM PARA RACHA 0
  * ═════════════════════════════════════════════════════════════════════════════
- * Descansa plácidamente sobre leños de fogata con relieve 3D, ojos
- * curvos soñando suavemente, burbujas zZz flotantes y mejillas tiernas.
+ * Tono slate frío con borde negro sólido de 4px, leños rústicos con bordes
+ * negros y badges estilo comic "Zzz" flotantes.
  */
-const DormantSleepingFlame3D: React.FC = () => (
+const NeoBrutalDormantFlame: React.FC = () => (
   <div className="dormant-flame-wrapper">
-    {/* Burbujas flotantes de sueño zZz */}
-    <div className="zzz-bubble zzz-1">z</div>
-    <div className="zzz-bubble zzz-2">Z</div>
-    <div className="zzz-bubble zzz-3">Z</div>
+    {/* Badges Flotantes Comic zZz Neo-brutalism */}
+    <div className="neo-zzz-badge zzz-1">z</div>
+    <div className="neo-zzz-badge zzz-2">Z</div>
+    <div className="neo-zzz-badge zzz-3">Z</div>
 
     <svg
       viewBox="0 0 190 210"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
       className="dormant-flame-svg"
-      aria-label="Fueguito Dormilón Racha 0"
+      aria-label="Fueguito Dormilón Racha 0 Neo-brutalism"
     >
-      <defs>
-        {/* Degradado gris azulado frío de la llama dormida */}
-        <linearGradient id="sleepyBodyGrad" x1="95" y1="25" x2="95" y2="175" gradientUnits="userSpaceOnUse">
-          <stop offset="0%" stopColor="#94A3B8" />
-          <stop offset="60%" stopColor="#64748B" />
-          <stop offset="100%" stopColor="#475569" />
-        </linearGradient>
+      {/* Sombra base sólida */}
+      <ellipse cx="95" cy="195" rx="55" ry="8" fill="#000000" />
 
-        <linearGradient id="sleepyInnerGrad" x1="95" y1="65" x2="95" y2="155" gradientUnits="userSpaceOnUse">
-          <stop offset="0%" stopColor="#CBD5E1" />
-          <stop offset="60%" stopColor="#94A3B8" />
-          <stop offset="100%" stopColor="#64748B" />
-        </linearGradient>
-
-        {/* Leños de madera con relieve 3D */}
-        <linearGradient id="woodLogGrad" x1="30" y1="160" x2="160" y2="185" gradientUnits="userSpaceOnUse">
-          <stop offset="0%" stopColor="#92400E" />
-          <stop offset="50%" stopColor="#B45309" />
-          <stop offset="100%" stopColor="#78350F" />
-        </linearGradient>
-
-        <radialGradient id="sleepyGroundShadow" cx="50%" cy="50%" r="50%">
-          <stop offset="0%" stopColor="#94A3B8" stopOpacity="0.5" />
-          <stop offset="70%" stopColor="#CBD5E1" stopOpacity="0.2" />
-          <stop offset="100%" stopColor="#E2E8F0" stopOpacity="0" />
-        </radialGradient>
-      </defs>
-
-      {/* Sombra base */}
-      <ellipse cx="95" cy="194" rx="58" ry="9" fill="url(#sleepyGroundShadow)" />
-
-      {/* Leños de fogata 3D con corte de anillos de árbol */}
-      <g className="campfire-logs-3d">
-        <rect x="30" y="162" width="130" height="20" rx="10" fill="url(#woodLogGrad)" stroke="#451A03" strokeWidth="2.6" />
+      {/* Leños de fogata con bordes negros */}
+      <g className="campfire-logs-neo">
+        <rect x="30" y="162" width="130" height="20" rx="10" fill="#92400E" stroke="#000000" strokeWidth="3.5" />
         {/* Anillo de madera izquierdo */}
-        <ellipse cx="40" cy="172" rx="7" ry="8" fill="#D97706" stroke="#78350F" strokeWidth="1.6" />
-        <circle cx="40" cy="172" r="3" fill="#92400E" />
+        <ellipse cx="40" cy="172" rx="7" ry="8" fill="#D97706" stroke="#000000" strokeWidth="2.2" />
+        <circle cx="40" cy="172" r="3" fill="#78350F" />
         {/* Anillo de madera derecho */}
-        <ellipse cx="150" cy="172" rx="7" ry="8" fill="#D97706" stroke="#78350F" strokeWidth="1.6" />
+        <ellipse cx="150" cy="172" rx="7" ry="8" fill="#D97706" stroke="#000000" strokeWidth="2.2" />
       </g>
 
-      {/* Bisel 3D inferior */}
+      {/* Sombra sólida de la llama */}
       <path
-        d="M 95 30 C 99 52 116 66 128 82 C 142 100 148 120 148 142 C 148 166 124 176 95 176 C 66 176 42 166 42 142 C 42 120 48 100 62 82 C 74 66 91 52 95 30 Z"
-        fill="#334155"
+        d="M 95 30 C 99 52 116 66 128 82 C 142 100 148 120 148 144 C 148 168 124 178 95 178 C 66 178 42 168 42 144 C 42 120 48 100 62 82 C 74 66 91 52 95 30 Z"
+        fill="#000000"
       />
 
-      {/* Cuerpo principal dormido */}
+      {/* Cuerpo principal dormido en azul grisáceo */}
       <path
         d="M 95 30 C 99 52 116 66 128 82 C 142 100 148 120 148 140 C 148 162 124 172 95 172 C 66 172 42 162 42 140 C 42 120 48 100 62 82 C 74 66 91 52 95 30 Z"
-        fill="url(#sleepyBodyGrad)"
-        stroke="#334155"
-        strokeWidth="3.4"
+        fill="#64748B"
+        stroke="#000000"
+        strokeWidth="4"
         strokeLinejoin="round"
       />
 
       {/* Vientre suave tenue */}
-      <ellipse cx="95" cy="132" rx="36" ry="28" fill="url(#sleepyInnerGrad)" />
+      <ellipse cx="95" cy="132" rx="36" ry="28" fill="#94A3B8" stroke="#000000" strokeWidth="3" />
 
-      {/* Ojos cerrados soñando plácidamente ( ˘ ◡ ˘ ) */}
-      <path d="M 70 120 Q 79 127 88 120" stroke="#CBD5E1" strokeWidth="3.6" strokeLinecap="round" fill="none" />
-      <path d="M 102 120 Q 111 127 120 120" stroke="#CBD5E1" strokeWidth="3.6" strokeLinecap="round" fill="none" />
+      {/* Ojos cerrados soñando plácidamente */}
+      <path d="M 70 120 Q 79 127 88 120" stroke="#000000" strokeWidth="4" strokeLinecap="round" fill="none" />
+      <path d="M 102 120 Q 111 127 120 120" stroke="#000000" strokeWidth="4" strokeLinecap="round" fill="none" />
 
       {/* Mejillas tiernas */}
-      <circle cx="62" cy="126" r="5" fill="#F472B6" fillOpacity="0.75" />
-      <circle cx="128" cy="126" r="5" fill="#F472B6" fillOpacity="0.75" />
+      <circle cx="62" cy="126" r="5.5" fill="#F472B6" stroke="#000000" strokeWidth="2" />
+      <circle cx="128" cy="126" r="5.5" fill="#F472B6" stroke="#000000" strokeWidth="2" />
 
       {/* Boquita tranquila roncando suave */}
-      <ellipse cx="95" cy="134" rx="4" ry="5.5" fill="#1E293B" />
+      <ellipse cx="95" cy="134" rx="4.5" ry="6" fill="#000000" />
     </svg>
   </div>
+);
+
+/**
+ * Chispa Comic Neo-brutalism ✦
+ */
+const ComicSpark: React.FC<{ size?: number; color?: string; style?: React.CSSProperties }> = ({
+  size = 20,
+  color = '#FFE600',
+  style
+}) => (
+  <svg
+    viewBox="0 0 40 40"
+    width={size}
+    height={size}
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+    style={style}
+    className="streak-neo-spark"
+  >
+    <path
+      d="M 20 2 Q 20 20 2 20 Q 20 20 20 38 Q 20 20 38 20 Q 20 20 20 2 Z"
+      fill={color}
+      stroke="#000000"
+      strokeWidth="2.8"
+      strokeLinejoin="round"
+    />
+  </svg>
 );
 
 export const StreakCelebrationModal: React.FC<StreakCelebrationModalProps> = ({
@@ -301,7 +277,7 @@ export const StreakCelebrationModal: React.FC<StreakCelebrationModalProps> = ({
   const hasPracticedToday = (user.streak?.lastActivityDate === todayStr && streakCount > 0) || isJustCompleted;
   const isAlreadyClaimedMode = !isZeroStreak && hasAlreadySeenToday && !isJustCompleted;
 
-  // Secuencia de animación de júbilo
+  // Secuencia de animación de júbilo neo-brutal
   const [animationPhase, setAnimationPhase] = useState<'jump' | 'ignite' | 'ready'>(
     isAlreadyClaimedMode ? 'ignite' : isZeroStreak ? 'ready' : 'jump'
   );
@@ -345,14 +321,14 @@ export const StreakCelebrationModal: React.FC<StreakCelebrationModalProps> = ({
     setAnimationPhase('jump');
     setDisplayCount(startCount);
 
-    // Salto de júbilo con confetti y grito
+    // Salto de júbilo con confetti neo-brutal y grito
     const timerYujuu = setTimeout(() => {
       soundService.playYujuu();
       confetti({
-        particleCount: 50,
-        spread: 65,
+        particleCount: 55,
+        spread: 70,
         origin: { y: 0.38 },
-        colors: ['#FF9600', '#FFD200', '#58CC02', '#38BDF8']
+        colors: ['#000000', '#FFE600', '#FF5722', '#22C55E', '#38BDF8', '#FF3366']
       });
     }, 320);
 
@@ -362,10 +338,10 @@ export const StreakCelebrationModal: React.FC<StreakCelebrationModalProps> = ({
       soundService.playStreak();
 
       confetti({
-        particleCount: 90,
-        spread: 90,
+        particleCount: 100,
+        spread: 95,
         origin: { y: 0.44 },
-        colors: ['#FF7A00', '#FF9600', '#FFD200', '#FFA800', '#22C55E']
+        colors: ['#000000', '#FFE600', '#FF6D00', '#FF3B30', '#22C55E', '#FF3366']
       });
 
       setDisplayCount(targetStreak);
@@ -387,32 +363,19 @@ export const StreakCelebrationModal: React.FC<StreakCelebrationModalProps> = ({
    * ═══════════════════════════════════════════════════════════════════════════
    * CALENDARIO DINÁMICO DE RACHA (7 DÍAS A PARTIR DEL INICIO DE LA RACHA)
    * ═══════════════════════════════════════════════════════════════════════════
-   * Regla Pedagógica solicitada:
-   * El calendario debe iniciar desde donde empezó la racha activa y mostrar los
-   * días consecutivos para que no parezca que la racha empezó en lunes.
-   *
-   * Ejemplo: Si hoy es lunes, pero ayer era domingo y tenía racha:
-   * Debe mostrar: Dom (ayer 🔥), Lun (hoy 🔥), Mar, Mié, Jue, Vie, Sáb.
    */
   const calendarDays = useMemo(() => {
     let startDayOffset = 0;
 
     if (isZeroStreak) {
-      // Sin racha: inicia hoy
       startDayOffset = 0;
     } else if (hasPracticedToday || isJustCompleted) {
-      // Hoy está activo:
-      // Si streak = 1 -> empezó hoy (offset 0)
-      // Si streak = 2 -> empezó ayer (offset -1)
-      // Si streak = 3 -> empezó hace 2 días (offset -2)
       if (streakCount <= 6) {
         startDayOffset = -(streakCount - 1);
       } else {
-        // Racha de 7 o más: muestra los 7 días consecutivos que culminan hoy (+ offset paginado)
         startDayOffset = -6 + weekOffset * 7;
       }
     } else {
-      // Racha activa en días anteriores, pero hoy aún no ha practicado:
       if (streakCount <= 5) {
         startDayOffset = -streakCount;
       } else {
@@ -429,7 +392,6 @@ export const StreakCelebrationModal: React.FC<StreakCelebrationModalProps> = ({
       const isPast = d < todayDate;
       const isFuture = d > todayDate;
 
-      // Calcular si este día específico formaba parte de la racha activa
       let isActive = false;
       let isPendingToday = false;
 
@@ -441,7 +403,6 @@ export const StreakCelebrationModal: React.FC<StreakCelebrationModalProps> = ({
           isPendingToday = true;
         }
       } else if (isPast) {
-        // Días pasados activos dentro de la longitud de la racha
         const diffDaysFromToday = Math.round((todayDate.getTime() - d.getTime()) / (1000 * 60 * 60 * 24));
         if (hasPracticedToday) {
           isActive = diffDaysFromToday < streakCount;
@@ -450,13 +411,11 @@ export const StreakCelebrationModal: React.FC<StreakCelebrationModalProps> = ({
         }
       }
 
-      // Nombre del día en español
-      const dayJsIdx = d.getDay(); // 0 = Dom, 1 = Lun...
+      const dayJsIdx = d.getDay();
       const dayShortName = SPANISH_DAYS_SHORT[dayJsIdx];
       const dayLetter = SPANISH_DAYS_LETTER[dayJsIdx];
       const dayNum = d.getDate();
 
-      // Etiqueta de contexto relativo
       let relativeText = '';
       if (isToday) relativeText = 'Hoy';
       else if (Math.round((todayDate.getTime() - d.getTime()) / 86400000) === 1) relativeText = 'Ayer';
@@ -523,7 +482,7 @@ export const StreakCelebrationModal: React.FC<StreakCelebrationModalProps> = ({
           height: 100vh;
           height: 100dvh;
           z-index: 999999;
-          background: rgba(15, 23, 42, 0.64);
+          background: rgba(15, 23, 42, 0.72);
           backdrop-filter: blur(8px);
           -webkit-backdrop-filter: blur(8px);
           display: flex;
@@ -538,30 +497,30 @@ export const StreakCelebrationModal: React.FC<StreakCelebrationModalProps> = ({
           to { opacity: 1; }
         }
 
-        /* ─── TARJETA BLANCA 3D ESTILO DUOLINGO (0% NEGRO, 100% APP THEME) ─── */
+        /* ─── TARJETA NEO-BRUTALISM: BORDES NEGROS SÓLIDOS Y SOMBRA HARD OFFSET ─── */
         .streak-modal-card {
           position: relative;
           width: 100%;
           max-width: 440px;
           max-height: min(92dvh, 740px);
           background: #FFFFFF;
-          border: 2.5px solid #E2E8F0;
-          border-bottom: 6px solid #CBD5E1;
-          border-radius: clamp(22px, 4.5vw, 30px);
-          box-shadow: 0 20px 50px rgba(15, 23, 42, 0.18), 0 4px 12px rgba(0, 0, 0, 0.04);
+          border: 3.5px solid #000000;
+          border-radius: clamp(20px, 4.5vw, 26px);
+          box-shadow: 7px 7px 0px #000000;
           display: flex;
           flex-direction: column;
           overflow: hidden;
-          color: #0F172A;
-          animation: streakCardPop 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+          color: #000000;
+          animation: streakNeoPop 0.38s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
         }
 
-        @keyframes streakCardPop {
-          0% { opacity: 0; transform: scale(0.92) translateY(16px); }
-          100% { opacity: 1; transform: scale(1) translateY(0); }
+        @keyframes streakNeoPop {
+          0% { opacity: 0; transform: scale(0.85) translateY(24px) rotate(-1deg); }
+          70% { opacity: 1; transform: scale(1.02) translateY(-4px) rotate(0.5deg); }
+          100% { opacity: 1; transform: scale(1) translateY(0) rotate(0deg); }
         }
 
-        /* Botón de cierre X estilo Duolingo 3D */
+        /* Botón de cierre X Neo-brutalism */
         .streak-top-close-btn {
           position: absolute;
           top: 14px;
@@ -569,28 +528,29 @@ export const StreakCelebrationModal: React.FC<StreakCelebrationModalProps> = ({
           width: 38px;
           height: 38px;
           background: #FFFFFF;
-          border: 2px solid #E2E8F0;
-          border-bottom: 3.5px solid #CBD5E1;
+          border: 2.5px solid #000000;
           border-radius: 12px;
+          box-shadow: 3px 3px 0px #000000;
           display: flex;
           align-items: center;
           justify-content: center;
-          color: #64748B;
+          color: #000000;
           cursor: pointer;
           z-index: 30;
-          transition: transform 0.08s ease, color 0.12s ease, border-color 0.12s ease;
+          transition: transform 0.1s ease, box-shadow 0.1s ease, background 0.1s ease;
         }
         .streak-top-close-btn:hover {
-          color: #0F172A;
-          border-color: #CBD5E1;
-          background: #F8FAFC;
+          color: #000000;
+          background: #FEE2E2;
+          transform: translate(-1px, -1px);
+          box-shadow: 4px 4px 0px #000000;
         }
         .streak-top-close-btn:active {
-          transform: translateY(2px);
-          border-bottom-width: 2px;
+          transform: translate(2px, 2px);
+          box-shadow: 1px 1px 0px #000000;
         }
 
-        /* Cuerpo con scroll interno limpio si la pantalla es baja */
+        /* Cuerpo con scroll interno limpio */
         .streak-modal-body {
           padding: clamp(16px, 2.6vh, 22px) clamp(14px, 3.5vw, 20px) clamp(16px, 2.8vh, 22px);
           overflow-y: auto;
@@ -601,7 +561,7 @@ export const StreakCelebrationModal: React.FC<StreakCelebrationModalProps> = ({
           width: 100%;
         }
 
-        /* ─── ESCENARIO HERO DEL FUEGUITO 3D ─── */
+        /* ─── ESCENARIO HERO NEO-BRUTALISM ─── */
         .streak-flame-hero-stage {
           position: relative;
           display: flex;
@@ -609,40 +569,54 @@ export const StreakCelebrationModal: React.FC<StreakCelebrationModalProps> = ({
           align-items: center;
           justify-content: center;
           width: 100%;
-          height: clamp(140px, 24vh, 180px);
-          margin-bottom: 4px;
+          height: clamp(140px, 24vh, 185px);
+          margin-bottom: 6px;
         }
 
-        /* Resplandor cálido de fondo sobre blanco */
-        .streak-ambient-glow {
+        /* Comic Action Starburst rotatorio de fondo */
+        .streak-neo-starburst {
           position: absolute;
-          width: clamp(190px, 52vw, 260px);
-          height: clamp(190px, 52vw, 260px);
-          background: radial-gradient(circle, rgba(255, 150, 0, 0.18) 0%, rgba(255, 210, 0, 0.08) 50%, transparent 72%);
-          border-radius: 50%;
+          width: clamp(180px, 48vw, 235px);
+          height: clamp(180px, 48vw, 235px);
           pointer-events: none;
           z-index: 0;
-          transition: transform 0.6s ease, opacity 0.6s ease;
+          animation: starburstSpin 24s linear infinite;
+          filter: drop-shadow(4px 4px 0px #000000);
+        }
+        @keyframes starburstSpin {
+          0% { transform: rotate(0deg) scale(0.96); }
+          50% { transform: rotate(180deg) scale(1.04); }
+          100% { transform: rotate(360deg) scale(0.96); }
         }
 
-        /* Chispas flotantes que suben suavemente */
-        .streak-ambient-spark {
+        .streak-neo-starburst.ignite-blast {
+          animation: starburstBlast 0.65s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards, starburstSpin 24s linear infinite 0.65s;
+        }
+        @keyframes starburstBlast {
+          0% { transform: scale(0.3) rotate(0deg); opacity: 0; }
+          60% { transform: scale(1.22) rotate(40deg); opacity: 1; }
+          100% { transform: scale(1) rotate(60deg); opacity: 1; }
+        }
+
+        /* Chispas flotantes Comic Neo-brutalism */
+        .streak-neo-spark {
           position: absolute;
-          width: 7px;
-          height: 7px;
-          background: #FFD23F;
-          border-radius: 50%;
-          box-shadow: 0 0 8px #FF7A00;
+          display: flex;
+          align-items: center;
+          justify-content: center;
           pointer-events: none;
-          animation: sparkFloatUp 2.8s ease-in infinite;
+          animation: neoSparkFloat 2.4s ease-in-out infinite;
+          filter: drop-shadow(2px 2px 0px #000000);
+          z-index: 12;
         }
-        @keyframes sparkFloatUp {
-          0% { transform: translateY(0) scale(0.6); opacity: 0; }
-          20% { opacity: 0.9; }
-          100% { transform: translateY(-110px) scale(1.3); opacity: 0; }
+        @keyframes neoSparkFloat {
+          0% { transform: translateY(0) scale(0.5) rotate(0deg); opacity: 0; }
+          25% { opacity: 1; transform: translateY(-20px) scale(1.15) rotate(15deg); }
+          75% { opacity: 1; transform: translateY(-60px) scale(1) rotate(-10deg); }
+          100% { transform: translateY(-95px) scale(0.4) rotate(25deg); opacity: 0; }
         }
 
-        .duo-flame-wrapper {
+        .neo-flame-wrapper {
           position: relative;
           width: clamp(140px, 34vw, 175px);
           height: 100%;
@@ -652,62 +626,63 @@ export const StreakCelebrationModal: React.FC<StreakCelebrationModalProps> = ({
           z-index: 10;
         }
 
-        .duo-flame-svg {
+        .neo-flame-svg {
           width: 100%;
           height: 100%;
           object-fit: contain;
-          filter: drop-shadow(0 10px 18px rgba(234, 88, 12, 0.32));
-          animation: flameIdleFloat 2.6s ease-in-out infinite alternate;
+          filter: drop-shadow(3px 5px 0px #000000);
+          animation: flameNeoIdle 2.6s ease-in-out infinite alternate;
           transform-origin: 50% 90%;
         }
 
-        @keyframes flameIdleFloat {
-          0% { transform: translateY(0) scale(1); }
-          50% { transform: translateY(-7px) scale(1.02, 0.98); }
-          100% { transform: translateY(0) scale(0.99, 1.01); }
+        @keyframes flameNeoIdle {
+          0% { transform: translateY(0) rotate(0deg) scale(1); }
+          25% { transform: translateY(-8px) rotate(-2deg) scale(1.02, 0.98); }
+          75% { transform: translateY(-4px) rotate(2deg) scale(0.98, 1.02); }
+          100% { transform: translateY(0) rotate(0deg) scale(1); }
         }
 
-        .duo-flame-arms {
+        .neo-flame-arms {
           transform-origin: 50% 120px;
-          animation: flameArmsCelebrate 1.8s ease-in-out infinite alternate;
+          animation: flameNeoArmsCelebrate 1.8s ease-in-out infinite alternate;
         }
-        @keyframes flameArmsCelebrate {
-          0% { transform: rotate(-3deg); }
-          100% { transform: rotate(3deg); }
+        @keyframes flameNeoArmsCelebrate {
+          0% { transform: rotate(-4deg); }
+          100% { transform: rotate(4deg); }
         }
 
         .ignite-pop {
-          animation: flameIgnitePop 0.65s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+          animation: flameNeoIgnitePop 0.68s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
         }
-        @keyframes flameIgnitePop {
-          0% { transform: scale(0.3) translateY(35px); opacity: 0; }
-          65% { transform: scale(1.15) translateY(-12px); opacity: 1; }
-          85% { transform: scale(0.96) translateY(2px); }
-          100% { transform: scale(1) translateY(0); }
+        @keyframes flameNeoIgnitePop {
+          0% { transform: scale(0.35) translateY(40px) rotate(-6deg); opacity: 0; }
+          50% { transform: scale(1.22) translateY(-16px) rotate(4deg); opacity: 1; }
+          75% { transform: scale(0.95) translateY(2px) rotate(-2deg); }
+          100% { transform: scale(1) translateY(0) rotate(0deg); }
         }
 
-        /* Parpadeo Ojos Duolingo 3D */
-        .duo-eye {
-          animation: duoEyeBlink 3.8s infinite;
+        /* Parpadeo Ojos Comic */
+        .neo-eye {
+          animation: neoEyeBlink 3.8s infinite;
           transform-origin: 50% 122px;
         }
-        @keyframes duoEyeBlink {
+        @keyframes neoEyeBlink {
           0%, 46%, 50%, 100% { transform: scaleY(1); }
           48% { transform: scaleY(0.08); }
         }
 
-        /* Sombra de Suelo */
+        /* Sombra de Suelo Neo-brutalism */
         .flame-ground-shadow {
-          animation: shadowBreathe 2.6s ease-in-out infinite alternate;
-          transform-origin: 95px 194px;
+          animation: shadowNeoBreathe 2.6s ease-in-out infinite alternate;
+          transform-origin: 95px 195px;
         }
-        @keyframes shadowBreathe {
-          0% { transform: scale(1); opacity: 0.65; }
-          50% { transform: scale(0.85); opacity: 0.4; }
-          100% { transform: scale(1); opacity: 0.65; }
+        @keyframes shadowNeoBreathe {
+          0% { transform: scale(1); opacity: 0.9; }
+          50% { transform: scale(0.82); opacity: 0.6; }
+          100% { transform: scale(1); opacity: 0.9; }
         }
 
-        /* ─── DORMANT FLAME (DÍA 0) ─── */
+        /* ─── DORMANT FLAME NEO-BRUTALISM (DÍA 0) ─── */
         .dormant-flame-wrapper {
           position: relative;
           width: clamp(135px, 32vw, 165px);
@@ -722,48 +697,79 @@ export const StreakCelebrationModal: React.FC<StreakCelebrationModalProps> = ({
           width: 100%;
           height: 100%;
           object-fit: contain;
-          animation: dormantGentleBreathe 3s ease-in-out infinite alternate;
+          animation: dormantNeoBreathe 3s ease-in-out infinite alternate;
           transform-origin: 50% 85%;
-          filter: drop-shadow(0 6px 14px rgba(71, 85, 105, 0.22));
+          filter: drop-shadow(3px 4px 0px #000000);
         }
-        @keyframes dormantGentleBreathe {
+        @keyframes dormantNeoBreathe {
           0% { transform: scale(1); }
           100% { transform: scale(1.03, 0.97); }
         }
 
-        .zzz-bubble {
+        /* Badges flotantes Comic zZz */
+        .neo-zzz-badge {
           position: absolute;
-          color: #64748B;
+          background: #FFFFFF;
+          color: #000000;
           font-weight: 900;
+          border: 2.5px solid #000000;
+          box-shadow: 2.5px 2.5px 0px #000000;
+          border-radius: 8px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
           pointer-events: none;
-          animation: zFloatUp 2.5s ease-in-out infinite;
+          animation: neoZFloat 2.6s ease-in-out infinite;
         }
-        .zzz-1 { top: 22px; right: 20px; font-size: 0.95rem; animation-delay: 0s; }
-        .zzz-2 { top: 6px; right: 10px; font-size: 1.15rem; animation-delay: 0.8s; }
-        .zzz-3 { top: -10px; right: 0px; font-size: 1.4rem; animation-delay: 1.6s; }
-
-        @keyframes zFloatUp {
-          0% { transform: translate(0, 0) scale(0.6); opacity: 0; }
-          40% { opacity: 0.85; }
-          100% { transform: translate(16px, -22px) scale(1.15); opacity: 0; }
+        .zzz-1 {
+          top: 22px;
+          right: 20px;
+          width: 24px;
+          height: 24px;
+          font-size: 0.85rem;
+          animation-delay: 0s;
+        }
+        .zzz-2 {
+          top: 4px;
+          right: 8px;
+          width: 28px;
+          height: 28px;
+          font-size: 1.05rem;
+          animation-delay: 0.8s;
+        }
+        .zzz-3 {
+          top: -14px;
+          right: -2px;
+          width: 32px;
+          height: 32px;
+          font-size: 1.25rem;
+          animation-delay: 1.6s;
         }
 
-        /* ─── NÚMERO GIGANTE Y TÍTULOS DUOLINGO ─── */
+        @keyframes neoZFloat {
+          0% { transform: translate(0, 0) scale(0.6) rotate(0deg); opacity: 0; }
+          30% { opacity: 1; transform: translate(6px, -8px) scale(1) rotate(5deg); }
+          75% { opacity: 1; transform: translate(14px, -18px) scale(1.08) rotate(-4deg); }
+          100% { transform: translate(22px, -28px) scale(1.15) rotate(8deg); opacity: 0; }
+        }
+
+        /* ─── NÚMERO GIGANTE Y TÍTULOS NEO-BRUTALISM ─── */
         .streak-giant-box {
           display: flex;
           flex-direction: column;
           align-items: center;
           justify-content: center;
-          margin-bottom: 4px;
+          margin-bottom: 6px;
         }
 
         .streak-giant-number {
-          font-size: clamp(3rem, 9vw, 4rem);
+          font-size: clamp(3.2rem, 9.5vw, 4.3rem);
           font-weight: 900;
           line-height: 0.95;
-          letter-spacing: -0.03em;
-          color: #FF9600;
-          text-shadow: 0 4.5px 0 #C2410C;
+          letter-spacing: -0.02em;
+          color: #FF5400;
+          text-shadow: 4px 4px 0px #000000;
+          -webkit-text-stroke: 1.8px #000000;
           margin: 0;
           display: flex;
           align-items: baseline;
@@ -772,41 +778,65 @@ export const StreakCelebrationModal: React.FC<StreakCelebrationModalProps> = ({
 
         .streak-giant-number.zero {
           color: #94A3B8;
-          text-shadow: 0 4.5px 0 #64748B;
+          text-shadow: 4px 4px 0px #000000;
+          -webkit-text-stroke: 1.8px #000000;
         }
 
-        .streak-giant-title {
-          font-size: clamp(1.15rem, 3.6vw, 1.4rem);
+        .streak-giant-number.igniting {
+          animation: neoNumberSlam 0.55s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+        @keyframes neoNumberSlam {
+          0% { transform: scale(0.4) translateY(24px); opacity: 0; }
+          60% { transform: scale(1.3) translateY(-10px); }
+          80% { transform: scale(0.95) translateY(2px); }
+          100% { transform: scale(1) translateY(0); opacity: 1; }
+        }
+
+        /* Badge Sticker del Título */
+        .streak-giant-title-badge {
+          display: inline-flex;
+          align-items: center;
+          gap: 6px;
+          background: #FFE600;
+          color: #000000;
+          border: 2.5px solid #000000;
+          box-shadow: 3px 3px 0px #000000;
+          border-radius: 12px;
+          padding: 5px 14px;
+          font-size: clamp(0.95rem, 3.2vw, 1.15rem);
           font-weight: 900;
-          letter-spacing: 0.03em;
+          letter-spacing: 0.04em;
           text-transform: uppercase;
-          color: #0F172A;
-          margin: 4px 0 2px;
+          margin: 8px 0 6px;
           text-align: center;
+        }
+
+        .streak-giant-title-badge.zero {
+          background: #E2E8F0;
         }
 
         .streak-subtitle-desc {
-          font-size: clamp(0.78rem, 2.3vw, 0.86rem);
-          color: #64748B;
-          font-weight: 700;
+          font-size: clamp(0.8rem, 2.4vw, 0.88rem);
+          color: #0F172A;
+          font-weight: 800;
           text-align: center;
-          max-width: 340px;
+          max-width: 350px;
           line-height: 1.35;
-          margin: 0 0 10px;
+          margin: 0 0 12px;
         }
 
-        /* ─── TARJETA DUOLINGO 3D: RASTREADOR SEMANAL (7 DÍAS DINÁMICOS) ─── */
+        /* ─── TARJETA NEO-BRUTALISM: RASTREADOR SEMANAL (7 DÍAS) ─── */
         .streak-calendar-card {
           width: 100%;
-          background: #F8FAFC;
-          border: 2px solid #E2E8F0;
-          border-bottom: 4px solid #CBD5E1;
-          border-radius: 20px;
-          padding: 10px 8px 8px;
-          margin-bottom: 10px;
+          background: #FFFDF0;
+          border: 2.5px solid #000000;
+          box-shadow: 4px 4px 0px #000000;
+          border-radius: 18px;
+          padding: 10px 10px 8px;
+          margin-bottom: 12px;
           display: flex;
           flex-direction: column;
-          gap: 6px;
+          gap: 8px;
         }
 
         .streak-calendar-header {
@@ -814,55 +844,60 @@ export const StreakCelebrationModal: React.FC<StreakCelebrationModalProps> = ({
           align-items: center;
           justify-content: space-between;
           padding: 0 4px 4px;
-          border-bottom: 1.5px solid #E2E8F0;
+          border-bottom: 2px solid #000000;
         }
 
         .streak-cal-title {
-          font-size: 0.68rem;
+          font-size: 0.72rem;
           font-weight: 900;
-          color: #64748B;
+          color: #000000;
           letter-spacing: 0.05em;
           text-transform: uppercase;
           display: flex;
           align-items: center;
-          gap: 4px;
+          gap: 6px;
         }
 
         .streak-cal-nav {
           display: flex;
           align-items: center;
-          gap: 4px;
+          gap: 6px;
         }
 
         .streak-nav-btn {
-          width: 24px;
-          height: 24px;
+          width: 26px;
+          height: 26px;
           border-radius: 8px;
           background: #FFFFFF;
-          border: 1.5px solid #CBD5E1;
-          border-bottom: 2.5px solid #94A3B8;
+          border: 2px solid #000000;
+          box-shadow: 2px 2px 0px #000000;
           display: flex;
           align-items: center;
           justify-content: center;
-          color: #475569;
+          color: #000000;
           cursor: pointer;
-          transition: transform 0.08s ease;
+          transition: transform 0.08s ease, box-shadow 0.08s ease, background 0.1s ease;
         }
-        .streak-nav-btn:active {
-          transform: translateY(1.5px);
-          border-bottom-width: 1.5px;
+        .streak-nav-btn:hover:not(:disabled) {
+          background: #FFE600;
+          transform: translate(-1px, -1px);
+          box-shadow: 2.5px 2.5px 0px #000000;
+        }
+        .streak-nav-btn:active:not(:disabled) {
+          transform: translate(1.5px, 1.5px);
+          box-shadow: 0.5px 0.5px 0px #000000;
         }
         .streak-nav-btn:disabled {
-          opacity: 0.4;
+          opacity: 0.35;
           cursor: not-allowed;
-          transform: none;
+          box-shadow: none;
         }
 
         .streak-days-track {
           display: flex;
           align-items: center;
           justify-content: space-between;
-          gap: 3px;
+          gap: 4px;
           width: 100%;
         }
 
@@ -870,7 +905,7 @@ export const StreakCelebrationModal: React.FC<StreakCelebrationModalProps> = ({
           display: flex;
           flex-direction: column;
           align-items: center;
-          gap: 3px;
+          gap: 4px;
           flex: 1;
         }
 
@@ -879,94 +914,102 @@ export const StreakCelebrationModal: React.FC<StreakCelebrationModalProps> = ({
           font-weight: 900;
           letter-spacing: 0.02em;
           text-transform: uppercase;
-          color: #64748B;
+          color: #475569;
         }
         .duo-day-label.today {
-          color: #EA580C;
-          font-weight: 900;
+          color: #000000;
+          background: #FFE600;
+          border: 1.5px solid #000000;
+          border-radius: 6px;
+          padding: 1px 4px;
+          box-shadow: 1.5px 1.5px 0px #000000;
         }
 
         .duo-day-coin-3d {
           width: clamp(33px, 8.8vw, 38px);
           height: clamp(33px, 8.8vw, 38px);
-          border-radius: 50%;
+          border-radius: 12px;
           display: flex;
           align-items: center;
           justify-content: center;
-          font-size: 0.8rem;
+          font-size: 0.82rem;
           font-weight: 900;
-          transition: transform 0.15s ease;
+          transition: transform 0.15s ease, box-shadow 0.15s ease;
         }
 
-        /* Moneda Activa Hoy (Celebración dorada pulsante) */
+        /* Moneda Activa Hoy (Celebración dorada / naranja con pulso neo-brutal) */
         .coin-ignited-today {
-          background: linear-gradient(180deg, #FFC800 0%, #FF8200 100%);
-          border: 2px solid #FFF7ED;
-          box-shadow: 0 3.5px 0 #C2410C, 0 4px 12px rgba(255, 130, 0, 0.4);
+          background: #FF6D00;
+          border: 2.5px solid #000000;
+          box-shadow: 3.5px 3.5px 0px #000000;
           color: #FFFFFF;
-          transform: scale(1.08);
+          animation: neoCoinIgnitedPulse 1.6s ease-in-out infinite;
+        }
+        @keyframes neoCoinIgnitedPulse {
+          0%, 100% { transform: scale(1.08) rotate(0deg); }
+          50% { transform: scale(1.18) rotate(3deg); }
         }
 
         /* Moneda de Racha Pasada Activa */
         .coin-active-past {
-          background: linear-gradient(180deg, #FF9600 0%, #EA580C 100%);
-          border: 2px solid #FED7AA;
-          box-shadow: 0 3px 0 #9A3412;
+          background: #FFA000;
+          border: 2px solid #000000;
+          box-shadow: 2.5px 2.5px 0px #000000;
           color: #FFFFFF;
         }
 
         /* Moneda Hoy Pendiente (Día 0 o lección aún no completada) */
         .coin-today-pending {
           background: #FFF7ED;
-          border: 2px dashed #FF9600;
-          box-shadow: 0 3px 0 #FED7AA;
+          border: 2px dashed #000000;
+          box-shadow: 2px 2px 0px #000000;
           color: #EA580C;
-          animation: coinPendingPulse 1.8s ease-in-out infinite;
+          animation: neoCoinPendingPulse 1.8s ease-in-out infinite;
         }
-        @keyframes coinPendingPulse {
+        @keyframes neoCoinPendingPulse {
           0%, 100% { transform: scale(1); }
-          50% { transform: scale(1.08); box-shadow: 0 0 10px rgba(255, 150, 0, 0.45); }
+          50% { transform: scale(1.08); background: #FEF08A; }
         }
 
-        /* Moneda Inactiva / Días Futuros (Clean White 3D) */
+        /* Moneda Inactiva / Días Futuros */
         .coin-inactive {
-          background: #FFFFFF;
-          border: 2px solid #E2E8F0;
-          box-shadow: 0 2.5px 0 #CBD5E1;
-          color: #94A3B8;
+          background: #F1F5F9;
+          border: 2px solid #000000;
+          box-shadow: 2px 2px 0px #CBD5E1;
+          color: #64748B;
         }
 
         .duo-day-sub {
           font-size: clamp(0.58rem, 1.8vw, 0.66rem);
-          font-weight: 800;
-          color: #94A3B8;
+          font-weight: 900;
+          color: #64748B;
         }
         .duo-day-sub.today {
-          color: #EA580C;
+          color: #000000;
           font-weight: 900;
         }
 
-        /* ─── TARJETA PROTECTOR DE RACHA / STREAK FREEZE DUOLINGO 3D ─── */
+        /* ─── TARJETA PROTECTOR DE RACHA NEO-BRUTALISM ─── */
         .duo-freeze-pill-3d {
           width: 100%;
-          background: #F0F9FF;
-          border: 2px solid #BAE6FD;
-          border-bottom: 3.5px solid #7DD3FC;
+          background: #E0F2FE;
+          border: 2.5px solid #000000;
+          box-shadow: 3.5px 3.5px 0px #000000;
           border-radius: 16px;
           padding: 8px 12px;
           display: flex;
           align-items: center;
           gap: 10px;
-          margin-bottom: 8px;
+          margin-bottom: 12px;
         }
 
         .duo-freeze-icon-box {
-          width: 32px;
-          height: 32px;
+          width: 34px;
+          height: 34px;
           border-radius: 10px;
           background: #0284C7;
-          border: 1.5px solid #70CFF8;
-          box-shadow: 0 2.5px 0 #0369A1;
+          border: 2px solid #000000;
+          box-shadow: 2px 2px 0px #000000;
           display: flex;
           align-items: center;
           justify-content: center;
@@ -981,18 +1024,18 @@ export const StreakCelebrationModal: React.FC<StreakCelebrationModalProps> = ({
         }
 
         .duo-freeze-title {
-          font-size: 0.8rem;
+          font-size: 0.82rem;
           font-weight: 900;
-          color: #0369A1;
+          color: #000000;
         }
 
         .duo-freeze-sub {
-          font-size: 0.68rem;
+          font-size: 0.7rem;
           font-weight: 700;
-          color: #0284C7;
+          color: #0369A1;
         }
 
-        /* ─── BOTONES DUOLINGO 3D AUTÉNTICOS ─── */
+        /* ─── BOTONES NEO-BRUTALISM ─── */
         .streak-bottom-actions {
           width: 100%;
           display: flex;
@@ -1004,30 +1047,35 @@ export const StreakCelebrationModal: React.FC<StreakCelebrationModalProps> = ({
           width: 50px;
           height: 50px;
           background: #FFFFFF;
-          border: 2px solid #E2E8F0;
-          border-bottom: 4px solid #CBD5E1;
+          border: 2.5px solid #000000;
+          box-shadow: 4px 4px 0px #000000;
           border-radius: 16px;
-          color: #EA580C;
+          color: #000000;
           display: flex;
           align-items: center;
           justify-content: center;
           cursor: pointer;
           flex-shrink: 0;
-          transition: transform 0.08s ease, border-bottom-width 0.08s ease;
+          transition: transform 0.08s ease, box-shadow 0.08s ease, background 0.1s ease;
+        }
+        .btn-duo-share-3d:hover {
+          background: #FEF08A;
+          transform: translate(-1px, -1px);
+          box-shadow: 5px 5px 0px #000000;
         }
         .btn-duo-share-3d:active {
-          transform: translateY(2.5px);
-          border-bottom-width: 2px;
+          transform: translate(2px, 2px);
+          box-shadow: 2px 2px 0px #000000;
         }
 
         .btn-duo-green-3d {
           flex: 1;
           height: 50px;
-          background: #58CC02;
-          border: 2px solid #58CC02;
-          border-bottom: 5px solid #46A302;
+          background: #22C55E;
+          border: 3px solid #000000;
+          box-shadow: 4px 4px 0px #000000;
           border-radius: 16px;
-          color: #FFFFFF;
+          color: #000000;
           font-size: clamp(0.95rem, 3.2vw, 1.05rem);
           font-weight: 900;
           letter-spacing: 0.05em;
@@ -1037,18 +1085,20 @@ export const StreakCelebrationModal: React.FC<StreakCelebrationModalProps> = ({
           align-items: center;
           justify-content: center;
           gap: 8px;
-          transition: transform 0.08s ease, border-bottom-width 0.08s ease, filter 0.15s ease;
+          transition: transform 0.08s ease, box-shadow 0.08s ease, filter 0.15s ease;
         }
         .btn-duo-green-3d:hover {
-          filter: brightness(1.04);
+          filter: brightness(1.05);
+          transform: translate(-1px, -1px);
+          box-shadow: 5px 5px 0px #000000;
         }
         .btn-duo-green-3d:active {
-          transform: translateY(3px);
-          border-bottom-width: 2px;
+          transform: translate(2px, 2px);
+          box-shadow: 2px 2px 0px #000000;
         }
       `}</style>
 
-      {/* Tarjeta Centrada Duolingo 3D */}
+      {/* Tarjeta Centrada Neo-brutalism */}
       <div className="streak-modal-card">
         {/* Botón X superior derecho para cerrar */}
         <button
@@ -1061,49 +1111,64 @@ export const StreakCelebrationModal: React.FC<StreakCelebrationModalProps> = ({
           type="button"
           aria-label="Cerrar pantalla de racha"
         >
-          <X size={20} strokeWidth={2.8} />
+          <X size={20} strokeWidth={3} />
         </button>
 
         <div className="streak-modal-body">
-          {/* ═══ ESCENARIO HERO DEL FUEGUITO 3D ═══ */}
+          {/* ═══ ESCENARIO HERO NEO-BRUTALISM ═══ */}
           <div className="streak-flame-hero-stage">
-            {/* Resplandor cálido de fondo */}
+            {/* Comic Starburst animado detrás del personaje */}
             {!isZeroStreak && (
               <>
-                <div
-                  className="streak-ambient-glow"
-                  style={{
-                    opacity: animationPhase !== 'jump' ? 1 : 0.45,
-                    transform: `scale(${animationPhase !== 'jump' ? '1.08' : '0.88'})`
-                  }}
-                />
-                <div className="streak-ambient-spark" style={{ left: '22%', bottom: '38%', animationDelay: '0s' }} />
-                <div className="streak-ambient-spark" style={{ left: '76%', bottom: '42%', animationDelay: '0.9s' }} />
-                <div className="streak-ambient-spark" style={{ left: '50%', bottom: '32%', animationDelay: '1.7s' }} />
+                <svg
+                  viewBox="0 0 200 200"
+                  className={`streak-neo-starburst ${animationPhase === 'ignite' ? 'ignite-blast' : ''}`}
+                  aria-hidden="true"
+                >
+                  <polygon
+                    points={STARBURST_POINTS}
+                    fill="#FFE600"
+                    stroke="#000000"
+                    strokeWidth="3.5"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+
+                {/* Chispas flotantes Comic ✦ */}
+                <ComicSpark size={22} color="#FFE600" style={{ left: '16%', bottom: '38%', animationDelay: '0s' }} />
+                <ComicSpark size={18} color="#FF5722" style={{ left: '80%', bottom: '44%', animationDelay: '0.8s' }} />
+                <ComicSpark size={24} color="#FFFFFF" style={{ left: '50%', bottom: '28%', animationDelay: '1.6s' }} />
               </>
             )}
 
             {isZeroStreak ? (
-              <DormantSleepingFlame3D />
+              <NeoBrutalDormantFlame />
             ) : (
-              <DuolingoFlame3D isIgniting={animationPhase === 'ignite'} />
+              <NeoBrutalFlame isIgniting={animationPhase === 'ignite'} />
             )}
           </div>
 
-          {/* ═══ CONTEO GIGANTE Y TÍTULOS ═══ */}
+          {/* ═══ CONTEO GIGANTE Y TÍTULOS NEO-BRUTALISM ═══ */}
           <div className="streak-giant-box">
-            <div className={`streak-giant-number ${isZeroStreak ? 'zero' : ''}`}>
+            <div
+              className={`streak-giant-number ${isZeroStreak ? 'zero' : ''} ${
+                animationPhase === 'ignite' ? 'igniting' : ''
+              }`}
+            >
               <span>{displayCount}</span>
-              <span style={{ fontSize: '0.45em', opacity: 0.9 }}>🔥</span>
+              <span style={{ fontSize: '0.5em' }}>🔥</span>
             </div>
 
-            <h1 className="streak-giant-title">
-              {isZeroStreak
-                ? 'Día 0 de Racha'
-                : displayCount === 1
-                ? '1 Día de Racha'
-                : `${displayCount} Días de Racha`}
-            </h1>
+            <div className={`streak-giant-title-badge ${isZeroStreak ? 'zero' : ''}`}>
+              <Flame size={16} color="#000000" strokeWidth={3} fill={isZeroStreak ? 'none' : '#FF5400'} />
+              <span>
+                {isZeroStreak
+                  ? 'Día 0 de Racha'
+                  : displayCount === 1
+                  ? '1 Día de Racha'
+                  : `${displayCount} Días de Racha`}
+              </span>
+            </div>
 
             <p className="streak-subtitle-desc">
               {isZeroStreak
@@ -1116,11 +1181,11 @@ export const StreakCelebrationModal: React.FC<StreakCelebrationModalProps> = ({
             </p>
           </div>
 
-          {/* ═══ TARJETA 3D: RASTREADOR SEMANAL DINÁMICO ═══ */}
+          {/* ═══ TARJETA NEO-BRUTAL: RASTREADOR SEMANAL DINÁMICO ═══ */}
           <div className="streak-calendar-card">
             <div className="streak-calendar-header">
               <span className="streak-cal-title">
-                <Flame size={13} color="#EA580C" /> Tu Camino de Racha
+                <Flame size={14} color="#000000" fill="#FF5400" /> Tu Camino de Racha
               </span>
 
               {streakCount > 7 && (
@@ -1133,7 +1198,7 @@ export const StreakCelebrationModal: React.FC<StreakCelebrationModalProps> = ({
                     type="button"
                     aria-label="Ver semana anterior"
                   >
-                    <ChevronLeft size={14} />
+                    <ChevronLeft size={16} strokeWidth={3} />
                   </button>
                   <button
                     className="streak-nav-btn"
@@ -1143,7 +1208,7 @@ export const StreakCelebrationModal: React.FC<StreakCelebrationModalProps> = ({
                     type="button"
                     aria-label="Ver semana reciente"
                   >
-                    <ChevronRight size={14} />
+                    <ChevronRight size={16} strokeWidth={3} />
                   </button>
                 </div>
               )}
@@ -1168,9 +1233,9 @@ export const StreakCelebrationModal: React.FC<StreakCelebrationModalProps> = ({
 
                     <div className={`duo-day-coin-3d ${coinClass}`}>
                       {day.isActive ? (
-                        <Flame size={18} fill="#FFFFFF" color="#FFFFFF" />
+                        <Flame size={19} fill="#FFFFFF" color="#000000" strokeWidth={2.4} />
                       ) : day.isPendingToday ? (
-                        <Sparkles size={16} color="#EA580C" />
+                        <Sparkles size={17} color="#EA580C" strokeWidth={2.6} />
                       ) : (
                         <span>{day.dayNum}</span>
                       )}
@@ -1185,10 +1250,10 @@ export const StreakCelebrationModal: React.FC<StreakCelebrationModalProps> = ({
             </div>
           </div>
 
-          {/* ═══ TARJETA 3D: PROTECTOR DE RACHA (STREAK FREEZE) ═══ */}
+          {/* ═══ TARJETA NEO-BRUTAL: PROTECTOR DE RACHA (STREAK FREEZE) ═══ */}
           <div className="duo-freeze-pill-3d">
             <div className="duo-freeze-icon-box">
-              <ShieldCheck size={18} color="#FFFFFF" strokeWidth={2.8} />
+              <ShieldCheck size={20} color="#FFFFFF" strokeWidth={3} />
             </div>
             <div className="duo-freeze-info">
               <span className="duo-freeze-title">
@@ -1202,7 +1267,7 @@ export const StreakCelebrationModal: React.FC<StreakCelebrationModalProps> = ({
             </div>
           </div>
 
-          {/* ═══ BOTONES INFERIORES 100% DUOLINGO 3D ═══ */}
+          {/* ═══ BOTONES INFERIORES NEO-BRUTALISM ═══ */}
           <div className="streak-bottom-actions">
             {!isZeroStreak && (
               <button
@@ -1212,7 +1277,7 @@ export const StreakCelebrationModal: React.FC<StreakCelebrationModalProps> = ({
                 type="button"
                 aria-label="Compartir Racha"
               >
-                {copied ? <Check size={20} color="#22C55E" strokeWidth={3} /> : <Share2 size={20} strokeWidth={2.6} />}
+                {copied ? <Check size={22} color="#16A34A" strokeWidth={3.5} /> : <Share2 size={20} strokeWidth={2.8} />}
               </button>
             )}
 
@@ -1239,9 +1304,9 @@ export const StreakCelebrationModal: React.FC<StreakCelebrationModalProps> = ({
                   style={{
                     background: 'transparent',
                     border: 'none',
-                    color: '#64748B',
+                    color: '#0F172A',
                     fontSize: '0.86rem',
-                    fontWeight: 800,
+                    fontWeight: 900,
                     cursor: 'pointer',
                     padding: '6px 12px',
                     textDecoration: 'underline'
