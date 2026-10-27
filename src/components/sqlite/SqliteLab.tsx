@@ -40,7 +40,8 @@ import {
   Database,
   FileCode2,
   Cloud,
-  Loader2
+  Loader2,
+  ChevronDown
 } from 'lucide-react';
 
 export interface UserDatabase {
@@ -88,12 +89,29 @@ export const SqliteLab: React.FC<SqliteLabProps> = ({
   // Modales
   const [isLimitationsOpen, setIsLimitationsOpen] = useState(false);
   const [isResetConfirmOpen, setIsResetConfirmOpen] = useState(false);
+  const [isExportDropdownOpen, setIsExportDropdownOpen] = useState(false);
   const [submitSuccessMsg, setSubmitSuccessMsg] = useState<string | null>(null);
+  const exportDropdownRef = useRef<HTMLDivElement>(null);
   const [autoCheckModal, setAutoCheckModal] = useState<{
     isOpen: boolean;
     passed: boolean;
     checks: { description: string; passed: boolean; details?: string }[];
   } | null>(null);
+
+  // Cerrar dropdown de exportar al hacer clic afuera
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (exportDropdownRef.current && !exportDropdownRef.current.contains(event.target as Node)) {
+        setIsExportDropdownOpen(false);
+      }
+    }
+    if (isExportDropdownOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isExportDropdownOpen]);
 
   // Referencia para carga universal de archivos (.db o .sql)
   const universalFileInputRef = useRef<HTMLInputElement>(null);
@@ -932,27 +950,116 @@ INSERT INTO articulos (nombre, precio, stock) VALUES
             <span>Importar</span>
           </button>
 
-          {/* Botón Exportar .db */}
-          <button
-            type="button"
-            className="sqlite-btn-util"
-            onClick={handleExportDb}
-            title="Descargar base de datos SQLite (.db)"
-          >
-            <Download size={14} />
-            <span>Exportar .db</span>
-          </button>
+          {/* Botón Unificado Exportar con Dropdown Neobrutalist */}
+          <div className="relative" ref={exportDropdownRef}>
+            <button
+              type="button"
+              className="sqlite-btn-util"
+              onClick={() => setIsExportDropdownOpen(!isExportDropdownOpen)}
+              title="Opciones de exportación (.db o .sql)"
+              style={{
+                backgroundColor: isExportDropdownOpen ? '#FEF9C3' : undefined
+              }}
+            >
+              <Download size={14} />
+              <span>Exportar</span>
+              <ChevronDown
+                size={13}
+                style={{
+                  transform: isExportDropdownOpen ? 'rotate(180deg)' : 'none',
+                  transition: 'transform 0.15s ease'
+                }}
+              />
+            </button>
 
-          {/* Botón Exportar .sql */}
-          <button
-            type="button"
-            className="sqlite-btn-util"
-            onClick={handleExportSql}
-            title="Descargar script SQL (Dump DDL y datos)"
-          >
-            <FileCode2 size={14} />
-            <span>Exportar .sql</span>
-          </button>
+            {isExportDropdownOpen && (
+              <div
+                className="sqlite-dropdown-menu"
+                style={{
+                  minWidth: 200,
+                  marginTop: 6,
+                  borderRadius: 10,
+                  boxShadow: '4px 4px 0px #000000',
+                  border: '2px solid #000000',
+                  padding: 0,
+                  overflow: 'hidden'
+                }}
+              >
+                <div
+                  style={{
+                    padding: '8px 12px',
+                    fontSize: '0.68rem',
+                    fontWeight: 900,
+                    letterSpacing: '0.05em',
+                    background: '#F1F5F9',
+                    borderBottom: '2px solid #000000',
+                    color: '#475569',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 6
+                  }}
+                >
+                  <Download size={12} className="text-slate-600" />
+                  FORMATOS DE EXPORTACIÓN
+                </div>
+
+                <button
+                  type="button"
+                  className="sqlite-dropdown-item"
+                  onClick={() => {
+                    handleExportDb();
+                    setIsExportDropdownOpen(false);
+                  }}
+                  title="Descargar archivo binario SQLite .db nativo"
+                  style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'flex-start',
+                    gap: 2,
+                    padding: '10px 12px',
+                    cursor: 'pointer',
+                    transition: 'background 0.1s ease'
+                  }}
+                >
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 7, fontWeight: 900, color: '#0F172A', fontSize: '0.8rem' }}>
+                    <Database size={14} className="text-emerald-600" />
+                    <span>Exportar .db (Binario)</span>
+                  </div>
+                  <span style={{ fontSize: '0.68rem', color: '#64748B', fontWeight: 600, paddingLeft: 21 }}>
+                    Base de datos nativa SQLite completa
+                  </span>
+                </button>
+
+                <button
+                  type="button"
+                  className="sqlite-dropdown-item"
+                  onClick={() => {
+                    handleExportSql();
+                    setIsExportDropdownOpen(false);
+                  }}
+                  title="Descargar script de sentencias SQL en texto plano"
+                  style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'flex-start',
+                    gap: 2,
+                    padding: '10px 12px',
+                    cursor: 'pointer',
+                    transition: 'background 0.1s ease',
+                    borderTop: '1px solid #E2E8F0'
+                  }}
+                >
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 7, fontWeight: 900, color: '#0F172A', fontSize: '0.8rem' }}>
+                    <FileCode2 size={14} className="text-sky-600" />
+                    <span>Exportar .sql (Script)</span>
+                  </div>
+                  <span style={{ fontSize: '0.68rem', color: '#64748B', fontWeight: 600, paddingLeft: 21 }}>
+                    Script SQL (CREATE TABLE + INSERTs)
+                  </span>
+                </button>
+              </div>
+            )}
+          </div>
 
           {/* Botón Reset */}
           <button
@@ -963,17 +1070,6 @@ INSERT INTO articulos (nombre, precio, stock) VALUES
           >
             <Trash2 size={14} />
             <span>Reset</span>
-          </button>
-
-          {/* Botón Info / Motor */}
-          <button
-            type="button"
-            className="sqlite-btn-util"
-            onClick={() => setIsLimitationsOpen(true)}
-            title="Información del motor SQLite WASM"
-          >
-            <Info size={14} />
-            <span className="hidden lg:inline">IA / Motor</span>
           </button>
         </div>
       </header>

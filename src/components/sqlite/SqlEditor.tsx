@@ -3,9 +3,6 @@ import {
   Copy,
   Check,
   RotateCcw,
-  Sparkles,
-  ChevronDown,
-  Layers,
   Plus,
   X,
   FileCode2
@@ -90,74 +87,6 @@ function highlightSql(code: string): string {
   return html;
 }
 
-const SQL_TEMPLATES = [
-  {
-    label: 'CREATE TABLE con PK y FK',
-    code: `CREATE TABLE IF NOT EXISTS categorias (
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
-  nombre TEXT UNIQUE NOT NULL
-);
-
-CREATE TABLE IF NOT EXISTS articulos (
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
-  nombre TEXT NOT NULL,
-  precio REAL CHECK(precio >= 0),
-  categoria_id INTEGER,
-  FOREIGN KEY (categoria_id) REFERENCES categorias(id) ON DELETE RESTRICT
-);`
-  },
-  {
-    label: 'INSERT múltiple',
-    code: `INSERT INTO articulos (nombre, precio, categoria_id) VALUES
-  ('Teclado Pro', 49.99, 1),
-  ('Mouse Ergonómico', 29.50, 1),
-  ('Pad XXL', 15.00, 1);`
-  },
-  {
-    label: 'SELECT con INNER JOIN',
-    code: `SELECT 
-  a.id,
-  a.nombre AS articulo,
-  a.precio,
-  c.nombre AS categoria
-FROM articulos a
-INNER JOIN categorias c ON a.categoria_id = c.id
-ORDER BY a.precio DESC;`
-  },
-  {
-    label: 'GROUP BY y Agregaciones (SUM, AVG)',
-    code: `SELECT 
-  c.nombre AS categoria,
-  COUNT(a.id) AS total_articulos,
-  ROUND(AVG(a.precio), 2) AS precio_promedio,
-  MAX(a.precio) AS precio_maximo
-FROM categorias c
-LEFT JOIN articulos a ON c.id = a.categoria_id
-GROUP BY c.id
-HAVING total_articulos > 0;`
-  },
-  {
-    label: 'Transacción ACID (BEGIN / COMMIT)',
-    code: `BEGIN TRANSACTION;
-
-UPDATE articulos SET precio = precio * 1.10 WHERE categoria_id = 1;
--- Confirmar los cambios:
-COMMIT;
--- Si algo falla usar: ROLLBACK;`
-  },
-  {
-    label: 'Crear VISTA (CREATE VIEW)',
-    code: `CREATE VIEW IF NOT EXISTS vista_catalogo AS
-SELECT 
-  a.id,
-  a.nombre,
-  a.precio,
-  c.nombre AS categoria
-FROM articulos a
-JOIN categorias c ON a.categoria_id = c.id;`
-  }
-];
-
 export const SqlEditor: React.FC<SqlEditorProps> = ({
   tabs,
   activeTabId,
@@ -171,7 +100,6 @@ export const SqlEditor: React.FC<SqlEditorProps> = ({
   isRunning = false
 }) => {
   const [copied, setCopied] = useState(false);
-  const [showTemplates, setShowTemplates] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const highlightRef = useRef<HTMLPreElement>(null);
   const lineNumbersRef = useRef<HTMLDivElement>(null);
@@ -217,12 +145,6 @@ export const SqlEditor: React.FC<SqlEditorProps> = ({
     navigator.clipboard.writeText(value);
     setCopied(true);
     setTimeout(() => setCopied(false), 1800);
-  };
-
-  const insertTemplate = (templateCode: string) => {
-    const nextVal = value.trim() ? `${value}\n\n${templateCode}` : templateCode;
-    onChange(nextVal);
-    setShowTemplates(false);
   };
 
   // Código con formato coloreado (palabras clave en azul)
@@ -275,37 +197,6 @@ export const SqlEditor: React.FC<SqlEditorProps> = ({
 
         {/* Acciones auxiliares de edición */}
         <div className="sqlite-editor-actions-right">
-          <div className="relative">
-            <button
-              type="button"
-              className="sqlite-editor-mini-btn"
-              onClick={() => setShowTemplates(!showTemplates)}
-            >
-              <Sparkles size={12} className="text-amber-500" />
-              <span>Plantillas</span>
-              <ChevronDown size={11} />
-            </button>
-
-            {showTemplates && (
-              <div className="sqlite-dropdown-menu" style={{ width: 250 }}>
-                <div style={{ padding: '6px 12px', fontSize: '0.7rem', fontWeight: 900, background: '#F8FAFC', borderBottom: '1px solid #E2E8F0', color: '#64748B' }}>
-                  PLANTILLAS SQLITE
-                </div>
-                {SQL_TEMPLATES.map((tmpl, idx) => (
-                  <button
-                    key={idx}
-                    type="button"
-                    className="sqlite-dropdown-item"
-                    onClick={() => insertTemplate(tmpl.code)}
-                  >
-                    <Layers size={13} className="text-sky-600" />
-                    <span>{tmpl.label}</span>
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
-
           <button
             type="button"
             className="sqlite-editor-mini-btn"
