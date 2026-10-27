@@ -26,6 +26,23 @@ const SYNC_TS_PREFIX = 'prograpp_sqlite_synced_ts_';
 const LOCAL_TS_PREFIX = 'prograpp_sqlite_local_ts_';
 const MOCK_CLOUD_PREFIX = 'prograpp_mock_cloud_db_';
 
+// Función utilitaria para eliminar recursivamente claves con valor undefined que Firestore no soporta
+function cleanFirestoreData<T extends Record<string, any>>(obj: T): Record<string, any> {
+  const cleaned: Record<string, any> = {};
+  for (const [key, val] of Object.entries(obj)) {
+    if (val !== undefined) {
+      if (Array.isArray(val)) {
+        cleaned[key] = val.map(item => (typeof item === 'object' && item !== null ? cleanFirestoreData(item) : item));
+      } else if (typeof val === 'object' && val !== null) {
+        cleaned[key] = cleanFirestoreData(val);
+      } else {
+        cleaned[key] = val;
+      }
+    }
+  }
+  return cleaned;
+}
+
 class SqliteCloudSyncService {
   /**
    * Convierte un Uint8Array a cadena Base64
@@ -140,17 +157,19 @@ class SqliteCloudSyncService {
         dbName: options.dbName || 'Base SQLite',
         sql: sqlToSave || '',
         binaryBase64,
-        buttonSqlMap: Object.keys(buttonSqlMap).length > 0 ? buttonSqlMap : undefined,
+        buttonSqlMap: (buttonSqlMap && Object.keys(buttonSqlMap).length > 0) ? buttonSqlMap : undefined,
         updatedAt: now
       };
 
-      // 4. Guardar en Firestore (o fallback local mock si aplica)
+      // 4. Guardar en Firestore limpiando cualquier valor undefined que Firestore rechaza
+      const firestoreData = cleanFirestoreData(record);
+
       if (db && !isLocalMockMode) {
         const docRef = doc(db, 'user_sqlite_dbs', record.id);
-        await setDoc(docRef, record, { merge: true });
+        await setDoc(docRef, firestoreData, { merge: true });
       } else {
         // En modo local mock, simulamos almacenamiento en nube
-        localStorage.setItem(`${MOCK_CLOUD_PREFIX}${record.id}`, JSON.stringify(record));
+        localStorage.setItem(`${MOCK_CLOUD_PREFIX}${record.id}`, JSON.stringify(firestoreData));
       }
 
       // 5. Actualizar metadatos locales de sincronización
@@ -259,11 +278,12 @@ class SqliteCloudSyncService {
   public async syncUserDatabasesList(userId: string, list: UserDatabaseMeta[]): Promise<void> {
     if (!userId || userId === 'guest') return;
     try {
+      const cleanList = list.map(item => cleanFirestoreData(item));
       if (db && !isLocalMockMode) {
         const docRef = doc(db, 'user_sqlite_metadata', userId);
-        await setDoc(docRef, { databases: list, updatedAt: Date.now() }, { merge: true });
+        await setDoc(docRef, { databases: cleanList, updatedAt: Date.now() }, { merge: true });
       } else {
-        localStorage.setItem(`mock_user_sqlite_metadata_${userId}`, JSON.stringify({ databases: list, updatedAt: Date.now() }));
+        localStorage.setItem(`mock_user_sqlite_metadata_${userId}`, JSON.stringify({ databases: cleanList, updatedAt: Date.now() }));
       }
     } catch (err) {
       console.warn('[SqliteCloudSync] Error sincronizando lista de bases:', err);
