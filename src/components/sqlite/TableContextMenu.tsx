@@ -80,20 +80,23 @@ export const TableContextMenu: React.FC<TableContextMenuProps> = ({
         top: posY,
         zIndex: 10000,
         background: '#FFFFFF',
-        border: '2px solid #000',
-        boxShadow: '4px 4px 0 #000',
-        borderRadius: 10,
+        border: '2.5px solid #000000',
+        boxShadow: '4px 4px 0px #000000',
+        borderRadius: 12,
         width: menuWidth,
         padding: '6px',
-        userSelect: 'none'
+        userSelect: 'none',
+        animation: 'sqliteDropdownPop 0.12s cubic-bezier(0.16, 1, 0.3, 1)'
       }}
     >
-      {/* Título de la tabla seleccionada */}
+      {/* Título de la tabla seleccionada Neo-Brutalist */}
       <div
         style={{
-          padding: '6px 10px',
-          borderBottom: '1.5px solid #E2E8F0',
-          marginBottom: 4,
+          padding: '7px 10px',
+          background: '#F1F5F9',
+          border: '2px solid #000000',
+          borderRadius: 8,
+          marginBottom: 6,
           display: 'flex',
           alignItems: 'center',
           gap: 6
@@ -103,7 +106,7 @@ export const TableContextMenu: React.FC<TableContextMenuProps> = ({
         <span style={{ fontWeight: 900, fontSize: '0.78rem', color: '#0F172A', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
           {table.name}
         </span>
-        <span style={{ marginLeft: 'auto', fontSize: '0.68rem', fontWeight: 800, color: '#64748B' }}>
+        <span style={{ marginLeft: 'auto', fontSize: '0.66rem', fontWeight: 900, color: '#475569', background: '#E2E8F0', padding: '1px 5px', borderRadius: 4 }}>
           {table.rowCount} filas
         </span>
       </div>

@@ -40,7 +40,9 @@ import {
   FileCode2,
   Cloud,
   Loader2,
-  ChevronDown
+  ChevronDown,
+  MousePointerClick,
+  Layers
 } from 'lucide-react';
 
 export interface UserDatabase {
@@ -70,6 +72,7 @@ export const SqliteLab: React.FC<SqliteLabProps> = ({
   const [isInitializing, setIsInitializing] = useState(true);
   const [initError, setInitError] = useState<string | null>(null);
   const [schemaTables, setSchemaTables] = useState<TableSchemaInfo[]>([]);
+  const [mobileTab, setMobileTab] = useState<'editor' | 'tables'>('editor');
 
   // Pestañas de Consultas (Query 1, Query 2...)
   const [tabs, setTabs] = useState<QueryTab[]>([
@@ -89,28 +92,47 @@ export const SqliteLab: React.FC<SqliteLabProps> = ({
   const [isLimitationsOpen, setIsLimitationsOpen] = useState(false);
   const [isResetConfirmOpen, setIsResetConfirmOpen] = useState(false);
   const [isExportDropdownOpen, setIsExportDropdownOpen] = useState(false);
+  const [isDbDropdownOpen, setIsDbDropdownOpen] = useState(false);
   const [submitSuccessMsg, setSubmitSuccessMsg] = useState<string | null>(null);
   const exportDropdownRef = useRef<HTMLDivElement>(null);
+  const dbDropdownRef = useRef<HTMLDivElement>(null);
   const [autoCheckModal, setAutoCheckModal] = useState<{
     isOpen: boolean;
     passed: boolean;
     checks: { description: string; passed: boolean; details?: string }[];
   } | null>(null);
 
-  // Cerrar dropdown de exportar al hacer clic afuera
+  // Cerrar dropdowns al hacer clic afuera o presionar Escape
   useEffect(() => {
-    function handleClickOutside(event: MouseEvent) {
-      if (exportDropdownRef.current && !exportDropdownRef.current.contains(event.target as Node)) {
+    if (!isExportDropdownOpen && !isDbDropdownOpen) return;
+
+    function handleClickOutside(event: MouseEvent | TouchEvent) {
+      const target = event.target as Node;
+      if (exportDropdownRef.current && !exportDropdownRef.current.contains(target)) {
         setIsExportDropdownOpen(false);
       }
+      if (dbDropdownRef.current && !dbDropdownRef.current.contains(target)) {
+        setIsDbDropdownOpen(false);
+      }
     }
-    if (isExportDropdownOpen) {
-      document.addEventListener('mousedown', handleClickOutside);
+
+    function handleKeyDown(event: KeyboardEvent) {
+      if (event.key === 'Escape') {
+        setIsExportDropdownOpen(false);
+        setIsDbDropdownOpen(false);
+      }
     }
+
+    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener('touchstart', handleClickOutside);
+    document.addEventListener('keydown', handleKeyDown);
+
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('touchstart', handleClickOutside);
+      document.removeEventListener('keydown', handleKeyDown);
     };
-  }, [isExportDropdownOpen]);
+  }, [isExportDropdownOpen, isDbDropdownOpen]);
 
   // Referencia para carga universal de archivos (.db o .sql)
   const universalFileInputRef = useRef<HTMLInputElement>(null);
@@ -481,6 +503,7 @@ export const SqliteLab: React.FC<SqliteLabProps> = ({
   const handleInsertQuery = (sql: string) => {
     const nextVal = currentSql.trim() ? `${currentSql}\n\n${sql}` : sql;
     handleSqlChange(nextVal);
+    setMobileTab('editor');
   };
 
   // Ver datos de una tabla (SELECT * ... LIMIT 100) directamente en la tabla de resultados
@@ -489,6 +512,7 @@ export const SqliteLab: React.FC<SqliteLabProps> = ({
     const result = sqliteService.execute(sql);
     setLastResult(result);
     soundService.playToken();
+    setMobileTab('editor');
   };
 
   // Modificar estructura de una tabla
@@ -656,7 +680,9 @@ INSERT INTO articulos (nombre, precio, stock) VALUES
     const blob = new Blob([new Uint8Array(bin)], { type: 'application/x-sqlite3' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
-    const safeTitle = (activeExercise?.title || 'mi_base_sqlite')
+    const activeDbObj = userDatabases.find(d => d.id === activeDbId);
+    const rawTitle = activeExercise?.title || (activeDbObj ? activeDbObj.name.replace(/\.db$/i, '') : 'mi_base_sqlite');
+    const safeTitle = rawTitle
       .toLowerCase()
       .replace(/[^a-z0-9]/g, '_');
     a.href = url;
@@ -664,7 +690,7 @@ INSERT INTO articulos (nombre, precio, stock) VALUES
     a.click();
     URL.revokeObjectURL(url);
     soundService.playToken();
-    setSubmitSuccessMsg(`¡Archivo "${a.download}" descargado con éxito!`);
+    setSubmitSuccessMsg(`¡Archivo binario "${a.download}" descargado con éxito!`);
     setTimeout(() => setSubmitSuccessMsg(null), 3500);
   };
 
@@ -674,7 +700,9 @@ INSERT INTO articulos (nombre, precio, stock) VALUES
     const blob = new Blob([dump], { type: 'text/plain;charset=utf-8' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
-    const safeTitle = (activeExercise?.title || 'mi_base_sqlite')
+    const activeDbObj = userDatabases.find(d => d.id === activeDbId);
+    const rawTitle = activeExercise?.title || (activeDbObj ? activeDbObj.name.replace(/\.db$/i, '') : 'mi_base_sqlite');
+    const safeTitle = rawTitle
       .toLowerCase()
       .replace(/[^a-z0-9]/g, '_');
     a.href = url;
@@ -785,66 +813,228 @@ INSERT INTO articulos (nombre, precio, stock) VALUES
       <header className="sqlite-topbar">
         {/* Izquierda: Volver + Brand + Selector de Espacio */}
         <div className="sqlite-topbar-left">
-          <button
-            type="button"
-            className="sqlite-back-btn"
-            onClick={onBack}
-            title="Volver"
-          >
-            <ArrowLeft size={16} />
-            <span>Volver</span>
-          </button>
+          <div className="sqlite-topbar-brand-group">
+            <button
+              type="button"
+              className="sqlite-back-btn"
+              onClick={onBack}
+              title="Volver"
+            >
+              <ArrowLeft size={16} />
+              <span>Volver</span>
+            </button>
 
-          <div className="sqlite-brand">
-            <div className="sqlite-brand-icon">
-              <Database size={18} />
+            <div className="sqlite-brand">
+              <div className="sqlite-brand-icon">
+                <Database size={17} />
+              </div>
+              <h1 className="sqlite-brand-title">SQLite Lab</h1>
             </div>
-            <h1 className="sqlite-brand-title">SQLite Lab</h1>
           </div>
 
-          {/* Selector de Base de Datos y Ejercicios */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-            <select
-              className="sqlite-exercise-select"
-              value={isSandbox ? `db_${activeDbId}` : selectedExerciseId}
-              onChange={(e) => {
-                const val = e.target.value;
-                if (val.startsWith('db_')) {
-                  setSelectedExerciseId('sandbox');
-                  setActiveDbId(val.replace('db_', ''));
-                } else {
-                  setSelectedExerciseId(val);
-                }
-              }}
+          {/* Selector de Base de Datos y Ejercicios Neo-Brutalist */}
+          <div className="sqlite-topbar-db-group" style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+            <div
+              className="sqlite-export-dropdown-wrapper relative"
+              ref={dbDropdownRef}
+              style={{ position: 'relative', display: 'inline-flex' }}
             >
-              <optgroup label="Bases de Datos">
-                {userDatabases.map(db => (
-                  <option key={db.id} value={`db_${db.id}`}>
-                    💾 {db.name}
-                  </option>
-                ))}
-              </optgroup>
-              {exercises.length > 0 && (
-                <optgroup label="Ejercicios Asignados">
-                  {exercises.map(ex => (
-                    <option key={ex.id} value={ex.id}>
-                      {ex.type === 'button_programming' ? '🖱️' : '📝'} {ex.title}
-                    </option>
-                  ))}
-                </optgroup>
+              <button
+                type="button"
+                className="sqlite-btn-util sqlite-neo-select-btn"
+                onClick={() => setIsDbDropdownOpen(prev => !prev)}
+                style={{
+                  backgroundColor: isDbDropdownOpen ? '#FEF9C3' : '#FFFFFF',
+                  minWidth: 170,
+                  maxWidth: 290,
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: 8,
+                  justifyContent: 'space-between',
+                  padding: '7px 12px'
+                }}
+                title="Seleccionar Base de Datos o Ejercicio Asignado"
+                aria-expanded={isDbDropdownOpen}
+                aria-haspopup="true"
+              >
+                <div style={{ display: 'flex', alignItems: 'center', gap: 7, minWidth: 0, overflow: 'hidden' }}>
+                  {isSandbox ? (
+                    <Database size={15} className="text-sky-600 flex-shrink-0" />
+                  ) : activeExercise?.type === 'button_programming' ? (
+                    <MousePointerClick size={15} className="text-purple-600 flex-shrink-0" />
+                  ) : (
+                    <FileCode2 size={15} className="text-amber-600 flex-shrink-0" />
+                  )}
+                  <span
+                    style={{
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis',
+                      whiteSpace: 'nowrap',
+                      fontWeight: 900,
+                      fontSize: '0.8rem',
+                      color: '#0F172A'
+                    }}
+                  >
+                    {isSandbox
+                      ? (userDatabases.find(d => d.id === activeDbId)?.name || 'Base Principal')
+                      : activeExercise?.title}
+                  </span>
+                </div>
+                <ChevronDown
+                  size={14}
+                  style={{
+                    transform: isDbDropdownOpen ? 'rotate(180deg)' : 'none',
+                    transition: 'transform 0.15s ease',
+                    flexShrink: 0,
+                    color: '#0F172A'
+                  }}
+                />
+              </button>
+
+              {isDbDropdownOpen && (
+                <div
+                  className="sqlite-dropdown-menu"
+                  style={{
+                    minWidth: 280,
+                    maxWidth: 350,
+                    maxHeight: 400,
+                    overflowY: 'auto',
+                    marginTop: 6,
+                    left: 0,
+                    right: 'auto',
+                    borderRadius: 12,
+                    boxShadow: '4px 4px 0px #000000',
+                    border: '2.5px solid #000000',
+                    padding: 0,
+                    background: '#FFFFFF',
+                    zIndex: 9999
+                  }}
+                >
+                  {/* Encabezado: Bases de Datos */}
+                  <div className="sqlite-dropdown-header">
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                      <Database size={12} className="text-sky-700" />
+                      <span>BASES DE DATOS</span>
+                    </div>
+                    <span style={{ background: '#CBD5E1', color: '#0F172A', padding: '1px 6px', borderRadius: 4, fontSize: '0.65rem' }}>
+                      {userDatabases.length}
+                    </span>
+                  </div>
+
+                  {userDatabases.map(db => {
+                    const isSelected = isSandbox && activeDbId === db.id;
+                    return (
+                      <button
+                        key={db.id}
+                        type="button"
+                        className="sqlite-dropdown-item"
+                        onClick={() => {
+                          setSelectedExerciseId('sandbox');
+                          setActiveDbId(db.id);
+                          setIsDbDropdownOpen(false);
+                        }}
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'space-between',
+                          padding: '9px 12px',
+                          backgroundColor: isSelected ? '#FEF9C3' : '#FFFFFF',
+                          fontWeight: isSelected ? 900 : 700
+                        }}
+                      >
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 8, overflow: 'hidden' }}>
+                          <Database size={14} className={isSelected ? 'text-sky-600' : 'text-slate-400'} />
+                          <span style={{ fontSize: '0.78rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                            {db.name}
+                          </span>
+                        </div>
+                        {isSelected && (
+                          <span style={{ fontSize: '0.62rem', background: '#000000', color: '#FEF9C3', padding: '1px 6px', borderRadius: 4, fontWeight: 900, flexShrink: 0 }}>
+                            ACTIVA
+                          </span>
+                        )}
+                      </button>
+                    );
+                  })}
+
+                  {/* Encabezado: Ejercicios Asignados */}
+                  {exercises.length > 0 && (
+                    <>
+                      <div className="sqlite-dropdown-header" style={{ borderTop: '2px solid #000000' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                          <Sparkles size={12} className="text-amber-600" />
+                          <span>EJERCICIOS ASIGNADOS</span>
+                        </div>
+                        <span style={{ background: '#CBD5E1', color: '#0F172A', padding: '1px 6px', borderRadius: 4, fontSize: '0.65rem' }}>
+                          {exercises.length}
+                        </span>
+                      </div>
+
+                      {exercises.map(ex => {
+                        const isSelected = selectedExerciseId === ex.id;
+                        return (
+                          <button
+                            key={ex.id}
+                            type="button"
+                            className="sqlite-dropdown-item"
+                            onClick={() => {
+                              setSelectedExerciseId(ex.id);
+                              setIsDbDropdownOpen(false);
+                            }}
+                            style={{
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'space-between',
+                              padding: '9px 12px',
+                              backgroundColor: isSelected ? '#FEF9C3' : '#FFFFFF',
+                              fontWeight: isSelected ? 900 : 700
+                            }}
+                          >
+                            <div style={{ display: 'flex', alignItems: 'center', gap: 8, overflow: 'hidden' }}>
+                              {ex.type === 'button_programming' ? (
+                                <MousePointerClick size={14} className="text-purple-600 flex-shrink-0" />
+                              ) : (
+                                <FileCode2 size={14} className="text-amber-600 flex-shrink-0" />
+                              )}
+                              <span style={{ fontSize: '0.78rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                                {ex.title}
+                              </span>
+                            </div>
+                            <span
+                              style={{
+                                fontSize: '0.62rem',
+                                padding: '1px 5px',
+                                borderRadius: 4,
+                                fontWeight: 800,
+                                textTransform: 'uppercase',
+                                flexShrink: 0,
+                                background: isSelected ? '#000000' : '#F1F5F9',
+                                color: isSelected ? '#FFFFFF' : '#475569',
+                                border: '1px solid #CBD5E1'
+                              }}
+                            >
+                              {ex.difficulty}
+                            </span>
+                          </button>
+                        );
+                      })}
+                    </>
+                  )}
+                </div>
               )}
-            </select>
+            </div>
 
             {/* Botón Nueva BD */}
             <button
               type="button"
-              className="sqlite-btn-util"
+              className="sqlite-btn-util sqlite-new-db-btn"
               onClick={() => setIsNewDbModalOpen(true)}
               style={{ background: '#0284C7', color: '#FFF', borderColor: '#000', fontWeight: 800 }}
               title="Crear una nueva base de datos SQLite"
             >
               <Plus size={14} />
-              <span>Nueva BD</span>
+              <span className="sqlite-btn-label-desktop">Nueva BD</span>
+              <span className="sqlite-btn-label-mobile">BD</span>
             </button>
 
             {/* Si es una base personalizada creada por el usuario (no default), botón para eliminarla */}
@@ -873,14 +1063,15 @@ INSERT INTO articulos (nombre, precio, stock) VALUES
             title="Ejecutar instrucción actual (Ctrl + Enter)"
           >
             <Play size={14} fill="currentColor" />
-            <span>Ejecutar sentencia</span>
+            <span className="sqlite-btn-label-desktop">Ejecutar sentencia</span>
+            <span className="sqlite-btn-label-mobile">Ejecutar</span>
             <span className="sqlite-key-badge">Ctrl ↵</span>
           </button>
 
-          {/* Botón Ejecutar todo */}
+          {/* Botón Ejecutar todo (Desktop) */}
           <button
             type="button"
-            className="sqlite-btn-run-all hidden sm:inline-flex"
+            className="sqlite-btn-run-all sqlite-desktop-only"
             onClick={handleExecute}
             disabled={isRunning || isInitializing || !currentSql.trim()}
             title="Ejecutar todo el script (Shift + Ctrl + Enter)"
@@ -898,7 +1089,7 @@ INSERT INTO articulos (nombre, precio, stock) VALUES
             title="Deshacer último cambio"
           >
             <Undo2 size={14} />
-            <span className="hidden md:inline">Deshacer</span>
+            <span>Deshacer</span>
           </button>
 
           {/* Botón Sincronizar en la Nube */}
@@ -950,15 +1141,21 @@ INSERT INTO articulos (nombre, precio, stock) VALUES
           </button>
 
           {/* Botón Unificado Exportar con Dropdown Neobrutalist */}
-          <div className="relative" ref={exportDropdownRef}>
+          <div
+            className="sqlite-export-dropdown-wrapper relative"
+            ref={exportDropdownRef}
+            style={{ position: 'relative', display: 'inline-flex' }}
+          >
             <button
               type="button"
               className="sqlite-btn-util"
-              onClick={() => setIsExportDropdownOpen(!isExportDropdownOpen)}
+              onClick={() => setIsExportDropdownOpen(prev => !prev)}
               title="Opciones de exportación (.db o .sql)"
               style={{
                 backgroundColor: isExportDropdownOpen ? '#FEF9C3' : undefined
               }}
+              aria-expanded={isExportDropdownOpen}
+              aria-haspopup="true"
             >
               <Download size={14} />
               <span>Exportar</span>
@@ -975,13 +1172,15 @@ INSERT INTO articulos (nombre, precio, stock) VALUES
               <div
                 className="sqlite-dropdown-menu"
                 style={{
-                  minWidth: 200,
+                  minWidth: 230,
                   marginTop: 6,
                   borderRadius: 10,
                   boxShadow: '4px 4px 0px #000000',
                   border: '2px solid #000000',
                   padding: 0,
-                  overflow: 'hidden'
+                  overflow: 'hidden',
+                  background: '#FFFFFF',
+                  zIndex: 9999
                 }}
               >
                 <div
@@ -1017,7 +1216,12 @@ INSERT INTO articulos (nombre, precio, stock) VALUES
                     gap: 2,
                     padding: '10px 12px',
                     cursor: 'pointer',
-                    transition: 'background 0.1s ease'
+                    transition: 'background 0.1s ease',
+                    width: '100%',
+                    background: '#FFFFFF',
+                    border: 'none',
+                    borderBottom: '1px solid #E2E8F0',
+                    textAlign: 'left'
                   }}
                 >
                   <div style={{ display: 'flex', alignItems: 'center', gap: 7, fontWeight: 900, color: '#0F172A', fontSize: '0.8rem' }}>
@@ -1045,7 +1249,10 @@ INSERT INTO articulos (nombre, precio, stock) VALUES
                     padding: '10px 12px',
                     cursor: 'pointer',
                     transition: 'background 0.1s ease',
-                    borderTop: '1px solid #E2E8F0'
+                    width: '100%',
+                    background: '#FFFFFF',
+                    border: 'none',
+                    textAlign: 'left'
                   }}
                 >
                   <div style={{ display: 'flex', alignItems: 'center', gap: 7, fontWeight: 900, color: '#0F172A', fontSize: '0.8rem' }}>
@@ -1198,25 +1405,56 @@ INSERT INTO articulos (nombre, precio, stock) VALUES
           </div>
         </div>
       ) : (
-        <div className="sqlite-layout-grid">
-          {/* Panel Izquierdo: TABLES (Con Action Bar y Right Click) */}
-          <aside>
-            <SchemaViewer
-              tables={schemaTables}
-              onRefresh={refreshSchema}
-              onInsertQuery={handleInsertQuery}
-              onCreateTableGui={() => {
-                setEditTable(null);
-                setIsCreateTableOpen(true);
+        <>
+          {/* ═══ SELECTOR DE VISTAS EN MÓVIL (EDITOR SQL vs TABLAS) ═══ */}
+          <div className="sqlite-mobile-tabs-bar" role="tablist" aria-label="Cambiar vista en móvil">
+            <button
+              type="button"
+              role="tab"
+              aria-selected={mobileTab === 'editor'}
+              className={`sqlite-mobile-tab-btn ${mobileTab === 'editor' ? 'active' : ''}`}
+              onClick={() => {
+                soundService.playToken();
+                setMobileTab('editor');
               }}
-              onEditTable={handleEditTable}
-              onDeleteTable={handleDeleteTable}
-              onViewData={handleViewTableData}
-            />
-          </aside>
+            >
+              <FileCode2 size={16} />
+              <span>Editor SQL</span>
+            </button>
+            <button
+              type="button"
+              role="tab"
+              aria-selected={mobileTab === 'tables'}
+              className={`sqlite-mobile-tab-btn ${mobileTab === 'tables' ? 'active' : ''}`}
+              onClick={() => {
+                soundService.playToken();
+                setMobileTab('tables');
+              }}
+            >
+              <Layers size={16} />
+              <span>Tablas ({schemaTables.length})</span>
+            </button>
+          </div>
 
-          {/* Área Principal Derecha */}
-          <main className="sqlite-main-workspace">
+          <div className="sqlite-layout-grid">
+            {/* Panel Izquierdo: TABLES (Con Action Bar y Right Click) */}
+            <aside className={`sqlite-sidebar-aside ${mobileTab !== 'tables' ? 'sqlite-mobile-hidden' : ''}`}>
+              <SchemaViewer
+                tables={schemaTables}
+                onRefresh={refreshSchema}
+                onInsertQuery={handleInsertQuery}
+                onCreateTableGui={() => {
+                  setEditTable(null);
+                  setIsCreateTableOpen(true);
+                }}
+                onEditTable={handleEditTable}
+                onDeleteTable={handleDeleteTable}
+                onViewData={handleViewTableData}
+              />
+            </aside>
+
+            {/* Área Principal Derecha */}
+            <main className={`sqlite-main-workspace ${mobileTab !== 'editor' ? 'sqlite-mobile-hidden' : ''}`}>
             {isButtonMode && activeExercise ? (
               /* MODO PROGRAMAR BOTONES */
               <ButtonProgrammingLab
@@ -1250,6 +1488,7 @@ INSERT INTO articulos (nombre, precio, stock) VALUES
             )}
           </main>
         </div>
+        </>
       )}
 
       {/* ═══ MODAL DE DOCUMENTACIÓN Y LÍMITES DEL MOTOR ═══ */}

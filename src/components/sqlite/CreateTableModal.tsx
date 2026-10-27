@@ -607,13 +607,12 @@ export const CreateTableModal: React.FC<CreateTableModalProps> = ({
                           <select
                             value={col.type}
                             onChange={(e) => handleUpdateColumn(idx, { type: e.target.value as any })}
+                            className="sqlite-modal-select"
                             style={{
-                              border: '1.5px solid #CBD5E1',
-                              borderRadius: 4,
-                              padding: '4px 4px',
+                              width: '100%',
+                              padding: '5px 26px 5px 8px',
                               fontSize: '0.76rem',
-                              fontWeight: 800,
-                              background: '#FFF'
+                              fontWeight: 900
                             }}
                           >
                             <option value="INTEGER">INTEGER</option>
@@ -833,14 +832,12 @@ export const CreateTableModal: React.FC<CreateTableModalProps> = ({
                               <select
                                 value={fk.fromColumn}
                                 onChange={(e) => handleUpdateForeignKey(idx, { fromColumn: e.target.value })}
+                                className="sqlite-modal-select"
                                 style={{
                                   width: '100%',
-                                  border: '1.5px solid #CBD5E1',
-                                  borderRadius: 4,
-                                  padding: '4px 6px',
+                                  padding: '5px 26px 5px 8px',
                                   fontSize: '0.76rem',
-                                  fontWeight: 800,
-                                  background: '#FFF'
+                                  fontWeight: 800
                                 }}
                               >
                                 {columns.map((c) => (
@@ -856,14 +853,12 @@ export const CreateTableModal: React.FC<CreateTableModalProps> = ({
                               <select
                                 value={fk.toTable}
                                 onChange={(e) => handleUpdateForeignKey(idx, { toTable: e.target.value })}
+                                className="sqlite-modal-select"
                                 style={{
                                   width: '100%',
-                                  border: '1.5px solid #CBD5E1',
-                                  borderRadius: 4,
-                                  padding: '4px 6px',
+                                  padding: '5px 26px 5px 8px',
                                   fontSize: '0.76rem',
-                                  fontWeight: 800,
-                                  background: '#FFF'
+                                  fontWeight: 800
                                 }}
                               >
                                 {existingTables
@@ -881,14 +876,12 @@ export const CreateTableModal: React.FC<CreateTableModalProps> = ({
                               <select
                                 value={fk.toColumn}
                                 onChange={(e) => handleUpdateForeignKey(idx, { toColumn: e.target.value })}
+                                className="sqlite-modal-select"
                                 style={{
                                   width: '100%',
-                                  border: '1.5px solid #CBD5E1',
-                                  borderRadius: 4,
-                                  padding: '4px 6px',
+                                  padding: '5px 26px 5px 8px',
                                   fontSize: '0.76rem',
-                                  fontWeight: 800,
-                                  background: '#FFF'
+                                  fontWeight: 800
                                 }}
                               >
                                 {targetColumns.map((tc) => (
@@ -904,13 +897,11 @@ export const CreateTableModal: React.FC<CreateTableModalProps> = ({
                               <select
                                 value={fk.onDelete}
                                 onChange={(e) => handleUpdateForeignKey(idx, { onDelete: e.target.value as any })}
+                                className="sqlite-modal-select"
                                 style={{
-                                  border: '1.5px solid #CBD5E1',
-                                  borderRadius: 4,
-                                  padding: '4px 4px',
+                                  padding: '5px 24px 5px 6px',
                                   fontSize: '0.74rem',
-                                  fontWeight: 700,
-                                  background: '#FFF'
+                                  fontWeight: 800
                                 }}
                               >
                                 <option value="RESTRICT">RESTRICT</option>
@@ -926,13 +917,11 @@ export const CreateTableModal: React.FC<CreateTableModalProps> = ({
                               <select
                                 value={fk.onUpdate}
                                 onChange={(e) => handleUpdateForeignKey(idx, { onUpdate: e.target.value as any })}
+                                className="sqlite-modal-select"
                                 style={{
-                                  border: '1.5px solid #CBD5E1',
-                                  borderRadius: 4,
-                                  padding: '4px 4px',
+                                  padding: '5px 24px 5px 6px',
                                   fontSize: '0.74rem',
-                                  fontWeight: 700,
-                                  background: '#FFF'
+                                  fontWeight: 800
                                 }}
                               >
                                 <option value="CASCADE">CASCADE</option>

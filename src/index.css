@@ -11037,7 +11037,7 @@ button, a, input, select, .path-node, .token-chip, .pair-card {
   .duo-desktop-main-wrapper {
     display: block !important;
     width: 100% !important;
-    padding: 0 0 84px 0 !important;
+    padding: 0 0 32px 0 !important;
   }
 
   .duo-desktop-center-column {
@@ -11045,20 +11045,9 @@ button, a, input, select, .path-node, .token-chip, .pair-card {
     max-width: 100% !important;
   }
 
-  /* ═══ MOBILE BOTTOM NAVIGATION BAR ═══ */
+  /* ═══ MOBILE BOTTOM NAVIGATION BAR (REMOVED) ═══ */
   .mobile-bottom-nav-root {
-    display: block !important;
-    position: fixed !important;
-    bottom: 0 !important;
-    left: 0 !important;
-    right: 0 !important;
-    width: 100% !important;
-    background-color: #FFFFFF !important;
-    border-top: 3px solid #000000 !important;
-    box-shadow: 0 -4px 0 rgba(0, 0, 0, 0.05) !important;
-    z-index: 9999 !important;
-    padding-bottom: env(safe-area-inset-bottom, 0px) !important;
-    box-sizing: border-box !important;
+    display: none !important;
   }
 
   .mobile-bottom-nav-inner {
@@ -12349,7 +12338,7 @@ button, a, input, select, .path-node, .token-chip, .pair-card {
   width: 100%;
   max-width: 1600px;
   margin: 0 auto;
-  padding: 12px 16px 40px;
+  padding: 20px 24px 40px;
   box-sizing: border-box;
   color: #0F172A;
   font-family: inherit;
@@ -12360,37 +12349,53 @@ button, a, input, select, .path-node, .token-chip, .pair-card {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 12px;
-  flex-wrap: wrap;
-  padding: 10px 16px;
+  gap: 16px;
+  flex-wrap: nowrap;
+  padding: 12px 20px;
   background: #FFFFFF;
   border: 2.5px solid #000000;
   box-shadow: 4px 4px 0px #000000;
   border-radius: 14px;
-  margin-bottom: 14px;
+  margin-bottom: 18px;
 }
 
 .sqlite-topbar-left {
   display: flex;
   align-items: center;
-  gap: 10px;
-  flex-wrap: wrap;
+  gap: 18px;
+  flex-wrap: nowrap;
+  flex-shrink: 0;
+}
+
+.sqlite-topbar-brand-group {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+}
+
+.sqlite-topbar-db-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
 }
 
 .sqlite-back-btn {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  padding: 7px 12px;
+  padding: 8px 14px;
   background: #FFFFFF;
   color: #0F172A;
   font-weight: 800;
-  font-size: 0.8rem;
+  font-size: 0.82rem;
   border-radius: 8px;
   border: 2px solid #000000;
   box-shadow: 2px 2px 0px #000000;
   cursor: pointer;
   transition: all 0.08s ease;
+  flex-shrink: 0;
 }
 .sqlite-back-btn:hover {
   background: #F1F5F9;
@@ -12406,6 +12411,7 @@ button, a, input, select, .path-node, .token-chip, .pair-card {
   display: flex;
   align-items: center;
   gap: 8px;
+  flex-shrink: 0;
 }
 .sqlite-brand-icon {
   width: 32px;
@@ -12418,6 +12424,7 @@ button, a, input, select, .path-node, .token-chip, .pair-card {
   align-items: center;
   justify-content: center;
   color: #000000;
+  flex-shrink: 0;
 }
 .sqlite-brand-title {
   font-size: 1.05rem;
@@ -12425,6 +12432,7 @@ button, a, input, select, .path-node, .token-chip, .pair-card {
   color: #0F172A;
   margin: 0;
   letter-spacing: -0.01em;
+  white-space: nowrap;
 }
 
 .sqlite-exercise-select {
@@ -12448,8 +12456,9 @@ button, a, input, select, .path-node, .token-chip, .pair-card {
 .sqlite-topbar-actions {
   display: flex;
   align-items: center;
-  gap: 8px;
-  flex-wrap: wrap;
+  gap: 10px;
+  flex-wrap: nowrap;
+  flex-shrink: 0;
 }
 
 /* Botones Neo-Brutalistas */
@@ -13589,6 +13598,246 @@ button, a, input, select, .path-node, .token-chip, .pair-card {
 .sqlite-test-button-btn:active:not(:disabled) {
   transform: translate(1px, 1px);
   box-shadow: 0px 0px 0px #000000;
+}
+
+/* ═════════════════════════════════════════════════════════════════
+   SQLITE LAB - RESPONSIVE STYLES (MÓVIL Y PANTALLAS PEQUEÑAS)
+   ═════════════════════════════════════════════════════════════════ */
+.sqlite-btn-label-mobile {
+  display: none;
+}
+.sqlite-mobile-tabs-bar {
+  display: none;
+}
+
+@media (max-width: 899px) {
+  .sqlite-lab-container {
+    padding: 8px 8px 32px !important;
+  }
+
+  /* Barra superior compacta en 2 niveles limpios */
+  .sqlite-topbar {
+    padding: 8px 10px !important;
+    gap: 8px !important;
+    margin-bottom: 10px !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+    border-width: 2px !important;
+    box-shadow: 3px 3px 0px #000000 !important;
+    border-radius: 12px !important;
+  }
+
+  .sqlite-topbar-left {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 8px !important;
+    width: 100% !important;
+    flex-wrap: wrap !important;
+  }
+
+  .sqlite-topbar-brand-group {
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    flex-shrink: 0 !important;
+  }
+
+  .sqlite-topbar-db-group {
+    display: flex !important;
+    align-items: center !important;
+    gap: 6px !important;
+    flex-shrink: 0 !important;
+  }
+
+  .sqlite-back-btn {
+    padding: 5px 9px !important;
+    font-size: 0.74rem !important;
+    flex-shrink: 0 !important;
+  }
+
+  .sqlite-brand {
+    gap: 6px !important;
+    flex-shrink: 0 !important;
+  }
+
+  .sqlite-brand-icon {
+    width: 28px !important;
+    height: 28px !important;
+  }
+
+  .sqlite-brand-title {
+    font-size: 0.95rem !important;
+  }
+
+  /* Selector de base de datos compacto */
+  .sqlite-neo-select-btn {
+    min-width: 110px !important;
+    max-width: 160px !important;
+    padding: 5px 8px !important;
+    font-size: 0.74rem !important;
+  }
+
+  .sqlite-new-db-btn {
+    padding: 5px 9px !important;
+    font-size: 0.74rem !important;
+  }
+
+  /* Etiquetas responsivas para botones */
+  .sqlite-btn-label-desktop {
+    display: none !important;
+  }
+  .sqlite-btn-label-mobile {
+    display: inline !important;
+  }
+
+  /* Barra de acciones horizontal suave sin deformarse en 6 pisos */
+  .sqlite-topbar-actions {
+    display: flex !important;
+    align-items: center !important;
+    gap: 6px !important;
+    width: 100% !important;
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    padding: 2px 0 4px !important;
+    flex-wrap: nowrap !important;
+    scrollbar-width: none !important;
+  }
+  .sqlite-topbar-actions::-webkit-scrollbar {
+    display: none !important;
+  }
+
+  /* Ocultar elementos desktop innecesarios en pantallas táctiles */
+  .sqlite-desktop-only,
+  .sqlite-btn-run-all,
+  .sqlite-key-badge {
+    display: none !important;
+  }
+
+  .sqlite-btn-run-stmt {
+    padding: 6px 12px !important;
+    font-size: 0.78rem !important;
+    flex-shrink: 0 !important;
+  }
+
+  .sqlite-btn-util,
+  .sqlite-btn-reset {
+    padding: 5px 9px !important;
+    font-size: 0.74rem !important;
+    flex-shrink: 0 !important;
+    white-space: nowrap !important;
+  }
+
+  /* Dropdown contenido dentro del ancho de la pantalla */
+  .sqlite-dropdown-menu {
+    max-width: calc(100vw - 24px) !important;
+  }
+
+  /* Selector de pestañas de navegación móvil (Editor SQL vs Tablas) */
+  .sqlite-mobile-tabs-bar {
+    display: flex !important;
+    gap: 8px !important;
+    margin-bottom: 10px !important;
+    background: #F1F5F9 !important;
+    padding: 4px !important;
+    border: 2px solid #000000 !important;
+    box-shadow: 2.5px 2.5px 0px #000000 !important;
+    border-radius: 12px !important;
+  }
+
+  .sqlite-mobile-tab-btn {
+    flex: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 8px 12px;
+    border: 2px solid transparent;
+    border-radius: 8px;
+    background: transparent;
+    color: #475569;
+    font-size: 0.82rem;
+    font-weight: 800;
+    cursor: pointer;
+    transition: all 0.12s ease;
+    user-select: none;
+  }
+
+  .sqlite-mobile-tab-btn.active {
+    background: #FFFFFF !important;
+    color: #000000 !important;
+    border-color: #000000 !important;
+    box-shadow: 2px 2px 0px #000000 !important;
+    transform: translate(-1px, -1px);
+  }
+
+  /* Vista móvil: alternancia entre paneles */
+  .sqlite-layout-grid {
+    display: block !important;
+  }
+
+  .sqlite-sidebar-aside.sqlite-mobile-hidden {
+    display: none !important;
+  }
+
+  .sqlite-main-workspace.sqlite-mobile-hidden {
+    display: none !important;
+  }
+
+  /* Editor de código optimizado para móviles */
+  .sqlite-code-area {
+    min-height: 180px !important;
+    max-height: 280px !important;
+  }
+
+  .sqlite-line-numbers {
+    min-width: 32px !important;
+    padding: 10px 4px !important;
+    font-size: 13px !important;
+  }
+
+  .sqlite-code-shared {
+    font-size: 13px !important;
+    line-height: 20px !important;
+    padding: 10px 8px !important;
+  }
+
+  /* Resultados en móvil */
+  .sqlite-results-card {
+    margin-top: 10px !important;
+    border-width: 2px !important;
+    box-shadow: 2.5px 2.5px 0px #000000 !important;
+    border-radius: 12px !important;
+  }
+
+  .sqlite-empty-results {
+    padding: 28px 14px !important;
+  }
+
+  .sqlite-results-header {
+    padding: 6px 10px !important;
+    gap: 6px !important;
+  }
+
+  /* Banner de ejercicio docente */
+  .sqlite-exercise-strip {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 8px !important;
+    padding: 8px 12px !important;
+  }
+}
+
+@media (min-width: 900px) {
+  .sqlite-mobile-tabs-bar {
+    display: none !important;
+  }
+  .sqlite-sidebar-aside.sqlite-mobile-hidden {
+    display: block !important;
+  }
+  .sqlite-main-workspace.sqlite-mobile-hidden {
+    display: block !important;
+  }
 }
 
 

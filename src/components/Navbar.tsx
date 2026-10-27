@@ -37,6 +37,7 @@ interface NavbarProps {
   onOpenLocker?: () => void;
   onOpenNotifications?: () => void;
   onOpenLeague?: () => void;
+  onOpenSqliteLab?: () => void;
   onSignOut?: () => void;
   onLogoClick?: () => void;
 }
@@ -55,6 +56,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   onOpenLocker,
   onOpenNotifications,
   onOpenLeague,
+  onOpenSqliteLab,
   onSignOut,
   onLogoClick: _onLogoClick
 }) => {
@@ -341,31 +343,28 @@ export const Navbar: React.FC<NavbarProps> = ({
                   </div>
                 </button>
 
-                {/* Mi Perfil */}
-                <button
-                  type="button"
-                  className="duo-settings-row"
-                  onClick={() => {
-                    soundService.playToken();
-                    setIsDrawerOpen(false);
-                    onOpenProfile();
-                  }}
-                >
-                  <div className="duo-settings-row-left">
-                    <div className="duo-settings-row-icon-box purple">
-                      <DevAvatar
-                        avatarId={user?.avatarId || 'robot_byte'}
-                        skinId={user?.equippedSkin}
-                        size={22}
-                      />
+                {/* Lab SQLite */}
+                {onOpenSqliteLab && (
+                  <button
+                    type="button"
+                    className="duo-settings-row"
+                    onClick={() => {
+                      soundService.playToken();
+                      setIsDrawerOpen(false);
+                      onOpenSqliteLab();
+                    }}
+                  >
+                    <div className="duo-settings-row-left">
+                      <div className="duo-settings-row-icon-box cyan">
+                        <Database size={18} color="#0284C7" strokeWidth={2.6} />
+                      </div>
+                      <span className="duo-settings-row-label">Lab SQLite</span>
                     </div>
-                    <span className="duo-settings-row-label">Mi Perfil</span>
-                  </div>
-                  <div className="duo-settings-row-right">
-                    <span className="duo-settings-row-sub">{user?.displayName || 'Dev'}</span>
-                    <ChevronRight size={18} color="#000000" strokeWidth={3} />
-                  </div>
-                </button>
+                    <div className="duo-settings-row-right">
+                      <ChevronRight size={18} color="#000000" strokeWidth={3} />
+                    </div>
+                  </button>
+                )}
 
                 {/* Notificaciones */}
                 {onOpenNotifications && (

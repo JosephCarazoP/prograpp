@@ -56,7 +56,6 @@ import { ActivityOpinionModal } from './components/ActivityOpinionModal';
 import { StreakCelebrationModal } from './components/StreakCelebrationModal';
 import { StorePage } from './components/StorePage';
 import { SeasonPathPage } from './components/SeasonPathPage';
-import { MobileBottomNav } from './components/MobileBottomNav';
 import { LiveUsersModal } from './components/LiveUsersModal';
 import { NotificationsPage } from './components/NotificationsPage';
 import { NetworkStatusBadge } from './components/NetworkStatusBadge';
@@ -1315,7 +1314,7 @@ export default function App() {
       )}
 
       {/* Barra de Estado Superior (solo visible en path y practice cuando no se está leyendo teoría o en páginas dedicadas) */}
-      {view !== 'boss' && view !== 'lesson' && view !== 'academic' && view !== 'notifications' && view !== 'store' && view !== 'season' && !activeTheory && (
+      {view !== 'boss' && view !== 'lesson' && view !== 'academic' && view !== 'notifications' && view !== 'store' && view !== 'season' && view !== 'sqlite-lab' && !activeTheory && (
         <Navbar
           user={user}
           isAdmin={authService.isCurrentUserAdmin()}
@@ -1366,6 +1365,12 @@ export default function App() {
             setView('path');
             setMainTab('league');
             window.scrollTo({ top: 0, behavior: 'smooth' });
+          }}
+          onOpenSqliteLab={() => {
+            soundService.playToken();
+            setView('sqlite-lab');
+            setSqliteInitialExerciseId(null);
+            window.scrollTo({ top: 0, behavior: 'instant' });
           }}
           onSignOut={handleSignOut}
         />
@@ -1700,24 +1705,6 @@ export default function App() {
           )}
           </div>
         </div>
-
-        {/* ═══ NAVEGACIÓN INFERIOR MÓVIL (IDÉNTICA A SIDEBAR DESKTOP) ═══ */}
-        <MobileBottomNav
-          currentView={view}
-          currentMainTab={mainTab}
-          unreadNotificationsCount={unreadNotificationsCount}
-          isAdmin={authService.isCurrentUserAdmin()}
-          onNavigate={(targetView, targetTab) => {
-            setView(targetView);
-            if (targetTab) {
-              setMainTab(targetTab);
-            }
-            if (targetView === 'path') {
-              setActiveTheory(null);
-            }
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-          }}
-        />
       </>
     )}
 
