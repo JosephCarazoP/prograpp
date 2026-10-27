@@ -33,7 +33,6 @@ import {
   Sparkles,
   ArrowLeft,
   Send,
-  Info,
   Trash2,
   Undo2,
   Plus,
