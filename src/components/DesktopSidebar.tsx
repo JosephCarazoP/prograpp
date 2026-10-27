@@ -11,7 +11,8 @@ import {
   Volume2,
   VolumeX,
   LogOut,
-  Flame
+  Flame,
+  Database
 } from 'lucide-react';
 import { soundService } from '../services/soundService';
 
@@ -21,7 +22,7 @@ export interface DesktopSidebarProps {
   unreadNotificationsCount?: number;
   onlineUsersCount?: number;
   isAdmin?: boolean;
-  onNavigate: (view: 'path' | 'profile' | 'store' | 'notifications' | 'academic' | 'season', tab?: 'play' | 'courses' | 'league') => void;
+  onNavigate: (view: 'path' | 'profile' | 'store' | 'notifications' | 'academic' | 'season' | 'sqlite-lab', tab?: 'play' | 'courses' | 'league') => void;
   onOpenQuests?: () => void;
   onOpenLiveUsers: () => void;
   onSignOut?: () => void;
@@ -94,6 +95,18 @@ export const DesktopSidebar: React.FC<DesktopSidebarProps> = ({
       },
       activeColor: '#FEF08A',
       iconColor: '#EA580C'
+    },
+    {
+      id: 'sqlite-lab',
+      label: 'LAB SQLITE',
+      icon: Database,
+      isActive: currentView === 'sqlite-lab',
+      onClick: () => {
+        soundService.playToken();
+        onNavigate('sqlite-lab');
+      },
+      activeColor: '#BAE6FD',
+      iconColor: '#0284C7'
     },
     {
       id: 'store',

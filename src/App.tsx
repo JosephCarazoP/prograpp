@@ -61,6 +61,7 @@ import { LiveUsersModal } from './components/LiveUsersModal';
 import { NotificationsPage } from './components/NotificationsPage';
 import { NetworkStatusBadge } from './components/NetworkStatusBadge';
 import { PWAInstallBanner } from './components/PWAInstallBanner';
+import { SqliteLab } from './components/sqlite/SqliteLab';
 import { academicService } from './services/academicService';
 import { timeTrackingService } from './services/timeTrackingService';
 import { presenceService } from './services/presenceService';
@@ -187,8 +188,8 @@ export default function App() {
     return raw && typeof raw === 'object' ? raw : {};
   });
 
-  // Vistas principales: path, lesson, practice, boss, profile, academic, notifications, store, season
-  const [view, setView] = useState<'path' | 'lesson' | 'practice' | 'boss' | 'profile' | 'academic' | 'notifications' | 'store' | 'season'>(() => {
+  // Vistas principales: path, lesson, practice, boss, profile, academic, notifications, store, season, sqlite-lab
+  const [view, setView] = useState<'path' | 'lesson' | 'practice' | 'boss' | 'profile' | 'academic' | 'notifications' | 'store' | 'season' | 'sqlite-lab'>(() => {
     if (typeof window !== 'undefined') {
       const params = new URLSearchParams(window.location.search);
       if (params.get('view') === 'boss') return 'boss';
@@ -196,8 +197,17 @@ export default function App() {
       if (params.get('view') === 'notifications') return 'notifications';
       if (params.get('view') === 'store' || params.get('view') === 'shop') return 'store';
       if (params.get('view') === 'season') return 'season';
+      if (params.get('view') === 'sqlite' || params.get('view') === 'sqlite-lab') return 'sqlite-lab';
     }
     return 'path';
+  });
+
+  const [sqliteInitialExerciseId, setSqliteInitialExerciseId] = useState<string | null>(() => {
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search);
+      return params.get('exercise');
+    }
+    return null;
   });
 
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(() => {
@@ -494,6 +504,12 @@ export default function App() {
         status: 'boss',
         activityText: 'Combatiendo al Jefe de Unidad',
         path: user.currentPath
+      };
+    } else if (view === 'sqlite-lab') {
+      activity = {
+        status: 'practice',
+        activityText: 'En Laboratorio SQLite (WASM)',
+        path: 'sql'
       };
     } else if (view === 'academic') {
       activity = {
@@ -1356,7 +1372,7 @@ export default function App() {
       )}
 
       {/* ═══ CONTENEDOR MAESTRO DUOLINGO DESKTOP (3 COLUMNAS: SIDEBAR IZQ + CONTENIDO + SIDEBAR DER) ═══ */}
-      {view !== 'boss' && view !== 'lesson' && (
+      {view !== 'boss' && view !== 'lesson' && view !== 'sqlite-lab' && (
         <>
           <div className="duo-desktop-app-layout">
           {/* Columna Izquierda: Barra Lateral de Navegación Permanente (Desktop) */}
@@ -1391,7 +1407,7 @@ export default function App() {
           {/* Área Principal Desktop (Centro + Widgets Derecha) */}
           <div className="duo-desktop-main-wrapper">
             {/* Columna Central: Contenido Principal */}
-            <div className={`duo-desktop-center-column ${['store', 'academic', 'season', 'notifications', 'profile'].includes(view) ? 'wide-view' : ''}`}>
+            <div className={`duo-desktop-center-column ${['store', 'academic', 'season', 'notifications', 'profile', 'sqlite-lab'].includes(view) ? 'wide-view' : ''}`}>
             {/* VISTA 1: EL CAMINO (LEARNING PATH) / SECCIÓN DE CURSOS / TEORÍA */}
             {view === 'path' && (
               <main
@@ -1511,6 +1527,12 @@ export default function App() {
                   onSelectPractice={(lessonId) => {
                     const l = getLessonById(lessonId);
                     if (l) handleStartLesson(l);
+                  }}
+                  onOpenSqliteLab={() => {
+                    soundService.playToken();
+                    setView('sqlite-lab');
+                    setSqliteInitialExerciseId(null);
+                    window.scrollTo({ top: 0, behavior: 'instant' });
                   }}
                 />
               ) : mainTab === 'league' ? (
@@ -1698,6 +1720,22 @@ export default function App() {
         />
       </>
     )}
+
+      {/* ═══ VISTA DEDICADA: LABORATORIO SQLITE REAL (ENFOQUE TOTAL SIN NAV BARS) ═══ */}
+      {view === 'sqlite-lab' && (
+        <div className="sqlite-fullscreen-wrapper" style={{ width: '100%', minHeight: '100vh', background: '#FFFFFF' }}>
+          <SqliteLab
+            user={user}
+            initialExerciseId={sqliteInitialExerciseId}
+            onBack={() => {
+              soundService.playToken();
+              setView('path');
+              setSqliteInitialExerciseId(null);
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
+          />
+        </div>
+      )}
 
       {/* VISTA 2: SESIÓN DE LECCIÓN INTERACTIVA (CON COMODINES Y VS CODE SNIPPET) */}
       {view === 'lesson' && activeLesson && currentExercise && (

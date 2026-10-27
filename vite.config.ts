@@ -16,7 +16,8 @@ export default defineConfig({
         'byte-app-icon.png',
         'pwa-192x192.png',
         'pwa-512x512.png',
-        'logo.svg'
+        'logo.svg',
+        'sql-wasm.wasm'
       ],
       manifest: {
         name: 'PrograApp — Conecta con el Código',
@@ -51,7 +52,7 @@ export default defineConfig({
       },
       workbox: {
         maximumFileSizeToCacheInBytes: 6 * 1024 * 1024,
-        globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2,json}'],
+        globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2,json,wasm}'],
         runtimeCaching: [
           {
             urlPattern: /^https:\/\/fonts\.googleapis\.com\/.*/i,

@@ -26,6 +26,7 @@ interface CoursesViewProps {
   currentPath: 'kotlin' | 'sql';
   onSelectTheory: (theory: TheoryLesson) => void;
   onSelectPractice: (lessonId: string) => void;
+  onOpenSqliteLab?: () => void;
   user?: UserProfile;
 }
 
@@ -36,6 +37,7 @@ export const CoursesView: React.FC<CoursesViewProps> = ({
   currentPath,
   onSelectTheory,
   onSelectPractice,
+  onOpenSqliteLab,
   user
 }) => {
   const [selectedUnitId, setSelectedUnitId] = useState<number>(1);
@@ -176,6 +178,81 @@ export const CoursesView: React.FC<CoursesViewProps> = ({
           </div>
         </div>
       </div>
+
+      {/* ═══ BANNER ACCESO A LABORATORIO SQLITE (WASM REAL) ═══ */}
+      {onOpenSqliteLab && (
+        <div
+          style={{
+            background: '#0F172A',
+            border: '2.5px solid #000000',
+            boxShadow: '4px 4px 0px #000000',
+            borderRadius: '16px',
+            padding: '16px 20px',
+            marginBottom: '20px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            gap: '14px',
+            flexWrap: 'wrap'
+          }}
+        >
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+            <div
+              style={{
+                width: 44,
+                height: 44,
+                borderRadius: '12px',
+                background: '#0284C7',
+                border: '2px solid #000000',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                color: '#FFFFFF',
+                boxShadow: '2px 2px 0px #000000'
+              }}
+            >
+              <Database size={22} />
+            </div>
+            <div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <h3 style={{ margin: 0, fontSize: '1rem', fontWeight: 900, color: '#FFFFFF' }}>
+                  Laboratorio SQLite Integrado
+                </h3>
+                <span className="sqlite-badge-engine">Motor Real</span>
+              </div>
+              <p style={{ margin: '3px 0 0 0', fontSize: '0.78rem', color: '#94A3B8' }}>
+                Crea tus propias tablas, define PKs/FKs, ejecuta JOINs y programa botones CRUD sin instalar software.
+              </p>
+            </div>
+          </div>
+
+          <button
+            type="button"
+            onClick={() => {
+              soundService.playToken();
+              onOpenSqliteLab();
+            }}
+            className="btn-3d btn-green"
+            style={{
+              padding: '9px 18px',
+              fontSize: '0.82rem',
+              fontWeight: 900,
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '6px',
+              background: '#22C55E',
+              color: '#000000',
+              border: '2px solid #000000',
+              boxShadow: '2px 2px 0px #000000',
+              borderRadius: '10px',
+              cursor: 'pointer'
+            }}
+          >
+            <Play size={14} fill="currentColor" />
+            <span>Abrir Laboratorio SQLite</span>
+          </button>
+        </div>
+      )}
 
       {/* ═══ BUSCADOR DE CONCEPTOS NEO-BRUTALISM ═══ */}
       <div style={{ position: 'relative', marginBottom: '20px' }}>

@@ -66,6 +66,10 @@ import { soundService } from '../services/soundService';
 import { presenceService } from '../services/presenceService';
 import { LiveUsersModal } from './LiveUsersModal';
 import { DevAvatar } from './Avatars';
+import { SqliteExercise } from '../types/sqliteLab';
+import { sqliteExerciseService } from '../services/sqliteExerciseService';
+import { TeacherExerciseEditor } from './sqlite/TeacherExerciseEditor';
+import { TeacherSubmissionsView } from './sqlite/TeacherSubmissionsView';
 
 interface AcademicDashboardProps {
   currentUser: UserProfile;
@@ -90,7 +94,7 @@ export const AcademicDashboard: React.FC<AcademicDashboardProps> = ({
   const [, setPresenceTicker] = useState(0);
 
   // Pestañas del Panel
-  const [activeTab, setActiveTab] = useState<'group' | 'student' | 'assignDiagnostic' | 'evaluations' | 'attempts' | 'observations' | 'notifications'>('group');
+  const [activeTab, setActiveTab] = useState<'group' | 'student' | 'assignDiagnostic' | 'evaluations' | 'attempts' | 'observations' | 'notifications' | 'sqliteExercises'>('group');
 
   // Datos del Panel
   const [loadingData, setLoadingData] = useState(false);
@@ -101,6 +105,12 @@ export const AcademicDashboard: React.FC<AcademicDashboardProps> = ({
   const [opinions, setOpinions] = useState<ActivityOpinion[]>([]);
   const [progressMapByUser, setProgressMapByUser] = useState<Record<string, Record<string, any>>>({});
   const [assignments, setAssignments] = useState<DiagnosticAssignment[]>([]);
+
+  // Estados para Laboratorio SQLite Docente
+  const [sqliteExercises, setSqliteExercises] = useState<SqliteExercise[]>([]);
+  const [editingSqliteExercise, setEditingSqliteExercise] = useState<SqliteExercise | null>(null);
+  const [showSqliteEditorModal, setShowSqliteEditorModal] = useState(false);
+  const [sqliteDashboardTab, setSqliteDashboardTab] = useState<'exercises' | 'submissions'>('exercises');
 
   // Estados para Avisos y Notificaciones a los Alumnos
   const [teacherNotifications, setTeacherNotifications] = useState<AppNotification[]>([]);
@@ -310,7 +320,8 @@ export const AcademicDashboard: React.FC<AcademicDashboardProps> = ({
         allOps,
         allAss,
         allNotifs,
-        progressEntries
+        progressEntries,
+        allSqliteEx
       ] = await Promise.all([
         academicService.getAllAttempts(studentList),
         academicService.getAllEvaluations(),
@@ -323,7 +334,8 @@ export const AcademicDashboard: React.FC<AcademicDashboardProps> = ({
             const prog = await progressService.getAllProgress(st.uid);
             return { uid: st.uid, prog };
           })
-        )
+        ),
+        sqliteExerciseService.getAllExercises()
       ]);
 
       setAttempts(allAtts);
@@ -332,6 +344,7 @@ export const AcademicDashboard: React.FC<AcademicDashboardProps> = ({
       setOpinions(allOps);
       setAssignments(allAss);
       setTeacherNotifications(allNotifs);
+      setSqliteExercises(allSqliteEx);
 
       const pMap: Record<string, Record<string, any>> = {};
       progressEntries.forEach(({ uid, prog }) => {
@@ -985,6 +998,7 @@ export const AcademicDashboard: React.FC<AcademicDashboardProps> = ({
       <nav className="academic-nav-dock" aria-label="Secciones del panel">
         {[
           { key: 'group' as const, labelDesktop: 'Mis Estudiantes', labelMobile: 'Estudiantes', icon: <Users size={16} /> },
+          { key: 'sqliteExercises' as const, labelDesktop: 'Laboratorio SQLite', labelMobile: 'SQLite', icon: <Database size={16} /> },
           { key: 'notifications' as const, labelDesktop: 'Avisos a Alumnos', labelMobile: 'Avisos', icon: <Bell size={16} /> },
           { key: 'assignDiagnostic' as const, labelDesktop: 'Asignar Diagnósticos', labelMobile: 'Asignar', icon: <Send size={16} /> },
           { key: 'evaluations' as const, labelDesktop: 'Evaluaciones', labelMobile: 'Evaluaciones', icon: <Award size={16} /> },
@@ -3256,6 +3270,215 @@ export const AcademicDashboard: React.FC<AcademicDashboardProps> = ({
                   </div>
                 )}
               </div>
+            </div>
+          )}
+
+          {/* ════════════ PESTAÑA SQLITE LAB DOCENTE ════════════ */}
+          {activeTab === 'sqliteExercises' && (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+              {/* Barra superior de pestañas del Laboratorio Docente */}
+              <div className="academic-card" style={{ padding: '16px 20px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 14, flexWrap: 'wrap' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                    <div style={{ width: 40, height: 40, borderRadius: 10, background: '#0284C7', color: '#FFFFFF', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      <Database size={22} />
+                    </div>
+                    <div>
+                      <h2 style={{ fontSize: '1.2rem', fontWeight: 900, color: '#0F172A', margin: 0 }}>
+                        Gestión de Ejercicios y Laboratorio SQLite
+                      </h2>
+                      <p style={{ fontSize: '0.82rem', color: '#64748B', margin: '2px 0 0 0' }}>
+                        Crea ejercicios prácticos, diseña formularios para programar botones CRUD y califica las entregas de los estudiantes.
+                      </p>
+                    </div>
+                  </div>
+
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                    {/* Botones de sub-pestaña */}
+                    <div style={{ display: 'flex', background: '#F1F5F9', padding: 4, borderRadius: 10, border: '1.5px solid #CBD5E1' }}>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          soundService.playToken();
+                          setSqliteDashboardTab('exercises');
+                        }}
+                        style={{
+                          padding: '6px 14px',
+                          borderRadius: 8,
+                          border: 'none',
+                          fontWeight: 800,
+                          fontSize: '0.8rem',
+                          cursor: 'pointer',
+                          background: sqliteDashboardTab === 'exercises' ? '#0284C7' : 'transparent',
+                          color: sqliteDashboardTab === 'exercises' ? '#FFFFFF' : '#475569'
+                        }}
+                      >
+                        Ejercicios ({sqliteExercises.length})
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          soundService.playToken();
+                          setSqliteDashboardTab('submissions');
+                        }}
+                        style={{
+                          padding: '6px 14px',
+                          borderRadius: 8,
+                          border: 'none',
+                          fontWeight: 800,
+                          fontSize: '0.8rem',
+                          cursor: 'pointer',
+                          background: sqliteDashboardTab === 'submissions' ? '#0284C7' : 'transparent',
+                          color: sqliteDashboardTab === 'submissions' ? '#FFFFFF' : '#475569'
+                        }}
+                      >
+                        Entregas de Alumnos
+                      </button>
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={() => {
+                        soundService.playToken();
+                        setEditingSqliteExercise(null);
+                        setShowSqliteEditorModal(true);
+                      }}
+                      className="btn-3d btn-green"
+                      style={{ padding: '8px 16px', display: 'flex', alignItems: 'center', gap: 6 }}
+                    >
+                      <PlusCircle size={16} />
+                      <span>Crear Ejercicio SQLite</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              {sqliteDashboardTab === 'exercises' ? (
+                /* Lista de Ejercicios Configurados */
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(360px, 1fr))', gap: 16 }}>
+                  {sqliteExercises.map(ex => (
+                    <div
+                      key={ex.id}
+                      style={{
+                        background: '#FFFFFF',
+                        border: '2.5px solid #000000',
+                        boxShadow: '4px 4px 0px #000000',
+                        borderRadius: 16,
+                        padding: '18px 20px',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        justifyContent: 'space-between',
+                        gap: 12
+                      }}
+                    >
+                      <div>
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8, marginBottom: 8 }}>
+                          <span
+                            style={{
+                              fontSize: '0.7rem',
+                              fontWeight: 900,
+                              textTransform: 'uppercase',
+                              padding: '2px 8px',
+                              borderRadius: 6,
+                              border: '1.5px solid #000000',
+                              background: ex.type === 'button_programming' ? '#C7D2FE' : '#BAE6FD',
+                              color: '#000000'
+                            }}
+                          >
+                            {ex.type === 'button_programming' ? '🖱️ Programar Botones' : '📝 Consulta / DDL'}
+                          </span>
+                          <span
+                            style={{
+                              fontSize: '0.68rem',
+                              fontWeight: 800,
+                              textTransform: 'uppercase',
+                              color: ex.difficulty === 'easy' ? '#16A34A' : ex.difficulty === 'medium' ? '#D97706' : '#DC2626'
+                            }}
+                          >
+                            {ex.difficulty.toUpperCase()}
+                          </span>
+                        </div>
+
+                        <h3 style={{ fontSize: '1.05rem', fontWeight: 900, color: '#0F172A', margin: '0 0 6px 0' }}>
+                          {ex.title}
+                        </h3>
+                        <p style={{ fontSize: '0.82rem', color: '#475569', margin: '0 0 10px 0', lineHeight: 1.4 }}>
+                          {ex.description}
+                        </p>
+
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: 4, background: '#F8FAFC', padding: '8px 12px', borderRadius: 10, border: '1px solid #E2E8F0', fontSize: '0.78rem', color: '#64748B' }}>
+                          <span><strong>Objetivos:</strong> {ex.objectives?.length || 0} definidos</span>
+                          <span><strong>Pistas:</strong> {ex.hints?.length || 0} disponibles</span>
+                          {ex.buttonConfig && (
+                            <span><strong>Botones:</strong> {ex.buttonConfig.buttons?.length || 0} configurados</span>
+                          )}
+                        </div>
+                      </div>
+
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 8, borderTop: '1px solid #E2E8F0', paddingTop: 10 }}>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            soundService.playToken();
+                            setEditingSqliteExercise(ex);
+                            setShowSqliteEditorModal(true);
+                          }}
+                          className="btn-3d btn-outline"
+                          style={{ padding: '6px 12px', fontSize: '0.78rem' }}
+                        >
+                          <Edit3 size={13} style={{ marginRight: 4 }} />
+                          Editar
+                        </button>
+
+                        <button
+                          type="button"
+                          onClick={async () => {
+                            if (window.confirm(`¿Estás seguro de eliminar el ejercicio "${ex.title}"?`)) {
+                              await sqliteExerciseService.deleteExercise(ex.id);
+                              setSqliteExercises(prev => prev.filter(e => e.id !== ex.id));
+                              soundService.playToken();
+                            }
+                          }}
+                          style={{
+                            background: '#FEE2E2',
+                            color: '#DC2626',
+                            border: '1.5px solid #000000',
+                            borderRadius: 8,
+                            padding: '6px 10px',
+                            cursor: 'pointer',
+                            display: 'inline-flex',
+                            alignItems: 'center'
+                          }}
+                          title="Eliminar ejercicio"
+                        >
+                          <Trash2 size={14} />
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                /* Sub-pestaña de Entregas de Alumnos */
+                <TeacherSubmissionsView exercises={sqliteExercises} />
+              )}
+
+              {/* Modal de Creación / Edición de Ejercicio */}
+              {showSqliteEditorModal && (
+                <TeacherExerciseEditor
+                  exerciseToEdit={editingSqliteExercise}
+                  onClose={() => {
+                    setShowSqliteEditorModal(false);
+                    setEditingSqliteExercise(null);
+                  }}
+                  onSaved={async () => {
+                    setShowSqliteEditorModal(false);
+                    setEditingSqliteExercise(null);
+                    const list = await sqliteExerciseService.getAllExercises();
+                    setSqliteExercises(list);
+                    soundService.playWin();
+                  }}
+                />
+              )}
             </div>
           )}
         </>
