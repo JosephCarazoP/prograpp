@@ -845,8 +845,8 @@ INSERT INTO articulos (nombre, precio, stock) VALUES
                 onClick={() => setIsDbDropdownOpen(prev => !prev)}
                 style={{
                   backgroundColor: isDbDropdownOpen ? '#FEF9C3' : '#FFFFFF',
-                  minWidth: 170,
-                  maxWidth: 290,
+                  minWidth: 120,
+                  maxWidth: 220,
                   display: 'inline-flex',
                   alignItems: 'center',
                   gap: 8,
@@ -1052,33 +1052,19 @@ INSERT INTO articulos (nombre, precio, stock) VALUES
           </div>
         </div>
 
-        {/* Derecha: Ejecutar sentencia, Ejecutar todo, Deshacer, Importar, Exportar, Reset */}
+        {/* Derecha: Ejecutar, Deshacer, Nube, Importar, Exportar, Reset */}
         <div className="sqlite-topbar-actions">
-          {/* Botón Ejecutar sentencia */}
+          {/* Botón Ejecutar */}
           <button
             type="button"
             className="sqlite-btn-run-stmt"
             onClick={handleExecute}
             disabled={isRunning || isInitializing || !currentSql.trim()}
-            title="Ejecutar instrucción actual (Ctrl + Enter)"
+            title="Ejecutar consulta SQL (Ctrl + Enter)"
           >
             <Play size={14} fill="currentColor" />
-            <span className="sqlite-btn-label-desktop">Ejecutar sentencia</span>
-            <span className="sqlite-btn-label-mobile">Ejecutar</span>
+            <span>Ejecutar</span>
             <span className="sqlite-key-badge">Ctrl ↵</span>
-          </button>
-
-          {/* Botón Ejecutar todo (Desktop) */}
-          <button
-            type="button"
-            className="sqlite-btn-run-all sqlite-desktop-only"
-            onClick={handleExecute}
-            disabled={isRunning || isInitializing || !currentSql.trim()}
-            title="Ejecutar todo el script (Shift + Ctrl + Enter)"
-          >
-            <Play size={13} fill="currentColor" />
-            <span>Ejecutar todo</span>
-            <span className="sqlite-key-badge" style={{ background: '#E2E8F0', color: '#0F172A' }}>Shift ↵</span>
           </button>
 
           {/* Botón Deshacer */}
@@ -1115,8 +1101,8 @@ INSERT INTO articulos (nombre, precio, stock) VALUES
               {syncStatus === 'syncing'
                 ? 'Guardando...'
                 : syncStatus === 'dirty'
-                ? 'Guardar en la nube'
-                : 'Nube al día'}
+                ? 'Guardar'
+                : 'Al día'}
             </span>
           </button>
 

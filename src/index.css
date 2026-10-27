@@ -13828,15 +13828,270 @@ button, a, input, select, .path-node, .token-chip, .pair-card {
   }
 }
 
+/* ═════════════════════════════════════════════════════════════════
+   SQLITE LAB - ESTILOS COMPLETOS PARA ESCRITORIO (DESKTOP IDE)
+   ═════════════════════════════════════════════════════════════════ */
 @media (min-width: 900px) {
   .sqlite-mobile-tabs-bar {
     display: none !important;
   }
   .sqlite-sidebar-aside.sqlite-mobile-hidden {
-    display: block !important;
+    display: flex !important;
   }
   .sqlite-main-workspace.sqlite-mobile-hidden {
-    display: block !important;
+    display: flex !important;
+  }
+
+  /* Vista de pantalla completa sin scroll externo innecesario */
+  .sqlite-fullscreen-wrapper {
+    height: 100vh !important;
+    max-height: 100vh !important;
+    overflow: hidden !important;
+    display: flex !important;
+    flex-direction: column !important;
+    background: #FFFFFF !important;
+  }
+
+  .sqlite-lab-container {
+    width: 100% !important;
+    max-width: 100% !important;
+    height: 100vh !important;
+    max-height: 100vh !important;
+    padding: 12px 18px 14px !important;
+    margin: 0 !important;
+    box-sizing: border-box !important;
+    display: flex !important;
+    flex-direction: column !important;
+    overflow: hidden !important;
+  }
+
+  /* Barra superior compacta y equilibrada */
+  .sqlite-topbar {
+    flex-shrink: 0 !important;
+    margin-bottom: 12px !important;
+    padding: 9px 16px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 12px !important;
+    flex-wrap: nowrap !important;
+  }
+
+  .sqlite-topbar-left {
+    display: flex !important;
+    align-items: center !important;
+    gap: 12px !important;
+    flex-shrink: 0 !important;
+    flex-wrap: nowrap !important;
+  }
+
+  .sqlite-topbar-brand-group {
+    display: flex !important;
+    align-items: center !important;
+    gap: 10px !important;
+    flex-shrink: 0 !important;
+  }
+
+  .sqlite-topbar-db-group {
+    display: flex !important;
+    align-items: center !important;
+    gap: 6px !important;
+    flex-shrink: 0 !important;
+  }
+
+  .sqlite-topbar-actions {
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    flex-shrink: 0 !important;
+    flex-wrap: nowrap !important;
+  }
+
+  /* Banners opcionales docentes o de restauración */
+  .sqlite-exercise-strip,
+  .sqlite-cloud-restore-banner {
+    flex-shrink: 0 !important;
+    margin-bottom: 10px !important;
+    padding: 8px 14px !important;
+  }
+
+  /* Cuadrícula de 2 columnas que aprovecha todo el alto de la pantalla */
+  .sqlite-layout-grid {
+    flex: 1 !important;
+    min-height: 0 !important;
+    height: 100% !important;
+    display: grid !important;
+    grid-template-columns: 270px 1fr !important;
+    gap: 14px !important;
+    align-items: stretch !important;
+    overflow: hidden !important;
+  }
+
+  .sqlite-layout-grid.sidebar-collapsed {
+    grid-template-columns: 46px 1fr !important;
+  }
+
+  /* Panel izquierdo de Tablas (Sidebar) */
+  .sqlite-sidebar-aside {
+    height: 100% !important;
+    min-height: 0 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    overflow: hidden !important;
+  }
+
+  .sqlite-sidebar-box {
+    height: 100% !important;
+    min-height: 0 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    overflow: hidden !important;
+  }
+
+  .sqlite-sidebar-header,
+  .sqlite-table-actions-bar {
+    flex-shrink: 0 !important;
+  }
+
+  .sqlite-sidebar-content {
+    flex: 1 !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    overflow-y: auto !important;
+  }
+
+  /* Espacio de trabajo derecho (Editor arriba + Resultados abajo) */
+  .sqlite-main-workspace {
+    height: 100% !important;
+    min-height: 0 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 12px !important;
+    overflow: hidden !important;
+  }
+
+  /* Editor SQL ocupa ~54% del alto disponible */
+  .sqlite-editor-card {
+    flex: 5.4 !important;
+    min-height: 180px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    overflow: hidden !important;
+  }
+
+  .sqlite-tabs-bar {
+    flex-shrink: 0 !important;
+  }
+
+  .sqlite-code-area {
+    flex: 1 !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    height: 100% !important;
+    display: flex !important;
+    overflow: hidden !important;
+    border-bottom: none !important;
+  }
+
+  .sqlite-line-numbers {
+    overflow: hidden !important;
+  }
+
+  .sqlite-editor-text-wrapper {
+    flex: 1 !important;
+    min-height: 0 !important;
+    height: 100% !important;
+    position: relative !important;
+    overflow: hidden !important;
+  }
+
+  /* Panel de Resultados ocupa ~46% del alto disponible */
+  .sqlite-results-card {
+    flex: 4.6 !important;
+    min-height: 160px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    overflow: hidden !important;
+    margin-top: 0 !important;
+  }
+
+  .sqlite-results-header {
+    flex-shrink: 0 !important;
+  }
+
+  .sqlite-empty-results {
+    flex: 1 !important;
+    min-height: 0 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 20px !important;
+  }
+
+  .sqlite-table-container {
+    flex: 1 !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    overflow: auto !important;
+  }
+
+  .sqlite-error-box {
+    flex: 1 !important;
+    min-height: 0 !important;
+    overflow-y: auto !important;
+    margin: 10px !important;
+  }
+}
+
+/* Ajustes finos para pantallas de escritorio intermedias (900px a 1240px) */
+@media (min-width: 900px) and (max-width: 1240px) {
+  .sqlite-lab-container {
+    padding: 8px 12px 10px !important;
+  }
+  .sqlite-topbar {
+    padding: 8px 12px !important;
+    gap: 8px !important;
+    margin-bottom: 8px !important;
+  }
+  .sqlite-topbar-left {
+    gap: 8px !important;
+  }
+  .sqlite-brand-title {
+    font-size: 0.95rem !important;
+  }
+  .sqlite-back-btn {
+    padding: 6px 9px !important;
+    font-size: 0.78rem !important;
+  }
+  .sqlite-neo-select-btn {
+    min-width: 100px !important;
+    max-width: 150px !important;
+    padding: 6px 8px !important;
+    font-size: 0.76rem !important;
+  }
+  .sqlite-new-db-btn {
+    padding: 6px 8px !important;
+    font-size: 0.76rem !important;
+  }
+  .sqlite-topbar-actions {
+    gap: 6px !important;
+  }
+  .sqlite-btn-run-stmt {
+    padding: 6px 10px !important;
+    font-size: 0.78rem !important;
+  }
+  .sqlite-btn-util,
+  .sqlite-btn-reset {
+    padding: 6px 8px !important;
+    font-size: 0.74rem !important;
+  }
+  .sqlite-layout-grid {
+    grid-template-columns: 220px 1fr !important;
+    gap: 8px !important;
+  }
+  .sqlite-main-workspace {
+    gap: 8px !important;
   }
 }
 

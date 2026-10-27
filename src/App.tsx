@@ -1710,7 +1710,7 @@ export default function App() {
 
       {/* ═══ VISTA DEDICADA: LABORATORIO SQLITE REAL (ENFOQUE TOTAL SIN NAV BARS) ═══ */}
       {view === 'sqlite-lab' && (
-        <div className="sqlite-fullscreen-wrapper" style={{ width: '100%', minHeight: '100vh', background: '#FFFFFF' }}>
+        <div className="sqlite-fullscreen-wrapper">
           <SqliteLab
             user={user}
             initialExerciseId={sqliteInitialExerciseId}
