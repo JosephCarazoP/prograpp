@@ -321,7 +321,13 @@ class SqliteExerciseService {
 
     if (db) {
       try {
-        await setDoc(doc(db, 'sqlite_submissions', submission.id), submission);
+        const cleanSubmission: Record<string, any> = {};
+        for (const [k, v] of Object.entries(submission)) {
+          if (v !== undefined) {
+            cleanSubmission[k] = v;
+          }
+        }
+        await setDoc(doc(db, 'sqlite_submissions', submission.id), cleanSubmission);
       } catch (e) {
         console.warn('Error sincronizando entrega SQLite en Firestore:', e);
       }
