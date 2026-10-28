@@ -57,6 +57,74 @@ export const PRELOADED_NOTIFICATION_TEMPLATES: NotificationTemplate[] = [
     message: 'Te recomendamos repasar la teoría y ejercicios de la última unidad antes de comenzar los nuevos retos prácticos.',
     type: 'reminder',
     description: 'Recomendación pedagógica para afianzar conocimientos'
+  },
+  {
+    id: 'tpl_sql_tables_sample',
+    title: 'Script SQL: Estructura de Tablas y Datos de Prueba',
+    message: 'Estimados estudiantes, aquí les comparto el script SQL con la definición de tablas y registros iniciales para la práctica de hoy. Ábranlo en su base de datos creada en SQLite Lab.',
+    type: 'script',
+    description: 'Compartir script SQL para abrir en SQLite Lab',
+    defaultCodeLanguage: 'sql',
+    defaultCodeSnippet: `-- Creación de tablas de ejemplo para práctica
+CREATE TABLE IF NOT EXISTS clientes (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  nombre TEXT NOT NULL,
+  email TEXT UNIQUE,
+  ciudad TEXT DEFAULT 'San José'
+);
+
+CREATE TABLE IF NOT EXISTS pedidos (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  cliente_id INTEGER,
+  monto REAL NOT NULL,
+  fecha DATE DEFAULT CURRENT_DATE,
+  FOREIGN KEY (cliente_id) REFERENCES clientes(id)
+);
+
+-- Registros de prueba
+INSERT INTO clientes (nombre, email, ciudad) VALUES
+  ('Ana Mora', 'ana@email.com', 'San José'),
+  ('Carlos Ruiz', 'carlos@email.com', 'Heredia'),
+  ('Elena Gómez', 'elena@email.com', 'Cartago');
+
+INSERT INTO pedidos (cliente_id, monto) VALUES
+  (1, 1450.00),
+  (2, 320.50),
+  (1, 890.00);
+
+-- Consulta de verificación
+SELECT 
+  c.nombre AS Cliente,
+  COUNT(p.id) AS Total_Pedidos,
+  SUM(p.monto) AS Total_Gastado
+FROM clientes c
+LEFT JOIN pedidos p ON c.id = p.cliente_id
+GROUP BY c.id;`
+  },
+  {
+    id: 'tpl_kotlin_snippet',
+    title: 'Fragmento de Código Kotlin para Análisis',
+    message: 'Les comparto este ejemplo en Kotlin con funciones y estructuras de control para que revisen el flujo lógico y buenas prácticas.',
+    type: 'script',
+    description: 'Compartir código Kotlin para análisis',
+    defaultCodeLanguage: 'kotlin',
+    defaultCodeSnippet: `// Función para calcular bonificaciones según rendimiento
+fun calcularBonificacion(puntos: Int, rachaDias: Int): Double {
+    val factorBase = when {
+        puntos >= 1000 -> 1.5
+        puntos >= 500  -> 1.2
+        else           -> 1.0
+    }
+    
+    val bonoRacha = if (rachaDias >= 7) 50.0 else 10.0
+    return (puntos * factorBase) + bonoRacha
+}
+
+fun main() {
+    val estudiante = "Dev 01"
+    val bono = calcularBonificacion(puntos = 650, rachaDias = 8)
+    println("Estudiante: $estudiante | Bonificación total: $bono")
+}`
   }
 ];
 
@@ -85,6 +153,8 @@ export const notificationService = {
       targetUid?: string;
       targetGroup?: string;
       sender?: string;
+      codeSnippet?: string;
+      codeLanguage?: 'sql' | 'kotlin' | 'text';
     }
   ): Promise<AppNotification> {
     const notifId = `notif_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
@@ -99,7 +169,10 @@ export const notificationService = {
       sender: data.sender || 'Profesor',
       createdAt: Date.now(),
       readBy: [],
-      dismissedBy: []
+      dismissedBy: [],
+      // Mantener formato exacto sin trim que altere indentaciones
+      codeSnippet: data.codeSnippet ? data.codeSnippet : undefined,
+      codeLanguage: data.codeLanguage || (data.type === 'script' ? 'sql' : undefined)
     };
 
     // Guardar en caché local

@@ -117,6 +117,9 @@ export const AcademicDashboard: React.FC<AcademicDashboardProps> = ({
   const [notifTitle, setNotifTitle] = useState('');
   const [notifMessage, setNotifMessage] = useState('');
   const [notifType, setNotifType] = useState<NotificationType>('update');
+  const [notifCodeSnippet, setNotifCodeSnippet] = useState('');
+  const [notifCodeLanguage, setNotifCodeLanguage] = useState<'sql' | 'kotlin' | 'text'>('sql');
+  const [attachCodeSnippet, setAttachCodeSnippet] = useState(false);
   const [notifTargetMode, setNotifTargetMode] = useState<'all' | 'specific' | 'group'>('all');
   const [notifTargetUid, setNotifTargetUid] = useState<string>('');
   const [notifTargetGroup, setNotifTargetGroup] = useState<string>('Grupo A');
@@ -492,24 +495,31 @@ export const AcademicDashboard: React.FC<AcademicDashboardProps> = ({
   // Enviar Notificación / Aviso a Alumnos
   const handleSendTeacherNotification = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!notifTitle.trim() || !notifMessage.trim()) return;
+    const effectiveMsg = notifMessage.trim() || (notifCodeSnippet.trim() ? 'Script o código adjunto por el profesor para revisión y práctica.' : '');
+    if (!notifTitle.trim() || !effectiveMsg) return;
 
     setNotifLoading(true);
     soundService.playToken();
     try {
+      const hasCode = (notifType === 'script' || attachCodeSnippet) && notifCodeSnippet.trim().length > 0;
       const created = await notificationService.sendNotification({
         title: notifTitle.trim(),
-        message: notifMessage.trim(),
+        message: effectiveMsg,
         type: notifType,
         targetType: notifTargetMode,
         targetUid: notifTargetMode === 'specific' ? notifTargetUid : undefined,
         targetGroup: notifTargetMode === 'group' ? notifTargetGroup : undefined,
-        sender: 'Profesor Joseph'
+        sender: 'Profesor Joseph',
+        // Mantener estrictamente el formato, identado y saltos de línea sin alteración
+        codeSnippet: hasCode ? notifCodeSnippet : undefined,
+        codeLanguage: hasCode ? notifCodeLanguage : undefined
       });
 
       setTeacherNotifications(prev => [created, ...prev]);
       setNotifTitle('');
       setNotifMessage('');
+      setNotifCodeSnippet('');
+      setAttachCodeSnippet(false);
       setNotifSuccessMsg('¡Aviso enviado exitosamente a los estudiantes!');
       setTimeout(() => setNotifSuccessMsg(''), 4500);
       soundService.playWin();
@@ -526,6 +536,14 @@ export const AcademicDashboard: React.FC<AcademicDashboardProps> = ({
     setNotifTitle(tpl.title);
     setNotifMessage(tpl.message);
     setNotifType(tpl.type);
+    if (tpl.defaultCodeSnippet) {
+      setNotifCodeSnippet(tpl.defaultCodeSnippet);
+      setNotifCodeLanguage(tpl.defaultCodeLanguage || 'sql');
+      setAttachCodeSnippet(true);
+    } else {
+      setNotifCodeSnippet('');
+      setAttachCodeSnippet(false);
+    }
   };
 
   // Eliminar notificación enviada
@@ -3077,10 +3095,17 @@ export const AcademicDashboard: React.FC<AcademicDashboardProps> = ({
                       <label className="auth-label">Tipo de Notificación</label>
                       <select
                         value={notifType}
-                        onChange={(e) => setNotifType(e.target.value as NotificationType)}
+                        onChange={(e) => {
+                          const val = e.target.value as NotificationType;
+                          setNotifType(val);
+                          if (val === 'script') {
+                            setAttachCodeSnippet(true);
+                          }
+                        }}
                         style={{ width: '100%', padding: '9px 12px', borderRadius: 10, border: '2px solid #000000', boxShadow: '2px 2px 0px #000000', fontWeight: 700 }}
                       >
                         <option value="update">Actualización de la Plataforma</option>
+                        <option value="script">Script o Código para Alumnos</option>
                         <option value="observation">Observación Pedagógica</option>
                         <option value="reminder">Recordatorio de Estudio</option>
                         <option value="assignment">Evaluación Asignada</option>
@@ -3141,21 +3166,176 @@ export const AcademicDashboard: React.FC<AcademicDashboardProps> = ({
                   </div>
 
                   <div>
-                    <label className="auth-label">Mensaje Completo para el Alumno</label>
+                    <label className="auth-label">Mensaje o Indicaciones para el Alumno</label>
                     <textarea
-                      rows={4}
-                      placeholder="Escribe aquí el contenido del aviso que verán los alumnos..."
+                      rows={notifType === 'script' || attachCodeSnippet ? 2 : 4}
+                      placeholder={
+                        notifType === 'script' || attachCodeSnippet
+                          ? 'Instrucciones breves (opcional, ej. "Ejecuten este script en SQLite Lab sobre su base de datos")...'
+                          : 'Escribe aquí el contenido del aviso que verán los alumnos...'
+                      }
                       value={notifMessage}
                       onChange={(e) => setNotifMessage(e.target.value)}
                       style={{ width: '100%', padding: '10px 14px', borderRadius: 10, border: '2px solid #000000', boxShadow: '2px 2px 0px #000000', fontSize: '0.9rem', lineHeight: 1.5 }}
-                      required
                     />
                   </div>
+
+                  {/* Casilla para adjuntar bloque de código / script */}
+                  {notifType !== 'script' && (
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                      <label
+                        style={{
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: 8,
+                          fontSize: '0.86rem',
+                          fontWeight: 800,
+                          color: '#1E293B',
+                          cursor: 'pointer',
+                          userSelect: 'none'
+                        }}
+                      >
+                        <input
+                          type="checkbox"
+                          checked={attachCodeSnippet}
+                          onChange={(e) => setAttachCodeSnippet(e.target.checked)}
+                          style={{ width: 18, height: 18, accentColor: '#0284C7', cursor: 'pointer' }}
+                        />
+                        <span>Adjuntar bloque de script / código exacto (SQL o Kotlin)</span>
+                      </label>
+                    </div>
+                  )}
+
+                  {/* Editor de Código de Alta Fidelidad - Preservando exactamente formato, identado y saltos */}
+                  {(notifType === 'script' || attachCodeSnippet) && (
+                    <div
+                      style={{
+                        background: '#0B1120',
+                        border: '2.5px solid #000000',
+                        borderRadius: 14,
+                        padding: '14px',
+                        boxShadow: '3.5px 3.5px 0px #000000',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: 10
+                      }}
+                    >
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 10 }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                          <span style={{ fontSize: '0.78rem', fontWeight: 900, color: '#38BDF8', letterSpacing: '0.04em' }}>
+                            LENGUAJE DEL SCRIPT:
+                          </span>
+                          <div style={{ display: 'flex', gap: 6 }}>
+                            <button
+                              type="button"
+                              onClick={() => {
+                                soundService.playToken();
+                                setNotifCodeLanguage('sql');
+                              }}
+                              style={{
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                gap: 6,
+                                padding: '5px 12px',
+                                borderRadius: 8,
+                                border: '2px solid #000000',
+                                background: notifCodeLanguage === 'sql' ? '#38BDF8' : '#1E293B',
+                                color: notifCodeLanguage === 'sql' ? '#0F172A' : '#94A3B8',
+                                fontWeight: 900,
+                                fontSize: '0.76rem',
+                                cursor: 'pointer',
+                                boxShadow: notifCodeLanguage === 'sql' ? '2px 2px 0px #000000' : 'none'
+                              }}
+                            >
+                              <Database size={13} strokeWidth={2.5} />
+                              <span>SQL</span>
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => {
+                                soundService.playToken();
+                                setNotifCodeLanguage('kotlin');
+                              }}
+                              style={{
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                gap: 6,
+                                padding: '5px 12px',
+                                borderRadius: 8,
+                                border: '2px solid #000000',
+                                background: notifCodeLanguage === 'kotlin' ? '#A78BFA' : '#1E293B',
+                                color: notifCodeLanguage === 'kotlin' ? '#0F172A' : '#94A3B8',
+                                fontWeight: 900,
+                                fontSize: '0.76rem',
+                                cursor: 'pointer',
+                                boxShadow: notifCodeLanguage === 'kotlin' ? '2px 2px 0px #000000' : 'none'
+                              }}
+                            >
+                              <Code2 size={13} strokeWidth={2.5} />
+                              <span>Kotlin</span>
+                            </button>
+                          </div>
+                        </div>
+
+                        <div style={{ fontSize: '0.73rem', color: '#94A3B8', fontWeight: 700 }}>
+                          {notifCodeSnippet ? `${notifCodeSnippet.split('\n').length} líneas` : '0 líneas'}
+                          {' • Formato e identado 100% conservados'}
+                        </div>
+                      </div>
+
+                      <textarea
+                        rows={9}
+                        value={notifCodeSnippet}
+                        onChange={(e) => setNotifCodeSnippet(e.target.value)}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Tab') {
+                            e.preventDefault();
+                            const target = e.currentTarget;
+                            const start = target.selectionStart;
+                            const end = target.selectionEnd;
+                            const val = target.value;
+                            const updated = val.substring(0, start) + '  ' + val.substring(end);
+                            setNotifCodeSnippet(updated);
+                            setTimeout(() => {
+                              target.selectionStart = target.selectionEnd = start + 2;
+                            }, 0);
+                          }
+                        }}
+                        placeholder={
+                          notifCodeLanguage === 'sql'
+                            ? `-- Pega aquí el script SQL exacto tal como quieres que los alumnos lo vean o ejecuten:\nCREATE TABLE clientes (\n  id INTEGER PRIMARY KEY,\n  nombre TEXT NOT NULL\n);\n\nINSERT INTO clientes (nombre) VALUES ('Ana');`
+                            : `// Pega aquí el código Kotlin con su identado original:\nfun main() {\n  println("Hola Estudiantes")\n}`
+                        }
+                        spellCheck={false}
+                        wrap="off"
+                        style={{
+                          width: '100%',
+                          padding: '12px 14px',
+                          borderRadius: 8,
+                          border: '1.5px solid #1E293B',
+                          background: '#030712',
+                          color: '#E2E8F0',
+                          fontFamily: "'JetBrains Mono', 'Fira Code', Menlo, Monaco, Consolas, monospace",
+                          fontSize: '0.84rem',
+                          lineHeight: 1.55,
+                          whiteSpace: 'pre',
+                          tabSize: 2,
+                          boxSizing: 'border-box',
+                          overflowX: 'auto',
+                          resize: 'vertical'
+                        }}
+                      />
+                    </div>
+                  )}
 
                   <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 4 }}>
                     <button
                       type="submit"
-                      disabled={notifLoading || !notifTitle.trim() || !notifMessage.trim()}
+                      disabled={
+                        notifLoading ||
+                        !notifTitle.trim() ||
+                        (!notifMessage.trim() && !notifCodeSnippet.trim())
+                      }
                       className="btn-3d btn-green"
                       style={{
                         padding: '12px 28px',

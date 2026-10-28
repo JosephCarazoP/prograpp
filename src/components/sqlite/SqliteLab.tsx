@@ -54,14 +54,21 @@ export interface UserDatabase {
 interface SqliteLabProps {
   user: UserProfile;
   initialExerciseId?: string | null;
+  initialDbId?: string | null;
+  initialSqlCode?: string | null;
   onBack: () => void;
 }
 
 export const SqliteLab: React.FC<SqliteLabProps> = ({
   user,
   initialExerciseId = null,
+  initialDbId = null,
+  initialSqlCode = null,
   onBack
 }) => {
+  // Flag para asegurar carga única del script inicial
+  const initialScriptLoadedRef = useRef(false);
+
   // Lista de ejercicios disponibles
   const [exercises, setExercises] = useState<SqliteExercise[]>([]);
   const [selectedExerciseId, setSelectedExerciseId] = useState<string>(
@@ -163,11 +170,19 @@ export const SqliteLab: React.FC<SqliteLabProps> = ({
     return [{ id: 'default', name: 'Base Principal (main.db)', createdAt: Date.now() }];
   });
 
-  const [activeDbId, setActiveDbId] = useState<string>('default');
+  const [activeDbId, setActiveDbId] = useState<string>(initialDbId || 'default');
   const [isNewDbModalOpen, setIsNewDbModalOpen] = useState(false);
   const [isCreateTableOpen, setIsCreateTableOpen] = useState(false);
   const [editTable, setEditTable] = useState<TableSchemaInfo | null>(null);
   const [tableToDelete, setTableToDelete] = useState<TableSchemaInfo | null>(null);
+
+  // Sincronizar activeDbId si se provee inicialmente o desde modal de notificaciones
+  useEffect(() => {
+    if (initialDbId) {
+      setActiveDbId(initialDbId);
+      setSelectedExerciseId('sandbox');
+    }
+  }, [initialDbId]);
 
   // Estados de Sincronización en la Nube y Recuperación
   const [syncStatus, setSyncStatus] = useState<'synced' | 'syncing' | 'dirty'>('synced');
@@ -222,10 +237,22 @@ export const SqliteLab: React.FC<SqliteLabProps> = ({
         const defaultSql = activeExercise?.initialSql || '-- Escribe tu consulta SQL aquí\n';
         let savedSql = sqliteStorageService.loadStudentSql(storageKey, defaultSql);
         
-        setTabs([
-          { id: 'q1', title: 'Query 1', sql: savedSql }
-        ]);
-        setActiveTabId('q1');
+        if (initialSqlCode && !initialScriptLoadedRef.current) {
+          initialScriptLoadedRef.current = true;
+          const scriptTabId = `q_script_${Date.now()}`;
+          setTabs([
+            { id: scriptTabId, title: 'Script Profesor', sql: initialSqlCode },
+            { id: 'q1', title: 'Query 1', sql: savedSql }
+          ]);
+          setActiveTabId(scriptTabId);
+          setSubmitSuccessMsg('¡Script del profesor cargado en el editor!');
+          setTimeout(() => setSubmitSuccessMsg(null), 4000);
+        } else {
+          setTabs([
+            { id: 'q1', title: 'Query 1', sql: savedSql }
+          ]);
+          setActiveTabId('q1');
+        }
 
         let savedBinary = await sqliteStorageService.loadDatabase(storageKey);
 

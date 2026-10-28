@@ -1,4 +1,4 @@
-export type NotificationType = 'update' | 'observation' | 'reminder' | 'cheer' | 'assignment';
+export type NotificationType = 'update' | 'observation' | 'reminder' | 'cheer' | 'assignment' | 'script';
 
 export interface AppNotification {
   id: string;
@@ -12,6 +12,8 @@ export interface AppNotification {
   createdAt: number;
   readBy: string[];
   dismissedBy?: string[]; // UIDs de usuarios que limpiaron esta notificación de su bandeja personal
+  codeSnippet?: string; // Código o script exacto con formato preservado
+  codeLanguage?: 'sql' | 'kotlin' | 'text'; // Lenguaje del script
 }
 
 export interface NotificationTemplate {
@@ -20,4 +22,6 @@ export interface NotificationTemplate {
   message: string;
   type: NotificationType;
   description: string;
+  defaultCodeSnippet?: string;
+  defaultCodeLanguage?: 'sql' | 'kotlin';
 }

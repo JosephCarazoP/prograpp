@@ -9,11 +9,16 @@ import {
   Target,
   Award,
   Trash2,
-  Check
+  Check,
+  Copy,
+  Play,
+  Database,
+  Code2
 } from 'lucide-react';
 import { AppNotification, NotificationType } from '../types/notification';
 import { UserProfile } from '../types/user';
 import { soundService } from '../services/soundService';
+import { SelectDatabaseModal } from './sqlite/SelectDatabaseModal';
 
 interface NotificationsPageProps {
   user: UserProfile;
@@ -23,6 +28,39 @@ interface NotificationsPageProps {
   onMarkAllAsRead: () => void;
   onDismissNotification: (id: string) => void;
   onDismissAllRead?: () => void;
+  onOpenScriptInSqlite?: (sqlCode: string, targetDbId: string) => void;
+}
+
+/**
+ * Extrae de forma segura el script o bloque de código preservando 100% el identado original
+ */
+function extractNotificationCode(notif: AppNotification): {
+  code: string;
+  language: 'sql' | 'kotlin' | 'text';
+  textMessage: string;
+} | null {
+  if (notif.codeSnippet && notif.codeSnippet.length > 0) {
+    return {
+      code: notif.codeSnippet,
+      language: notif.codeLanguage || (notif.type === 'script' ? 'sql' : 'text'),
+      textMessage: notif.message
+    };
+  }
+
+  // Detectar bloques de código markdown ```sql ... ```
+  const codeBlockMatch = notif.message.match(/```(sql|kotlin|text)?\s*([\s\S]*?)```/);
+  if (codeBlockMatch) {
+    const lang = (codeBlockMatch[1]?.toLowerCase() as 'sql' | 'kotlin') || 'sql';
+    const rawCode = codeBlockMatch[2];
+    const textWithoutCode = notif.message.replace(/```(sql|kotlin|text)?\s*[\s\S]*?```/g, '').trim();
+    return {
+      code: rawCode,
+      language: lang,
+      textMessage: textWithoutCode || notif.message
+    };
+  }
+
+  return null;
 }
 
 export const NotificationsPage: React.FC<NotificationsPageProps> = ({
@@ -32,18 +70,58 @@ export const NotificationsPage: React.FC<NotificationsPageProps> = ({
   onMarkAsRead,
   onMarkAllAsRead,
   onDismissNotification,
-  onDismissAllRead
+  onDismissAllRead,
+  onOpenScriptInSqlite
 }) => {
-  const [filterType, setFilterType] = useState<'all' | 'unread' | NotificationType>('all');
+  const [filterType, setFilterType] = useState<'all' | 'unread' | 'script' | NotificationType>('all');
+  const [isSelectDbModalOpen, setIsSelectDbModalOpen] = useState(false);
+  const [pendingScript, setPendingScript] = useState<{ code: string; title: string } | null>(null);
+  const [copiedId, setCopiedId] = useState<string | null>(null);
 
   const unreadCount = notifications.filter((n) => !n.readBy.includes(user.uid)).length;
+  const scriptsCount = notifications.filter((n) => n.type === 'script' || Boolean(extractNotificationCode(n))).length;
 
   const filteredNotifications = notifications.filter((n) => {
     const isUnread = !n.readBy.includes(user.uid);
     if (filterType === 'all') return true;
     if (filterType === 'unread') return isUnread;
+    if (filterType === 'script') return n.type === 'script' || Boolean(extractNotificationCode(n));
     return n.type === filterType;
   });
+
+  const handleCopyScript = async (e: React.MouseEvent, code: string, id: string) => {
+    e.stopPropagation();
+    soundService.playToken();
+    try {
+      await navigator.clipboard.writeText(code);
+      setCopiedId(id);
+      setTimeout(() => setCopiedId(null), 2500);
+    } catch {
+      const ta = document.createElement('textarea');
+      ta.value = code;
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand('copy');
+      document.body.removeChild(ta);
+      setCopiedId(id);
+      setTimeout(() => setCopiedId(null), 2500);
+    }
+  };
+
+  const handleOpenSqliteModal = (e: React.MouseEvent, code: string, title: string) => {
+    e.stopPropagation();
+    soundService.playToken();
+    setPendingScript({ code, title });
+    setIsSelectDbModalOpen(true);
+  };
+
+  const handleDatabaseSelected = (dbId: string) => {
+    if (pendingScript && onOpenScriptInSqlite) {
+      onOpenScriptInSqlite(pendingScript.code, dbId);
+    }
+    setIsSelectDbModalOpen(false);
+    setPendingScript(null);
+  };
 
   const formatRelativeTime = (timestamp: number) => {
     const diffMs = Date.now() - timestamp;
@@ -65,6 +143,14 @@ export const NotificationsPage: React.FC<NotificationsPageProps> = ({
 
   const getTypeMeta = (type: NotificationType) => {
     switch (type) {
+      case 'script':
+        return {
+          label: 'Script de Código',
+          icon: <Code2 size={16} color="#0284C7" />,
+          bg: '#E0F2FE',
+          color: '#0369A1',
+          border: '#BAE6FD'
+        };
       case 'update':
         return {
           label: 'Actualización',
@@ -207,6 +293,17 @@ export const NotificationsPage: React.FC<NotificationsPageProps> = ({
 
         <button
           type="button"
+          className={`duo-3d-filter-chip ${filterType === 'script' ? 'active' : ''}`}
+          onClick={() => {
+            soundService.playToken();
+            setFilterType('script');
+          }}
+        >
+          SCRIPTS ({scriptsCount})
+        </button>
+
+        <button
+          type="button"
           className={`duo-3d-filter-chip ${filterType === 'observation' ? 'active' : ''}`}
           onClick={() => {
             soundService.playToken();
@@ -247,11 +344,13 @@ export const NotificationsPage: React.FC<NotificationsPageProps> = ({
               <Bell size={38} color="#0284C7" strokeWidth={2.5} />
             </div>
             <h3 className="duo-empty-title">
-              {filterType === 'unread' ? '¡ESTÁS AL DÍA!' : 'NO HAY NOTIFICACIONES'}
+              {filterType === 'unread' ? '¡ESTÁS AL DÍA!' : filterType === 'script' ? 'NO HAY SCRIPTS COMPARTIDOS' : 'NO HAY NOTIFICACIONES'}
             </h3>
             <p className="duo-empty-desc">
               {filterType === 'unread'
                 ? 'Has leído todos tus avisos y comunicados pendientes.'
+                : filterType === 'script'
+                ? 'Aún no tienes scripts o fragmentos de código compartidos por tu profesor.'
                 : 'Tu bandeja personal está limpia. Cuando el docente o el sistema emita un aviso, aparecerá aquí inmediatamente en tiempo real.'}
             </p>
             <button
@@ -269,6 +368,7 @@ export const NotificationsPage: React.FC<NotificationsPageProps> = ({
         ) : (
           filteredNotifications.map((notif) => {
             const isUnread = !notif.readBy.includes(user.uid);
+            const extractedCode = extractNotificationCode(notif);
             const meta = getTypeMeta(notif.type);
 
             return (
@@ -288,13 +388,31 @@ export const NotificationsPage: React.FC<NotificationsPageProps> = ({
                     <span
                       className="duo-3d-tag"
                       style={{
-                        background: meta.bg,
-                        color: meta.color,
-                        borderColor: meta.border
+                        background: extractedCode
+                          ? (extractedCode.language === 'sql' ? '#E0F2FE' : '#F3E8FF')
+                          : meta.bg,
+                        color: extractedCode
+                          ? (extractedCode.language === 'sql' ? '#0369A1' : '#6B21A8')
+                          : meta.color,
+                        borderColor: extractedCode
+                          ? (extractedCode.language === 'sql' ? '#BAE6FD' : '#DDD6FE')
+                          : meta.border
                       }}
                     >
-                      {meta.icon}
-                      <span>{meta.label.toUpperCase()}</span>
+                      {extractedCode ? (
+                        extractedCode.language === 'sql' ? (
+                          <Database size={14} color="#0284C7" strokeWidth={2.5} />
+                        ) : (
+                          <Code2 size={14} color="#7C3AED" strokeWidth={2.5} />
+                        )
+                      ) : (
+                        meta.icon
+                      )}
+                      <span>
+                        {extractedCode
+                          ? (extractedCode.language === 'sql' ? 'SCRIPT SQL' : extractedCode.language === 'kotlin' ? 'CÓDIGO KOTLIN' : 'SCRIPT')
+                          : meta.label.toUpperCase()}
+                      </span>
                     </span>
 
                     <span className="notif-sender-label">
@@ -325,12 +443,79 @@ export const NotificationsPage: React.FC<NotificationsPageProps> = ({
                   </div>
                 </div>
 
-                {/* Título y Mensaje */}
+                {/* Título */}
                 <h3 className="notif-card-title duo-card-h3">{notif.title}</h3>
-                <p className="notif-card-message duo-card-p">{notif.message}</p>
+
+                {/* Mensaje descriptivo */}
+                {extractedCode?.textMessage ? (
+                  <p className="notif-card-message duo-card-p">{extractedCode.textMessage}</p>
+                ) : (
+                  !extractedCode && <p className="notif-card-message duo-card-p">{notif.message}</p>
+                )}
+
+                {/* Bloque de Código de Alta Fidelidad - Preservando exactamente espacios e indentación */}
+                {extractedCode && (
+                  <div className="notif-code-block-wrapper" onClick={(e) => e.stopPropagation()}>
+                    <div className="notif-code-block-header">
+                      <div className="notif-code-lang-tag">
+                        {extractedCode.language === 'sql' ? (
+                          <Database size={14} color="#38BDF8" strokeWidth={2.5} />
+                        ) : (
+                          <Code2 size={14} color="#A78BFA" strokeWidth={2.5} />
+                        )}
+                        <span>{extractedCode.language === 'sql' ? 'SQL SCRIPT' : extractedCode.language === 'kotlin' ? 'KOTLIN' : 'SCRIPT'}</span>
+                        <span className="notif-code-line-count">
+                          ({extractedCode.code.split('\n').length} líneas)
+                        </span>
+                      </div>
+
+                      <div className="notif-code-actions">
+                        {/* BOTÓN COPIAR SCRIPT */}
+                        <button
+                          type="button"
+                          className="notif-code-btn copy-btn"
+                          onClick={(e) => handleCopyScript(e, extractedCode.code, notif.id)}
+                          title="Copiar script exactamente con todo su formato al portapapeles"
+                        >
+                          {copiedId === notif.id ? (
+                            <>
+                              <Check size={14} strokeWidth={3} color="#22C55E" />
+                              <span style={{ color: '#22C55E', fontWeight: 900 }}>¡COPIADO!</span>
+                            </>
+                          ) : (
+                            <>
+                              <Copy size={13} strokeWidth={2.5} />
+                              <span>COPIAR</span>
+                            </>
+                          )}
+                        </button>
+
+                        {/* BOTÓN ABRIR EN SQLITE LAB (Solo si es SQL) */}
+                        {extractedCode.language === 'sql' && onOpenScriptInSqlite && (
+                          <button
+                            type="button"
+                            className="notif-code-btn open-sqlite-btn"
+                            onClick={(e) => handleOpenSqliteModal(e, extractedCode.code, notif.title)}
+                            title="Seleccionar en cuál Base de Datos abrir y ejecutar este script"
+                          >
+                            <Play size={13} fill="#0369A1" color="#0369A1" />
+                            <span>ABRIR EN SQLITE LAB</span>
+                          </button>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* CUERPO DEL CÓDIGO - PRESERVANDO FORMATO, ESPACIOS E IDENTADO EXACTOS */}
+                    <div className="notif-code-pre-scroll">
+                      <pre className="notif-code-pre">
+                        <code>{extractedCode.code}</code>
+                      </pre>
+                    </div>
+                  </div>
+                )}
 
                 {/* Footer de acción táctil */}
-                <div className="notif-card-footer" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <div className="notif-card-footer" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 4 }}>
                   {isUnread ? (
                     <span className="duo-tap-read-hint">TOCA PARA MARCAR COMO LEÍDO</span>
                   ) : (
@@ -362,6 +547,19 @@ export const NotificationsPage: React.FC<NotificationsPageProps> = ({
           })
         )}
       </div>
+
+      {/* Modal para seleccionar en cuál Base de Datos abrir el script */}
+      <SelectDatabaseModal
+        isOpen={isSelectDbModalOpen}
+        onClose={() => {
+          setIsSelectDbModalOpen(false);
+          setPendingScript(null);
+        }}
+        onSelectDatabase={handleDatabaseSelected}
+        userId={user.uid}
+        scriptSnippet={pendingScript?.code}
+        scriptTitle={pendingScript?.title}
+      />
     </div>
   );
 };

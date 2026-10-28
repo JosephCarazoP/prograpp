@@ -179,6 +179,27 @@ class SqliteStorageService {
       return {};
     }
   }
+
+  /**
+   * Obtiene la lista de bases de datos creadas por el usuario en SQLite Lab
+   */
+  public getUserDatabases(userId?: string): UserDatabaseItem[] {
+    try {
+      const raw = localStorage.getItem(`prograpp_sqlite_user_dbs_${userId || 'guest'}`);
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+      }
+    } catch (e) {}
+    return [{ id: 'default', name: 'Base Principal (main.db)', createdAt: Date.now() }];
+  }
+}
+
+export interface UserDatabaseItem {
+  id: string;
+  name: string;
+  createdAt: number;
 }
 
 export const sqliteStorageService = new SqliteStorageService();
+

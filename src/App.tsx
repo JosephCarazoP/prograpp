@@ -208,6 +208,8 @@ export default function App() {
     }
     return null;
   });
+  const [sqliteInitialDbId, setSqliteInitialDbId] = useState<string | null>(null);
+  const [sqliteInitialSqlCode, setSqliteInitialSqlCode] = useState<string | null>(null);
 
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(() => {
     return Boolean(storageService.getItem<string | null>('last_authenticated_uid', null));
@@ -1370,6 +1372,8 @@ export default function App() {
             soundService.playToken();
             setView('sqlite-lab');
             setSqliteInitialExerciseId(null);
+            setSqliteInitialDbId(null);
+            setSqliteInitialSqlCode(null);
             window.scrollTo({ top: 0, behavior: 'instant' });
           }}
           onSignOut={handleSignOut}
@@ -1537,6 +1541,8 @@ export default function App() {
                     soundService.playToken();
                     setView('sqlite-lab');
                     setSqliteInitialExerciseId(null);
+                    setSqliteInitialDbId(null);
+                    setSqliteInitialSqlCode(null);
                     window.scrollTo({ top: 0, behavior: 'instant' });
                   }}
                 />
@@ -1637,6 +1643,13 @@ export default function App() {
                 onMarkAllAsRead={handleMarkAllNotificationsAsRead}
                 onDismissNotification={handleDismissNotification}
                 onDismissAllRead={handleDismissAllRead}
+                onOpenScriptInSqlite={(sqlCode, targetDbId) => {
+                  soundService.playToken();
+                  setSqliteInitialDbId(targetDbId);
+                  setSqliteInitialSqlCode(sqlCode);
+                  setSqliteInitialExerciseId('sandbox');
+                  setView('sqlite-lab');
+                }}
               />
             )}
 
@@ -1714,10 +1727,14 @@ export default function App() {
           <SqliteLab
             user={user}
             initialExerciseId={sqliteInitialExerciseId}
+            initialDbId={sqliteInitialDbId}
+            initialSqlCode={sqliteInitialSqlCode}
             onBack={() => {
               soundService.playToken();
               setView('path');
               setSqliteInitialExerciseId(null);
+              setSqliteInitialDbId(null);
+              setSqliteInitialSqlCode(null);
               window.scrollTo({ top: 0, behavior: 'smooth' });
             }}
           />

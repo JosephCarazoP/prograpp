@@ -10267,6 +10267,131 @@ html.is-pwa-standalone .sqlite-lab-container {
 }
 
 /* ═══════════════════════════════════════════════════════════════════
+   7.1. BLOQUE DE CÓDIGO Y SCRIPTS PARA NOTIFICACIONES (PRESERVANDO FORMATO)
+   ═══════════════════════════════════════════════════════════════════ */
+.notif-code-block-wrapper {
+  margin: 14px 0 10px 0;
+  background: #0B1120;
+  border: 2.5px solid #000000;
+  border-radius: 14px;
+  box-shadow: 3.5px 3.5px 0px #000000;
+  overflow: hidden;
+  transition: transform 0.1s ease;
+}
+
+.notif-code-block-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 8px 14px;
+  background: #030712;
+  border-bottom: 2px solid #1E293B;
+}
+
+.notif-code-lang-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 0.76rem;
+  font-weight: 900;
+  color: #38BDF8;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.notif-code-line-count {
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: #64748B;
+  text-transform: none;
+}
+
+.notif-code-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.notif-code-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  font-size: 0.74rem;
+  font-weight: 900;
+  border-radius: 8px;
+  border: 2px solid #000000;
+  cursor: pointer;
+  letter-spacing: 0.03em;
+  transition: all 0.1s ease;
+  user-select: none;
+}
+
+.notif-code-btn.copy-btn {
+  background: #1E293B;
+  color: #F8FAFC;
+  box-shadow: 2px 2px 0px #000000;
+}
+.notif-code-btn.copy-btn:hover {
+  background: #334155;
+  color: #FFFFFF;
+}
+.notif-code-btn.copy-btn:active {
+  transform: translate(1px, 1px);
+  box-shadow: 0.5px 0.5px 0px #000000;
+}
+
+.notif-code-btn.open-sqlite-btn {
+  background: #0284C7;
+  color: #FFFFFF;
+  box-shadow: 2.5px 2.5px 0px #000000;
+}
+.notif-code-btn.open-sqlite-btn:hover {
+  background: #0369A1;
+}
+.notif-code-btn.open-sqlite-btn:active {
+  transform: translate(1px, 1px);
+  box-shadow: 0.5px 0.5px 0px #000000;
+}
+
+.notif-code-pre-scroll {
+  max-height: 380px;
+  overflow-x: auto;
+  overflow-y: auto;
+  background: #0B1120;
+  padding: 12px 14px;
+}
+
+.notif-code-pre {
+  margin: 0 !important;
+  padding: 0 !important;
+  font-family: 'JetBrains Mono', 'Fira Code', Menlo, Monaco, Consolas, monospace !important;
+  font-size: 0.82rem !important;
+  line-height: 1.6 !important;
+  color: #E2E8F0 !important;
+  white-space: pre !important;
+  tab-size: 2 !important;
+  -moz-tab-size: 2 !important;
+  word-break: normal !important;
+  overflow-wrap: normal !important;
+  background: transparent !important;
+  border: none !important;
+}
+
+.notif-code-pre code {
+  font-family: inherit !important;
+  white-space: inherit !important;
+  background: transparent !important;
+  padding: 0 !important;
+  border: none !important;
+  color: inherit !important;
+  font-size: inherit !important;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
    8. DUOLINGO 3D: TIENDA COMPLETA Y VESTIDOR DE BYTE (STORE PAGE)
    ═══════════════════════════════════════════════════════════════════ */
 .duo-store-page-root {
