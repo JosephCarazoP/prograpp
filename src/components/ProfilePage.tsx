@@ -354,7 +354,7 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({
               onClick={handleShare}
             >
               <Share2 size={17} strokeWidth={2.6} />
-              <span>{copied ? '¡ENLACE COPIADO!' : '+ COMPARTIR PERFIL'}</span>
+              <span>{copied ? '¡ENLACE COPIADO!' : 'COMPARTIR PERFIL'}</span>
             </button>
 
             {onOpenLocker && (
