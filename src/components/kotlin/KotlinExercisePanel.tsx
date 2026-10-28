@@ -4,9 +4,9 @@ import {
   CheckCircle2,
   HelpCircle,
   Lightbulb,
-  Sparkles,
   ChevronDown,
-  ChevronUp
+  ChevronUp,
+  Check
 } from 'lucide-react';
 import { KotlinExercise, KotlinAutoCheckResult } from '../../types/kotlinLab';
 
@@ -65,7 +65,7 @@ export const KotlinExercisePanel: React.FC<KotlinExercisePanelProps> = ({
           <ul className="kt-exercise-objectives-list">
             {exercise.objectives.map((obj, i) => (
               <li key={i} className="kt-exercise-objective-item">
-                <span className="kt-objective-bullet">✦</span>
+                <Check size={14} className="text-purple-600 flex-shrink-0 mt-0.5" strokeWidth={3} />
                 <span className="kt-objective-text">{obj}</span>
               </li>
             ))}
@@ -152,7 +152,6 @@ export const KotlinExercisePanel: React.FC<KotlinExercisePanelProps> = ({
           disabled={isVerifying}
           className="kt-btn-verify"
         >
-          <Sparkles size={18} />
           <span>{isVerifying ? 'Verificando con JVM...' : 'Verificar Solución'}</span>
         </button>
 

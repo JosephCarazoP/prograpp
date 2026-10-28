@@ -71,3 +71,12 @@ export interface KotlinAutoCheckResult {
   maxScore: number;
   checks: KotlinAutoCheckItem[];
 }
+
+export interface UserKotlinProject {
+  id: string;
+  name: string;
+  files: KotlinFile[];
+  createdAt: number;
+  updatedAt?: number;
+}
+

@@ -8251,7 +8251,8 @@ button, a, input, select, .path-node, .token-chip, .pair-card {
    === MODAL DE CONTROL DE USUARIOS EN TIEMPO REAL (DOCENTE EN VIVO) ===
    ========================================================================== */
 
-.live-users-modal-backdrop {
+.live-users-modal-backdrop,
+.live-users-modal-overlay {
   position: fixed;
   inset: 0;
   background: rgba(15, 23, 42, 0.78);
@@ -8830,6 +8831,31 @@ button, a, input, select, .path-node, .token-chip, .pair-card {
 }
 .live-card-action-btn:active {
   transform: translate(2px, 2px);
+  box-shadow: 0px 0px 0px #000000;
+}
+
+.live-card-menu-btn {
+  background: #FFFFFF;
+  border: 2px solid #000000;
+  box-shadow: 2px 2px 0px #000000;
+  border-radius: 8px;
+  width: 28px;
+  height: 28px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #0F172A;
+  cursor: pointer;
+  transition: all 0.08s ease;
+  flex-shrink: 0;
+}
+.live-card-menu-btn:hover {
+  background: #FEF08A;
+  transform: translate(-1px, -1px);
+  box-shadow: 3px 3px 0px #000000;
+}
+.live-card-menu-btn:active {
+  transform: translate(1px, 1px);
   box-shadow: 0px 0px 0px #000000;
 }
 
@@ -14482,25 +14508,25 @@ html.is-pwa-standalone .sqlite-lab-container {
   font-family: inherit;
 }
 
-/* ═══ TOPBAR KOTLIN PLAYGROUND ═══ */
+/* ═══ TOPBAR KOTLIN PLAYGROUND (ESTILO LAB SQLITE) ═══ */
 .kt-topbar {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 16px;
+  gap: 12px;
   flex-wrap: nowrap;
-  padding: 12px 18px;
+  padding: 10px 16px;
   background: #FFFFFF;
-  border: 2.5px solid #000000;
-  box-shadow: 4px 4px 0px #000000;
-  border-radius: 14px;
-  margin-bottom: 16px;
+  border: 2px solid #000000;
+  box-shadow: 3px 3px 0px #000000;
+  border-radius: 12px;
+  margin-bottom: 14px;
 }
 
 .kt-topbar-left {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 12px;
   flex-wrap: nowrap;
   flex-shrink: 0;
 }
@@ -14508,21 +14534,23 @@ html.is-pwa-standalone .sqlite-lab-container {
 .kt-back-btn {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  padding: 8px 14px;
+  gap: 5px;
+  padding: 7px 11px;
   background: #FFFFFF;
-  color: #0F172A;
+  color: #334155;
   font-weight: 800;
-  font-size: 0.82rem;
+  font-size: 0.78rem;
   border-radius: 8px;
   border: 2px solid #000000;
   box-shadow: 2px 2px 0px #000000;
   cursor: pointer;
   transition: all 0.08s ease;
+  user-select: none;
   flex-shrink: 0;
 }
 .kt-back-btn:hover {
   background: #F1F5F9;
+  color: #0F172A;
   transform: translate(-1px, -1px);
   box-shadow: 3px 3px 0px #000000;
 }
@@ -14534,25 +14562,21 @@ html.is-pwa-standalone .sqlite-lab-container {
 .kt-brand {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
   flex-shrink: 0;
 }
 .kt-brand-icon {
-  width: 34px;
-  height: 34px;
-  background: linear-gradient(135deg, #7F52FF 0%, #C084FC 100%);
+  width: 32px;
+  height: 32px;
+  background: #F3E8FF;
   border: 2px solid #000000;
-  border-radius: 9px;
-  box-shadow: 2px 2px 0px #000000;
+  border-radius: 8px;
+  box-shadow: 1.5px 1.5px 0px #000000;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #FFFFFF;
+  color: #7E22CE;
   flex-shrink: 0;
-}
-.kt-brand-info {
-  display: flex;
-  flex-direction: column;
 }
 .kt-brand-title {
   font-size: 1.05rem;
@@ -14562,77 +14586,171 @@ html.is-pwa-standalone .sqlite-lab-container {
   letter-spacing: -0.01em;
   white-space: nowrap;
 }
-.kt-brand-subtitle {
-  font-size: 0.68rem;
-  font-weight: 700;
-  color: #64748B;
-}
-.kt-badge-engine {
-  background: #F3E8FF;
-  color: #7E22CE;
-  font-size: 0.7rem;
-  font-weight: 900;
-  padding: 1px 7px;
-  border-radius: 6px;
-  border: 1.5px solid #000000;
-  box-shadow: 1px 1px 0px #000000;
-  white-space: nowrap;
-}
 
-.kt-exercise-selector-wrapper {
+/* ═══ SELECTORES CON NEO-BRUTALISM (ESTILO EXPORT LAB SQLITE) ═══ */
+.kt-neo-dropdown-wrapper {
+  position: relative;
+  display: inline-flex;
   flex-shrink: 0;
 }
-.kt-exercise-select {
+
+.kt-neo-dropdown-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  padding: 7px 11px;
   background: #FFFFFF;
-  color: #0F172A;
+  color: #334155;
   border: 2px solid #000000;
   border-radius: 8px;
   box-shadow: 2px 2px 0px #000000;
-  padding: 7px 12px;
-  font-size: 0.82rem;
+  font-size: 0.78rem;
   font-weight: 800;
-  outline: none;
   cursor: pointer;
-  max-width: 320px;
+  transition: all 0.08s ease;
+  user-select: none;
+  min-width: 120px;
+  max-width: 240px;
 }
-.kt-exercise-select:focus {
-  background: #FAF5FF;
+.kt-neo-dropdown-btn:hover {
+  background: #F1F5F9;
+  color: #0F172A;
+  transform: translate(-1px, -1px);
+  box-shadow: 3px 3px 0px #000000;
+}
+.kt-neo-dropdown-btn:active {
+  transform: translate(1px, 1px);
+  box-shadow: 1px 1px 0px #000000;
+}
+
+.kt-neo-dropdown-btn-left {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  overflow: hidden;
+}
+.kt-neo-dropdown-title {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-weight: 800;
+  font-size: 0.78rem;
+  color: #0F172A;
+}
+.kt-neo-dropdown-chevron {
+  flex-shrink: 0;
+  color: #475569;
+}
+
+/* Menú flotante Neo-Brutalist (Normalizado estilo SQLite) */
+.kt-neo-dropdown-menu {
+  position: absolute;
+  top: calc(100% + 5px);
+  left: 0;
+  min-width: 280px;
+  max-width: 340px;
+  max-height: 380px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  background: #FFFFFF;
+  border: 2px solid #000000;
+  border-radius: 10px;
+  box-shadow: 4px 4px 0px #000000;
+  z-index: 9999;
+  padding: 0;
+}
+.kt-neo-dropdown-menu.version-menu {
+  left: auto;
+  right: 0;
+  min-width: 190px;
+  max-width: 230px;
+}
+
+.kt-neo-dropdown-header {
+  padding: 8px 12px;
+  background: #F1F5F9;
+  border-bottom: 2px solid #000000;
+  font-size: 0.68rem;
+  font-weight: 900;
+  color: #475569;
+  letter-spacing: 0.05em;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.kt-neo-dropdown-header.section-divider {
+  border-top: 2px solid #000000;
+}
+.kt-neo-dropdown-count {
+  background: #CBD5E1;
+  color: #0F172A;
+  border-radius: 4px;
+  padding: 1px 6px;
+  font-size: 0.65rem;
+  font-weight: 800;
+}
+
+.kt-neo-dropdown-item {
+  width: 100%;
+  text-align: left;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 8px 12px;
+  background: #FFFFFF;
+  color: #0F172A;
+  font-size: 0.78rem;
+  font-weight: 700;
+  border: none;
+  border-bottom: 1px solid #E2E8F0;
+  cursor: pointer;
+  transition: background 0.08s ease;
+}
+.kt-neo-dropdown-item:last-child {
+  border-bottom: none;
+}
+.kt-neo-dropdown-item:hover {
+  background: #FEF9C3;
+}
+
+.kt-diff-pill {
+  font-size: 0.62rem;
+  font-weight: 800;
+  padding: 1px 5px;
+  border-radius: 4px;
+  border: 1px solid #000000;
+}
+.kt-diff-pill.easy {
+  background: #DCFCE7;
+  color: #166534;
+}
+.kt-diff-pill.medium {
+  background: #FEF08A;
+  color: #854D0E;
+}
+.kt-diff-pill.hard {
+  background: #FCE7F3;
+  color: #9D174D;
 }
 
 /* Acciones superiores */
 .kt-topbar-actions {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
   flex-shrink: 0;
 }
 
-.kt-version-wrapper {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  background: #FAF5FF;
-  border: 2px solid #000000;
-  border-radius: 8px;
-  box-shadow: 2px 2px 0px #000000;
-  padding: 4px 8px;
-}
-.kt-version-select {
-  background: transparent;
-  border: none;
-  font-size: 0.78rem;
-  font-weight: 800;
-  color: #7E22CE;
-  outline: none;
-  cursor: pointer;
-}
-
-.kt-btn-verify-header {
+/* Botón Ejecutar (Igual a SQLite pero en tono morado) */
+.kt-btn-run {
   display: inline-flex;
   align-items: center;
   gap: 6px;
   padding: 7px 14px;
-  background: #FACC15;
+  background: #C084FC;
   color: #000000;
   font-size: 0.82rem;
   font-weight: 900;
@@ -14643,44 +14761,141 @@ html.is-pwa-standalone .sqlite-lab-container {
   transition: all 0.08s ease;
   user-select: none;
 }
-.kt-btn-verify-header:hover:not(:disabled) {
-  background: #FDE047;
+.kt-btn-run:hover:not(:disabled) {
+  background: #D8B4FE;
   transform: translate(-1px, -1px);
   box-shadow: 3.5px 3.5px 0px #000000;
-}
-.kt-btn-verify-header:active:not(:disabled) {
-  transform: translate(1px, 1px);
-  box-shadow: 1px 1px 0px #000000;
-}
-
-.kt-btn-run {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 8px 18px;
-  background: #9333EA;
-  color: #FFFFFF;
-  font-size: 0.84rem;
-  font-weight: 900;
-  border-radius: 8px;
-  border: 2.5px solid #000000;
-  box-shadow: 3px 3px 0px #000000;
-  cursor: pointer;
-  transition: all 0.08s ease;
-  user-select: none;
-}
-.kt-btn-run:hover:not(:disabled) {
-  background: #A855F7;
-  transform: translate(-1px, -1px);
-  box-shadow: 4px 4px 0px #000000;
 }
 .kt-btn-run:active:not(:disabled) {
   transform: translate(1px, 1px);
   box-shadow: 1px 1px 0px #000000;
 }
 .kt-btn-run:disabled {
-  opacity: 0.6;
+  opacity: 0.5;
   cursor: not-allowed;
+}
+
+.kt-key-badge {
+  font-size: 0.65rem;
+  background: #000000;
+  color: #FFFFFF;
+  padding: 1px 5px;
+  border-radius: 4px;
+  font-weight: 700;
+  margin-left: 2px;
+}
+
+/* Botones Utilitarios Kotlin Lab (Deshacer, Importar, Exportar, Nube) */
+.kt-btn-util {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 7px 11px;
+  background: #FFFFFF;
+  color: #334155;
+  font-size: 0.78rem;
+  font-weight: 800;
+  border-radius: 8px;
+  border: 2px solid #000000;
+  box-shadow: 2px 2px 0px #000000;
+  cursor: pointer;
+  transition: all 0.08s ease;
+  user-select: none;
+}
+.kt-btn-util:hover:not(:disabled) {
+  background: #F1F5F9;
+  color: #0F172A;
+  transform: translate(-1px, -1px);
+  box-shadow: 3px 3px 0px #000000;
+}
+.kt-btn-util:active:not(:disabled) {
+  transform: translate(1px, 1px);
+  box-shadow: 1px 1px 0px #000000;
+}
+.kt-btn-util:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.kt-new-project-btn {
+  background: #7E22CE !important;
+  color: #FFFFFF !important;
+}
+.kt-new-project-btn:hover:not(:disabled) {
+  background: #9333EA !important;
+  color: #FFFFFF !important;
+}
+
+/* Estado de Sincronización en la Nube */
+.kt-btn-cloud-dirty {
+  background: #FEF3C7 !important;
+  color: #B45309 !important;
+  border-color: #000000 !important;
+}
+.kt-btn-cloud-dirty:hover {
+  background: #FDE68A !important;
+  color: #92400E !important;
+}
+.kt-btn-cloud-synced {
+  background: #ECFDF5 !important;
+  color: #047857 !important;
+}
+.kt-btn-cloud-synced:hover {
+  background: #D1FAE5 !important;
+}
+
+/* Botón Reset */
+.kt-btn-reset {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 7px 11px;
+  background: #FEE2E2;
+  color: #DC2626;
+  font-size: 0.78rem;
+  font-weight: 800;
+  border-radius: 8px;
+  border: 2px solid #000000;
+  box-shadow: 2px 2px 0px #000000;
+  cursor: pointer;
+  transition: all 0.08s ease;
+  user-select: none;
+}
+.kt-btn-reset:hover {
+  background: #FCA5A5;
+  color: #991B1B;
+  transform: translate(-1px, -1px);
+  box-shadow: 3px 3px 0px #000000;
+}
+.kt-btn-reset:active {
+  transform: translate(1px, 1px);
+  box-shadow: 1px 1px 0px #000000;
+}
+
+.kt-btn-verify-header {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 7px 13px;
+  background: #FACC15;
+  color: #000000;
+  font-size: 0.78rem;
+  font-weight: 800;
+  border-radius: 8px;
+  border: 2px solid #000000;
+  box-shadow: 2px 2px 0px #000000;
+  cursor: pointer;
+  transition: all 0.08s ease;
+  user-select: none;
+}
+.kt-btn-verify-header:hover:not(:disabled) {
+  background: #FDE047;
+  transform: translate(-1px, -1px);
+  box-shadow: 3px 3px 0px #000000;
+}
+.kt-btn-verify-header:active:not(:disabled) {
+  transform: translate(1px, 1px);
+  box-shadow: 1px 1px 0px #000000;
 }
 
 /* ═══ PESTAÑAS MÓVILES (SEGMENTED CONTROL) ═══ */
@@ -15751,7 +15966,8 @@ html.is-pwa-standalone .sqlite-lab-container {
     flex-wrap: wrap;
     justify-content: space-between;
   }
-  .kt-exercise-select {
+  .kt-neo-dropdown-wrapper,
+  .kt-neo-dropdown-btn {
     max-width: 100%;
     width: 100%;
   }

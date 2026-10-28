@@ -5,10 +5,10 @@ import {
   Trash2,
   AlertTriangle,
   CheckCircle2,
-  Flame,
   ChevronDown,
   ChevronUp,
-  Cpu
+  Cpu,
+  Flame
 } from 'lucide-react';
 import { KotlinRunResult } from '../../types/kotlinLab';
 

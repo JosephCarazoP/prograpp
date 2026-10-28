@@ -608,13 +608,13 @@ export default function App() {
 
   // Notificación urgente del profesor activa para el estudiante (Llamado de atención en pantalla)
   const activeUrgentAlert = useMemo(() => {
-    if (!user?.uid) return null;
+    if (!user?.uid || isTeacherAdmin) return null;
     return (
       notifications.find(
         (n) => n.type === 'urgent_alert' && !n.readBy.includes(user.uid)
       ) || null
     );
-  }, [notifications, user?.uid]);
+  }, [notifications, user?.uid, isTeacherAdmin]);
 
   // Reproducir alerta sonora al recibir un nuevo llamado de atención
   useEffect(() => {

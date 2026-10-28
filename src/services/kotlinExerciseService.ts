@@ -1,7 +1,7 @@
 import { KotlinExercise, KotlinFile } from '../types/kotlinLab';
 
-export const DEFAULT_KOTLIN_SANDBOX_CODE = `// 🚀 Laboratorio Kotlin — Inspirado en Kotlin Playground
-// Escribe tu código aquí y presiona "Ejecutar" o presiona Ctrl + Enter
+export const DEFAULT_KOTLIN_SANDBOX_CODE = `// Laboratorio Kotlin — Inspirado en Kotlin Playground
+// Escribe tu codigo aqui y presiona "Ejecutar" o presiona Ctrl + Enter
 
 fun main() {
     println("¡Hola desde el Laboratorio de Kotlin!")

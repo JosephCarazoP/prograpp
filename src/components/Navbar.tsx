@@ -168,6 +168,31 @@ export const Navbar: React.FC<NavbarProps> = ({
             </button>
           )}
 
+          {/* Botón Exclusivo de Usuarios En Línea para Docente (Acceso directo) */}
+          {isTeacherAdmin && onOpenLiveUsers && (
+            <button
+              className="btn-3d btn-green nav-live-users-btn"
+              onClick={() => {
+                soundService.playToken();
+                onOpenLiveUsers();
+              }}
+              title="Usuarios en Línea en Tiempo Real"
+              aria-label="Usuarios en Línea"
+              type="button"
+            >
+              <span className="live-pulsing-dot" />
+              <Users size={15} color="#FFFFFF" strokeWidth={2.5} />
+              <span className="nav-live-users-label">
+                En Línea{onlineUsersCount > 0 ? ` (${onlineUsersCount})` : ''}
+              </span>
+              {onlineUsersCount > 0 && (
+                <span className="nav-live-users-badge-mobile">
+                  {onlineUsersCount}
+                </span>
+              )}
+            </button>
+          )}
+
           {/* Botón Menú Hamburguesa Neo-brutalism (hb-nav para Desktop y Móvil) */}
           <button
             type="button"

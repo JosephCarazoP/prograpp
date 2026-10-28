@@ -9,13 +9,13 @@ import {
   Gamepad2,
   Flame,
   Zap,
-  ExternalLink,
   GraduationCap,
   AlertTriangle,
   Eye,
   Send,
   CheckCircle2,
-  Loader2
+  Loader2,
+  MoreVertical
 } from 'lucide-react';
 import { UserProfile, UserActivityStatus } from '../types/user';
 import { presenceService } from '../services/presenceService';
@@ -247,14 +247,21 @@ export const LiveUsersModal: React.FC<LiveUsersModalProps> = ({
     }
   };
 
-  // Abrir menú contextual por clic derecho
+  // Abrir menú contextual por clic derecho o botón de opciones
   const handleCardContextMenu = (e: React.MouseEvent, st: UserProfile) => {
     if (!isTeacher) return;
     e.preventDefault();
     e.stopPropagation();
     soundService.playToken();
-    const x = Math.min(e.clientX, window.innerWidth - 240);
-    const y = Math.min(e.clientY, window.innerHeight - 170);
+    let posX = e.clientX;
+    let posY = e.clientY;
+    if (e.type === 'click' && e.currentTarget) {
+      const rect = e.currentTarget.getBoundingClientRect();
+      posX = rect.right - 220;
+      posY = rect.bottom + 4;
+    }
+    const x = Math.max(12, Math.min(posX, window.innerWidth - 240));
+    const y = Math.max(12, Math.min(posY, window.innerHeight - 175));
     setContextMenu({ x, y, student: st });
   };
 
@@ -277,7 +284,11 @@ export const LiveUsersModal: React.FC<LiveUsersModalProps> = ({
   };
 
   // Enviar alerta en tiempo real a través de Firestore
-  const handleSendAlert = async () => {
+  const handleSendAlert = async (e?: React.MouseEvent) => {
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
     if (!alertTitle.trim() || !alertMessage.trim()) {
       alert('Por favor completa el título y mensaje de la alerta.');
       return;
@@ -326,13 +337,38 @@ export const LiveUsersModal: React.FC<LiveUsersModalProps> = ({
   if (!isOpen) return null;
 
   return (
-    <div className="live-users-modal-overlay">
-      <div className="live-users-modal-card">
+    <div
+      className="live-users-modal-backdrop"
+      onClick={(e) => {
+        if (e.target === e.currentTarget) {
+          onClose();
+        }
+      }}
+      role="dialog"
+      aria-label="Control de Usuarios en Tiempo Real"
+    >
+      <div
+        className="live-users-modal-card"
+        onClick={(e) => e.stopPropagation()}
+      >
         {/* HEADER DEL MODAL */}
         <div className="live-users-modal-header">
-          <div className="live-users-header-left">
-            <div className="live-users-live-badge">
-              <span className="live-live-pill">
+          <div className="live-users-header-title-col">
+            <div className="live-users-badge-row">
+              <span className="live-users-exclusive-pill">
+                {isTeacher ? (
+                  <>
+                    <GraduationCap size={13} />
+                    <span>Docente • josephcarazo56@gmail.com</span>
+                  </>
+                ) : (
+                  <>
+                    <Users size={13} />
+                    <span>Comunidad de Estudiantes</span>
+                  </>
+                )}
+              </span>
+              <span className="live-users-online-count-pill">
                 <span className="live-pulsing-dot" />
                 <span>{onlineStudents.length} en línea</span>
               </span>
@@ -625,7 +661,7 @@ export const LiveUsersModal: React.FC<LiveUsersModalProps> = ({
                       )}
                     </div>
 
-                    {/* FOOTER CON ESTADÍSTICAS Y ACCIÓN RÁPIDA */}
+                    {/* FOOTER CON ESTADÍSTICAS Y MENÚ DISCRETO */}
                     <div className="live-card-footer">
                       <div className="live-card-stats-row">
                         <span className="live-stat-item" title="XP acumulado">
@@ -638,54 +674,16 @@ export const LiveUsersModal: React.FC<LiveUsersModalProps> = ({
                         </span>
                       </div>
 
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                        {/* Botón de ALERT inmediato para el docente */}
-                        {isTeacher && (
-                          <button
-                            type="button"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              soundService.playToken();
-                              handleOpenAlertModal(st);
-                            }}
-                            title="Enviar llamado de atención en pantalla a este estudiante (o clic derecho)"
-                            style={{
-                              background: '#FEE2E2',
-                              color: '#991B1B',
-                              border: '1.5px solid #000000',
-                              boxShadow: '2px 2px 0px #000000',
-                              borderRadius: '8px',
-                              padding: '4px 8px',
-                              fontSize: '0.68rem',
-                              fontWeight: 900,
-                              display: 'inline-flex',
-                              alignItems: 'center',
-                              gap: '4px',
-                              cursor: 'pointer',
-                              transition: 'all 0.08s ease'
-                            }}
-                          >
-                            <AlertTriangle size={11} strokeWidth={2.8} />
-                            <span>ALERT</span>
-                          </button>
-                        )}
-
-                        {onSelectStudent && (
-                          <button
-                            type="button"
-                            className="live-card-action-btn"
-                            onClick={() => {
-                              soundService.playToken();
-                              onClose();
-                              onSelectStudent(st.uid);
-                            }}
-                            title="Ver expediente en Seguimiento Académico"
-                          >
-                            <span>Expediente</span>
-                            <ExternalLink size={12} />
-                          </button>
-                        )}
-                      </div>
+                      {isTeacher && (
+                        <button
+                          type="button"
+                          onClick={(e) => handleCardContextMenu(e, st)}
+                          className="live-card-menu-btn"
+                          title="Opciones (Expediente o ALERT) — también con clic derecho"
+                        >
+                          <MoreVertical size={14} strokeWidth={2.4} />
+                        </button>
+                      )}
                     </div>
                   </div>
                 );
@@ -700,14 +698,19 @@ export const LiveUsersModal: React.FC<LiveUsersModalProps> = ({
         <>
           <div
             style={{ position: 'fixed', inset: 0, zIndex: 100050 }}
-            onClick={() => setContextMenu(null)}
+            onClick={(e) => {
+              e.stopPropagation();
+              setContextMenu(null);
+            }}
             onContextMenu={(e) => {
               e.preventDefault();
+              e.stopPropagation();
               setContextMenu(null);
             }}
           />
           <div
             className="live-context-menu"
+            onClick={(e) => e.stopPropagation()}
             style={{
               position: 'fixed',
               top: contextMenu.y,
@@ -743,7 +746,8 @@ export const LiveUsersModal: React.FC<LiveUsersModalProps> = ({
               <button
                 type="button"
                 className="live-context-item"
-                onClick={() => {
+                onClick={(e) => {
+                  e.stopPropagation();
                   soundService.playToken();
                   const uid = contextMenu.student.uid;
                   setContextMenu(null);
@@ -777,7 +781,8 @@ export const LiveUsersModal: React.FC<LiveUsersModalProps> = ({
             <button
               type="button"
               className="live-context-item"
-              onClick={() => {
+              onClick={(e) => {
+                e.stopPropagation();
                 soundService.playToken();
                 const st = contextMenu.student;
                 setContextMenu(null);
@@ -823,6 +828,7 @@ export const LiveUsersModal: React.FC<LiveUsersModalProps> = ({
             padding: '16px'
           }}
           onClick={(e) => {
+            e.stopPropagation();
             if (e.target === e.currentTarget && !isSendingAlert) {
               setAlertTargetStudent(null);
             }
@@ -841,6 +847,7 @@ export const LiveUsersModal: React.FC<LiveUsersModalProps> = ({
               flexDirection: 'column',
               animation: 'bounce-in 0.25s cubic-bezier(0.34, 1.56, 0.64, 1)'
             }}
+            onClick={(e) => e.stopPropagation()}
           >
             {/* Header del modal de alerta */}
             <div
