@@ -91,6 +91,8 @@ export const SqliteLab: React.FC<SqliteLabProps> = ({
   // Ejecución y Resultados
   const [lastResult, setLastResult] = useState<SqliteQueryResult | null>(null);
   const [isRunning, setIsRunning] = useState(false);
+  const [selectedSql, setSelectedSql] = useState<string>('');
+  const isExecutingRef = useRef(false);
   const [retryCount, setRetryCount] = useState(0);
 
   const [showHints, setShowHints] = useState(false);
@@ -475,6 +477,7 @@ export const SqliteLab: React.FC<SqliteLabProps> = ({
     };
     setTabs(prev => [...prev, newTab]);
     setActiveTabId(newTab.id);
+    setSelectedSql('');
   };
 
   // Cerrar pestaña
@@ -482,6 +485,7 @@ export const SqliteLab: React.FC<SqliteLabProps> = ({
     if (tabs.length <= 1) return;
     const newTabs = tabs.filter(t => t.id !== idToClose);
     setTabs(newTabs);
+    setSelectedSql('');
     if (activeTabId === idToClose) {
       setActiveTabId(newTabs[0].id);
     }
@@ -494,25 +498,33 @@ export const SqliteLab: React.FC<SqliteLabProps> = ({
   };
 
   // Ejecutar sentencia
-  const handleExecute = async () => {
-    if (!currentSql.trim() || isRunning) return;
+  const handleExecute = async (overrideSql?: string) => {
+    if (isExecutingRef.current) return;
 
+    // Prioridad: 1. overrideSql explícito, 2. selectedSql si hay texto seleccionado, 3. currentSql
+    const sqlToRun = (typeof overrideSql === 'string' && overrideSql.trim())
+      ? overrideSql.trim()
+      : (selectedSql.trim() ? selectedSql.trim() : currentSql.trim());
+
+    if (!sqlToRun) return;
+
+    isExecutingRef.current = true;
     setIsRunning(true);
     soundService.playToken();
 
     try {
-      const result = sqliteService.execute(currentSql);
+      const result = sqliteService.execute(sqlToRun);
       setLastResult(result);
 
-      if (!result.error) {
-        const bin = sqliteService.exportBinary();
-        if (bin) {
-          await sqliteStorageService.saveDatabase(storageKey, bin);
-          sqliteCloudSyncService.markDirty(storageKey);
-          setSyncStatus('dirty');
-        }
-        await refreshSchema();
+      // Si se modificó la base de datos (o la ejecución no tuvo error), guardamos siempre
+      // para evitar que queden cambios en memoria que no se persistan en IndexedDB
+      const bin = sqliteService.exportBinary();
+      if (bin) {
+        await sqliteStorageService.saveDatabase(storageKey, bin);
+        sqliteCloudSyncService.markDirty(storageKey);
+        setSyncStatus('dirty');
       }
+      await refreshSchema();
     } catch (e: any) {
       setLastResult({
         columns: [],
@@ -522,6 +534,7 @@ export const SqliteLab: React.FC<SqliteLabProps> = ({
         error: e?.message || String(e)
       });
     } finally {
+      isExecutingRef.current = false;
       setIsRunning(false);
     }
   };
@@ -1085,12 +1098,12 @@ INSERT INTO articulos (nombre, precio, stock) VALUES
           <button
             type="button"
             className="sqlite-btn-run-stmt"
-            onClick={handleExecute}
-            disabled={isRunning || isInitializing || !currentSql.trim()}
-            title="Ejecutar consulta SQL (Ctrl + Enter)"
+            onClick={() => handleExecute()}
+            disabled={isRunning || isInitializing || (!currentSql.trim() && !selectedSql.trim())}
+            title={selectedSql.trim() ? "Ejecutar sentencia seleccionada (Ctrl + Enter)" : "Ejecutar consulta SQL (Ctrl + Enter)"}
           >
             <Play size={14} fill="currentColor" />
-            <span>Ejecutar</span>
+            <span>{selectedSql.trim() ? 'Ejecutar Selección' : 'Ejecutar'}</span>
             <span className="sqlite-key-badge">Ctrl ↵</span>
           </button>
 
@@ -1482,13 +1495,17 @@ INSERT INTO articulos (nombre, precio, stock) VALUES
                 <SqlEditor
                   tabs={tabs}
                   activeTabId={activeTabId}
-                  onSelectTab={setActiveTabId}
+                  onSelectTab={(id) => {
+                    setActiveTabId(id);
+                    setSelectedSql('');
+                  }}
                   onAddTab={handleAddTab}
                   onCloseTab={handleCloseTab}
                   value={currentSql}
                   onChange={handleSqlChange}
-                  onExecuteStatement={handleExecute}
-                  onExecuteAll={handleExecute}
+                  onExecuteStatement={(sql) => handleExecute(sql)}
+                  onExecuteAll={(sql) => handleExecute(sql || currentSql)}
+                  onSelectionChange={setSelectedSql}
                   isRunning={isRunning}
                 />
 

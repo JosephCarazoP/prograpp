@@ -18,13 +18,19 @@ export const presenceService = {
     if (!uid || uid === 'guest_user_1') return;
 
     const now = Date.now();
+    const currentActivity: Record<string, any> = {
+      status: activity?.status || 'playing',
+      activityText: activity?.activityText || 'En la plataforma',
+      updatedAt: now
+    };
+    if (activity?.targetId) currentActivity.targetId = activity.targetId;
+    if (activity?.targetTitle) currentActivity.targetTitle = activity.targetTitle;
+    if (activity?.path) currentActivity.path = activity.path;
+
     const payload = {
       isOnline: true,
       lastActiveAt: now,
-      currentActivity: {
-        ...activity,
-        updatedAt: now
-      }
+      currentActivity
     };
 
     // Actualización local para persistencia instantánea y modo offline

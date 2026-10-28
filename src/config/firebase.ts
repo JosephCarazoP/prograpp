@@ -34,7 +34,8 @@ if (!isLocalMockMode) {
     db = initializeFirestore(app, {
       localCache: persistentLocalCache({
         tabManager: persistentMultipleTabManager()
-      })
+      }),
+      ignoreUndefinedProperties: true
     });
 
     auth = getAuth(app);

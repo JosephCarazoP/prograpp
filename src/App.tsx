@@ -444,13 +444,8 @@ export default function App() {
     (user?.email && user.email.toLowerCase() === 'josephcarazo56@gmail.com')
   );
 
-  // Suscripción en tiempo real a la presencia de todos los estudiantes (Exclusivo Docente josephcarazo56@gmail.com)
+  // Suscripción en tiempo real a la presencia de todos los estudiantes (Docente y Alumnos)
   useEffect(() => {
-    if (!isTeacherAdmin) {
-      setOnlineUsersCount(0);
-      return;
-    }
-
     const unsubscribe = presenceService.subscribeToAllStudents((studentsList) => {
       const count = studentsList.filter((s) => presenceService.isUserOnline(s)).length;
       setOnlineUsersCount(count);
@@ -459,6 +454,13 @@ export default function App() {
     return () => {
       unsubscribe();
     };
+  }, [user?.uid, isAuthenticated]);
+
+  // Sincronizar automáticamente a la nube notificaciones o scripts que hayan quedado en local
+  useEffect(() => {
+    if (isTeacherAdmin) {
+      notificationService.syncLocalNotificationsToCloud().catch(() => {});
+    }
   }, [isTeacherAdmin]);
 
   // Latido de presencia en tiempo real (reporta estado y actividad cada 30 segundos o al cambiar de contexto)
@@ -581,7 +583,7 @@ export default function App() {
 
   // Suscripción en tiempo real a notificaciones para el estudiante (Aparecen al instante sin recargar)
   useEffect(() => {
-    if (!user || !user.uid || user.uid === 'guest_user_1') return;
+    if (!user) return;
     const unsubscribe = notificationService.subscribeToUserNotifications(user, (notifs) => {
       setNotifications(notifs);
     });
@@ -2712,15 +2714,16 @@ export default function App() {
         </div>
       )}
 
-      {/* MODAL DE USUARIOS EN LÍNEA EN TIEMPO REAL (DOCENTE josephcarazo56@gmail.com) */}
+      {/* MODAL DE USUARIOS EN LÍNEA EN TIEMPO REAL */}
       <LiveUsersModal
         isOpen={isLiveUsersOpen}
         onClose={() => setIsLiveUsersOpen(false)}
-        onSelectStudent={(uid) => {
+        isTeacher={isTeacherAdmin}
+        onSelectStudent={isTeacherAdmin ? (uid) => {
           setIsLiveUsersOpen(false);
           setSelectedAcademicStudentUid(uid);
           setView('academic');
-        }}
+        } : undefined}
       />
 
       {/* Alertas Nativas del Juego (Reemplazo total de window.alert) */}

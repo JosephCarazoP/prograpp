@@ -3,8 +3,6 @@ import {
   doc,
   setDoc,
   getDocs,
-  query,
-  orderBy,
   deleteDoc,
   arrayUnion,
   updateDoc,
@@ -169,11 +167,15 @@ export const notificationService = {
       sender: data.sender || 'Profesor',
       createdAt: Date.now(),
       readBy: [],
-      dismissedBy: [],
-      // Mantener formato exacto sin trim que altere indentaciones
-      codeSnippet: data.codeSnippet ? data.codeSnippet : undefined,
-      codeLanguage: data.codeLanguage || (data.type === 'script' ? 'sql' : undefined)
+      dismissedBy: []
     };
+
+    if (data.codeSnippet) {
+      newNotif.codeSnippet = data.codeSnippet;
+    }
+    if (data.codeLanguage || data.type === 'script') {
+      newNotif.codeLanguage = data.codeLanguage || 'sql';
+    }
 
     // Guardar en caché local
     const local = storageService.getItem<AppNotification[]>('app_notifications_all', []);
@@ -185,8 +187,9 @@ export const notificationService = {
       try {
         const notifRef = doc(db, 'notifications', notifId);
         await setDoc(notifRef, newNotif);
+        console.log('[notificationService] Notificación publicada en la nube exitosamente:', notifId);
       } catch (err) {
-        console.warn('[notificationService] Guardado en cola local:', err);
+        console.error('[notificationService] Error crítico guardando notificación en Firestore:', err);
       }
     }
 
@@ -202,10 +205,9 @@ export const notificationService = {
     if (!isLocalMockMode && db) {
       try {
         const col = collection(db, 'notifications');
-        const q = query(col, orderBy('createdAt', 'desc'));
         const snap = await Promise.race([
-          getDocs(q),
-          new Promise<null>((_, reject) => setTimeout(() => reject(new Error('timeout')), 2500))
+          getDocs(col),
+          new Promise<null>((_, reject) => setTimeout(() => reject(new Error('timeout')), 3000))
         ]);
 
         if (snap) {
@@ -215,6 +217,7 @@ export const notificationService = {
             remote.push({ ...item, id: d.id });
           });
           if (remote.length > 0) {
+            remote.sort((a, b) => b.createdAt - a.createdAt);
             storageService.setItem('app_notifications_all', remote);
             allNotifications = remote;
           }
@@ -233,16 +236,16 @@ export const notificationService = {
 
   // Filtra notificaciones destinadas al usuario que no hayan sido descartadas de su bandeja
   filterForUser(all: AppNotification[], user: UserProfile): AppNotification[] {
-    const dismissedLocal = storageService.getItem<string[]>('dismissed_notifs_' + user.uid, []);
+    const dismissedLocal = user?.uid ? storageService.getItem<string[]>('dismissed_notifs_' + user.uid, []) : [];
 
     const userNotifs = all.filter(n => {
       // Si el alumno la eliminó de su bandeja personal, no se le muestra
-      if (n.dismissedBy?.includes(user.uid) || dismissedLocal.includes(n.id)) {
+      if ((user?.uid && n.dismissedBy?.includes(user.uid)) || dismissedLocal.includes(n.id)) {
         return false;
       }
       if (n.targetType === 'all') return true;
-      if (n.targetType === 'specific' && n.targetUid === user.uid) return true;
-      if (n.targetType === 'group' && n.targetGroup && n.targetGroup === (user.group || 'Grupo A')) return true;
+      if (n.targetType === 'specific' && user?.uid && n.targetUid === user.uid) return true;
+      if (n.targetType === 'group' && n.targetGroup && n.targetGroup === (user?.group || 'Grupo A')) return true;
       return false;
     });
 
@@ -273,15 +276,32 @@ export const notificationService = {
     if (!isLocalMockMode && db) {
       try {
         const col = collection(db, 'notifications');
-        const q = query(col, orderBy('createdAt', 'desc'));
+        // Fetch inicial directo garantizado
+        getDocs(col).then((snapshot) => {
+          if (!snapshot.empty) {
+            const remote: AppNotification[] = [];
+            snapshot.forEach((d) => {
+              const item = d.data() as AppNotification;
+              remote.push({ ...item, id: d.id });
+            });
+            remote.sort((a, b) => b.createdAt - a.createdAt);
+            storageService.setItem('app_notifications_all', remote);
+            onUpdate(this.filterForUser(remote, user));
+          }
+        }).catch((err) => {
+          console.warn('[notificationService] Error en fetch inicial de notificaciones:', err);
+        });
+
+        // Listener en tiempo real sin requerir índice compuesto
         unsubscribeFirestore = onSnapshot(
-          q,
+          col,
           (snapshot) => {
             const remote: AppNotification[] = [];
             snapshot.forEach((d) => {
               const item = d.data() as AppNotification;
               remote.push({ ...item, id: d.id });
             });
+            remote.sort((a, b) => b.createdAt - a.createdAt);
             storageService.setItem('app_notifications_all', remote);
             onUpdate(this.filterForUser(remote, user));
           },
@@ -323,15 +343,28 @@ export const notificationService = {
     if (!isLocalMockMode && db) {
       try {
         const col = collection(db, 'notifications');
-        const q = query(col, orderBy('createdAt', 'desc'));
+        getDocs(col).then((snapshot) => {
+          if (!snapshot.empty) {
+            const remote: AppNotification[] = [];
+            snapshot.forEach((d) => {
+              const item = d.data() as AppNotification;
+              remote.push({ ...item, id: d.id });
+            });
+            remote.sort((a, b) => b.createdAt - a.createdAt);
+            storageService.setItem('app_notifications_all', remote);
+            onUpdate(remote);
+          }
+        }).catch(() => {});
+
         unsubscribeFirestore = onSnapshot(
-          q,
+          col,
           (snapshot) => {
             const remote: AppNotification[] = [];
             snapshot.forEach((d) => {
               const item = d.data() as AppNotification;
               remote.push({ ...item, id: d.id });
             });
+            remote.sort((a, b) => b.createdAt - a.createdAt);
             storageService.setItem('app_notifications_all', remote);
             onUpdate(remote);
           },
@@ -360,21 +393,63 @@ export const notificationService = {
     if (!isLocalMockMode && db) {
       try {
         const col = collection(db, 'notifications');
-        const q = query(col, orderBy('createdAt', 'desc'));
-        const snap = await getDocs(q);
+        const snap = await getDocs(col);
         const remote: AppNotification[] = [];
         snap.forEach(d => {
           remote.push({ ...(d.data() as AppNotification), id: d.id });
         });
         if (remote.length > 0) {
+          remote.sort((a, b) => b.createdAt - a.createdAt);
           storageService.setItem('app_notifications_all', remote);
           return remote;
         }
       } catch (err) {
-        console.warn('[notificationService] Error al obtener todas las notificaciones:', err);
+        console.warn('[notificationService] Error al consultar todas las notificaciones en Firestore:', err);
       }
     }
+    // Intentar sincronizar avisos locales rezagados a Firestore
+    this.syncLocalNotificationsToCloud().catch(() => {});
     return storageService.getItem<AppNotification[]>('app_notifications_all', []);
+  },
+
+  // Sincronizar notificaciones locales existentes hacia Firestore si no existen en la nube (para recuperar avisos y scripts previos)
+  async syncLocalNotificationsToCloud(): Promise<void> {
+    if (isLocalMockMode || !db) return;
+    try {
+      const local = storageService.getItem<AppNotification[]>('app_notifications_all', []);
+      if (!local || local.length === 0) return;
+
+      const col = collection(db, 'notifications');
+      const snap = await getDocs(col);
+      const existingIds = new Set<string>();
+      snap.forEach(d => existingIds.add(d.id));
+
+      for (const notif of local) {
+        if (notif.id && !existingIds.has(notif.id)) {
+          const cleanNotif: Record<string, any> = {
+            id: notif.id,
+            title: notif.title || '',
+            message: notif.message || '',
+            type: notif.type || 'update',
+            targetType: notif.targetType || 'all',
+            targetUid: notif.targetUid || '',
+            targetGroup: notif.targetGroup || '',
+            sender: notif.sender || 'Profesor',
+            createdAt: notif.createdAt || Date.now(),
+            readBy: Array.isArray(notif.readBy) ? notif.readBy : [],
+            dismissedBy: Array.isArray(notif.dismissedBy) ? notif.dismissedBy : []
+          };
+          if (notif.codeSnippet) cleanNotif.codeSnippet = notif.codeSnippet;
+          if (notif.codeLanguage) cleanNotif.codeLanguage = notif.codeLanguage;
+
+          const notifRef = doc(db, 'notifications', notif.id);
+          await setDoc(notifRef, cleanNotif);
+          console.log('[notificationService] Notificación previa recuperada y subida a Firestore:', notif.id);
+        }
+      }
+    } catch (err) {
+      console.warn('[notificationService] Error sincronizando notificaciones pendientes:', err);
+    }
   },
 
   // Marcar una notificación como leída por un usuario

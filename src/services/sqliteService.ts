@@ -2,6 +2,82 @@ import initSqlJs, { Database, SqlJsStatic } from 'sql.js';
 import sqlWasmUrl from 'sql.js/dist/sql-wasm.wasm?url';
 import { SqliteQueryResult, TableSchemaInfo, TableColumnInfo, TableForeignKeyInfo } from '../types/sqliteLab';
 
+/**
+ * Divide un script SQL en sentencias individuales respetando cadenas de texto,
+ * comentarios de línea (-- ...) y comentarios de bloque (/* ... * /).
+ */
+export function splitSqlStatements(sql: string): string[] {
+  const statements: string[] = [];
+  let current = '';
+  let inSingleQuote = false;
+  let inDoubleQuote = false;
+  let inLineComment = false;
+  let inBlockComment = false;
+
+  for (let i = 0; i < sql.length; i++) {
+    const char = sql[i];
+    const nextChar = sql[i + 1];
+
+    // Comentarios de una línea (-- ...)
+    if (!inSingleQuote && !inDoubleQuote && !inBlockComment && char === '-' && nextChar === '-') {
+      inLineComment = true;
+    }
+    if (inLineComment) {
+      if (char === '\n' || char === '\r') {
+        inLineComment = false;
+      }
+      current += char;
+      continue;
+    }
+
+    // Comentarios de bloque (/* ... */)
+    if (!inSingleQuote && !inDoubleQuote && !inLineComment && char === '/' && nextChar === '*') {
+      inBlockComment = true;
+    }
+    if (inBlockComment) {
+      current += char;
+      if (char === '*' && nextChar === '/') {
+        current += '/';
+        i++;
+        inBlockComment = false;
+      }
+      continue;
+    }
+
+    // Comillas simples (cadenas literales)
+    if (!inDoubleQuote && char === "'") {
+      if (inSingleQuote && nextChar === "'") {
+        current += "''";
+        i++;
+        continue;
+      }
+      inSingleQuote = !inSingleQuote;
+    }
+
+    // Comillas dobles (identificadores)
+    if (!inSingleQuote && char === '"') {
+      inDoubleQuote = !inDoubleQuote;
+    }
+
+    // Separador de sentencias ';'
+    if (char === ';' && !inSingleQuote && !inDoubleQuote) {
+      if (current.trim()) {
+        statements.push(current.trim());
+      }
+      current = '';
+      continue;
+    }
+
+    current += char;
+  }
+
+  if (current.trim()) {
+    statements.push(current.trim());
+  }
+
+  return statements;
+}
+
 class SqliteService {
   private SQL: SqlJsStatic | null = null;
   private db: Database | null = null;
@@ -123,7 +199,22 @@ class SqliteService {
   }
 
   /**
-   * Ejecuta una o varias sentencias SQL (DDL, DML, TCL, consultas)
+   * Obtiene el total acumulado de cambios en la base de datos (SELECT total_changes())
+   */
+  private getTotalChanges(): number {
+    if (!this.db) return 0;
+    try {
+      const res = this.db.exec('SELECT total_changes();');
+      return Number(res[0]?.values?.[0]?.[0]) || 0;
+    } catch {
+      return 0;
+    }
+  }
+
+  /**
+   * Ejecuta una consulta o script SQL en la base de datos actual.
+   * Divide el script en sentencias individuales para garantizar reporte exacto de filas
+   * afectadas, aislamiento de errores por sentencia y persistencia correcta.
    */
   public execute(sql: string): SqliteQueryResult {
     if (!this.db) {
@@ -146,6 +237,16 @@ class SqliteService {
       };
     }
 
+    const statements = splitSqlStatements(trimmed);
+    if (statements.length === 0) {
+      return {
+        columns: [],
+        values: [],
+        rowsAffected: 0,
+        executionTimeMs: 0
+      };
+    }
+
     const startTime = performance.now();
     try {
       // Garantizar que la verificación estricta de llaves foráneas esté activa
@@ -153,23 +254,53 @@ class SqliteService {
         this.db.run('PRAGMA foreign_keys = ON;');
       } catch (_) {}
 
-      // Registrar filas modificadas antes de la ejecución
-      const beforeModified = this.db.getRowsModified();
-      
-      // db.exec() puede devolver múltiples tablas de resultados si hay múltiples SELECTs
-      const execResults = this.db.exec(trimmed);
-      const executionTimeMs = Math.round((performance.now() - startTime) * 100) / 100;
-      
-      const afterModified = this.db.getRowsModified();
-      const rowsAffected = Math.max(0, afterModified - beforeModified);
+      let lastSelectResult: { columns: string[]; values: any[][] } | null = null;
+      let totalRowsAffected = 0;
 
-      if (execResults.length > 0) {
-        // Tomamos el último conjunto de resultados de consulta
-        const lastResult = execResults[execResults.length - 1];
+      for (let i = 0; i < statements.length; i++) {
+        const stmt = statements[i];
+        if (!stmt.trim()) continue;
+
+        const beforeChanges = this.getTotalChanges();
+        let execResults;
+
+        try {
+          execResults = this.db.exec(stmt);
+        } catch (err: any) {
+          const afterChanges = this.getTotalChanges();
+          const rowsFromFailedStmt = Math.max(0, afterChanges - beforeChanges);
+          totalRowsAffected += rowsFromFailedStmt;
+          const executionTimeMs = Math.round((performance.now() - startTime) * 100) / 100;
+          const msg = err?.message || String(err);
+          const shortStmt = stmt.length > 60 ? `${stmt.substring(0, 57).replace(/\s+/g, ' ')}...` : stmt.replace(/\s+/g, ' ');
+          const formattedError = statements.length > 1
+            ? `Error en la sentencia ${i + 1} ("${shortStmt}"): ${msg}${totalRowsAffected > 0 ? ` (${totalRowsAffected} fila(s) afectada(s) en total)` : ''}`
+            : msg;
+
+          return {
+            columns: lastSelectResult?.columns || [],
+            values: lastSelectResult?.values || [],
+            rowsAffected: totalRowsAffected,
+            executionTimeMs,
+            error: formattedError
+          };
+        }
+
+        const afterChanges = this.getTotalChanges();
+        totalRowsAffected += Math.max(0, afterChanges - beforeChanges);
+
+        if (execResults && execResults.length > 0) {
+          lastSelectResult = execResults[execResults.length - 1];
+        }
+      }
+
+      const executionTimeMs = Math.round((performance.now() - startTime) * 100) / 100;
+
+      if (lastSelectResult) {
         return {
-          columns: lastResult.columns,
-          values: lastResult.values,
-          rowsAffected,
+          columns: lastSelectResult.columns,
+          values: lastSelectResult.values,
+          rowsAffected: totalRowsAffected,
           executionTimeMs
         };
       }
@@ -177,7 +308,7 @@ class SqliteService {
       return {
         columns: [],
         values: [],
-        rowsAffected,
+        rowsAffected: totalRowsAffected,
         executionTimeMs
       };
     } catch (err: any) {
@@ -210,7 +341,7 @@ class SqliteService {
 
     const startTime = performance.now();
     try {
-      const beforeModified = this.db.getRowsModified();
+      const beforeChanges = this.getTotalChanges();
 
       // Mapear parámetros con prefijo : si el usuario no lo puso
       const normalizedParams: Record<string, any> = {};
@@ -232,8 +363,8 @@ class SqliteService {
       }
       stmt.free();
 
-      const afterModified = this.db.getRowsModified();
-      const rowsAffected = Math.max(0, afterModified - beforeModified);
+      const afterChanges = this.getTotalChanges();
+      const rowsAffected = Math.max(0, afterChanges - beforeChanges);
       const executionTimeMs = Math.round((performance.now() - startTime) * 100) / 100;
 
       return {

@@ -459,57 +459,62 @@ export const Navbar: React.FC<NavbarProps> = ({
               </div>
 
               {/* SECCIÓN 3: DOCENTE (Si es docente/admin) */}
-              {isTeacherAdmin && (
+              {isTeacherAdmin && onOpenAcademic && (
                 <>
                   <div className="duo-settings-group-label">Panel Docente</div>
                   <div className="duo-settings-table">
-                    {onOpenAcademic && (
-                      <button
-                        type="button"
-                        className="duo-settings-row"
-                        onClick={() => {
-                          soundService.playToken();
-                          setIsDrawerOpen(false);
-                          onOpenAcademic();
-                        }}
-                      >
-                        <div className="duo-settings-row-left">
-                          <div className="duo-settings-row-icon-box purple">
-                            <ShieldCheck size={18} color="#7C3AED" strokeWidth={2.6} />
-                          </div>
-                          <span className="duo-settings-row-label">Seguimiento Académico</span>
+                    <button
+                      type="button"
+                      className="duo-settings-row"
+                      onClick={() => {
+                        soundService.playToken();
+                        setIsDrawerOpen(false);
+                        onOpenAcademic();
+                      }}
+                    >
+                      <div className="duo-settings-row-left">
+                        <div className="duo-settings-row-icon-box purple">
+                          <ShieldCheck size={18} color="#7C3AED" strokeWidth={2.6} />
                         </div>
-                        <div className="duo-settings-row-right">
-                          <ChevronRight size={18} color="#000000" strokeWidth={3} />
+                        <span className="duo-settings-row-label">Seguimiento Académico</span>
+                      </div>
+                      <div className="duo-settings-row-right">
+                        <ChevronRight size={18} color="#000000" strokeWidth={3} />
+                      </div>
+                    </button>
+                  </div>
+                </>
+              )}
+
+              {/* SECCIÓN: COMUNIDAD EN VIVO (Para alumnos y docente) */}
+              {onOpenLiveUsers && (
+                <>
+                  <div className="duo-settings-group-label">En Línea</div>
+                  <div className="duo-settings-table">
+                    <button
+                      type="button"
+                      className="duo-settings-row"
+                      onClick={() => {
+                        soundService.playToken();
+                        setIsDrawerOpen(false);
+                        onOpenLiveUsers();
+                      }}
+                    >
+                      <div className="duo-settings-row-left">
+                        <div className="duo-settings-row-icon-box green">
+                          <Users size={18} color="#15803D" strokeWidth={2.6} />
                         </div>
-                      </button>
-                    )}
-                    {onOpenLiveUsers && (
-                      <button
-                        type="button"
-                        className="duo-settings-row"
-                        onClick={() => {
-                          soundService.playToken();
-                          setIsDrawerOpen(false);
-                          onOpenLiveUsers();
-                        }}
-                      >
-                        <div className="duo-settings-row-left">
-                          <div className="duo-settings-row-icon-box green">
-                            <Users size={18} color="#15803D" strokeWidth={2.6} />
-                          </div>
-                          <span className="duo-settings-row-label">Usuarios en Línea</span>
-                        </div>
-                        <div className="duo-settings-row-right">
-                          {onlineUsersCount > 0 && (
-                            <span className="duo-settings-pill-tag green">
-                              {onlineUsersCount} ACTIVOS
-                            </span>
-                          )}
-                          <ChevronRight size={18} color="#000000" strokeWidth={3} />
-                        </div>
-                      </button>
-                    )}
+                        <span className="duo-settings-row-label">Usuarios en Línea</span>
+                      </div>
+                      <div className="duo-settings-row-right">
+                        {onlineUsersCount > 0 && (
+                          <span className="duo-settings-pill-tag green">
+                            {onlineUsersCount} ACTIVOS
+                          </span>
+                        )}
+                        <ChevronRight size={18} color="#000000" strokeWidth={3} />
+                      </div>
+                    </button>
                   </div>
                 </>
               )}

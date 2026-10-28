@@ -24,12 +24,14 @@ interface LiveUsersModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSelectStudent?: (uid: string) => void;
+  isTeacher?: boolean;
 }
 
 export const LiveUsersModal: React.FC<LiveUsersModalProps> = ({
   isOpen,
   onClose,
-  onSelectStudent
+  onSelectStudent,
+  isTeacher = false
 }) => {
   const [students, setStudents] = useState<UserProfile[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -232,15 +234,26 @@ export const LiveUsersModal: React.FC<LiveUsersModalProps> = ({
           <div className="live-users-header-title-col">
             <div className="live-users-badge-row">
               <span className="live-users-exclusive-pill">
-                <GraduationCap size={13} />
-                <span>Docente • josephcarazo56@gmail.com</span>
+                {isTeacher ? (
+                  <>
+                    <GraduationCap size={13} />
+                    <span>Docente • josephcarazo56@gmail.com</span>
+                  </>
+                ) : (
+                  <>
+                    <Users size={13} />
+                    <span>Comunidad de Estudiantes</span>
+                  </>
+                )}
               </span>
               <span className="live-users-online-count-pill">
                 <span className="live-pulsing-dot" />
                 <span>{onlineStudents.length} en línea</span>
               </span>
             </div>
-            <h2 className="live-users-modal-title">Control de Usuarios en Tiempo Real</h2>
+            <h2 className="live-users-modal-title">
+              {isTeacher ? 'Control de Usuarios en Tiempo Real' : 'Compañeros en Línea en Vivo'}
+            </h2>
           </div>
 
           <div className="live-users-header-actions">

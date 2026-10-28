@@ -7,6 +7,7 @@ import {
   X,
   FileCode2
 } from 'lucide-react';
+import { splitSqlStatements } from '../../services/sqliteService';
 
 export interface QueryTab {
   id: string;
@@ -22,8 +23,9 @@ interface SqlEditorProps {
   onCloseTab: (id: string) => void;
   value: string;
   onChange: (val: string) => void;
-  onExecuteStatement: () => void;
-  onExecuteAll: () => void;
+  onExecuteStatement: (sql?: string) => void;
+  onExecuteAll: (sql?: string) => void;
+  onSelectionChange?: (selectedSql: string) => void;
   isRunning?: boolean;
 }
 
@@ -87,6 +89,28 @@ function highlightSql(code: string): string {
   return html;
 }
 
+/**
+ * Obtiene la sentencia SQL en la posición del cursor o retorna todo el código si es única
+ */
+function getStatementAtCursor(sql: string, cursorOffset: number): string {
+  if (!sql.trim()) return '';
+  const statements = splitSqlStatements(sql);
+  if (statements.length <= 1) return sql.trim();
+
+  let searchStart = 0;
+  for (const stmt of statements) {
+    const idx = sql.indexOf(stmt, searchStart);
+    if (idx !== -1) {
+      const stmtEnd = idx + stmt.length;
+      if (cursorOffset >= idx && cursorOffset <= stmtEnd + 1) {
+        return stmt.trim();
+      }
+      searchStart = stmtEnd;
+    }
+  }
+  return statements[statements.length - 1]?.trim() || sql.trim();
+}
+
 export const SqlEditor: React.FC<SqlEditorProps> = ({
   tabs,
   activeTabId,
@@ -97,6 +121,7 @@ export const SqlEditor: React.FC<SqlEditorProps> = ({
   onChange,
   onExecuteStatement,
   onExecuteAll,
+  onSelectionChange,
   isRunning = false
 }) => {
   const [copied, setCopied] = useState(false);
@@ -115,16 +140,41 @@ export const SqlEditor: React.FC<SqlEditorProps> = ({
     }
   };
 
+  // Monitorear selección de texto para permitir ejecutar solo la parte resaltada
+  const handleSelect = (e: React.SyntheticEvent<HTMLTextAreaElement>) => {
+    const target = e.currentTarget;
+    if (target.selectionStart !== target.selectionEnd) {
+      const selected = value.substring(target.selectionStart, target.selectionEnd).trim();
+      onSelectionChange?.(selected);
+    } else {
+      onSelectionChange?.('');
+    }
+  };
+
   // Atajos de teclado:
   // Ctrl + Enter: Ejecutar sentencia actual o texto seleccionado
   // Shift + Ctrl + Enter: Ejecutar todo el script
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
       e.preventDefault();
+      e.stopPropagation();
+      if (isRunning || e.repeat) return;
+
+      const textarea = textareaRef.current;
+      const start = textarea?.selectionStart ?? 0;
+      const end = textarea?.selectionEnd ?? 0;
+      const hasSelection = start !== end;
+      const selected = hasSelection ? value.substring(start, end).trim() : '';
+
       if (e.shiftKey) {
-        onExecuteAll();
+        onExecuteAll(value);
       } else {
-        onExecuteStatement();
+        if (selected) {
+          onExecuteStatement(selected);
+        } else {
+          const stmt = getStatementAtCursor(value, start);
+          onExecuteStatement(stmt || value);
+        }
       }
     } else if (e.key === 'Tab') {
       e.preventDefault();
@@ -210,7 +260,10 @@ export const SqlEditor: React.FC<SqlEditorProps> = ({
           <button
             type="button"
             className="sqlite-editor-mini-btn text-red-600 hover:bg-red-50"
-            onClick={() => onChange('')}
+            onClick={() => {
+              onChange('');
+              onSelectionChange?.('');
+            }}
             title="Limpiar texto"
           >
             <RotateCcw size={12} />
@@ -249,6 +302,9 @@ export const SqlEditor: React.FC<SqlEditorProps> = ({
             onChange={(e) => onChange(e.target.value)}
             onKeyDown={handleKeyDown}
             onScroll={handleScroll}
+            onSelect={handleSelect}
+            onKeyUp={handleSelect}
+            onMouseUp={handleSelect}
             placeholder="-- Escribe tu consulta SQL aquí"
             spellCheck={false}
             autoCapitalize="off"
