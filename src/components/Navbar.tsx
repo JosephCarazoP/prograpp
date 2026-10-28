@@ -38,6 +38,7 @@ interface NavbarProps {
   onOpenNotifications?: () => void;
   onOpenLeague?: () => void;
   onOpenSqliteLab?: () => void;
+  onOpenKotlinLab?: () => void;
   onSignOut?: () => void;
   onLogoClick?: () => void;
 }
@@ -57,6 +58,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   onOpenNotifications,
   onOpenLeague,
   onOpenSqliteLab,
+  onOpenKotlinLab,
   onSignOut,
   onLogoClick: _onLogoClick
 }) => {
@@ -359,6 +361,29 @@ export const Navbar: React.FC<NavbarProps> = ({
                         <Database size={18} color="#0284C7" strokeWidth={2.6} />
                       </div>
                       <span className="duo-settings-row-label">Lab SQLite</span>
+                    </div>
+                    <div className="duo-settings-row-right">
+                      <ChevronRight size={18} color="#000000" strokeWidth={3} />
+                    </div>
+                  </button>
+                )}
+
+                {/* Lab Kotlin */}
+                {onOpenKotlinLab && (
+                  <button
+                    type="button"
+                    className="duo-settings-row"
+                    onClick={() => {
+                      soundService.playToken();
+                      setIsDrawerOpen(false);
+                      onOpenKotlinLab();
+                    }}
+                  >
+                    <div className="duo-settings-row-left">
+                      <div className="duo-settings-row-icon-box purple">
+                        <Code2 size={18} color="#9333EA" strokeWidth={2.6} />
+                      </div>
+                      <span className="duo-settings-row-label">Lab Kotlin</span>
                     </div>
                     <div className="duo-settings-row-right">
                       <ChevronRight size={18} color="#000000" strokeWidth={3} />

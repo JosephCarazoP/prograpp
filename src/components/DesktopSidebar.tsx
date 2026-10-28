@@ -12,7 +12,8 @@ import {
   VolumeX,
   LogOut,
   Flame,
-  Database
+  Database,
+  Code2
 } from 'lucide-react';
 import { soundService } from '../services/soundService';
 
@@ -22,7 +23,7 @@ export interface DesktopSidebarProps {
   unreadNotificationsCount?: number;
   onlineUsersCount?: number;
   isAdmin?: boolean;
-  onNavigate: (view: 'path' | 'profile' | 'store' | 'notifications' | 'academic' | 'season' | 'sqlite-lab', tab?: 'play' | 'courses' | 'league') => void;
+  onNavigate: (view: 'path' | 'profile' | 'store' | 'notifications' | 'academic' | 'season' | 'sqlite-lab' | 'kotlin-lab', tab?: 'play' | 'courses' | 'league') => void;
   onOpenQuests?: () => void;
   onOpenLiveUsers: () => void;
   onSignOut?: () => void;
@@ -107,6 +108,18 @@ export const DesktopSidebar: React.FC<DesktopSidebarProps> = ({
       },
       activeColor: '#BAE6FD',
       iconColor: '#0284C7'
+    },
+    {
+      id: 'kotlin-lab',
+      label: 'LAB KOTLIN',
+      icon: Code2,
+      isActive: currentView === 'kotlin-lab',
+      onClick: () => {
+        soundService.playToken();
+        onNavigate('kotlin-lab');
+      },
+      activeColor: '#F3E8FF',
+      iconColor: '#9333EA'
     },
     {
       id: 'store',

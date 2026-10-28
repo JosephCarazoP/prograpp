@@ -7,16 +7,20 @@ import {
   BookOpen,
   Code2,
   Gamepad2,
-  FileCheck2,
   Flame,
   Zap,
-  Sparkles,
   ExternalLink,
-  GraduationCap
+  GraduationCap,
+  AlertTriangle,
+  Eye,
+  Send,
+  CheckCircle2,
+  Loader2
 } from 'lucide-react';
 import { UserProfile, UserActivityStatus } from '../types/user';
 import { presenceService } from '../services/presenceService';
 import { userService } from '../services/userService';
+import { notificationService } from '../services/notificationService';
 import { DevAvatar } from './Avatars';
 import { soundService } from '../services/soundService';
 
@@ -26,6 +30,37 @@ interface LiveUsersModalProps {
   onSelectStudent?: (uid: string) => void;
   isTeacher?: boolean;
 }
+
+export const LIVE_ALERT_TEMPLATES = [
+  {
+    id: 'watching_you',
+    label: '👀 ¡Te estoy viendo!',
+    title: '👀 ¡Te estoy viendo!',
+    message: 'Se asignó tiempo de práctica en clase y veo que no estás jugando la lección. Por favor, abre tu ruta de aprendizaje y ponte a jugar ahora mismo.',
+    badge: 'Inactividad'
+  },
+  {
+    id: 'get_playing',
+    label: '⚠️ ¡A jugar la lección!',
+    title: '⚠️ ¡A jugar la lección!',
+    message: 'Veo que no estás avanzando en el juego como se indicó en clase. ¡Concéntrate en resolver tus ejercicios asignados!',
+    badge: 'Llamado de atención'
+  },
+  {
+    id: 'practice_time',
+    label: '🎮 ¡Hora de practicar!',
+    title: '🎮 ¡Hora de jugar y practicar!',
+    message: 'Tu profesor te solicita ingresar a tu ruta de aprendizaje y avanzar en los niveles pendientes para la clase de hoy.',
+    badge: 'Práctica'
+  },
+  {
+    id: 'screen_attention',
+    label: '🛑 ¡Atención a la pantalla!',
+    title: '🛑 ¡Atención a la pantalla!',
+    message: 'Por favor pausa lo que estés haciendo en tu dispositivo y presta atención inmediata a las instrucciones del docente.',
+    badge: 'Pausa'
+  }
+];
 
 export const LiveUsersModal: React.FC<LiveUsersModalProps> = ({
   isOpen,
@@ -39,6 +74,22 @@ export const LiveUsersModal: React.FC<LiveUsersModalProps> = ({
   const [searchTerm, setSearchTerm] = useState<string>('');
   const [filterType, setFilterType] = useState<'all' | 'online' | 'lesson' | 'theory' | 'playing' | 'offline'>('online');
   const [, setTicker] = useState<number>(0);
+
+  // Menú contextual al hacer clic derecho en una tarjeta de estudiante
+  const [contextMenu, setContextMenu] = useState<{
+    x: number;
+    y: number;
+    student: UserProfile;
+  } | null>(null);
+
+  // Modal para configurar y enviar alerta al estudiante
+  const [alertTargetStudent, setAlertTargetStudent] = useState<UserProfile | null>(null);
+  const [alertTargetScope, setAlertTargetScope] = useState<'single' | 'all_online'>('single');
+  const [alertTitle, setAlertTitle] = useState(LIVE_ALERT_TEMPLATES[0].title);
+  const [alertMessage, setAlertMessage] = useState(LIVE_ALERT_TEMPLATES[0].message);
+  const [selectedTemplateId, setSelectedTemplateId] = useState(LIVE_ALERT_TEMPLATES[0].id);
+  const [isSendingAlert, setIsSendingAlert] = useState(false);
+  const [sendSuccessMsg, setSendSuccessMsg] = useState<string | null>(null);
 
   // Suscribirse a usuarios en tiempo real
   useEffect(() => {
@@ -98,155 +149,190 @@ export const LiveUsersModal: React.FC<LiveUsersModalProps> = ({
 
   // Lista filtrada
   const filteredList = useMemo(() => {
-    let result = [...students];
+    let list = students;
 
-    // Ordenar: primero los que están en línea, luego los más recientemente activos
-    result.sort((a, b) => {
-      const aOnline = presenceService.isUserOnline(a);
-      const bOnline = presenceService.isUserOnline(b);
-      if (aOnline && !bOnline) return -1;
-      if (!aOnline && bOnline) return 1;
-      return (b.lastActiveAt || 0) - (a.lastActiveAt || 0);
-    });
-
-    // Filtro por estado
+    // Filtro por pestaña de estado
     if (filterType === 'online') {
-      result = result.filter((s) => presenceService.isUserOnline(s));
+      list = onlineStudents;
     } else if (filterType === 'lesson') {
-      result = result.filter(
-        (s) => presenceService.isUserOnline(s) && presenceService.getUserActivityInfo(s).status === 'lesson'
+      list = onlineStudents.filter(
+        (s) => presenceService.getUserActivityInfo(s).status === 'lesson'
       );
     } else if (filterType === 'theory') {
-      result = result.filter(
-        (s) => presenceService.isUserOnline(s) && presenceService.getUserActivityInfo(s).status === 'theory'
+      list = onlineStudents.filter(
+        (s) => presenceService.getUserActivityInfo(s).status === 'theory'
       );
     } else if (filterType === 'playing') {
-      result = result.filter((s) => {
-        if (!presenceService.isUserOnline(s)) return false;
+      list = onlineStudents.filter((s) => {
         const st = presenceService.getUserActivityInfo(s).status;
         return st === 'playing' || st === 'boss' || st === 'practice';
       });
     } else if (filterType === 'offline') {
-      result = result.filter((s) => !presenceService.isUserOnline(s));
+      list = students.filter((s) => !presenceService.isUserOnline(s));
     }
 
-    // Filtro por texto de búsqueda
+    // Filtro por término de búsqueda
     if (searchTerm.trim()) {
-      const term = searchTerm.toLowerCase();
-      result = result.filter(
-        (s) =>
-          s.displayName?.toLowerCase().includes(term) ||
-          s.email?.toLowerCase().includes(term) ||
-          s.studentCode?.toLowerCase().includes(term) ||
-          s.group?.toLowerCase().includes(term) ||
-          s.currentActivity?.activityText?.toLowerCase().includes(term) ||
-          presenceService.getUserActivityInfo(s).activityText.toLowerCase().includes(term)
-      );
+      const q = searchTerm.toLowerCase().trim();
+      list = list.filter((s) => {
+        const name = (s.displayName || '').toLowerCase();
+        const email = (s.email || '').toLowerCase();
+        const code = (s.studentCode || '').toLowerCase();
+        const grp = (s.group || '').toLowerCase();
+        return name.includes(q) || email.includes(q) || code.includes(q) || grp.includes(q);
+      });
     }
 
-    return result;
-  }, [students, filterType, searchTerm]);
+    return list;
+  }, [students, onlineStudents, filterType, searchTerm]);
 
-  if (!isOpen) return null;
-
-  const getActivityBadge = (activity?: UserActivityStatus, isOnline?: boolean) => {
+  // Color y badge dinámico de actividad
+  const getActivityBadge = (
+    activity: UserActivityStatus | undefined,
+    isOnline: boolean
+  ) => {
     if (!isOnline) {
       return {
-        label: 'Desconectado',
-        icon: <span style={{ width: 8, height: 8, borderRadius: '50%', background: '#94A3B8' }} />,
-        color: '#64748B',
         bg: '#F1F5F9',
-        border: '#000000'
+        border: '#CBD5E1',
+        color: '#64748B',
+        label: 'Desconectado',
+        icon: <span style={{ width: 8, height: 8, borderRadius: '50%', background: '#94A3B8', display: 'inline-block' }} />
       };
     }
 
-    const st = activity?.status || 'idle';
-    switch (st) {
+    switch (activity?.status) {
       case 'lesson':
         return {
-          label: 'En Lección',
-          icon: <Code2 size={13} color="#2563EB" />,
-          color: '#1D4ED8',
           bg: '#EFF6FF',
-          border: '#000000'
+          border: '#60A5FA',
+          color: '#1D4ED8',
+          label: 'En Lección',
+          icon: <Code2 size={13} color="#2563EB" />
         };
       case 'theory':
         return {
-          label: 'Leyendo Materia',
-          icon: <BookOpen size={13} color="#0D9488" />,
-          color: '#0F766E',
           bg: '#F0FDFA',
-          border: '#000000'
+          border: '#2DD4BF',
+          color: '#0F766E',
+          label: 'Leyendo Teoría',
+          icon: <BookOpen size={13} color="#0D9488" />
         };
       case 'playing':
+      case 'practice':
         return {
+          bg: '#FAF5FF',
+          border: '#C084FC',
+          color: '#7E22CE',
           label: 'Jugando Ruta',
-          icon: <Gamepad2 size={13} color="#7C3AED" />,
-          color: '#6D28D9',
-          bg: '#F5F3FF',
-          border: '#000000'
+          icon: <Gamepad2 size={13} color="#9333EA" />
         };
       case 'boss':
         return {
-          label: 'Reto de Jefe',
-          icon: <Sparkles size={13} color="#D97706" />,
-          color: '#B45309',
-          bg: '#FFFBEB',
-          border: '#000000'
-        };
-      case 'practice':
-        return {
-          label: 'En Práctica',
-          icon: <Zap size={13} color="#F59E0B" fill="#F59E0B" />,
-          color: '#B45309',
-          bg: '#FFFBEB',
-          border: '#000000'
-        };
-      case 'evaluation':
-        return {
-          label: 'En Evaluación',
-          icon: <FileCheck2 size={13} color="#DC2626" />,
-          color: '#B91C1C',
           bg: '#FEF2F2',
-          border: '#000000'
+          border: '#F87171',
+          color: '#B91C1C',
+          label: 'Combate Jefe',
+          icon: <Flame size={13} color="#DC2626" />
         };
+      case 'idle':
       default:
         return {
-          label: 'En la Aplicación',
-          icon: <span className="live-pulsing-dot-small" />,
-          color: '#15803D',
           bg: '#F0FDF4',
-          border: '#000000'
+          border: '#4ADE80',
+          color: '#15803D',
+          label: 'En Línea Activo',
+          icon: <span className="live-pulsing-dot-small" />
         };
     }
   };
 
+  // Abrir menú contextual por clic derecho
+  const handleCardContextMenu = (e: React.MouseEvent, st: UserProfile) => {
+    if (!isTeacher) return;
+    e.preventDefault();
+    e.stopPropagation();
+    soundService.playToken();
+    const x = Math.min(e.clientX, window.innerWidth - 240);
+    const y = Math.min(e.clientY, window.innerHeight - 170);
+    setContextMenu({ x, y, student: st });
+  };
+
+  // Abrir modal de alerta
+  const handleOpenAlertModal = (student: UserProfile) => {
+    setAlertTargetStudent(student);
+    setAlertTargetScope('single');
+    setSelectedTemplateId(LIVE_ALERT_TEMPLATES[0].id);
+    setAlertTitle(LIVE_ALERT_TEMPLATES[0].title);
+    setAlertMessage(LIVE_ALERT_TEMPLATES[0].message);
+    setSendSuccessMsg(null);
+  };
+
+  // Seleccionar plantilla rápida
+  const handleSelectTemplate = (tpl: (typeof LIVE_ALERT_TEMPLATES)[0]) => {
+    soundService.playToken();
+    setSelectedTemplateId(tpl.id);
+    setAlertTitle(tpl.title);
+    setAlertMessage(tpl.message);
+  };
+
+  // Enviar alerta en tiempo real a través de Firestore
+  const handleSendAlert = async () => {
+    if (!alertTitle.trim() || !alertMessage.trim()) {
+      alert('Por favor completa el título y mensaje de la alerta.');
+      return;
+    }
+
+    setIsSendingAlert(true);
+    try {
+      if (alertTargetScope === 'single' && alertTargetStudent) {
+        await notificationService.sendNotification({
+          title: alertTitle.trim(),
+          message: alertMessage.trim(),
+          type: 'urgent_alert',
+          targetType: 'specific',
+          targetUid: alertTargetStudent.uid,
+          sender: 'Profesor Joseph Carazo'
+        });
+      } else {
+        await notificationService.sendNotification({
+          title: alertTitle.trim(),
+          message: alertMessage.trim(),
+          type: 'urgent_alert',
+          targetType: 'all',
+          sender: 'Profesor Joseph Carazo'
+        });
+      }
+
+      soundService.playToken();
+      setSendSuccessMsg(
+        alertTargetScope === 'single' && alertTargetStudent
+          ? `¡Alerta enviada en vivo a ${alertTargetStudent.displayName}!`
+          : `¡Alerta enviada en vivo a todos los estudiantes!`
+      );
+
+      setTimeout(() => {
+        setAlertTargetStudent(null);
+        setSendSuccessMsg(null);
+      }, 1600);
+    } catch (err) {
+      console.error('Error enviando alerta en vivo:', err);
+      alert('Error enviando la alerta. Inténtalo de nuevo.');
+    } finally {
+      setIsSendingAlert(false);
+    }
+  };
+
+  if (!isOpen) return null;
+
   return (
-    <div className="live-users-modal-backdrop" onClick={onClose}>
-      <div
-        className="live-users-modal-card"
-        onClick={(e) => e.stopPropagation()}
-        role="dialog"
-        aria-label="Control de Usuarios en Tiempo Real"
-      >
-        {/* CABECERA PRINCIPAL */}
+    <div className="live-users-modal-overlay">
+      <div className="live-users-modal-card">
+        {/* HEADER DEL MODAL */}
         <div className="live-users-modal-header">
-          <div className="live-users-header-title-col">
-            <div className="live-users-badge-row">
-              <span className="live-users-exclusive-pill">
-                {isTeacher ? (
-                  <>
-                    <GraduationCap size={13} />
-                    <span>Docente • josephcarazo56@gmail.com</span>
-                  </>
-                ) : (
-                  <>
-                    <Users size={13} />
-                    <span>Comunidad de Estudiantes</span>
-                  </>
-                )}
-              </span>
-              <span className="live-users-online-count-pill">
+          <div className="live-users-header-left">
+            <div className="live-users-live-badge">
+              <span className="live-live-pill">
                 <span className="live-pulsing-dot" />
                 <span>{onlineStudents.length} en línea</span>
               </span>
@@ -458,6 +544,8 @@ export const LiveUsersModal: React.FC<LiveUsersModalProps> = ({
                   <div
                     key={st.uid}
                     className={`live-user-card ${isOnline ? 'is-online-card' : 'is-offline-card'}`}
+                    onContextMenu={(e) => handleCardContextMenu(e, st)}
+                    title={isTeacher ? 'Clic derecho para opciones: Expediente o ALERT' : undefined}
                   >
                     {/* Header de la tarjeta */}
                     <div className="live-card-top">
@@ -550,21 +638,54 @@ export const LiveUsersModal: React.FC<LiveUsersModalProps> = ({
                         </span>
                       </div>
 
-                      {onSelectStudent && (
-                        <button
-                          type="button"
-                          className="live-card-action-btn"
-                          onClick={() => {
-                            soundService.playToken();
-                            onClose();
-                            onSelectStudent(st.uid);
-                          }}
-                          title="Ver expediente en Seguimiento Académico"
-                        >
-                          <span>Expediente</span>
-                          <ExternalLink size={12} />
-                        </button>
-                      )}
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                        {/* Botón de ALERT inmediato para el docente */}
+                        {isTeacher && (
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              soundService.playToken();
+                              handleOpenAlertModal(st);
+                            }}
+                            title="Enviar llamado de atención en pantalla a este estudiante (o clic derecho)"
+                            style={{
+                              background: '#FEE2E2',
+                              color: '#991B1B',
+                              border: '1.5px solid #000000',
+                              boxShadow: '2px 2px 0px #000000',
+                              borderRadius: '8px',
+                              padding: '4px 8px',
+                              fontSize: '0.68rem',
+                              fontWeight: 900,
+                              display: 'inline-flex',
+                              alignItems: 'center',
+                              gap: '4px',
+                              cursor: 'pointer',
+                              transition: 'all 0.08s ease'
+                            }}
+                          >
+                            <AlertTriangle size={11} strokeWidth={2.8} />
+                            <span>ALERT</span>
+                          </button>
+                        )}
+
+                        {onSelectStudent && (
+                          <button
+                            type="button"
+                            className="live-card-action-btn"
+                            onClick={() => {
+                              soundService.playToken();
+                              onClose();
+                              onSelectStudent(st.uid);
+                            }}
+                            title="Ver expediente en Seguimiento Académico"
+                          >
+                            <span>Expediente</span>
+                            <ExternalLink size={12} />
+                          </button>
+                        )}
+                      </div>
                     </div>
                   </div>
                 );
@@ -573,6 +694,452 @@ export const LiveUsersModal: React.FC<LiveUsersModalProps> = ({
           )}
         </div>
       </div>
+
+      {/* MENÚ CONTEXTUAL (CLIC DERECHO ENCIMA DEL ESTUDIANTE) */}
+      {contextMenu && (
+        <>
+          <div
+            style={{ position: 'fixed', inset: 0, zIndex: 100050 }}
+            onClick={() => setContextMenu(null)}
+            onContextMenu={(e) => {
+              e.preventDefault();
+              setContextMenu(null);
+            }}
+          />
+          <div
+            className="live-context-menu"
+            style={{
+              position: 'fixed',
+              top: contextMenu.y,
+              left: contextMenu.x,
+              zIndex: 100060,
+              background: '#FFFFFF',
+              border: '2.5px solid #000000',
+              boxShadow: '4px 4px 0px #000000',
+              borderRadius: '14px',
+              padding: '6px',
+              minWidth: '220px',
+              animation: 'fadeIn 0.1s ease-out'
+            }}
+          >
+            {/* Header del menú con nombre del estudiante */}
+            <div
+              style={{
+                padding: '6px 10px 8px',
+                borderBottom: '1.5px solid #E2E8F0',
+                marginBottom: '4px'
+              }}
+            >
+              <div style={{ fontSize: '0.66rem', fontWeight: 900, color: '#64748B', textTransform: 'uppercase' }}>
+                Estudiante
+              </div>
+              <div style={{ fontSize: '0.84rem', fontWeight: 900, color: '#0F172A', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                {contextMenu.student.displayName}
+              </div>
+            </div>
+
+            {/* Opción 1: Expediente */}
+            {onSelectStudent && (
+              <button
+                type="button"
+                className="live-context-item"
+                onClick={() => {
+                  soundService.playToken();
+                  const uid = contextMenu.student.uid;
+                  setContextMenu(null);
+                  onClose();
+                  onSelectStudent(uid);
+                }}
+                style={{
+                  width: '100%',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  padding: '8px 10px',
+                  borderRadius: '8px',
+                  border: 'none',
+                  background: 'transparent',
+                  cursor: 'pointer',
+                  fontSize: '0.8rem',
+                  fontWeight: 800,
+                  color: '#0F172A',
+                  textAlign: 'left'
+                }}
+                onMouseEnter={(e) => (e.currentTarget.style.background = '#F1F5F9')}
+                onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
+              >
+                <GraduationCap size={16} color="#0284C7" />
+                <span>Ver Expediente Académico</span>
+              </button>
+            )}
+
+            {/* Opción 2: ALERT */}
+            <button
+              type="button"
+              className="live-context-item"
+              onClick={() => {
+                soundService.playToken();
+                const st = contextMenu.student;
+                setContextMenu(null);
+                handleOpenAlertModal(st);
+              }}
+              style={{
+                width: '100%',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+                padding: '8px 10px',
+                borderRadius: '8px',
+                border: 'none',
+                background: 'transparent',
+                cursor: 'pointer',
+                fontSize: '0.8rem',
+                fontWeight: 800,
+                color: '#B91C1C',
+                textAlign: 'left'
+              }}
+              onMouseEnter={(e) => (e.currentTarget.style.background = '#FEF2F2')}
+              onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
+            >
+              <AlertTriangle size={16} color="#DC2626" />
+              <span>Enviar ALERT en Pantalla</span>
+            </button>
+          </div>
+        </>
+      )}
+
+      {/* MODAL PARA CONFIGURAR Y ENVIAR ALERTA EN TIEMPO REAL */}
+      {alertTargetStudent && (
+        <div
+          style={{
+            position: 'fixed',
+            inset: 0,
+            background: 'rgba(15, 23, 42, 0.75)',
+            backdropFilter: 'blur(6px)',
+            zIndex: 100070,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: '16px'
+          }}
+          onClick={(e) => {
+            if (e.target === e.currentTarget && !isSendingAlert) {
+              setAlertTargetStudent(null);
+            }
+          }}
+        >
+          <div
+            style={{
+              background: '#FFFFFF',
+              border: '3px solid #000000',
+              boxShadow: '6px 6px 0px #000000',
+              borderRadius: '22px',
+              maxWidth: '520px',
+              width: '100%',
+              overflow: 'hidden',
+              display: 'flex',
+              flexDirection: 'column',
+              animation: 'bounce-in 0.25s cubic-bezier(0.34, 1.56, 0.64, 1)'
+            }}
+          >
+            {/* Header del modal de alerta */}
+            <div
+              style={{
+                padding: '14px 18px',
+                background: '#FEF08A',
+                borderBottom: '2.5px solid #000000',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                gap: '10px'
+              }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <div
+                  style={{
+                    width: '32px',
+                    height: '32px',
+                    borderRadius: '8px',
+                    background: '#EF4444',
+                    color: '#FFFFFF',
+                    border: '2px solid #000000',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center'
+                  }}
+                >
+                  <Eye size={18} strokeWidth={2.6} />
+                </div>
+                <div>
+                  <h3 style={{ margin: 0, fontSize: '0.96rem', fontWeight: 900, color: '#0F172A' }}>
+                    Enviar Alerta en Pantalla
+                  </h3>
+                  <p style={{ margin: 0, fontSize: '0.72rem', fontWeight: 700, color: '#64748B' }}>
+                    Le aparecerá como un aviso emergente inmediato en su dispositivo
+                  </p>
+                </div>
+              </div>
+
+              <button
+                type="button"
+                onClick={() => setAlertTargetStudent(null)}
+                disabled={isSendingAlert}
+                style={{
+                  background: '#FFFFFF',
+                  border: '2px solid #000000',
+                  borderRadius: '8px',
+                  width: '30px',
+                  height: '30px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  cursor: 'pointer'
+                }}
+              >
+                <X size={16} />
+              </button>
+            </div>
+
+            {/* Contenido del modal */}
+            <div style={{ padding: '18px 20px', display: 'flex', flexDirection: 'column', gap: '14px' }}>
+              
+              {/* Selector de destinatario */}
+              <div
+                style={{
+                  background: '#F8FAFC',
+                  border: '2px solid #000000',
+                  borderRadius: '14px',
+                  padding: '10px 14px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  gap: '10px'
+                }}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                  <DevAvatar
+                    avatarId={alertTargetStudent.avatarId || 'robot_byte'}
+                    skinId={alertTargetStudent.equippedSkin}
+                    size={36}
+                  />
+                  <div>
+                    <div style={{ fontSize: '0.86rem', fontWeight: 900, color: '#0F172A' }}>
+                      {alertTargetStudent.displayName}
+                    </div>
+                    <div style={{ fontSize: '0.72rem', fontWeight: 700, color: '#64748B' }}>
+                      {alertTargetStudent.studentCode || 'EST'} • {alertTargetStudent.group || 'Grupo A'}
+                    </div>
+                  </div>
+                </div>
+
+                <div style={{ display: 'flex', gap: '4px' }}>
+                  <button
+                    type="button"
+                    onClick={() => setAlertTargetScope('single')}
+                    style={{
+                      padding: '4px 8px',
+                      borderRadius: '6px',
+                      fontSize: '0.7rem',
+                      fontWeight: 800,
+                      border: '1.5px solid #000000',
+                      background: alertTargetScope === 'single' ? '#0284C7' : '#FFFFFF',
+                      color: alertTargetScope === 'single' ? '#FFFFFF' : '#0F172A',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    Solo a este alumno
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setAlertTargetScope('all_online')}
+                    style={{
+                      padding: '4px 8px',
+                      borderRadius: '6px',
+                      fontSize: '0.7rem',
+                      fontWeight: 800,
+                      border: '1.5px solid #000000',
+                      background: alertTargetScope === 'all_online' ? '#0284C7' : '#FFFFFF',
+                      color: alertTargetScope === 'all_online' ? '#FFFFFF' : '#0F172A',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    A todos en línea ({onlineStudents.length})
+                  </button>
+                </div>
+              </div>
+
+              {/* Plantillas precargadas */}
+              <div>
+                <label style={{ display: 'block', fontSize: '0.76rem', fontWeight: 900, color: '#475569', marginBottom: '6px', textTransform: 'uppercase' }}>
+                  ⚡ Plantillas Rápidas Precargadas (1-clic):
+                </label>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '6px' }}>
+                  {LIVE_ALERT_TEMPLATES.map((tpl) => (
+                    <button
+                      key={tpl.id}
+                      type="button"
+                      onClick={() => handleSelectTemplate(tpl)}
+                      style={{
+                        padding: '8px 10px',
+                        borderRadius: '10px',
+                        border: '2px solid #000000',
+                        boxShadow: selectedTemplateId === tpl.id ? '2.5px 2.5px 0px #000000' : '1px 1px 0px #000000',
+                        background: selectedTemplateId === tpl.id ? '#FEF08A' : '#FFFFFF',
+                        color: '#0F172A',
+                        textAlign: 'left',
+                        cursor: 'pointer',
+                        fontSize: '0.76rem',
+                        fontWeight: 900,
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: '2px',
+                        transition: 'all 0.1s ease'
+                      }}
+                    >
+                      <span>{tpl.label}</span>
+                      <span style={{ fontSize: '0.64rem', color: '#64748B', fontWeight: 700 }}>
+                        {tpl.badge}
+                      </span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Campo: Título */}
+              <div>
+                <label style={{ display: 'block', fontSize: '0.76rem', fontWeight: 900, color: '#475569', marginBottom: '4px', textTransform: 'uppercase' }}>
+                  Título del Llamado:
+                </label>
+                <input
+                  type="text"
+                  value={alertTitle}
+                  onChange={(e) => {
+                    setAlertTitle(e.target.value);
+                    setSelectedTemplateId('');
+                  }}
+                  placeholder="Ej: 👀 ¡Te estoy viendo!"
+                  style={{
+                    width: '100%',
+                    padding: '8px 12px',
+                    borderRadius: '10px',
+                    border: '2px solid #000000',
+                    fontSize: '0.88rem',
+                    fontWeight: 800,
+                    boxSizing: 'border-box'
+                  }}
+                />
+              </div>
+
+              {/* Campo: Mensaje */}
+              <div>
+                <label style={{ display: 'block', fontSize: '0.76rem', fontWeight: 900, color: '#475569', marginBottom: '4px', textTransform: 'uppercase' }}>
+                  Mensaje en Pantalla:
+                </label>
+                <textarea
+                  rows={3}
+                  value={alertMessage}
+                  onChange={(e) => {
+                    setAlertMessage(e.target.value);
+                    setSelectedTemplateId('');
+                  }}
+                  placeholder="Escribe el mensaje que verá el estudiante..."
+                  style={{
+                    width: '100%',
+                    padding: '10px 12px',
+                    borderRadius: '10px',
+                    border: '2px solid #000000',
+                    fontSize: '0.84rem',
+                    fontWeight: 700,
+                    resize: 'none',
+                    boxSizing: 'border-box',
+                    fontFamily: 'inherit',
+                    lineHeight: 1.4
+                  }}
+                />
+              </div>
+
+              {/* Mensaje de éxito tras enviar */}
+              {sendSuccessMsg && (
+                <div
+                  style={{
+                    background: '#DCFCE7',
+                    border: '2px solid #166534',
+                    color: '#166534',
+                    borderRadius: '10px',
+                    padding: '10px 14px',
+                    fontSize: '0.84rem',
+                    fontWeight: 900,
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px'
+                  }}
+                >
+                  <CheckCircle2 size={18} />
+                  <span>{sendSuccessMsg}</span>
+                </div>
+              )}
+
+              {/* Botones de acción */}
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: '10px', marginTop: '6px' }}>
+                <button
+                  type="button"
+                  onClick={() => setAlertTargetStudent(null)}
+                  disabled={isSendingAlert}
+                  style={{
+                    padding: '9px 16px',
+                    background: '#FFFFFF',
+                    border: '2px solid #CBD5E1',
+                    borderRadius: '10px',
+                    fontSize: '0.82rem',
+                    fontWeight: 800,
+                    color: '#475569',
+                    cursor: 'pointer'
+                  }}
+                >
+                  Cancelar
+                </button>
+
+                <button
+                  type="button"
+                  onClick={handleSendAlert}
+                  disabled={isSendingAlert}
+                  style={{
+                    padding: '10px 20px',
+                    background: '#EF4444',
+                    color: '#FFFFFF',
+                    border: '2.5px solid #000000',
+                    boxShadow: '3px 3px 0px #000000',
+                    borderRadius: '12px',
+                    fontSize: '0.9rem',
+                    fontWeight: 900,
+                    cursor: isSendingAlert ? 'not-allowed' : 'pointer',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                    transition: 'all 0.08s ease'
+                  }}
+                >
+                  {isSendingAlert ? (
+                    <>
+                      <Loader2 size={16} className="live-spin-icon" />
+                      <span>Enviando...</span>
+                    </>
+                  ) : (
+                    <>
+                      <Send size={16} strokeWidth={2.6} />
+                      <span>
+                        {alertTargetScope === 'single'
+                          ? 'ENVIAR ALERTA INMEDIATA'
+                          : 'ENVIAR A TODOS EN LÍNEA'}
+                      </span>
+                    </>
+                  )}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

@@ -91,6 +91,13 @@ export default defineConfig({
   ],
   server: {
     port: 3000,
-    open: false
+    open: false,
+    proxy: {
+      '/api/kotlin-compiler': {
+        target: 'https://api.kotlinlang.org',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api\/kotlin-compiler/, '/api')
+      }
+    }
   }
 });

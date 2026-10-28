@@ -1,4 +1,4 @@
-export type NotificationType = 'update' | 'observation' | 'reminder' | 'cheer' | 'assignment' | 'script';
+export type NotificationType = 'update' | 'observation' | 'reminder' | 'cheer' | 'assignment' | 'script' | 'urgent_alert';
 
 export interface AppNotification {
   id: string;

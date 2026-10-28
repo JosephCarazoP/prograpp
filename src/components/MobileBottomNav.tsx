@@ -16,7 +16,7 @@ export interface MobileBottomNavProps {
   unreadNotificationsCount?: number;
   hasUnclaimedRewards?: boolean;
   isAdmin?: boolean;
-  onNavigate: (view: 'path' | 'profile' | 'store' | 'notifications' | 'academic' | 'season' | 'sqlite-lab', tab?: 'play' | 'courses' | 'league') => void;
+  onNavigate: (view: 'path' | 'profile' | 'store' | 'notifications' | 'academic' | 'season' | 'sqlite-lab' | 'kotlin-lab', tab?: 'play' | 'courses' | 'league') => void;
 }
 
 export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({

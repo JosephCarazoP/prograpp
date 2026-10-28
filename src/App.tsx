@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import confetti from 'canvas-confetti';
 import {
   X,
@@ -57,10 +57,12 @@ import { StreakCelebrationModal } from './components/StreakCelebrationModal';
 import { StorePage } from './components/StorePage';
 import { SeasonPathPage } from './components/SeasonPathPage';
 import { LiveUsersModal } from './components/LiveUsersModal';
+import { TeacherAttentionAlertModal } from './components/TeacherAttentionAlertModal';
 import { NotificationsPage } from './components/NotificationsPage';
 import { NetworkStatusBadge } from './components/NetworkStatusBadge';
 import { PWAInstallBanner } from './components/PWAInstallBanner';
 import { SqliteLab } from './components/sqlite/SqliteLab';
+import { KotlinLab } from './components/kotlin/KotlinLab';
 import { academicService } from './services/academicService';
 import { timeTrackingService } from './services/timeTrackingService';
 import { presenceService } from './services/presenceService';
@@ -187,8 +189,8 @@ export default function App() {
     return raw && typeof raw === 'object' ? raw : {};
   });
 
-  // Vistas principales: path, lesson, practice, boss, profile, academic, notifications, store, season, sqlite-lab
-  const [view, setView] = useState<'path' | 'lesson' | 'practice' | 'boss' | 'profile' | 'academic' | 'notifications' | 'store' | 'season' | 'sqlite-lab'>(() => {
+  // Vistas principales: path, lesson, practice, boss, profile, academic, notifications, store, season, sqlite-lab, kotlin-lab
+  const [view, setView] = useState<'path' | 'lesson' | 'practice' | 'boss' | 'profile' | 'academic' | 'notifications' | 'store' | 'season' | 'sqlite-lab' | 'kotlin-lab'>(() => {
     if (typeof window !== 'undefined') {
       const params = new URLSearchParams(window.location.search);
       if (params.get('view') === 'boss') return 'boss';
@@ -197,6 +199,7 @@ export default function App() {
       if (params.get('view') === 'store' || params.get('view') === 'shop') return 'store';
       if (params.get('view') === 'season') return 'season';
       if (params.get('view') === 'sqlite' || params.get('view') === 'sqlite-lab') return 'sqlite-lab';
+      if (params.get('view') === 'kotlin' || params.get('view') === 'kotlin-lab') return 'kotlin-lab';
     }
     return 'path';
   });
@@ -205,6 +208,13 @@ export default function App() {
     if (typeof window !== 'undefined') {
       const params = new URLSearchParams(window.location.search);
       return params.get('exercise');
+    }
+    return null;
+  });
+  const [kotlinInitialExerciseId, setKotlinInitialExerciseId] = useState<string | null>(() => {
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search);
+      return params.get('kt_exercise');
     }
     return null;
   });
@@ -514,6 +524,12 @@ export default function App() {
         activityText: 'En Laboratorio SQLite (WASM)',
         path: 'sql'
       };
+    } else if (view === 'kotlin-lab') {
+      activity = {
+        status: 'practice',
+        activityText: 'En Laboratorio Kotlin (Playground)',
+        path: 'kotlin'
+      };
     } else if (view === 'academic') {
       activity = {
         status: 'idle',
@@ -589,6 +605,42 @@ export default function App() {
     });
     return () => unsubscribe();
   }, [user?.uid, user?.group]);
+
+  // Notificación urgente del profesor activa para el estudiante (Llamado de atención en pantalla)
+  const activeUrgentAlert = useMemo(() => {
+    if (!user?.uid) return null;
+    return (
+      notifications.find(
+        (n) => n.type === 'urgent_alert' && !n.readBy.includes(user.uid)
+      ) || null
+    );
+  }, [notifications, user?.uid]);
+
+  // Reproducir alerta sonora al recibir un nuevo llamado de atención
+  useEffect(() => {
+    if (activeUrgentAlert) {
+      soundService.playError();
+    }
+  }, [activeUrgentAlert?.id]);
+
+  const handleAcknowledgeUrgentAlert = async (alertId: string) => {
+    if (!user?.uid) return;
+    soundService.playToken();
+    await notificationService.markAsRead(alertId, user.uid);
+    setNotifications((prev) =>
+      prev.map((n) =>
+        n.id === alertId ? { ...n, readBy: [...n.readBy, user.uid] } : n
+      )
+    );
+  };
+
+  const handleGoPlayUrgentAlert = async (alertId: string) => {
+    await handleAcknowledgeUrgentAlert(alertId);
+    setView('path');
+    setMainTab('play');
+    setActiveTheory(null);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
 
   const handleMarkNotificationAsRead = async (id: string) => {
     if (!user?.uid) return;
@@ -1318,7 +1370,7 @@ export default function App() {
       )}
 
       {/* Barra de Estado Superior (solo visible en path y practice cuando no se está leyendo teoría o en páginas dedicadas) */}
-      {view !== 'boss' && view !== 'lesson' && view !== 'academic' && view !== 'notifications' && view !== 'store' && view !== 'season' && view !== 'sqlite-lab' && !activeTheory && (
+      {view !== 'boss' && view !== 'lesson' && view !== 'academic' && view !== 'notifications' && view !== 'store' && view !== 'season' && view !== 'sqlite-lab' && view !== 'kotlin-lab' && !activeTheory && (
         <Navbar
           user={user}
           isAdmin={authService.isCurrentUserAdmin()}
@@ -1378,12 +1430,18 @@ export default function App() {
             setSqliteInitialSqlCode(null);
             window.scrollTo({ top: 0, behavior: 'instant' });
           }}
+          onOpenKotlinLab={() => {
+            soundService.playToken();
+            setView('kotlin-lab');
+            setKotlinInitialExerciseId(null);
+            window.scrollTo({ top: 0, behavior: 'instant' });
+          }}
           onSignOut={handleSignOut}
         />
       )}
 
       {/* ═══ CONTENEDOR MAESTRO DUOLINGO DESKTOP (3 COLUMNAS: SIDEBAR IZQ + CONTENIDO + SIDEBAR DER) ═══ */}
-      {view !== 'boss' && view !== 'lesson' && view !== 'sqlite-lab' && (
+      {view !== 'boss' && view !== 'lesson' && view !== 'sqlite-lab' && view !== 'kotlin-lab' && (
         <>
           <div className="duo-desktop-app-layout">
           {/* Columna Izquierda: Barra Lateral de Navegación Permanente (Desktop) */}
@@ -1418,7 +1476,7 @@ export default function App() {
           {/* Área Principal Desktop (Centro + Widgets Derecha) */}
           <div className="duo-desktop-main-wrapper">
             {/* Columna Central: Contenido Principal */}
-            <div className={`duo-desktop-center-column ${['store', 'academic', 'season', 'notifications', 'profile', 'sqlite-lab'].includes(view) ? 'wide-view' : ''}`}>
+            <div className={`duo-desktop-center-column ${['store', 'academic', 'season', 'notifications', 'profile', 'sqlite-lab', 'kotlin-lab'].includes(view) ? 'wide-view' : ''}`}>
             {/* VISTA 1: EL CAMINO (LEARNING PATH) / SECCIÓN DE CURSOS / TEORÍA */}
             {view === 'path' && (
               <main
@@ -1737,6 +1795,22 @@ export default function App() {
               setSqliteInitialExerciseId(null);
               setSqliteInitialDbId(null);
               setSqliteInitialSqlCode(null);
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
+          />
+        </div>
+      )}
+
+      {/* ═══ VISTA DEDICADA: LABORATORIO KOTLIN REAL (ENFOQUE TOTAL SIN NAV BARS) ═══ */}
+      {view === 'kotlin-lab' && (
+        <div className="kotlin-fullscreen-wrapper">
+          <KotlinLab
+            user={user}
+            initialExerciseId={kotlinInitialExerciseId}
+            onBack={() => {
+              soundService.playToken();
+              setView('path');
+              setKotlinInitialExerciseId(null);
               window.scrollTo({ top: 0, behavior: 'smooth' });
             }}
           />
@@ -2836,6 +2910,13 @@ export default function App() {
 
       {/* Banner / Modal de instalación en la pantalla de inicio (PWA) */}
       <PWAInstallBanner />
+
+      {/* Alerta de Atención Inmediata enviada por el Profesor en Tiempo Real */}
+      <TeacherAttentionAlertModal
+        alert={activeUrgentAlert}
+        onAcknowledge={handleAcknowledgeUrgentAlert}
+        onGoPlay={handleGoPlayUrgentAlert}
+      />
     </>
   );
 }
