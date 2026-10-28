@@ -18,10 +18,15 @@ export function usePWAInstall() {
     // Detectar si ya está instalada / modo standalone
     const isStandaloneMode =
       window.matchMedia('(display-mode: standalone)').matches ||
+      window.matchMedia('(display-mode: fullscreen)').matches ||
+      window.matchMedia('(display-mode: minimal-ui)').matches ||
       (navigator as any).standalone === true ||
       document.referrer.includes('android-app://');
 
     setIsInstalled(isStandaloneMode);
+    if (isStandaloneMode && typeof document !== 'undefined') {
+      document.documentElement.classList.add('is-pwa-standalone');
+    }
 
     // Detectar iOS
     const userAgent = window.navigator.userAgent.toLowerCase();

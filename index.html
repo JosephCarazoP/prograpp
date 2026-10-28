@@ -19,6 +19,21 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700;800&family=Nunito:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <!-- Detección inmediata de modo PWA / App Instalada en pantalla de inicio -->
+    <script>
+      (function() {
+        try {
+          var isStandalone = window.matchMedia('(display-mode: standalone)').matches ||
+            window.matchMedia('(display-mode: fullscreen)').matches ||
+            window.matchMedia('(display-mode: minimal-ui)').matches ||
+            (window.navigator && window.navigator.standalone === true) ||
+            (document.referrer && document.referrer.indexOf('android-app://') !== -1);
+          if (isStandalone) {
+            document.documentElement.classList.add('is-pwa-standalone');
+          }
+        } catch (e) {}
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>
