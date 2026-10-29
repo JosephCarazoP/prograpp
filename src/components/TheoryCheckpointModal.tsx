@@ -11,19 +11,24 @@ import {
   ExternalLink,
   Sparkles,
   Info,
-  Zap
+  Zap,
+  Flag
 } from 'lucide-react';
 import { Lesson } from '../types/lesson';
 import { TheoryLesson } from '../types/theory';
+import { UserProfile } from '../types/user';
+import { DEFAULT_PROFILE } from '../services/userService';
 import { soundService } from '../services/soundService';
 import { VSCodeSnippet } from './VSCodeSnippet';
 import { ConsoleDevAvatar } from './ConsoleAvatar';
 import { FormattedText } from './FormattedText';
+import { QuestionReportModal } from './QuestionReportModal';
 
 interface TheoryCheckpointModalProps {
   lesson: Lesson;
   theory?: TheoryLesson;
   isOpen: boolean;
+  user?: UserProfile;
   onClose: () => void;
   onComplete: (lesson: Lesson) => void;
   onOpenFullTheory?: (theory: TheoryLesson) => void;
@@ -43,6 +48,7 @@ export const TheoryCheckpointModal: React.FC<TheoryCheckpointModalProps> = ({
   lesson,
   theory,
   isOpen,
+  user,
   onClose,
   onComplete,
   onOpenFullTheory
@@ -60,6 +66,7 @@ export const TheoryCheckpointModal: React.FC<TheoryCheckpointModalProps> = ({
   const [selectedOption, setSelectedOption] = useState<number | null>(null);
   const [isAnswerChecked, setIsAnswerChecked] = useState(false);
   const [isCorrect, setIsCorrect] = useState(false);
+  const [isReportModalOpen, setIsReportModalOpen] = useState(false);
 
   // Extraer las 2 mejores preguntas conceptuales del banco del nivel
   const quizQuestions: QuizItem[] = useMemo(() => {
@@ -535,7 +542,7 @@ export const TheoryCheckpointModal: React.FC<TheoryCheckpointModalProps> = ({
              ══════════════════════════════════════════════════════════ */}
           {step === 'quiz' && currentQuestion && (
             <>
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px' }}>
                 <span
                   style={{
                     background: pathLightBg,
@@ -550,9 +557,37 @@ export const TheoryCheckpointModal: React.FC<TheoryCheckpointModalProps> = ({
                   Pregunta {currentQuizIndex + 1} de {quizQuestions.length}
                 </span>
 
-                <span style={{ fontSize: '0.82rem', color: '#64748B', fontWeight: 800 }}>
-                  Responde para desbloquear el nivel
-                </span>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <span style={{ fontSize: '0.82rem', color: '#64748B', fontWeight: 800 }}>
+                    Responde para desbloquear
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      soundService.playToken();
+                      setIsReportModalOpen(true);
+                    }}
+                    style={{
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '4px',
+                      background: '#FFFFFF',
+                      border: '1.5px solid #000000',
+                      boxShadow: '2px 2px 0px #000000',
+                      borderRadius: '8px',
+                      padding: '3px 8px',
+                      fontSize: '0.74rem',
+                      fontWeight: 800,
+                      color: '#DC2626',
+                      cursor: 'pointer'
+                    }}
+                    className="active:translate-x-[1px] active:translate-y-[1px] active:shadow-none hover:bg-red-50"
+                    title="Reportar problema con esta pregunta"
+                  >
+                    <Flag size={12} strokeWidth={2.4} fill="#FEE2E2" />
+                    <span>Reportar</span>
+                  </button>
+                </div>
               </div>
 
               {/* Enunciado de la pregunta */}
@@ -841,6 +876,29 @@ export const TheoryCheckpointModal: React.FC<TheoryCheckpointModalProps> = ({
           )}
         </div>
       </div>
+
+      {/* Modal para reportar problemas en el micro-quiz */}
+      {isReportModalOpen && currentQuestion && (
+        <QuestionReportModal
+          isOpen={isReportModalOpen}
+          onClose={() => setIsReportModalOpen(false)}
+          user={user || DEFAULT_PROFILE}
+          lesson={lesson}
+          exercise={{
+            id: currentQuestion.id,
+            type: 'predict_output',
+            prompt: currentQuestion.prompt,
+            codeSnippet: currentQuestion.codeSnippet,
+            options: currentQuestion.options,
+            explanation: currentQuestion.explanation,
+            correctOptionIndex: currentQuestion.correctIndex
+          }}
+          selectedOptionIndex={selectedOption}
+          userAnswer={selectedOption !== null ? currentQuestion.options[selectedOption] : undefined}
+          feedbackState={isAnswerChecked ? (isCorrect ? 'success' : 'error') : 'idle'}
+          feedbackExplanation={currentQuestion.explanation}
+        />
+      )}
     </div>
   );
 };

@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import { UserProfile } from '../../types/user';
 import {
   SqliteExercise,
@@ -42,7 +43,9 @@ import {
   Loader2,
   ChevronDown,
   MousePointerClick,
-  Layers
+  Layers,
+  Check,
+  X
 } from 'lucide-react';
 
 export interface UserDatabase {
@@ -105,6 +108,18 @@ export const SqliteLab: React.FC<SqliteLabProps> = ({
   const [submitSuccessMsg, setSubmitSuccessMsg] = useState<string | null>(null);
   const exportDropdownRef = useRef<HTMLDivElement>(null);
   const dbDropdownRef = useRef<HTMLDivElement>(null);
+
+  // Detección de vista móvil para exportación e interactividad táctil
+  const [isMobile, setIsMobile] = useState(() =>
+    typeof window !== 'undefined' ? window.innerWidth <= 899 : false
+  );
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth <= 899);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
   const [autoCheckModal, setAutoCheckModal] = useState<{
     isOpen: boolean;
     passed: boolean;
@@ -117,7 +132,8 @@ export const SqliteLab: React.FC<SqliteLabProps> = ({
 
     function handleClickOutside(event: MouseEvent | TouchEvent) {
       const target = event.target as Node;
-      if (exportDropdownRef.current && !exportDropdownRef.current.contains(target)) {
+      // El dropdown desktop solo se cierra si no estamos en móvil y el clic fue fuera
+      if (!isMobile && exportDropdownRef.current && !exportDropdownRef.current.contains(target)) {
         setIsExportDropdownOpen(false);
       }
       if (dbDropdownRef.current && !dbDropdownRef.current.contains(target)) {
@@ -141,7 +157,7 @@ export const SqliteLab: React.FC<SqliteLabProps> = ({
       document.removeEventListener('touchstart', handleClickOutside);
       document.removeEventListener('keydown', handleKeyDown);
     };
-  }, [isExportDropdownOpen, isDbDropdownOpen]);
+  }, [isExportDropdownOpen, isDbDropdownOpen, isMobile]);
 
   // Referencia para carga universal de archivos (.db o .sql)
   const universalFileInputRef = useRef<HTMLInputElement>(null);
@@ -725,12 +741,19 @@ INSERT INTO articulos (nombre, precio, stock) VALUES
     const safeTitle = rawTitle
       .toLowerCase()
       .replace(/[^a-z0-9]/g, '_');
+    const fileName = `${safeTitle}_${new Date().toISOString().split('T')[0]}.db`;
     a.href = url;
-    a.download = `${safeTitle}_${new Date().toISOString().split('T')[0]}.db`;
+    a.download = fileName;
+    document.body.appendChild(a);
     a.click();
-    URL.revokeObjectURL(url);
+    setTimeout(() => {
+      if (document.body.contains(a)) {
+        document.body.removeChild(a);
+      }
+      URL.revokeObjectURL(url);
+    }, 1500);
     soundService.playToken();
-    setSubmitSuccessMsg(`¡Archivo binario "${a.download}" descargado con éxito!`);
+    setSubmitSuccessMsg(`¡Archivo binario "${fileName}" descargado con éxito!`);
     setTimeout(() => setSubmitSuccessMsg(null), 3500);
   };
 
@@ -745,12 +768,19 @@ INSERT INTO articulos (nombre, precio, stock) VALUES
     const safeTitle = rawTitle
       .toLowerCase()
       .replace(/[^a-z0-9]/g, '_');
+    const fileName = `${safeTitle}_dump_${new Date().toISOString().split('T')[0]}.sql`;
     a.href = url;
-    a.download = `${safeTitle}_dump_${new Date().toISOString().split('T')[0]}.sql`;
+    a.download = fileName;
+    document.body.appendChild(a);
     a.click();
-    URL.revokeObjectURL(url);
+    setTimeout(() => {
+      if (document.body.contains(a)) {
+        document.body.removeChild(a);
+      }
+      URL.revokeObjectURL(url);
+    }, 1500);
     soundService.playToken();
-    setSubmitSuccessMsg(`¡Script SQL "${a.download}" descargado con éxito!`);
+    setSubmitSuccessMsg(`¡Script SQL "${fileName}" descargado con éxito!`);
     setTimeout(() => setSubmitSuccessMsg(null), 3500);
   };
 
@@ -874,89 +904,55 @@ INSERT INTO articulos (nombre, precio, stock) VALUES
 
           {/* Selector de Base de Datos y Ejercicios Neo-Brutalist */}
           <div className="sqlite-topbar-db-group" style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-            <div
-              className="sqlite-export-dropdown-wrapper relative"
-              ref={dbDropdownRef}
-              style={{ position: 'relative', display: 'inline-flex' }}
-            >
+            <div className="sqlite-neo-dropdown-wrapper" ref={dbDropdownRef}>
               <button
                 type="button"
-                className="sqlite-btn-util sqlite-neo-select-btn"
-                onClick={() => setIsDbDropdownOpen(prev => !prev)}
+                className="sqlite-neo-dropdown-btn sqlite-neo-select-btn"
+                onClick={() => {
+                  soundService.playToken();
+                  setIsDbDropdownOpen(prev => !prev);
+                  setIsExportDropdownOpen(false);
+                }}
                 style={{
-                  backgroundColor: isDbDropdownOpen ? '#FEF9C3' : '#FFFFFF',
-                  minWidth: 120,
-                  maxWidth: 220,
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: 8,
-                  justifyContent: 'space-between',
-                  padding: '7px 12px'
+                  backgroundColor: isDbDropdownOpen ? '#FEF9C3' : undefined
                 }}
                 title="Seleccionar Base de Datos o Ejercicio Asignado"
                 aria-expanded={isDbDropdownOpen}
                 aria-haspopup="true"
               >
-                <div style={{ display: 'flex', alignItems: 'center', gap: 7, minWidth: 0, overflow: 'hidden' }}>
+                <div className="sqlite-neo-dropdown-btn-left">
                   {isSandbox ? (
-                    <Database size={15} className="text-sky-600 flex-shrink-0" />
+                    <Database size={14} className="text-sky-600 flex-shrink-0" />
                   ) : activeExercise?.type === 'button_programming' ? (
-                    <MousePointerClick size={15} className="text-purple-600 flex-shrink-0" />
+                    <MousePointerClick size={14} className="text-purple-600 flex-shrink-0" />
                   ) : (
-                    <FileCode2 size={15} className="text-amber-600 flex-shrink-0" />
+                    <FileCode2 size={14} className="text-amber-600 flex-shrink-0" />
                   )}
-                  <span
-                    style={{
-                      overflow: 'hidden',
-                      textOverflow: 'ellipsis',
-                      whiteSpace: 'nowrap',
-                      fontWeight: 900,
-                      fontSize: '0.8rem',
-                      color: '#0F172A'
-                    }}
-                  >
+                  <span className="sqlite-neo-dropdown-title">
                     {isSandbox
                       ? (userDatabases.find(d => d.id === activeDbId)?.name || 'Base Principal')
                       : activeExercise?.title}
                   </span>
                 </div>
                 <ChevronDown
-                  size={14}
+                  size={13}
+                  className="sqlite-neo-dropdown-chevron"
                   style={{
                     transform: isDbDropdownOpen ? 'rotate(180deg)' : 'none',
-                    transition: 'transform 0.15s ease',
-                    flexShrink: 0,
-                    color: '#0F172A'
+                    transition: 'transform 0.15s ease'
                   }}
                 />
               </button>
 
               {isDbDropdownOpen && (
-                <div
-                  className="sqlite-dropdown-menu"
-                  style={{
-                    minWidth: 280,
-                    maxWidth: 350,
-                    maxHeight: 400,
-                    overflowY: 'auto',
-                    marginTop: 6,
-                    left: 0,
-                    right: 'auto',
-                    borderRadius: 12,
-                    boxShadow: '4px 4px 0px #000000',
-                    border: '2.5px solid #000000',
-                    padding: 0,
-                    background: '#FFFFFF',
-                    zIndex: 9999
-                  }}
-                >
+                <div className="sqlite-neo-dropdown-menu">
                   {/* Encabezado: Bases de Datos */}
-                  <div className="sqlite-dropdown-header">
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                  <div className="sqlite-neo-dropdown-header">
+                    <div className="flex items-center gap-1.5">
                       <Database size={12} className="text-sky-700" />
                       <span>BASES DE DATOS</span>
                     </div>
-                    <span style={{ background: '#CBD5E1', color: '#0F172A', padding: '1px 6px', borderRadius: 4, fontSize: '0.65rem' }}>
+                    <span className="sqlite-neo-dropdown-count">
                       {userDatabases.length}
                     </span>
                   </div>
@@ -967,31 +963,30 @@ INSERT INTO articulos (nombre, precio, stock) VALUES
                       <button
                         key={db.id}
                         type="button"
-                        className="sqlite-dropdown-item"
+                        className="sqlite-neo-dropdown-item"
                         onClick={() => {
+                          soundService.playToken();
                           setSelectedExerciseId('sandbox');
                           setActiveDbId(db.id);
                           setIsDbDropdownOpen(false);
                         }}
                         style={{
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'space-between',
-                          padding: '9px 12px',
-                          backgroundColor: isSelected ? '#FEF9C3' : '#FFFFFF',
+                          backgroundColor: isSelected ? '#FEF9C3' : undefined,
                           fontWeight: isSelected ? 900 : 700
                         }}
                       >
-                        <div style={{ display: 'flex', alignItems: 'center', gap: 8, overflow: 'hidden' }}>
-                          <Database size={14} className={isSelected ? 'text-sky-600' : 'text-slate-400'} />
-                          <span style={{ fontSize: '0.78rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                            {db.name}
-                          </span>
+                        <div className="flex items-center gap-2 min-w-0">
+                          <Database
+                            size={13}
+                            className={isSelected ? 'text-sky-600 flex-shrink-0' : 'text-slate-400 flex-shrink-0'}
+                          />
+                          <span className="truncate">{db.name}</span>
                         </div>
                         {isSelected && (
-                          <span style={{ fontSize: '0.62rem', background: '#000000', color: '#FEF9C3', padding: '1px 6px', borderRadius: 4, fontWeight: 900, flexShrink: 0 }}>
-                            ACTIVA
-                          </span>
+                          <div className="flex items-center gap-1.5 flex-shrink-0">
+                            <span className="sqlite-db-active-pill">ACTIVA</span>
+                            <Check size={13} className="text-sky-600" strokeWidth={2.6} />
+                          </div>
                         )}
                       </button>
                     );
@@ -1000,12 +995,12 @@ INSERT INTO articulos (nombre, precio, stock) VALUES
                   {/* Encabezado: Ejercicios Asignados */}
                   {exercises.length > 0 && (
                     <>
-                      <div className="sqlite-dropdown-header" style={{ borderTop: '2px solid #000000' }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                      <div className="sqlite-neo-dropdown-header section-divider">
+                        <div className="flex items-center gap-1.5">
                           <Sparkles size={12} className="text-amber-600" />
                           <span>EJERCICIOS ASIGNADOS</span>
                         </div>
-                        <span style={{ background: '#CBD5E1', color: '#0F172A', padding: '1px 6px', borderRadius: 4, fontSize: '0.65rem' }}>
+                        <span className="sqlite-neo-dropdown-count">
                           {exercises.length}
                         </span>
                       </div>
@@ -1016,45 +1011,39 @@ INSERT INTO articulos (nombre, precio, stock) VALUES
                           <button
                             key={ex.id}
                             type="button"
-                            className="sqlite-dropdown-item"
+                            className="sqlite-neo-dropdown-item"
                             onClick={() => {
+                              soundService.playToken();
                               setSelectedExerciseId(ex.id);
                               setIsDbDropdownOpen(false);
                             }}
                             style={{
-                              display: 'flex',
-                              alignItems: 'center',
-                              justifyContent: 'space-between',
-                              padding: '9px 12px',
-                              backgroundColor: isSelected ? '#FEF9C3' : '#FFFFFF',
+                              backgroundColor: isSelected ? '#FEF9C3' : undefined,
                               fontWeight: isSelected ? 900 : 700
                             }}
                           >
-                            <div style={{ display: 'flex', alignItems: 'center', gap: 8, overflow: 'hidden' }}>
+                            <div className="flex items-center gap-2 min-w-0">
                               {ex.type === 'button_programming' ? (
-                                <MousePointerClick size={14} className="text-purple-600 flex-shrink-0" />
+                                <MousePointerClick
+                                  size={13}
+                                  className={isSelected ? 'text-purple-600 flex-shrink-0' : 'text-slate-400 flex-shrink-0'}
+                                />
                               ) : (
-                                <FileCode2 size={14} className="text-amber-600 flex-shrink-0" />
+                                <FileCode2
+                                  size={13}
+                                  className={isSelected ? 'text-amber-600 flex-shrink-0' : 'text-slate-400 flex-shrink-0'}
+                                />
                               )}
-                              <span style={{ fontSize: '0.78rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                                {ex.title}
-                              </span>
+                              <span className="truncate">{ex.title}</span>
                             </div>
-                            <span
-                              style={{
-                                fontSize: '0.62rem',
-                                padding: '1px 5px',
-                                borderRadius: 4,
-                                fontWeight: 800,
-                                textTransform: 'uppercase',
-                                flexShrink: 0,
-                                background: isSelected ? '#000000' : '#F1F5F9',
-                                color: isSelected ? '#FFFFFF' : '#475569',
-                                border: '1px solid #CBD5E1'
-                              }}
-                            >
-                              {ex.difficulty}
-                            </span>
+                            <div className="flex items-center gap-2 flex-shrink-0">
+                              <span className={`sqlite-diff-pill ${ex.difficulty}`}>
+                                {ex.difficulty === 'easy' ? 'Fácil' : ex.difficulty === 'medium' ? 'Medio' : 'Desafío'}
+                              </span>
+                              {isSelected && (
+                                <Check size={13} className="text-sky-600" strokeWidth={2.6} />
+                              )}
+                            </div>
                           </button>
                         );
                       })}
@@ -1146,36 +1135,72 @@ INSERT INTO articulos (nombre, precio, stock) VALUES
             </span>
           </button>
 
-          {/* Input de archivo universal oculto */}
+          {/* Input de archivo universal oculto pero con caja de layout para compatibilidad móvil */}
           <input
+            id="sqlite-universal-file-input"
             ref={universalFileInputRef}
             type="file"
-            accept=".db,.sqlite,.sqlite3,.sql,.txt"
-            style={{ display: 'none' }}
+            accept=".db,.sqlite,.sqlite3,.sql,.txt,application/x-sqlite3,application/octet-stream,text/plain,*/*"
+            style={{
+              position: 'absolute',
+              width: '1px',
+              height: '1px',
+              padding: 0,
+              margin: '-1px',
+              overflow: 'hidden',
+              clip: 'rect(0, 0, 0, 0)',
+              whiteSpace: 'nowrap',
+              border: 0,
+              opacity: 0,
+              pointerEvents: 'none'
+            }}
             onChange={handleUniversalImport}
           />
 
-          {/* Botón Importar */}
-          <button
-            type="button"
+          {/* Botón Importar usando label para disparo nativo en móviles */}
+          <label
+            htmlFor="sqlite-universal-file-input"
             className="sqlite-btn-util"
-            onClick={() => universalFileInputRef.current?.click()}
             title="Importar archivo .db (base de datos) o archivo .sql (script)"
+            style={{
+              cursor: 'pointer',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: 5,
+              userSelect: 'none'
+            }}
+            onClick={() => {
+              soundService.playToken();
+              if (universalFileInputRef.current) {
+                universalFileInputRef.current.value = '';
+              }
+            }}
+            tabIndex={0}
+            role="button"
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                universalFileInputRef.current?.click();
+              }
+            }}
           >
             <Upload size={14} />
             <span>Importar</span>
-          </button>
+          </label>
 
-          {/* Botón Unificado Exportar con Dropdown Neobrutalist */}
+          {/* Botón Unificado Exportar con Dropdown Desktop y Action Sheet Móvil */}
           <div
-            className="sqlite-export-dropdown-wrapper relative"
+            className="sqlite-neo-dropdown-wrapper"
             ref={exportDropdownRef}
-            style={{ position: 'relative', display: 'inline-flex' }}
           >
             <button
               type="button"
               className="sqlite-btn-util"
-              onClick={() => setIsExportDropdownOpen(prev => !prev)}
+              onClick={() => {
+                soundService.playToken();
+                setIsExportDropdownOpen(prev => !prev);
+                setIsDbDropdownOpen(false);
+              }}
               title="Opciones de exportación (.db o .sql)"
               style={{
                 backgroundColor: isExportDropdownOpen ? '#FEF9C3' : undefined
@@ -1194,7 +1219,8 @@ INSERT INTO articulos (nombre, precio, stock) VALUES
               />
             </button>
 
-            {isExportDropdownOpen && (
+            {/* Dropdown Desktop */}
+            {isExportDropdownOpen && !isMobile && (
               <div
                 className="sqlite-dropdown-menu"
                 style={{
@@ -1292,6 +1318,247 @@ INSERT INTO articulos (nombre, precio, stock) VALUES
               </div>
             )}
           </div>
+
+          {/* Action Sheet Móvil Neo-Brutalist mediante Portal directo al body */}
+          {isExportDropdownOpen && isMobile && createPortal(
+            <div
+              className="lab-export-mobile-overlay"
+              style={{
+                position: 'fixed',
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                backgroundColor: 'rgba(15, 23, 42, 0.65)',
+                backdropFilter: 'blur(4px)',
+                WebkitBackdropFilter: 'blur(4px)',
+                display: 'flex',
+                alignItems: 'flex-end',
+                justifyContent: 'center',
+                zIndex: 999999,
+                padding: '0 0 max(16px, env(safe-area-inset-bottom)) 0'
+              }}
+              onClick={() => setIsExportDropdownOpen(false)}
+            >
+              <div
+                className="lab-export-mobile-sheet"
+                style={{
+                  backgroundColor: '#FFFFFF',
+                  width: 'calc(100% - 24px)',
+                  maxWidth: '480px',
+                  borderRadius: '16px',
+                  border: '3px solid #000000',
+                  boxShadow: '4px 4px 0px #000000',
+                  overflow: 'hidden'
+                }}
+                onClick={e => e.stopPropagation()}
+              >
+                {/* Cabecera */}
+                <div
+                  style={{
+                    padding: '12px 16px',
+                    background: '#F0FDF4',
+                    borderBottom: '2px solid #000000',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between'
+                  }}
+                >
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <div
+                      style={{
+                        width: 30,
+                        height: 30,
+                        borderRadius: 8,
+                        background: '#DCFCE7',
+                        border: '2px solid #000000',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center'
+                      }}
+                    >
+                      <Download size={16} className="text-emerald-700" strokeWidth={2.6} />
+                    </div>
+                    <div>
+                      <div style={{ fontSize: '0.85rem', fontWeight: 900, color: '#0F172A' }}>
+                        FORMATOS DE EXPORTACIÓN SQLITE
+                      </div>
+                      <div style={{ fontSize: '0.7rem', color: '#15803D', fontWeight: 700 }}>
+                        Descarga tu base de datos o script SQL
+                      </div>
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setIsExportDropdownOpen(false)}
+                    style={{
+                      background: '#FFFFFF',
+                      border: '2px solid #000000',
+                      borderRadius: '8px',
+                      width: 28,
+                      height: 28,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      cursor: 'pointer',
+                      boxShadow: '1.5px 1.5px 0px #000000'
+                    }}
+                    aria-label="Cerrar modal de exportación"
+                  >
+                    <X size={15} color="#000000" strokeWidth={2.8} />
+                  </button>
+                </div>
+
+                {/* Opciones */}
+                <div style={{ padding: '14px', display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      handleExportDb();
+                      setIsExportDropdownOpen(false);
+                    }}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      gap: 12,
+                      padding: '12px 14px',
+                      background: '#FFFFFF',
+                      border: '2px solid #000000',
+                      borderRadius: '12px',
+                      boxShadow: '2.5px 2.5px 0px #000000',
+                      textAlign: 'left',
+                      cursor: 'pointer',
+                      transition: 'all 0.1s ease'
+                    }}
+                  >
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                      <div
+                        style={{
+                          width: 40,
+                          height: 40,
+                          borderRadius: 10,
+                          background: '#ECFDF5',
+                          border: '2px solid #000000',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          flexShrink: 0
+                        }}
+                      >
+                        <Database size={20} className="text-emerald-600" />
+                      </div>
+                      <div>
+                        <div style={{ fontWeight: 900, color: '#0F172A', fontSize: '0.88rem' }}>
+                          Exportar .db (Binario SQLite)
+                        </div>
+                        <div style={{ fontSize: '0.72rem', color: '#64748B', fontWeight: 600 }}>
+                          Base de datos nativa completa para SQLite Viewer o DB Browser
+                        </div>
+                      </div>
+                    </div>
+                    <span
+                      style={{
+                        fontSize: '0.68rem',
+                        fontWeight: 900,
+                        background: '#D1FAE5',
+                        color: '#065F46',
+                        padding: '3px 8px',
+                        borderRadius: '6px',
+                        border: '1.5px solid #000000'
+                      }}
+                    >
+                      .db
+                    </span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      handleExportSql();
+                      setIsExportDropdownOpen(false);
+                    }}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      gap: 12,
+                      padding: '12px 14px',
+                      background: '#FFFFFF',
+                      border: '2px solid #000000',
+                      borderRadius: '12px',
+                      boxShadow: '2.5px 2.5px 0px #000000',
+                      textAlign: 'left',
+                      cursor: 'pointer',
+                      transition: 'all 0.1s ease'
+                    }}
+                  >
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                      <div
+                        style={{
+                          width: 40,
+                          height: 40,
+                          borderRadius: 10,
+                          background: '#E0F2FE',
+                          border: '2px solid #000000',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          flexShrink: 0
+                        }}
+                      >
+                        <FileCode2 size={20} className="text-sky-600" />
+                      </div>
+                      <div>
+                        <div style={{ fontWeight: 900, color: '#0F172A', fontSize: '0.88rem' }}>
+                          Exportar .sql (Script)
+                        </div>
+                        <div style={{ fontSize: '0.72rem', color: '#64748B', fontWeight: 600 }}>
+                          Sentencias SQL estructuradas (CREATE TABLE + INSERTs)
+                        </div>
+                      </div>
+                    </div>
+                    <span
+                      style={{
+                        fontSize: '0.68rem',
+                        fontWeight: 900,
+                        background: '#BAE6FD',
+                        color: '#0369A1',
+                        padding: '3px 8px',
+                        borderRadius: '6px',
+                        border: '1.5px solid #000000'
+                      }}
+                    >
+                      .sql
+                    </span>
+                  </button>
+                </div>
+
+                {/* Botón Cancelar */}
+                <div style={{ padding: '0 14px 14px' }}>
+                  <button
+                    type="button"
+                    onClick={() => setIsExportDropdownOpen(false)}
+                    style={{
+                      width: '100%',
+                      padding: '10px',
+                      background: '#F1F5F9',
+                      border: '2px solid #000000',
+                      borderRadius: '10px',
+                      boxShadow: '2px 2px 0px #000000',
+                      fontWeight: 800,
+                      fontSize: '0.82rem',
+                      color: '#334155',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    Cancelar
+                  </button>
+                </div>
+              </div>
+            </div>,
+            document.body
+          )}
 
           {/* Botón Reset */}
           <button

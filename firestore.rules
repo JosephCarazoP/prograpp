@@ -60,6 +60,11 @@ service cloud.firestore {
       match /dailyQuests/{questId} {
         allow read, write: if isOwner(userId);
       }
+
+      // Reportes formulados por el propio usuario
+      match /questionReports/{reportId} {
+        allow read, write: if isOwner(userId) || isAdmin();
+      }
     }
 
     // Evaluaciones estandarizadas (Diagnóstico y Prueba Final)
@@ -139,6 +144,13 @@ service cloud.firestore {
       allow read: if (isAuthenticated() && resource.data.studentId == request.auth.uid) || isAdmin();
       allow create, update: if isAuthenticated() && request.resource.data.studentId == request.auth.uid;
       allow delete: if isAdmin();
+    }
+
+    // Reportes de incidencias técnicas en preguntas (Estudiantes envían, Docente administra)
+    match /questionReports/{reportId} {
+      allow create: if isAuthenticated() && request.resource.data.studentId == request.auth.uid;
+      allow read: if isAdmin() || (isAuthenticated() && resource.data.studentId == request.auth.uid);
+      allow update, delete: if isAdmin();
     }
   }
 }

@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import { UserProfile } from '../../types/user';
 import {
   KotlinFile,
@@ -43,7 +44,8 @@ import {
   Download,
   Loader2,
   FileCode2,
-  FolderCode
+  FolderCode,
+  X
 } from 'lucide-react';
 
 interface KotlinLabProps {
@@ -191,6 +193,17 @@ export const KotlinLab: React.FC<KotlinLabProps> = ({
   // Tab activo en vista móvil ('editor' | 'console' | 'exercise')
   const [mobileTab, setMobileTab] = useState<'editor' | 'console' | 'exercise'>('editor');
 
+  // Detección de vista móvil para exportación e interactividad táctil
+  const [isMobile, setIsMobile] = useState(() =>
+    typeof window !== 'undefined' ? window.innerWidth <= 899 : false
+  );
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth <= 899);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
   // Estados de dropdowns Neo-Brutalistas
   const [isExerciseDropdownOpen, setIsExerciseDropdownOpen] = useState(false);
   const [isVersionDropdownOpen, setIsVersionDropdownOpen] = useState(false);
@@ -213,7 +226,8 @@ export const KotlinLab: React.FC<KotlinLabProps> = ({
       if (versionDropdownRef.current && !versionDropdownRef.current.contains(target)) {
         setIsVersionDropdownOpen(false);
       }
-      if (exportDropdownRef.current && !exportDropdownRef.current.contains(target)) {
+      // Solo para el dropdown inline de escritorio
+      if (!isMobile && exportDropdownRef.current && !exportDropdownRef.current.contains(target)) {
         setIsExportDropdownOpen(false);
       }
     }
@@ -235,7 +249,7 @@ export const KotlinLab: React.FC<KotlinLabProps> = ({
       document.removeEventListener('touchstart', handleClickOutside);
       document.removeEventListener('keydown', handleKeyDown);
     };
-  }, [isExerciseDropdownOpen, isVersionDropdownOpen, isExportDropdownOpen]);
+  }, [isExerciseDropdownOpen, isVersionDropdownOpen, isExportDropdownOpen, isMobile]);
 
   // Guardar en localStorage cuando cambian los archivos
   useEffect(() => {
@@ -523,6 +537,8 @@ export const KotlinLab: React.FC<KotlinLabProps> = ({
         }
         setSyncStatus('dirty');
         kotlinCloudSyncService.markDirty(currentStorageKey);
+        setCloudNotice(`¡Archivo "${cleanName}" importado con éxito!`);
+        setTimeout(() => setCloudNotice(null), 3500);
       }
     };
     reader.readAsText(file);
@@ -538,12 +554,19 @@ export const KotlinLab: React.FC<KotlinLabProps> = ({
     const blob = new Blob([curFile.content], { type: 'text/plain;charset=utf-8' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
+    const fileName = curFile.name || 'Main.kt';
     a.href = url;
-    a.download = curFile.name || 'Main.kt';
+    a.download = fileName;
     document.body.appendChild(a);
     a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
+    setTimeout(() => {
+      if (document.body.contains(a)) {
+        document.body.removeChild(a);
+      }
+      URL.revokeObjectURL(url);
+    }, 1500);
+    setCloudNotice(`¡Archivo "${fileName}" descargado con éxito!`);
+    setTimeout(() => setCloudNotice(null), 3500);
   };
 
   // Exportar proyecto completo combinado
@@ -559,12 +582,19 @@ export const KotlinLab: React.FC<KotlinLabProps> = ({
     const blob = new Blob([combined], { type: 'text/plain;charset=utf-8' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
+    const fileName = `${currentProjectName.replace(/[^a-zA-Z0-9_-]/g, '_')}_kotlin.kt`;
     a.href = url;
-    a.download = `${currentProjectName.replace(/[^a-zA-Z0-9_-]/g, '_')}_kotlin.kt`;
+    a.download = fileName;
     document.body.appendChild(a);
     a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
+    setTimeout(() => {
+      if (document.body.contains(a)) {
+        document.body.removeChild(a);
+      }
+      URL.revokeObjectURL(url);
+    }, 1500);
+    setCloudNotice(`¡Proyecto completo "${fileName}" descargado con éxito!`);
+    setTimeout(() => setCloudNotice(null), 3500);
   };
 
   // Confirmar restablecimiento
@@ -1018,27 +1048,60 @@ export const KotlinLab: React.FC<KotlinLabProps> = ({
             </span>
           </button>
 
-          {/* Input de archivo universal oculto */}
+          {/* Input de archivo universal oculto pero con caja de layout para compatibilidad móvil */}
           <input
+            id="kt-universal-file-input"
             ref={universalFileInputRef}
             type="file"
-            accept=".kt,.kts,.txt,.java"
-            style={{ display: 'none' }}
+            accept=".kt,.kts,.txt,.java,text/plain,*/*"
+            style={{
+              position: 'absolute',
+              width: '1px',
+              height: '1px',
+              padding: 0,
+              margin: '-1px',
+              overflow: 'hidden',
+              clip: 'rect(0, 0, 0, 0)',
+              whiteSpace: 'nowrap',
+              border: 0,
+              opacity: 0,
+              pointerEvents: 'none'
+            }}
             onChange={handleImportFile}
           />
 
-          {/* Botón Importar */}
-          <button
-            type="button"
+          {/* Botón Importar usando label para disparo nativo en móviles */}
+          <label
+            htmlFor="kt-universal-file-input"
             className="kt-btn-util"
-            onClick={() => universalFileInputRef.current?.click()}
             title="Importar archivo .kt de código fuente"
+            style={{
+              cursor: 'pointer',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: 5,
+              userSelect: 'none'
+            }}
+            onClick={() => {
+              soundService.playToken();
+              if (universalFileInputRef.current) {
+                universalFileInputRef.current.value = '';
+              }
+            }}
+            tabIndex={0}
+            role="button"
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                universalFileInputRef.current?.click();
+              }
+            }}
           >
             <Upload size={14} />
             <span>Importar</span>
-          </button>
+          </label>
 
-          {/* Botón Unificado Exportar con Dropdown */}
+          {/* Botón Unificado Exportar con Dropdown Desktop y Action Sheet Móvil */}
           <div
             className="kt-neo-dropdown-wrapper"
             ref={exportDropdownRef}
@@ -1071,7 +1134,8 @@ export const KotlinLab: React.FC<KotlinLabProps> = ({
               />
             </button>
 
-            {isExportDropdownOpen && (
+            {/* Dropdown Desktop */}
+            {isExportDropdownOpen && !isMobile && (
               <div
                 className="kt-neo-dropdown-menu"
                 style={{
@@ -1145,6 +1209,246 @@ export const KotlinLab: React.FC<KotlinLabProps> = ({
               </div>
             )}
           </div>
+
+          {/* Action Sheet Móvil Neo-Brutalist mediante Portal directo al body */}
+          {isExportDropdownOpen && isMobile && createPortal(
+            <div
+              className="lab-export-mobile-overlay"
+              style={{
+                position: 'fixed',
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                backgroundColor: 'rgba(15, 23, 42, 0.65)',
+                backdropFilter: 'blur(4px)',
+                WebkitBackdropFilter: 'blur(4px)',
+                display: 'flex',
+                alignItems: 'flex-end',
+                justifyContent: 'center',
+                zIndex: 999999,
+                padding: '0 0 max(16px, env(safe-area-inset-bottom)) 0'
+              }}
+              onClick={() => setIsExportDropdownOpen(false)}
+            >
+              <div
+                className="lab-export-mobile-sheet"
+                style={{
+                  backgroundColor: '#FFFFFF',
+                  width: 'calc(100% - 24px)',
+                  maxWidth: '480px',
+                  borderRadius: '16px',
+                  border: '3px solid #000000',
+                  boxShadow: '4px 4px 0px #000000',
+                  overflow: 'hidden'
+                }}
+                onClick={e => e.stopPropagation()}
+              >
+                {/* Cabecera */}
+                <div
+                  style={{
+                    padding: '12px 16px',
+                    background: '#FAF5FF',
+                    borderBottom: '2px solid #000000',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between'
+                  }}
+                >
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <div
+                      style={{
+                        width: 30,
+                        height: 30,
+                        borderRadius: 8,
+                        background: '#E9D5FF',
+                        border: '2px solid #000000',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center'
+                      }}
+                    >
+                      <Download size={16} className="text-purple-700" strokeWidth={2.6} />
+                    </div>
+                    <div>
+                      <div style={{ fontSize: '0.85rem', fontWeight: 900, color: '#0F172A' }}>
+                        FORMATOS DE EXPORTACIÓN KOTLIN
+                      </div>
+                      <div style={{ fontSize: '0.7rem', color: '#6B21A8', fontWeight: 700 }}>
+                        Guarda tu código en tu dispositivo
+                      </div>
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setIsExportDropdownOpen(false)}
+                    style={{
+                      background: '#FFFFFF',
+                      border: '2px solid #000000',
+                      borderRadius: '8px',
+                      width: 28,
+                      height: 28,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      cursor: 'pointer',
+                      boxShadow: '1.5px 1.5px 0px #000000'
+                    }}
+                    aria-label="Cerrar modal de exportación"
+                  >
+                    <X size={15} color="#000000" strokeWidth={2.8} />
+                  </button>
+                </div>
+
+                {/* Opciones */}
+                <div style={{ padding: '14px', display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      handleExportCurrentFile();
+                      setIsExportDropdownOpen(false);
+                    }}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      gap: 12,
+                      padding: '12px 14px',
+                      background: '#FFFFFF',
+                      border: '2px solid #000000',
+                      borderRadius: '12px',
+                      boxShadow: '2.5px 2.5px 0px #000000',
+                      textAlign: 'left',
+                      cursor: 'pointer',
+                      transition: 'all 0.1s ease'
+                    }}
+                  >
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                      <div
+                        style={{
+                          width: 40,
+                          height: 40,
+                          borderRadius: 10,
+                          background: '#F3E8FF',
+                          border: '2px solid #000000',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          flexShrink: 0
+                        }}
+                      >
+                        <FileCode2 size={20} className="text-purple-600" />
+                      </div>
+                      <div>
+                        <div style={{ fontWeight: 900, color: '#0F172A', fontSize: '0.88rem' }}>
+                          Exportar {files.find(f => f.id === activeFileId)?.name || 'Main.kt'}
+                        </div>
+                        <div style={{ fontSize: '0.72rem', color: '#64748B', fontWeight: 600 }}>
+                          Descarga únicamente el archivo Kotlin activo
+                        </div>
+                      </div>
+                    </div>
+                    <span
+                      style={{
+                        fontSize: '0.68rem',
+                        fontWeight: 900,
+                        background: '#F1F5F9',
+                        padding: '3px 8px',
+                        borderRadius: '6px',
+                        border: '1.5px solid #000000'
+                      }}
+                    >
+                      .kt
+                    </span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      handleExportAllFiles();
+                      setIsExportDropdownOpen(false);
+                    }}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      gap: 12,
+                      padding: '12px 14px',
+                      background: '#FFFFFF',
+                      border: '2px solid #000000',
+                      borderRadius: '12px',
+                      boxShadow: '2.5px 2.5px 0px #000000',
+                      textAlign: 'left',
+                      cursor: 'pointer',
+                      transition: 'all 0.1s ease'
+                    }}
+                  >
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                      <div
+                        style={{
+                          width: 40,
+                          height: 40,
+                          borderRadius: 10,
+                          background: '#ECFDF5',
+                          border: '2px solid #000000',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          flexShrink: 0
+                        }}
+                      >
+                        <FolderCode size={20} className="text-emerald-600" />
+                      </div>
+                      <div>
+                        <div style={{ fontWeight: 900, color: '#0F172A', fontSize: '0.88rem' }}>
+                          Exportar Todo el Proyecto
+                        </div>
+                        <div style={{ fontSize: '0.72rem', color: '#64748B', fontWeight: 600 }}>
+                          Todos los archivos de código combinados en un archivo .kt
+                        </div>
+                      </div>
+                    </div>
+                    <span
+                      style={{
+                        fontSize: '0.68rem',
+                        fontWeight: 900,
+                        background: '#D1FAE5',
+                        color: '#065F46',
+                        padding: '3px 8px',
+                        borderRadius: '6px',
+                        border: '1.5px solid #000000'
+                      }}
+                    >
+                      PROYECTO
+                    </span>
+                  </button>
+                </div>
+
+                {/* Botón Cancelar */}
+                <div style={{ padding: '0 14px 14px' }}>
+                  <button
+                    type="button"
+                    onClick={() => setIsExportDropdownOpen(false)}
+                    style={{
+                      width: '100%',
+                      padding: '10px',
+                      background: '#F1F5F9',
+                      border: '2px solid #000000',
+                      borderRadius: '10px',
+                      boxShadow: '2px 2px 0px #000000',
+                      fontWeight: 800,
+                      fontSize: '0.82rem',
+                      color: '#334155',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    Cancelar
+                  </button>
+                </div>
+              </div>
+            </div>,
+            document.body
+          )}
 
           {/* Botón Reset */}
           <button

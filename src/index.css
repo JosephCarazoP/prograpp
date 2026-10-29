@@ -14587,14 +14587,16 @@ html.is-pwa-standalone .sqlite-lab-container {
   white-space: nowrap;
 }
 
-/* ═══ SELECTORES CON NEO-BRUTALISM (ESTILO EXPORT LAB SQLITE) ═══ */
-.kt-neo-dropdown-wrapper {
+/* ═══ SELECTORES CON NEO-BRUTALISM (SQLITE LAB & KOTLIN LAB) ═══ */
+.kt-neo-dropdown-wrapper,
+.sqlite-neo-dropdown-wrapper {
   position: relative;
   display: inline-flex;
   flex-shrink: 0;
 }
 
-.kt-neo-dropdown-btn {
+.kt-neo-dropdown-btn,
+.sqlite-neo-dropdown-btn {
   display: inline-flex;
   align-items: center;
   justify-content: space-between;
@@ -14613,25 +14615,29 @@ html.is-pwa-standalone .sqlite-lab-container {
   min-width: 120px;
   max-width: 240px;
 }
-.kt-neo-dropdown-btn:hover {
+.kt-neo-dropdown-btn:hover,
+.sqlite-neo-dropdown-btn:hover {
   background: #F1F5F9;
   color: #0F172A;
   transform: translate(-1px, -1px);
   box-shadow: 3px 3px 0px #000000;
 }
-.kt-neo-dropdown-btn:active {
+.kt-neo-dropdown-btn:active,
+.sqlite-neo-dropdown-btn:active {
   transform: translate(1px, 1px);
   box-shadow: 1px 1px 0px #000000;
 }
 
-.kt-neo-dropdown-btn-left {
+.kt-neo-dropdown-btn-left,
+.sqlite-neo-dropdown-btn-left {
   display: flex;
   align-items: center;
   gap: 6px;
   min-width: 0;
   overflow: hidden;
 }
-.kt-neo-dropdown-title {
+.kt-neo-dropdown-title,
+.sqlite-neo-dropdown-title {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -14639,18 +14645,20 @@ html.is-pwa-standalone .sqlite-lab-container {
   font-size: 0.78rem;
   color: #0F172A;
 }
-.kt-neo-dropdown-chevron {
+.kt-neo-dropdown-chevron,
+.sqlite-neo-dropdown-chevron {
   flex-shrink: 0;
   color: #475569;
 }
 
-/* Menú flotante Neo-Brutalist (Normalizado estilo SQLite) */
-.kt-neo-dropdown-menu {
+/* Menú flotante Neo-Brutalist */
+.kt-neo-dropdown-menu,
+.sqlite-neo-dropdown-menu {
   position: absolute;
   top: calc(100% + 5px);
   left: 0;
   min-width: 280px;
-  max-width: 340px;
+  max-width: 350px;
   max-height: 380px;
   overflow-y: auto;
   overflow-x: hidden;
@@ -14661,14 +14669,18 @@ html.is-pwa-standalone .sqlite-lab-container {
   z-index: 9999;
   padding: 0;
 }
-.kt-neo-dropdown-menu.version-menu {
+.kt-neo-dropdown-menu.version-menu,
+.sqlite-neo-dropdown-menu.align-right,
+.sqlite-neo-dropdown-menu.version-menu {
   left: auto;
   right: 0;
-  min-width: 190px;
-  max-width: 230px;
+  min-width: 210px;
+  max-width: 280px;
 }
 
-.kt-neo-dropdown-header {
+.kt-neo-dropdown-header,
+.sqlite-neo-dropdown-header,
+.sqlite-dropdown-header {
   padding: 8px 12px;
   background: #F1F5F9;
   border-bottom: 2px solid #000000;
@@ -14680,10 +14692,12 @@ html.is-pwa-standalone .sqlite-lab-container {
   align-items: center;
   justify-content: space-between;
 }
-.kt-neo-dropdown-header.section-divider {
+.kt-neo-dropdown-header.section-divider,
+.sqlite-neo-dropdown-header.section-divider {
   border-top: 2px solid #000000;
 }
-.kt-neo-dropdown-count {
+.kt-neo-dropdown-count,
+.sqlite-neo-dropdown-count {
   background: #CBD5E1;
   color: #0F172A;
   border-radius: 4px;
@@ -14692,7 +14706,8 @@ html.is-pwa-standalone .sqlite-lab-container {
   font-weight: 800;
 }
 
-.kt-neo-dropdown-item {
+.kt-neo-dropdown-item,
+.sqlite-neo-dropdown-item {
   width: 100%;
   text-align: left;
   display: flex;
@@ -14709,31 +14724,47 @@ html.is-pwa-standalone .sqlite-lab-container {
   cursor: pointer;
   transition: background 0.08s ease;
 }
-.kt-neo-dropdown-item:last-child {
+.kt-neo-dropdown-item:last-child,
+.sqlite-neo-dropdown-item:last-child {
   border-bottom: none;
 }
-.kt-neo-dropdown-item:hover {
+.kt-neo-dropdown-item:hover,
+.sqlite-neo-dropdown-item:hover {
   background: #FEF9C3;
 }
 
-.kt-diff-pill {
+.kt-diff-pill,
+.sqlite-diff-pill {
   font-size: 0.62rem;
   font-weight: 800;
   padding: 1px 5px;
   border-radius: 4px;
   border: 1px solid #000000;
 }
-.kt-diff-pill.easy {
+.kt-diff-pill.easy,
+.sqlite-diff-pill.easy {
   background: #DCFCE7;
   color: #166534;
 }
-.kt-diff-pill.medium {
+.kt-diff-pill.medium,
+.sqlite-diff-pill.medium {
   background: #FEF08A;
   color: #854D0E;
 }
-.kt-diff-pill.hard {
+.kt-diff-pill.hard,
+.sqlite-diff-pill.hard {
   background: #FCE7F3;
   color: #9D174D;
+}
+
+.sqlite-db-active-pill {
+  font-size: 0.62rem;
+  background: #000000;
+  color: #FEF9C3;
+  padding: 1px 6px;
+  border-radius: 4px;
+  font-weight: 900;
+  letter-spacing: 0.03em;
 }
 
 /* Acciones superiores */
@@ -15966,14 +15997,43 @@ html.is-pwa-standalone .sqlite-lab-container {
     flex-wrap: wrap;
     justify-content: space-between;
   }
-  .kt-neo-dropdown-wrapper,
-  .kt-neo-dropdown-btn {
+  .kt-topbar-left .kt-neo-dropdown-wrapper,
+  .kt-topbar-left .kt-neo-dropdown-btn {
     max-width: 100%;
     width: 100%;
   }
   .kt-topbar-actions {
-    justify-content: flex-end;
-    flex-wrap: wrap;
+    display: flex !important;
+    align-items: center !important;
+    gap: 6px !important;
+    width: 100% !important;
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    padding: 2px 0 4px !important;
+    flex-wrap: nowrap !important;
+    scrollbar-width: none !important;
+  }
+  .kt-topbar-actions::-webkit-scrollbar {
+    display: none !important;
+  }
+
+  .kt-key-badge {
+    display: none !important;
+  }
+
+  .kt-btn-run {
+    padding: 6px 12px !important;
+    font-size: 0.78rem !important;
+    flex-shrink: 0 !important;
+  }
+
+  .kt-btn-util,
+  .kt-btn-reset,
+  .kt-btn-verify-header {
+    padding: 5px 9px !important;
+    font-size: 0.74rem !important;
+    flex-shrink: 0 !important;
+    white-space: nowrap !important;
   }
 
   .kt-mobile-tabs {
@@ -15994,3 +16054,29 @@ html.is-pwa-standalone .sqlite-lab-container {
     display: none !important;
   }
 }
+
+/* ═══ HOJA DE EXPORTACIÓN MÓVIL (ACTION SHEET NEO-BRUTALIST) ═══ */
+@keyframes labSheetFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes labSheetSlideUp {
+  from {
+    transform: translateY(100%);
+    opacity: 0.5;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.lab-export-mobile-overlay {
+  animation: labSheetFadeIn 0.16s ease-out forwards;
+}
+
+.lab-export-mobile-sheet {
+  animation: labSheetSlideUp 0.22s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+

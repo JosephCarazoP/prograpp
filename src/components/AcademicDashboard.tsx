@@ -34,7 +34,12 @@ import {
   Radio,
   Database,
   Code2,
-  Check
+  Check,
+  Flag,
+  Copy,
+  Terminal,
+  RefreshCw,
+  AlertCircle
 } from 'lucide-react';
 import { UserProfile, LearningPath } from '../types/user';
 import {
@@ -70,6 +75,9 @@ import { SqliteExercise } from '../types/sqliteLab';
 import { sqliteExerciseService } from '../services/sqliteExerciseService';
 import { TeacherExerciseEditor } from './sqlite/TeacherExerciseEditor';
 import { TeacherSubmissionsView } from './sqlite/TeacherSubmissionsView';
+import { QuestionReport } from '../types/questionReport';
+import { questionReportService } from '../services/questionReportService';
+import { FormattedText } from './FormattedText';
 
 interface AcademicDashboardProps {
   currentUser: UserProfile;
@@ -94,10 +102,16 @@ export const AcademicDashboard: React.FC<AcademicDashboardProps> = ({
   const [, setPresenceTicker] = useState(0);
 
   // Pestañas del Panel
-  const [activeTab, setActiveTab] = useState<'group' | 'student' | 'assignDiagnostic' | 'evaluations' | 'attempts' | 'observations' | 'notifications' | 'sqliteExercises'>('group');
+  const [activeTab, setActiveTab] = useState<'group' | 'student' | 'assignDiagnostic' | 'evaluations' | 'attempts' | 'observations' | 'notifications' | 'sqliteExercises' | 'reports'>('group');
 
   // Datos del Panel
   const [loadingData, setLoadingData] = useState(false);
+  const [questionReports, setQuestionReports] = useState<QuestionReport[]>([]);
+  const [reportFilterStatus, setReportFilterStatus] = useState<'all' | 'pending' | 'reviewed' | 'resolved'>('all');
+  const [reportFilterPath, setReportFilterPath] = useState<'all' | 'kotlin' | 'sql'>('all');
+  const [reportSearchTerm, setReportSearchTerm] = useState('');
+  const [copiedReportId, setCopiedReportId] = useState<string | null>(null);
+  const [reportAdminNotes, setReportAdminNotes] = useState<Record<string, string>>({});
   const [students, setStudents] = useState<UserProfile[]>([]);
   const [attempts, setAttempts] = useState<ExerciseAttempt[]>([]);
   const [evaluations, setEvaluations] = useState<AcademicEvaluation[]>([]);
@@ -300,10 +314,16 @@ export const AcademicDashboard: React.FC<AcademicDashboardProps> = ({
       setTeacherNotifications(liveNotifs);
     });
 
+    // 2d. Suscripción en tiempo real a reportes de preguntas (estilo centro de incidencias inmediato)
+    const unsubscribeReports = questionReportService.subscribeToAllReports((liveReports) => {
+      setQuestionReports(liveReports);
+    });
+
     return () => {
       clearInterval(ticker);
       unsubscribe();
       unsubscribeNotifs();
+      unsubscribeReports();
     };
   }, [isUnlocked]);
 
@@ -324,7 +344,8 @@ export const AcademicDashboard: React.FC<AcademicDashboardProps> = ({
         allAss,
         allNotifs,
         progressEntries,
-        allSqliteEx
+        allSqliteEx,
+        allQuestionReports
       ] = await Promise.all([
         academicService.getAllAttempts(studentList),
         academicService.getAllEvaluations(),
@@ -338,7 +359,8 @@ export const AcademicDashboard: React.FC<AcademicDashboardProps> = ({
             return { uid: st.uid, prog };
           })
         ),
-        sqliteExerciseService.getAllExercises()
+        sqliteExerciseService.getAllExercises(),
+        questionReportService.getAllReports()
       ]);
 
       setAttempts(allAtts);
@@ -348,6 +370,7 @@ export const AcademicDashboard: React.FC<AcademicDashboardProps> = ({
       setAssignments(allAss);
       setTeacherNotifications(allNotifs);
       setSqliteExercises(allSqliteEx);
+      setQuestionReports(allQuestionReports);
 
       const pMap: Record<string, Record<string, any>> = {};
       progressEntries.forEach(({ uid, prog }) => {
@@ -1016,6 +1039,13 @@ export const AcademicDashboard: React.FC<AcademicDashboardProps> = ({
       <nav className="academic-nav-dock" aria-label="Secciones del panel">
         {[
           { key: 'group' as const, labelDesktop: 'Mis Estudiantes', labelMobile: 'Estudiantes', icon: <Users size={16} /> },
+          {
+            key: 'reports' as const,
+            labelDesktop: 'Reportes de Preguntas',
+            labelMobile: 'Reportes',
+            icon: <Flag size={16} />,
+            badge: questionReports.filter(r => r.status === 'pending').length
+          },
           { key: 'sqliteExercises' as const, labelDesktop: 'Laboratorio SQLite', labelMobile: 'SQLite', icon: <Database size={16} /> },
           { key: 'notifications' as const, labelDesktop: 'Avisos a Alumnos', labelMobile: 'Avisos', icon: <Bell size={16} /> },
           { key: 'assignDiagnostic' as const, labelDesktop: 'Asignar Diagnósticos', labelMobile: 'Asignar', icon: <Send size={16} /> },
@@ -1030,10 +1060,27 @@ export const AcademicDashboard: React.FC<AcademicDashboardProps> = ({
               setActiveTab(tab.key);
             }}
             className={`academic-tab-pill ${activeTab === tab.key ? 'active' : ''}`}
+            style={{ position: 'relative' }}
           >
             {tab.icon}
             <span className="tab-text-desktop">{tab.labelDesktop}</span>
             <span className="tab-text-mobile">{tab.labelMobile}</span>
+            {Boolean(tab.badge && tab.badge > 0) && (
+              <span
+                style={{
+                  background: '#EF4444',
+                  color: '#FFFFFF',
+                  borderRadius: '9999px',
+                  padding: '1px 6px',
+                  fontSize: '0.68rem',
+                  fontWeight: 900,
+                  border: '1.5px solid #000000',
+                  marginLeft: '4px'
+                }}
+              >
+                {tab.badge}
+              </span>
+            )}
           </button>
         ))}
       </nav>
@@ -2959,6 +3006,958 @@ export const AcademicDashboard: React.FC<AcademicDashboardProps> = ({
                       </div>
                     ))}
                   </div>
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* ════════════ PESTAÑA: CENTRO DE REVISIÓN DE REPORTES DE PREGUNTAS ════════════ */}
+          {activeTab === 'reports' && (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+              {/* Encabezado Principal y Métricas Rápidas */}
+              <div className="academic-card">
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 14, marginBottom: 16 }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                    <div
+                      style={{
+                        width: 46,
+                        height: 46,
+                        borderRadius: 12,
+                        background: '#EF4444',
+                        border: '2.5px solid #000000',
+                        boxShadow: '3px 3px 0px #000000',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        color: '#FFFFFF',
+                        flexShrink: 0
+                      }}
+                    >
+                      <Flag size={24} strokeWidth={2.8} fill="#FFFFFF" />
+                    </div>
+                    <div>
+                      <h3 style={{ fontSize: '1.25rem', fontWeight: 900, color: '#0F172A', margin: 0, textTransform: 'uppercase', letterSpacing: '0.4px' }}>
+                        Revisión de Reportes de Preguntas
+                      </h3>
+                      <p style={{ margin: 0, fontSize: '0.84rem', color: '#64748B', fontWeight: 600 }}>
+                        Fichas técnicas completas de ejercicios reportados para auditoría y corrección en tiempo real
+                      </p>
+                    </div>
+                  </div>
+
+                  <button
+                    onClick={async () => {
+                      soundService.playToken();
+                      const reps = await questionReportService.getAllReports();
+                      setQuestionReports(reps);
+                    }}
+                    className="btn-3d"
+                    style={{
+                      background: '#FFFFFF',
+                      border: '2px solid #000000',
+                      boxShadow: '2.5px 2.5px 0px #000000',
+                      borderRadius: 10,
+                      padding: '8px 14px',
+                      fontSize: '0.82rem',
+                      fontWeight: 800,
+                      cursor: 'pointer',
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: 6
+                    }}
+                  >
+                    <RefreshCw size={14} strokeWidth={2.6} />
+                    <span>Actualizar Reportes</span>
+                  </button>
+                </div>
+
+                {/* Métricas por estado de reporte */}
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))', gap: 10 }}>
+                  <div style={{ background: '#F8FAFC', border: '2px solid #000000', borderRadius: 10, padding: '10px 12px' }}>
+                    <div style={{ fontSize: '0.72rem', color: '#64748B', fontWeight: 800, textTransform: 'uppercase' }}>TOTAL REPORTES</div>
+                    <div style={{ fontSize: '1.45rem', fontWeight: 900, color: '#0F172A', marginTop: 2 }}>{questionReports.length}</div>
+                  </div>
+                  <div style={{ background: '#FEF2F2', border: '2px solid #EF4444', borderRadius: 10, padding: '10px 12px' }}>
+                    <div style={{ fontSize: '0.72rem', color: '#B91C1C', fontWeight: 800, textTransform: 'uppercase' }}>PENDIENTES</div>
+                    <div style={{ fontSize: '1.45rem', fontWeight: 900, color: '#DC2626', marginTop: 2 }}>
+                      {questionReports.filter(r => r.status === 'pending').length}
+                    </div>
+                  </div>
+                  <div style={{ background: '#EFF6FF', border: '2px solid #3B82F6', borderRadius: 10, padding: '10px 12px' }}>
+                    <div style={{ fontSize: '0.72rem', color: '#1D4ED8', fontWeight: 800, textTransform: 'uppercase' }}>EN REVISIÓN</div>
+                    <div style={{ fontSize: '1.45rem', fontWeight: 900, color: '#2563EB', marginTop: 2 }}>
+                      {questionReports.filter(r => r.status === 'reviewed').length}
+                    </div>
+                  </div>
+                  <div style={{ background: '#F0FDF4', border: '2px solid #22C55E', borderRadius: 10, padding: '10px 12px' }}>
+                    <div style={{ fontSize: '0.72rem', color: '#15803D', fontWeight: 800, textTransform: 'uppercase' }}>RESUELTOS</div>
+                    <div style={{ fontSize: '1.45rem', fontWeight: 900, color: '#16A34A', marginTop: 2 }}>
+                      {questionReports.filter(r => r.status === 'resolved').length}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Barra de Filtros y Buscador */}
+                <div style={{ display: 'flex', gap: 10, marginTop: 14, flexWrap: 'wrap', alignItems: 'center' }}>
+                  {/* Buscador de texto en reportes */}
+                  <div style={{ flex: '1 1 240px', position: 'relative', minWidth: 200 }}>
+                    <Search size={15} color="#64748B" style={{ position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none' }} />
+                    <input
+                      type="text"
+                      value={reportSearchTerm}
+                      onChange={(e) => setReportSearchTerm(e.target.value)}
+                      placeholder="Buscar por alumno, carné, enunciado, ID de ejercicio..."
+                      style={{
+                        width: '100%',
+                        padding: '7px 10px 7px 32px',
+                        borderRadius: 8,
+                        border: '2px solid #000000',
+                        fontSize: '0.8rem',
+                        fontWeight: 600,
+                        outline: 'none',
+                        boxSizing: 'border-box'
+                      }}
+                    />
+                    {reportSearchTerm && (
+                      <button
+                        onClick={() => setReportSearchTerm('')}
+                        style={{
+                          position: 'absolute',
+                          right: 8,
+                          top: '50%',
+                          transform: 'translateY(-50%)',
+                          background: 'none',
+                          border: 'none',
+                          cursor: 'pointer',
+                          color: '#64748B'
+                        }}
+                      >
+                        <X size={14} />
+                      </button>
+                    )}
+                  </div>
+
+                  {/* Filtro por estado */}
+                  <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+                    {(['all', 'pending', 'reviewed', 'resolved'] as const).map(st => {
+                      const count = st === 'all'
+                        ? questionReports.length
+                        : questionReports.filter(r => r.status === st).length;
+                      return (
+                        <button
+                          key={st}
+                          onClick={() => {
+                            soundService.playToken();
+                            setReportFilterStatus(st);
+                          }}
+                          style={{
+                            background: reportFilterStatus === st ? '#0F172A' : '#FFFFFF',
+                            color: reportFilterStatus === st ? '#FFFFFF' : '#0F172A',
+                            border: '2px solid #000000',
+                            boxShadow: reportFilterStatus === st ? 'none' : '2px 2px 0px #000000',
+                            borderRadius: 8,
+                            padding: '6px 10px',
+                            fontSize: '0.76rem',
+                            fontWeight: 800,
+                            cursor: 'pointer'
+                          }}
+                        >
+                          {st === 'all' && `Todos (${count})`}
+                          {st === 'pending' && `Pendientes (${count})`}
+                          {st === 'reviewed' && `En Revisión (${count})`}
+                          {st === 'resolved' && `Resueltos (${count})`}
+                        </button>
+                      );
+                    })}
+                  </div>
+
+                  {/* Filtro por ruta */}
+                  <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+                    {(['all', 'kotlin', 'sql'] as const).map(path => (
+                      <button
+                        key={path}
+                        onClick={() => {
+                          soundService.playToken();
+                          setReportFilterPath(path);
+                        }}
+                        style={{
+                          background: reportFilterPath === path
+                            ? (path === 'sql' ? '#4F46E5' : path === 'kotlin' ? '#0284C7' : '#0F172A')
+                            : '#FFFFFF',
+                          color: reportFilterPath === path ? '#FFFFFF' : '#0F172A',
+                          border: '2px solid #000000',
+                          boxShadow: reportFilterPath === path ? 'none' : '2px 2px 0px #000000',
+                          borderRadius: 8,
+                          padding: '6px 10px',
+                          fontSize: '0.76rem',
+                          fontWeight: 800,
+                          cursor: 'pointer'
+                        }}
+                      >
+                        {path === 'all' ? 'Todas las Rutas' : path.toUpperCase()}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              {/* Lista de Fichas de Reportes */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+                {questionReports
+                  .filter(r => reportFilterStatus === 'all' || r.status === reportFilterStatus)
+                  .filter(r => reportFilterPath === 'all' || r.pathId === reportFilterPath)
+                  .filter(r => {
+                    if (!reportSearchTerm.trim()) return true;
+                    const term = reportSearchTerm.toLowerCase();
+                    const nameMatch = (r.studentName || '').toLowerCase().includes(term);
+                    const codeMatch = (r.studentCode || '').toLowerCase().includes(term);
+                    const promptMatch = (r.prompt || '').toLowerCase().includes(term);
+                    const idMatch = (r.exerciseId || '').toLowerCase().includes(term);
+                    const commentMatch = (r.comment || '').toLowerCase().includes(term);
+                    const reasonMatch = (r.reasonLabel || '').toLowerCase().includes(term);
+                    const lessonMatch = (r.lessonTitle || '').toLowerCase().includes(term);
+                    return nameMatch || codeMatch || promptMatch || idMatch || commentMatch || reasonMatch || lessonMatch;
+                  })
+                  .length === 0 ? (
+                  <div className="academic-card" style={{ textAlign: 'center', padding: '36px 20px' }}>
+                    <div
+                      style={{
+                        width: 44,
+                        height: 44,
+                        borderRadius: '50%',
+                        background: '#DCFCE7',
+                        border: '2px solid #000000',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        color: '#15803D',
+                        marginBottom: 10
+                      }}
+                    >
+                      <CheckCircle2 size={24} strokeWidth={2.8} />
+                    </div>
+                    <h4 style={{ margin: '0 0 6px 0', fontSize: '1.05rem', fontWeight: 900, color: '#0F172A' }}>
+                      No hay reportes de preguntas con los filtros seleccionados
+                    </h4>
+                    <p style={{ margin: 0, fontSize: '0.84rem', color: '#64748B' }}>
+                      No se encontraron incidencias activas en los ejercicios según la búsqueda o filtros aplicados.
+                    </p>
+                  </div>
+                ) : (
+                  questionReports
+                    .filter(r => reportFilterStatus === 'all' || r.status === reportFilterStatus)
+                    .filter(r => reportFilterPath === 'all' || r.pathId === reportFilterPath)
+                    .filter(r => {
+                      if (!reportSearchTerm.trim()) return true;
+                      const term = reportSearchTerm.toLowerCase();
+                      const nameMatch = (r.studentName || '').toLowerCase().includes(term);
+                      const codeMatch = (r.studentCode || '').toLowerCase().includes(term);
+                      const promptMatch = (r.prompt || '').toLowerCase().includes(term);
+                      const idMatch = (r.exerciseId || '').toLowerCase().includes(term);
+                      const commentMatch = (r.comment || '').toLowerCase().includes(term);
+                      const reasonMatch = (r.reasonLabel || '').toLowerCase().includes(term);
+                      const lessonMatch = (r.lessonTitle || '').toLowerCase().includes(term);
+                      return nameMatch || codeMatch || promptMatch || idMatch || commentMatch || reasonMatch || lessonMatch;
+                    })
+                    .map(rep => {
+                      const isReviewed = rep.status === 'reviewed';
+                      const isResolved = rep.status === 'resolved';
+
+                      return (
+                        <div
+                          key={rep.reportId}
+                          className="academic-card"
+                          style={{
+                            border: '3px solid #000000',
+                            boxShadow: '6px 6px 0px #000000',
+                            borderRadius: '14px',
+                            padding: '16px',
+                            display: 'flex',
+                            flexDirection: 'column',
+                            gap: 14,
+                            background: '#FFFFFF'
+                          }}
+                        >
+                          {/* ═══ 1. BARRA SUPERIOR DE LA FICHA (ESTILO VENTANA / CONSOLA) ═══ */}
+                          <div
+                            style={{
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'space-between',
+                              flexWrap: 'wrap',
+                              gap: 10,
+                              paddingBottom: 10,
+                              borderBottom: '2px solid #000000'
+                            }}
+                          >
+                            {/* Píldoras de contexto técnico */}
+                            <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
+                              {/* Ventana de controles simulados */}
+                              <div style={{ display: 'flex', gap: 4, marginRight: 6 }}>
+                                <div style={{ width: 10, height: 10, borderRadius: '50%', background: '#EF4444', border: '1px solid #000000' }} />
+                                <div style={{ width: 10, height: 10, borderRadius: '50%', background: '#F59E0B', border: '1px solid #000000' }} />
+                                <div style={{ width: 10, height: 10, borderRadius: '50%', background: '#10B981', border: '1px solid #000000' }} />
+                              </div>
+
+                              <span
+                                style={{
+                                  background: rep.pathId === 'sql' ? '#EEF2FF' : '#E0F2FE',
+                                  color: rep.pathId === 'sql' ? '#4F46E5' : '#0284C7',
+                                  border: '1.5px solid #000000',
+                                  borderRadius: 6,
+                                  padding: '2px 8px',
+                                  fontSize: '0.72rem',
+                                  fontWeight: 900,
+                                  textTransform: 'uppercase'
+                                }}
+                              >
+                                {rep.pathId}
+                              </span>
+
+                              <span
+                                style={{
+                                  background: '#F1F5F9',
+                                  border: '1.5px solid #000000',
+                                  borderRadius: 6,
+                                  padding: '2px 8px',
+                                  fontSize: '0.72rem',
+                                  fontWeight: 800,
+                                  color: '#0F172A'
+                                }}
+                              >
+                                {rep.lessonTitle}
+                              </span>
+
+                              <span
+                                style={{
+                                  background: '#FEF3C7',
+                                  border: '1.5px solid #000000',
+                                  borderRadius: 6,
+                                  padding: '2px 8px',
+                                  fontSize: '0.72rem',
+                                  fontWeight: 800,
+                                  color: '#B45309'
+                                }}
+                              >
+                                Tipo: {rep.exerciseType}
+                              </span>
+
+                              {/* Botón para copiar ID del ejercicio para buscarlo en VSCode */}
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  if (navigator?.clipboard) {
+                                    navigator.clipboard.writeText(rep.exerciseId);
+                                    setCopiedReportId(rep.exerciseId);
+                                    soundService.playToken();
+                                    setTimeout(() => setCopiedReportId(null), 2000);
+                                  }
+                                }}
+                                style={{
+                                  background: copiedReportId === rep.exerciseId ? '#DCFCE7' : '#FFFFFF',
+                                  color: copiedReportId === rep.exerciseId ? '#15803D' : '#0F172A',
+                                  border: '1.5px solid #000000',
+                                  boxShadow: '1.5px 1.5px 0px #000000',
+                                  borderRadius: 6,
+                                  padding: '2px 8px',
+                                  fontSize: '0.72rem',
+                                  fontWeight: 800,
+                                  cursor: 'pointer',
+                                  display: 'inline-flex',
+                                  alignItems: 'center',
+                                  gap: 4
+                                }}
+                                title="Copiar ID del ejercicio para buscarlo en VSCode"
+                              >
+                                <Copy size={12} strokeWidth={2.6} />
+                                <span>{copiedReportId === rep.exerciseId ? '¡Copiado!' : `ID: ${rep.exerciseId}`}</span>
+                              </button>
+                            </div>
+
+                            {/* Estado y fecha */}
+                            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                              <span style={{ fontSize: '0.74rem', color: '#64748B', fontWeight: 600 }}>
+                                {new Date(rep.timestamp).toLocaleString()}
+                              </span>
+
+                              <select
+                                value={rep.status}
+                                onChange={async (e) => {
+                                  const newStatus = e.target.value as 'pending' | 'reviewed' | 'resolved';
+                                  soundService.playToken();
+                                  await questionReportService.updateReportStatus(rep.reportId, newStatus);
+                                  setQuestionReports(prev =>
+                                    prev.map(r => r.reportId === rep.reportId ? { ...r, status: newStatus } : r)
+                                  );
+                                }}
+                                style={{
+                                  background: isResolved ? '#DCFCE7' : isReviewed ? '#DBEAFE' : '#FEE2E2',
+                                  color: isResolved ? '#15803D' : isReviewed ? '#1D4ED8' : '#B91C1C',
+                                  border: '2px solid #000000',
+                                  boxShadow: '2px 2px 0px #000000',
+                                  borderRadius: 8,
+                                  padding: '3px 8px',
+                                  fontSize: '0.76rem',
+                                  fontWeight: 900,
+                                  cursor: 'pointer'
+                                }}
+                              >
+                                <option value="pending">Pendiente</option>
+                                <option value="reviewed">En Revisión</option>
+                                <option value="resolved">Resuelto</option>
+                              </select>
+                            </div>
+                          </div>
+
+                          {/* ═══ 2. ALUMNO QUE REPORTÓ Y MOTIVO IDENTIFICADO ═══ */}
+                          <div
+                            style={{
+                              background: '#F8FAFC',
+                              border: '1.5px solid #000000',
+                              borderRadius: 10,
+                              padding: '10px 12px',
+                              display: 'flex',
+                              flexDirection: 'column',
+                              gap: 8
+                            }}
+                          >
+                            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 8 }}>
+                              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                                <div
+                                  style={{
+                                    width: 28,
+                                    height: 28,
+                                    borderRadius: '50%',
+                                    background: '#0F172A',
+                                    color: '#FFFFFF',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    fontSize: '0.72rem',
+                                    fontWeight: 900,
+                                    border: '1.5px solid #000000'
+                                  }}
+                                >
+                                  {rep.studentName.charAt(0).toUpperCase()}
+                                </div>
+                                <div>
+                                  <span style={{ fontSize: '0.86rem', fontWeight: 900, color: '#0F172A' }}>
+                                    {rep.studentName}
+                                  </span>
+                                  {rep.studentCode && (
+                                    <span style={{ fontSize: '0.76rem', color: '#64748B', fontWeight: 700, marginLeft: 6 }}>
+                                      ({rep.studentCode})
+                                    </span>
+                                  )}
+                                  {rep.studentEmail && (
+                                    <span style={{ fontSize: '0.74rem', color: '#94A3B8', marginLeft: 6 }}>
+                                      · {rep.studentEmail}
+                                    </span>
+                                  )}
+                                </div>
+                              </div>
+
+                              <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                                <span style={{ fontSize: '0.74rem', fontWeight: 800, color: '#64748B' }}>Motivo:</span>
+                                <span
+                                  style={{
+                                    background: '#FEE2E2',
+                                    color: '#B91C1C',
+                                    border: '1.5px solid #DC2626',
+                                    borderRadius: 6,
+                                    padding: '2px 8px',
+                                    fontSize: '0.74rem',
+                                    fontWeight: 900
+                                  }}
+                                >
+                                  {rep.reasonLabel}
+                                </span>
+                              </div>
+                            </div>
+
+                            {/* Comentario específico del alumno */}
+                            {rep.comment ? (
+                              <div
+                                style={{
+                                  background: '#FFF1F2',
+                                  border: '1.5px solid #FDA4AF',
+                                  borderRadius: 8,
+                                  padding: '8px 10px',
+                                  fontSize: '0.82rem',
+                                  color: '#881337',
+                                  fontWeight: 600,
+                                  lineHeight: 1.35
+                                }}
+                              >
+                                <strong style={{ color: '#BE123C' }}>Comentario del estudiante:</strong> "{rep.comment}"
+                              </div>
+                            ) : (
+                              <div style={{ fontSize: '0.74rem', color: '#94A3B8', fontStyle: 'italic' }}>
+                                (El alumno envió el reporte directo mediante el selector sin agregar comentario de texto adicional)
+                              </div>
+                            )}
+
+                            {rep.deviceInfo && (
+                              <div style={{ fontSize: '0.68rem', color: '#94A3B8' }}>
+                                Dispositivo: {rep.deviceInfo}
+                              </div>
+                            )}
+                          </div>
+
+                          {/* ═══ 3. "CAPTURA DE PANTALLA" INTERACTIVA DEL EJERCICIO COMPLETO ═══ */}
+                          <div
+                            style={{
+                              border: '2px solid #000000',
+                              boxShadow: '4px 4px 0px #000000',
+                              borderRadius: 12,
+                              overflow: 'hidden',
+                              background: '#FFFFFF'
+                            }}
+                          >
+                            {/* Barra de título del ejercicio simulado */}
+                            <div
+                              style={{
+                                background: '#0F172A',
+                                color: '#FFFFFF',
+                                padding: '8px 12px',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'space-between',
+                                fontSize: '0.76rem',
+                                fontWeight: 800,
+                                letterSpacing: '0.5px'
+                              }}
+                            >
+                              <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                                <Terminal size={14} color="#38BDF8" strokeWidth={2.6} />
+                                <span>SIMULACIÓN VISUAL DEL EJERCICIO</span>
+                              </div>
+                              <span style={{ color: '#94A3B8', fontSize: '0.7rem' }}>
+                                Vista del docente para corrección
+                              </span>
+                            </div>
+
+                            <div style={{ padding: '14px', display: 'flex', flexDirection: 'column', gap: 12 }}>
+                              {/* ENUNCIADO DE LA PREGUNTA */}
+                              <div>
+                                <div style={{ fontSize: '0.72rem', textTransform: 'uppercase', letterSpacing: '0.6px', fontWeight: 900, color: '#64748B', marginBottom: 4 }}>
+                                  Enunciado de la Pregunta:
+                                </div>
+                                <div
+                                  style={{
+                                    fontSize: '0.98rem',
+                                    fontWeight: 900,
+                                    color: '#0F172A',
+                                    lineHeight: 1.4,
+                                    background: '#F8FAFC',
+                                    border: '1.5px solid #CBD5E1',
+                                    borderRadius: 8,
+                                    padding: '10px 12px'
+                                  }}
+                                >
+                                  <FormattedText text={rep.prompt} inline />
+                                </div>
+                              </div>
+
+                              {/* CÓDIGO DE LA PREGUNTA (CON NÚMEROS DE LÍNEA) */}
+                              {rep.codeSnippet && (
+                                <div>
+                                  <div style={{ fontSize: '0.72rem', textTransform: 'uppercase', letterSpacing: '0.6px', fontWeight: 900, color: '#64748B', marginBottom: 4 }}>
+                                    Código del Ejercicio:
+                                  </div>
+                                  <div
+                                    style={{
+                                      background: '#0F172A',
+                                      border: '2px solid #000000',
+                                      borderRadius: 8,
+                                      padding: '10px',
+                                      fontSize: '0.78rem',
+                                      fontFamily: 'monospace',
+                                      color: '#F8FAFC',
+                                      overflowX: 'auto',
+                                      display: 'flex',
+                                      flexDirection: 'column',
+                                      gap: 3
+                                    }}
+                                  >
+                                    {rep.codeSnippet.split('\n').map((line, idx) => {
+                                      // Si es spot_the_bug, resaltar la línea que contiene el bug según la solución esperada
+                                      const isExpectedBugLine = rep.expectedSolution.includes(`Línea ${idx + 1}`);
+                                      const isUserSelectedLine = rep.userAnswer && rep.userAnswer.includes(`Línea ${idx + 1}`);
+
+                                      return (
+                                        <div
+                                          key={idx}
+                                          style={{
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            gap: 8,
+                                            padding: '2px 4px',
+                                            borderRadius: 4,
+                                            background: isExpectedBugLine
+                                              ? 'rgba(34, 197, 94, 0.25)'
+                                              : isUserSelectedLine
+                                              ? 'rgba(239, 68, 68, 0.25)'
+                                              : 'transparent',
+                                            border: isExpectedBugLine
+                                              ? '1px solid #22C55E'
+                                              : isUserSelectedLine
+                                              ? '1px solid #EF4444'
+                                              : '1px solid transparent'
+                                          }}
+                                        >
+                                          <span style={{ color: '#64748B', width: 24, textAlign: 'right', flexShrink: 0 }}>
+                                            {idx + 1}.
+                                          </span>
+                                          <span style={{ flex: 1, whiteSpace: 'pre' }}>{line}</span>
+                                          {isExpectedBugLine && (
+                                            <span style={{ background: '#22C55E', color: '#000000', padding: '1px 6px', borderRadius: 4, fontSize: '0.65rem', fontWeight: 900 }}>
+                                              BUG ESPERADO EN SISTEMA
+                                            </span>
+                                          )}
+                                          {isUserSelectedLine && (
+                                            <span style={{ background: '#EF4444', color: '#FFFFFF', padding: '1px 6px', borderRadius: 4, fontSize: '0.65rem', fontWeight: 900 }}>
+                                              LÍNEA TOCADA POR EL ALUMNO
+                                            </span>
+                                          )}
+                                        </div>
+                                      );
+                                    })}
+                                  </div>
+                                </div>
+                              )}
+
+                              {/* OPCIONES DE RESPUESTA PRESENTADAS AL ALUMNO */}
+                              {rep.availableOptions && rep.availableOptions.length > 0 && (
+                                <div>
+                                  <div style={{ fontSize: '0.72rem', textTransform: 'uppercase', letterSpacing: '0.6px', fontWeight: 900, color: '#64748B', marginBottom: 6 }}>
+                                    Opciones Disponibles y Calce con la Solución:
+                                  </div>
+                                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: 8 }}>
+                                    {rep.availableOptions.map((opt, idx) => {
+                                      const letter = String.fromCharCode(65 + idx);
+                                      const isSystemExpected =
+                                        rep.expectedSolution.includes(opt.trim()) ||
+                                        rep.expectedSolution.includes(`Opción ${letter}`);
+                                      const isUserSelection =
+                                        rep.userAnswer &&
+                                        (rep.userAnswer.includes(opt.trim()) || rep.userAnswer.includes(`Opción ${letter}`));
+
+                                      return (
+                                        <div
+                                          key={idx}
+                                          style={{
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'space-between',
+                                            gap: 8,
+                                            padding: '8px 10px',
+                                            borderRadius: 8,
+                                            border: `2px solid ${
+                                              isSystemExpected ? '#16A34A' : isUserSelection ? '#EF4444' : '#CBD5E1'
+                                            }`,
+                                            background: isSystemExpected
+                                              ? '#F0FDF4'
+                                              : isUserSelection
+                                              ? '#FEF2F2'
+                                              : '#FFFFFF',
+                                            fontSize: '0.8rem'
+                                          }}
+                                        >
+                                          <div style={{ display: 'flex', alignItems: 'center', gap: 8, minWidth: 0 }}>
+                                            <span
+                                              style={{
+                                                width: 22,
+                                                height: 22,
+                                                borderRadius: 6,
+                                                background: isSystemExpected
+                                                  ? '#16A34A'
+                                                  : isUserSelection
+                                                  ? '#EF4444'
+                                                  : '#FFFFFF',
+                                                color: isSystemExpected || isUserSelection ? '#FFFFFF' : '#0F172A',
+                                                fontWeight: 900,
+                                                fontSize: '0.72rem',
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                justifyContent: 'center',
+                                                border: '1.5px solid #000000',
+                                                flexShrink: 0
+                                              }}
+                                            >
+                                              {letter}
+                                            </span>
+                                            <span
+                                              style={{
+                                                fontWeight: isSystemExpected || isUserSelection ? 800 : 500,
+                                                color: '#0F172A',
+                                                fontFamily: 'monospace',
+                                                wordBreak: 'break-word'
+                                              }}
+                                            >
+                                              {opt}
+                                            </span>
+                                          </div>
+
+                                          <div style={{ display: 'flex', alignItems: 'center', gap: 4, flexShrink: 0 }}>
+                                            {isSystemExpected && (
+                                              <span
+                                                style={{
+                                                  background: '#DCFCE7',
+                                                  color: '#15803D',
+                                                  border: '1.5px solid #16A34A',
+                                                  padding: '1px 6px',
+                                                  borderRadius: 6,
+                                                  fontSize: '0.66rem',
+                                                  fontWeight: 900,
+                                                  display: 'inline-flex',
+                                                  alignItems: 'center',
+                                                  gap: 3
+                                                }}
+                                              >
+                                                <Check size={11} strokeWidth={3} />
+                                                SOLUCIÓN DEL SISTEMA
+                                              </span>
+                                            )}
+                                            {isUserSelection && (
+                                              <span
+                                                style={{
+                                                  background: isSystemExpected ? '#EFF6FF' : '#FEE2E2',
+                                                  color: isSystemExpected ? '#1D4ED8' : '#B91C1C',
+                                                  border: `1.5px solid ${isSystemExpected ? '#2563EB' : '#EF4444'}`,
+                                                  padding: '1px 6px',
+                                                  borderRadius: 6,
+                                                  fontSize: '0.66rem',
+                                                  fontWeight: 900
+                                                }}
+                                              >
+                                                SELECCIÓN ALUMNO
+                                              </span>
+                                            )}
+                                          </div>
+                                        </div>
+                                      );
+                                    })}
+                                  </div>
+                                </div>
+                              )}
+
+                              {/* COMPARATIVA DIRECTA: SOLUCIÓN DEL SISTEMA VS RESPUESTA DEL ALUMNO */}
+                              <div
+                                style={{
+                                  display: 'grid',
+                                  gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
+                                  gap: 10,
+                                  marginTop: 2
+                                }}
+                              >
+                                {/* Solución Esperada por la App */}
+                                <div
+                                  style={{
+                                    background: '#F0FDF4',
+                                    border: '2px solid #16A34A',
+                                    borderRadius: 10,
+                                    padding: '10px 12px',
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    gap: 4
+                                  }}
+                                >
+                                  <div style={{ fontSize: '0.72rem', textTransform: 'uppercase', letterSpacing: '0.6px', fontWeight: 900, color: '#166534', display: 'flex', alignItems: 'center', gap: 4 }}>
+                                    <CheckCircle2 size={13} strokeWidth={2.6} />
+                                    <span>Solución Esperada en la App (Backend):</span>
+                                  </div>
+                                  <div style={{ color: '#14532D', fontWeight: 800, fontSize: '0.86rem', wordBreak: 'break-word', fontFamily: 'monospace' }}>
+                                    {rep.expectedSolution}
+                                  </div>
+                                </div>
+
+                                {/* Respuesta enviada o marcada por el alumno */}
+                                <div
+                                  style={{
+                                    background: '#F0F9FF',
+                                    border: '2px solid #0284C7',
+                                    borderRadius: 10,
+                                    padding: '10px 12px',
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    gap: 4
+                                  }}
+                                >
+                                  <div style={{ fontSize: '0.72rem', textTransform: 'uppercase', letterSpacing: '0.6px', fontWeight: 900, color: '#0369A1', display: 'flex', alignItems: 'center', gap: 4 }}>
+                                    <AlertCircle size={13} strokeWidth={2.6} />
+                                    <span>Respuesta del Alumno al Reportar:</span>
+                                  </div>
+                                  <div style={{ color: '#075985', fontWeight: 800, fontSize: '0.86rem', wordBreak: 'break-word', fontFamily: 'monospace' }}>
+                                    {rep.userAnswer || '(El estudiante no había marcado respuesta al tocar la bandera)'}
+                                  </div>
+                                </div>
+                              </div>
+
+                              {/* Feedback Pedagógico (si estaba activo al momento de reportar) */}
+                              {rep.feedbackExplanation && (
+                                <div
+                                  style={{
+                                    background: '#FFFBEB',
+                                    border: '1.5px solid #F59E0B',
+                                    borderRadius: 8,
+                                    padding: '8px 10px',
+                                    fontSize: '0.78rem',
+                                    color: '#92400E'
+                                  }}
+                                >
+                                  <strong>Explicación del sistema mostrada al alumno:</strong> {rep.feedbackExplanation}
+                                </div>
+                              )}
+                            </div>
+                          </div>
+
+                          {/* ═══ 4. HERRAMIENTAS DE CORRECCIÓN Y NOTAS DEL DOCENTE ═══ */}
+                          <div
+                            style={{
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'space-between',
+                              flexWrap: 'wrap',
+                              gap: 10,
+                              paddingTop: 8,
+                              borderTop: '1.5px solid #E2E8F0'
+                            }}
+                          >
+                            {/* Campo de notas de corrección del docente */}
+                            <div style={{ display: 'flex', alignItems: 'center', gap: 6, flex: '1 1 300px' }}>
+                              <input
+                                type="text"
+                                defaultValue={rep.adminNotes || ''}
+                                placeholder="Nota de corrección (ej: 'Modificado índice en lección 3', 'Corregido')..."
+                                onChange={(e) => {
+                                  const val = e.target.value;
+                                  setReportAdminNotes(prev => ({ ...prev, [rep.reportId]: val }));
+                                }}
+                                style={{
+                                  flex: 1,
+                                  padding: '6px 10px',
+                                  borderRadius: 8,
+                                  border: '1.5px solid #000000',
+                                  fontSize: '0.78rem',
+                                  fontFamily: 'inherit',
+                                  outline: 'none'
+                                }}
+                              />
+                              <button
+                                type="button"
+                                onClick={async () => {
+                                  const note = reportAdminNotes[rep.reportId] !== undefined ? reportAdminNotes[rep.reportId] : (rep.adminNotes || '');
+                                  soundService.playToken();
+                                  await questionReportService.updateReportStatus(rep.reportId, rep.status, note);
+                                  setQuestionReports(prev =>
+                                    prev.map(r => r.reportId === rep.reportId ? { ...r, adminNotes: note } : r)
+                                  );
+                                  alert('Nota de corrección guardada.');
+                                }}
+                                style={{
+                                  background: '#FFFFFF',
+                                  color: '#0F172A',
+                                  border: '1.5px solid #000000',
+                                  boxShadow: '1.5px 1.5px 0px #000000',
+                                  borderRadius: 8,
+                                  padding: '6px 10px',
+                                  fontSize: '0.74rem',
+                                  fontWeight: 800,
+                                  cursor: 'pointer',
+                                  whiteSpace: 'nowrap'
+                                }}
+                              >
+                                Guardar Nota
+                              </button>
+                            </div>
+
+                            {/* Botones de acción rápida */}
+                            <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
+                              {rep.status !== 'reviewed' && (
+                                <button
+                                  type="button"
+                                  onClick={async () => {
+                                    soundService.playToken();
+                                    await questionReportService.updateReportStatus(rep.reportId, 'reviewed');
+                                    setQuestionReports(prev =>
+                                      prev.map(r => r.reportId === rep.reportId ? { ...r, status: 'reviewed' } : r)
+                                    );
+                                  }}
+                                  style={{
+                                    background: '#EFF6FF',
+                                    color: '#1D4ED8',
+                                    border: '1.5px solid #2563EB',
+                                    boxShadow: '1.5px 1.5px 0px #2563EB',
+                                    borderRadius: 8,
+                                    padding: '6px 12px',
+                                    fontSize: '0.76rem',
+                                    fontWeight: 900,
+                                    cursor: 'pointer'
+                                  }}
+                                >
+                                  En Revisión
+                                </button>
+                              )}
+
+                              {rep.status !== 'resolved' && (
+                                <button
+                                  type="button"
+                                  onClick={async () => {
+                                    soundService.playWin();
+                                    await questionReportService.updateReportStatus(rep.reportId, 'resolved');
+                                    setQuestionReports(prev =>
+                                      prev.map(r => r.reportId === rep.reportId ? { ...r, status: 'resolved' } : r)
+                                    );
+                                  }}
+                                  style={{
+                                    background: '#F0FDF4',
+                                    color: '#15803D',
+                                    border: '1.5px solid #16A34A',
+                                    boxShadow: '1.5px 1.5px 0px #16A34A',
+                                    borderRadius: 8,
+                                    padding: '6px 12px',
+                                    fontSize: '0.76rem',
+                                    fontWeight: 900,
+                                    cursor: 'pointer'
+                                  }}
+                                >
+                                  Marcar Resuelto
+                                </button>
+                              )}
+
+                              <button
+                                type="button"
+                                onClick={async () => {
+                                  if (window.confirm(`¿Seguro que deseas eliminar el reporte del ejercicio ${rep.exerciseId}?`)) {
+                                    soundService.playToken();
+                                    await questionReportService.deleteReport(rep.reportId);
+                                    setQuestionReports(prev => prev.filter(r => r.reportId !== rep.reportId));
+                                  }
+                                }}
+                                style={{
+                                  background: '#FFFFFF',
+                                  color: '#DC2626',
+                                  border: '1.5px solid #DC2626',
+                                  boxShadow: '1.5px 1.5px 0px #DC2626',
+                                  borderRadius: 8,
+                                  padding: '6px 10px',
+                                  fontSize: '0.74rem',
+                                  fontWeight: 800,
+                                  cursor: 'pointer',
+                                  display: 'inline-flex',
+                                  alignItems: 'center',
+                                  gap: 4
+                                }}
+                              >
+                                <Trash2 size={13} strokeWidth={2.4} />
+                                <span>Eliminar</span>
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })
                 )}
               </div>
             </div>

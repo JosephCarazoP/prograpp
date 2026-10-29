@@ -10,7 +10,8 @@ import {
   Sparkles,
   Trophy,
   Target,
-  Star
+  Star,
+  Flag
 } from 'lucide-react';
 
 import { UserProfile, LearningPath as PathType, UserPowerUps } from './types/user';
@@ -53,6 +54,7 @@ import { AnimatedDoodleBackground } from './components/AnimatedDoodleBackground'
 import { AcademicDashboard } from './components/AcademicDashboard';
 import { EvaluationPage } from './components/EvaluationPage';
 import { ActivityOpinionModal } from './components/ActivityOpinionModal';
+import { QuestionReportModal } from './components/QuestionReportModal';
 import { StreakCelebrationModal } from './components/StreakCelebrationModal';
 import { StorePage } from './components/StorePage';
 import { SeasonPathPage } from './components/SeasonPathPage';
@@ -850,8 +852,48 @@ export default function App() {
     setCodePeekClueText(null);
   };
 
+  const [isQuestionReportModalOpen, setIsQuestionReportModalOpen] = useState(false);
+
   const currentExercise: Exercise | undefined = lessonQueue[currentQueueIndex];
   const isReviewPhase = currentQueueIndex >= initialExercisesCount;
+
+  const currentExerciseUserAnswer = useMemo(() => {
+    if (!currentExercise) return undefined;
+    if (currentExercise.type === 'code_builder') {
+      return selectedTokenIndices.map(idx => currentExercise.tokens[idx]).join(' ');
+    }
+    if (currentExercise.type === 'spot_the_bug') {
+      return selectedBugLine !== null ? `Línea ${selectedBugLine + 1}` : undefined;
+    }
+    if (currentExercise.type === 'predict_output') {
+      return selectedOption !== null ? currentExercise.options[selectedOption] : undefined;
+    }
+    if (currentExercise.type === 'code_cloze') {
+      return selectedOption !== null ? currentExercise.options[selectedOption] : undefined;
+    }
+    if (currentExercise.type === 'matching_pairs') {
+      return matchedPairs.length > 0 ? `${matchedPairs.length / 2} parejas formadas` : undefined;
+    }
+    if (currentExercise.type === 'trace_step') {
+      return JSON.stringify(traceUserValues);
+    }
+    if (currentExercise.type === 'parsons_puzzle') {
+      return parsonsOrder.length > 0 ? parsonsOrder.map(idx => currentExercise.lines[idx]).join('\n') : undefined;
+    }
+    if (currentExercise.type === 'flowchart_builder') {
+      return flowchartOrder.length > 0 ? flowchartOrder.map(idx => currentExercise.blocks[idx]?.text || '').join(' -> ') : undefined;
+    }
+    return undefined;
+  }, [
+    currentExercise,
+    selectedTokenIndices,
+    selectedBugLine,
+    selectedOption,
+    matchedPairs,
+    traceUserValues,
+    parsonsOrder,
+    flowchartOrder
+  ]);
 
   // Desordenar determinísticamente la columna derecha de parejas para que sea un reto real
   useEffect(() => {
@@ -1942,6 +1984,35 @@ export default function App() {
                 ? `Repaso ${currentQueueIndex - initialExercisesCount + 1}/${lessonQueue.length - initialExercisesCount}`
                 : `${Math.min(currentQueueIndex + 1, initialExercisesCount)}/${initialExercisesCount}`}
             </div>
+
+            {/* Banderín Neo-Brutal para reportar problemas en la pregunta */}
+            <button
+              type="button"
+              onClick={() => {
+                soundService.playToken();
+                setIsQuestionReportModalOpen(true);
+              }}
+              style={{
+                width: '42px',
+                height: '42px',
+                borderRadius: '12px',
+                background: '#FFFFFF',
+                border: '2.5px solid #000000',
+                boxShadow: '3px 3px 0px #000000',
+                color: '#DC2626',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                flexShrink: 0,
+                transition: 'all 0.1s ease'
+              }}
+              className="active:translate-x-[1px] active:translate-y-[1px] active:shadow-none hover:bg-red-50"
+              title="Reportar algún problema en esta pregunta (banderín)"
+              aria-label="Reportar problema en la pregunta"
+            >
+              <Flag size={20} strokeWidth={2.6} fill="#FEE2E2" />
+            </button>
           </div>
 
           {/* Barra Táctica de Comodines Integrada */}
@@ -2523,6 +2594,32 @@ export default function App() {
                         <div style={{ fontSize: '0.92rem', color: '#166534', fontWeight: 800 }}>
                           <FormattedText text={feedbackExplanation} inline />
                         </div>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            soundService.playToken();
+                            setIsQuestionReportModalOpen(true);
+                          }}
+                          style={{
+                            marginTop: '6px',
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: '5px',
+                            background: '#FFFFFF',
+                            border: '1.5px solid #000000',
+                            boxShadow: '1.5px 1.5px 0px #000000',
+                            padding: '3px 8px',
+                            borderRadius: '8px',
+                            fontSize: '0.74rem',
+                            fontWeight: 800,
+                            color: '#B91C1C',
+                            cursor: 'pointer'
+                          }}
+                          className="active:translate-x-[1px] active:translate-y-[1px] active:shadow-none hover:bg-red-50"
+                        >
+                          <Flag size={12} strokeWidth={2.4} fill="#FEE2E2" />
+                          <span>Reportar problema en pregunta</span>
+                        </button>
                       </div>
                     </>
                   ) : (
@@ -2550,6 +2647,32 @@ export default function App() {
                         <div style={{ fontSize: '0.92rem', color: '#991B1B', fontWeight: 800 }}>
                           <FormattedText text={feedbackExplanation} inline />
                         </div>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            soundService.playToken();
+                            setIsQuestionReportModalOpen(true);
+                          }}
+                          style={{
+                            marginTop: '6px',
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: '5px',
+                            background: '#FFFFFF',
+                            border: '1.5px solid #000000',
+                            boxShadow: '1.5px 1.5px 0px #000000',
+                            padding: '3px 8px',
+                            borderRadius: '8px',
+                            fontSize: '0.74rem',
+                            fontWeight: 800,
+                            color: '#B91C1C',
+                            cursor: 'pointer'
+                          }}
+                          className="active:translate-x-[1px] active:translate-y-[1px] active:shadow-none hover:bg-red-50"
+                        >
+                          <Flag size={12} strokeWidth={2.4} fill="#FEE2E2" />
+                          <span>Reportar problema en pregunta</span>
+                        </button>
                       </div>
                     </>
                   )}
@@ -2651,6 +2774,23 @@ export default function App() {
           studentCode={user.studentCode || 'E01'}
           activityId={opinionActivityId}
           onClose={() => setOpinionActivityId(null)}
+        />
+      )}
+
+      {/* MODAL PARA REPORTAR PROBLEMAS EN PREGUNTAS (BANDERÍN) */}
+      {isQuestionReportModalOpen && currentExercise && (
+        <QuestionReportModal
+          isOpen={isQuestionReportModalOpen}
+          onClose={() => setIsQuestionReportModalOpen(false)}
+          user={user}
+          lesson={activeLesson || undefined}
+          exercise={currentExercise}
+          userAnswer={currentExerciseUserAnswer}
+          selectedOptionIndex={selectedOption}
+          selectedBugLineIndex={selectedBugLine}
+          selectedTokenIndices={selectedTokenIndices}
+          feedbackState={feedbackState}
+          feedbackExplanation={feedbackExplanation}
         />
       )}
 
@@ -2809,6 +2949,7 @@ export default function App() {
           lesson={checkpointLesson}
           theory={checkpointTheory || undefined}
           isOpen={Boolean(checkpointLesson)}
+          user={user}
           onClose={() => {
             setCheckpointLesson(null);
             setCheckpointTheory(null);
