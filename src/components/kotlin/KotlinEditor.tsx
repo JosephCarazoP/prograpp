@@ -10,6 +10,9 @@ import {
   AlertCircle
 } from 'lucide-react';
 import { KotlinFile, KotlinCompilerError } from '../../types/kotlinLab';
+import { CodeAutocomplete } from '../common/CodeAutocomplete';
+import { KOTLIN_COMPLETIONS } from '../../data/kotlinCompletions';
+import { useCodeAutocomplete } from '../../hooks/useCodeAutocomplete';
 
 interface KotlinEditorProps {
   files: KotlinFile[];
@@ -53,8 +56,8 @@ function highlightKotlin(code: string): string {
   const escapeHtml = (str: string) =>
     str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 
-  // Regex para tokens: comentarios, strings simples y multilínea, palabras, números, anotaciones y símbolos
-  const tokenRegex = /(\/\/[^\n]*|\/\*[\s\S]*?\*\/|"""[\s\S]*?"""|"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])'|@[a-zA-Z_][a-zA-Z0-9_]*|\b[a-zA-Z_][a-zA-Z0-9_]*\b|\b\d+(?:\.\d+)?[fFL]?\b|[^\s\w]+|\s+)/g;
+  // Regex para tokens: comentarios, strings simples (sin cruzar salto de línea) y multilínea, palabras, números, anotaciones y símbolos individuales
+  const tokenRegex = /(\/\/[^\n]*|\/\*[\s\S]*?\*\/|"""[\s\S]*?"""|"(?:\\.|[^"\\\r\n])*"|'(?:\\.|[^'\\\r\n])*'|@[a-zA-Z_][a-zA-Z0-9_]*|\b[a-zA-Z_][a-zA-Z0-9_]*\b|\b\d+(?:\.\d+)?[fFL]?\b|[^\s\w]|\s+)/g;
 
   let html = '';
   let match: RegExpExecArray | null;
@@ -66,7 +69,7 @@ function highlightKotlin(code: string): string {
       // Comentarios en gris itálica
       html += `<span style="color: #64748B; font-style: italic;">${escapeHtml(token)}</span>`;
     } else if (token.startsWith('"') || token.startsWith("'")) {
-      // Cadenas en verde esmeralda
+      // Cadenas de texto en verde esmeralda
       html += `<span style="color: #10B981;">${escapeHtml(token)}</span>`;
     } else if (token.startsWith('@')) {
       // Anotaciones en naranja
@@ -75,14 +78,14 @@ function highlightKotlin(code: string): string {
       // Números en ámbar
       html += `<span style="color: #F59E0B;">${token}</span>`;
     } else if (KOTLIN_KEYWORDS.has(token)) {
-      // Palabras reservadas en Violeta Kotlin (#A855F7 / #9333EA)
+      // Palabras reservadas en Violeta Kotlin (#9333EA)
       html += `<span style="color: #9333EA; font-weight: 700;">${escapeHtml(token)}</span>`;
     } else if (KOTLIN_TYPES.has(token)) {
-      // Tipos en azul cielo
+      // Tipos en azul cielo (#0284C7)
       html += `<span style="color: #0284C7; font-weight: 600;">${escapeHtml(token)}</span>`;
     } else if (KOTLIN_BUILTINS.has(token)) {
-      // Funciones comunes en magenta / rosa
-      html += `<span style="color: #E11D48; font-weight: 600;">${escapeHtml(token)}</span>`;
+      // Funciones y métodos estándar en azul eléctrico IDE (#2563EB) en lugar de rojo
+      html += `<span style="color: #2563EB; font-weight: 600;">${escapeHtml(token)}</span>`;
     } else {
       // Identificadores y símbolos en color texto oscuro
       html += `<span style="color: #0F172A;">${escapeHtml(token)}</span>`;
@@ -118,6 +121,15 @@ export const KotlinEditor: React.FC<KotlinEditorProps> = ({
 
   const [copied, setCopied] = useState(false);
 
+  // Hook de autocompletado y recomendaciones estilo NetBeans
+  const autocomplete = useCodeAutocomplete({
+    dictionary: KOTLIN_COMPLETIONS,
+    value: code,
+    onChange: onContentChange,
+    textareaRef,
+    theme: 'kotlin'
+  });
+
   // Mapear líneas con errores de compilación
   const errorLines = useMemo(() => {
     const lines = new Set<number>();
@@ -140,10 +152,16 @@ export const KotlinEditor: React.FC<KotlinEditorProps> = ({
     if (lineNumbersRef.current) {
       lineNumbersRef.current.scrollTop = scrollTop;
     }
+    autocomplete.handleScroll();
   };
 
-  // Manejar atajos de teclado (Ctrl+Enter para correr, Tab para indentar)
+  // Manejar atajos de teclado (Autocompletado, Ctrl+Enter para correr, Tab para indentar)
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    // Si el menú de sugerencias está abierto y procesó la tecla (Tab, Enter, Escape, Flechas)
+    if (autocomplete.handleKeyDown(e)) {
+      return;
+    }
+
     if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
       e.preventDefault();
       if (!isRunning) {
@@ -167,6 +185,63 @@ export const KotlinEditor: React.FC<KotlinEditorProps> = ({
       setTimeout(() => {
         textarea.selectionStart = textarea.selectionEnd = start + spaces.length;
       }, 0);
+      return;
+    }
+
+    // Auto-cierre de comillas y delimitadores estilo NetBeans / IntelliJ
+    const PAIRS: Record<string, string> = {
+      '"': '"',
+      "'": "'",
+      '(': ')',
+      '[': ']',
+      '{': '}'
+    };
+
+    const textarea = textareaRef.current;
+    if (!textarea) return;
+
+    const start = textarea.selectionStart;
+    const end = textarea.selectionEnd;
+
+    // Si el usuario escribe el caracter de cierre y ya existe inmediatamente después, avanzar cursor
+    if (['"', "'", ')', ']', '}'].includes(e.key) && start === end && code[start] === e.key) {
+      e.preventDefault();
+      textarea.selectionStart = textarea.selectionEnd = start + 1;
+      return;
+    }
+
+    // Si abre comillas o paréntesis, insertar par completo
+    if (PAIRS[e.key] && !e.ctrlKey && !e.metaKey && !e.altKey) {
+      e.preventDefault();
+      const closeChar = PAIRS[e.key];
+      const selectedText = code.substring(start, end);
+      const newCode = code.substring(0, start) + e.key + selectedText + closeChar + code.substring(end);
+      onContentChange(newCode);
+
+      setTimeout(() => {
+        if (textareaRef.current) {
+          textareaRef.current.selectionStart = start + 1;
+          textareaRef.current.selectionEnd = start + 1 + selectedText.length;
+        }
+      }, 0);
+      return;
+    }
+
+    // Si presiona Backspace entre delimitadores vacíos ("", '', (), [], {}), borrar ambos
+    if (e.key === 'Backspace' && start === end && start > 0) {
+      const prevChar = code[start - 1];
+      const nextChar = code[start];
+      if (PAIRS[prevChar] && PAIRS[prevChar] === nextChar) {
+        e.preventDefault();
+        const newCode = code.substring(0, start - 1) + code.substring(start + 1);
+        onContentChange(newCode);
+        setTimeout(() => {
+          if (textareaRef.current) {
+            textareaRef.current.selectionStart = textareaRef.current.selectionEnd = start - 1;
+          }
+        }, 0);
+        return;
+      }
     }
   };
 
@@ -313,7 +388,17 @@ export const KotlinEditor: React.FC<KotlinEditorProps> = ({
             ref={textareaRef}
             className="kt-editor-textarea"
             value={code}
-            onChange={e => onContentChange(e.target.value)}
+            onChange={e => {
+              const newContent = e.target.value;
+              onContentChange(newContent);
+              autocomplete.checkAutocomplete(newContent);
+            }}
+            onClick={() => autocomplete.checkAutocomplete()}
+            onKeyUp={e => {
+              if (!['ArrowDown', 'ArrowUp', 'Tab', 'Enter', 'Escape'].includes(e.key)) {
+                autocomplete.checkAutocomplete();
+              }
+            }}
             onScroll={handleScroll}
             onKeyDown={handleKeyDown}
             spellCheck={false}
@@ -321,6 +406,19 @@ export const KotlinEditor: React.FC<KotlinEditorProps> = ({
             autoComplete="off"
             autoCorrect="off"
             placeholder="// Escribe tu código Kotlin aquí..."
+          />
+
+          {/* Menú flotante de autocompletado y recomendaciones estilo NetBeans */}
+          <CodeAutocomplete
+            items={autocomplete.filteredItems}
+            selectedIndex={autocomplete.selectedIndex}
+            onSelect={autocomplete.handleSelect}
+            onHoverItem={autocomplete.setSelectedIndex}
+            position={autocomplete.coords}
+            visible={autocomplete.isOpen}
+            onClose={autocomplete.close}
+            filterPrefix={autocomplete.currentPrefix}
+            theme="kotlin"
           />
         </div>
       </div>

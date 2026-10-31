@@ -59,14 +59,14 @@ export const SchemaViewer: React.FC<SchemaViewerProps> = ({
 
   // Copiar DDL al portapapeles
   const handleCopyDdl = (table: TableSchemaInfo) => {
-    const ddl = table.sql || `CREATE TABLE "${table.name}" (...);`;
+    const ddl = table.sql || `CREATE TABLE ${table.name} (...);`;
     navigator.clipboard?.writeText(ddl);
   };
 
   // Vaciar registros
   const handleClearTable = (table: TableSchemaInfo) => {
     if (onInsertQuery) {
-      onInsertQuery(`DELETE FROM "${table.name}";`);
+      onInsertQuery(`DELETE FROM ${table.name};`);
     }
   };
 

@@ -8,6 +8,9 @@ import {
   FileCode2
 } from 'lucide-react';
 import { splitSqlStatements } from '../../services/sqliteService';
+import { CodeAutocomplete } from '../common/CodeAutocomplete';
+import { SQL_COMPLETIONS } from '../../data/sqlCompletions';
+import { useCodeAutocomplete } from '../../hooks/useCodeAutocomplete';
 
 export interface QueryTab {
   id: string;
@@ -54,7 +57,8 @@ function highlightSql(code: string): string {
       .replace(/</g, '&lt;')
       .replace(/>/g, '&gt;');
 
-  const tokenRegex = /(--[^\n]*|\/\*[\s\S]*?\*\/|'(?:''|[^'])*'|"(?:""|[^"])*"|\b[a-zA-Z_][a-zA-Z0-9_]*\b|\b\d+(?:\.\d+)?\b|[^\s\w]+|\s+)/g;
+  // Regex robusto para tokens: comentarios, strings individuales (sin cruzar líneas), palabras, números y símbolos únicos
+  const tokenRegex = /(--[^\n]*|\/\*[\s\S]*?\*\/|'(?:''|[^'\r\n])*'|"(?:""|[^"\r\n])*"|\b[a-zA-Z_][a-zA-Z0-9_]*\b|\b\d+(?:\.\d+)?\b|[^\s\w]|\s+)/g;
 
   let html = '';
   let match: RegExpExecArray | null;
@@ -129,6 +133,15 @@ export const SqlEditor: React.FC<SqlEditorProps> = ({
   const highlightRef = useRef<HTMLPreElement>(null);
   const lineNumbersRef = useRef<HTMLDivElement>(null);
 
+  // Hook de autocompletado y recomendaciones SQL estilo NetBeans
+  const autocomplete = useCodeAutocomplete({
+    dictionary: SQL_COMPLETIONS,
+    value,
+    onChange,
+    textareaRef,
+    theme: 'sql'
+  });
+
   // Sincronizar scroll entre el textarea transparente, la capa de resaltado y los números de línea
   const handleScroll = (e: React.UIEvent<HTMLTextAreaElement>) => {
     if (highlightRef.current) {
@@ -138,6 +151,7 @@ export const SqlEditor: React.FC<SqlEditorProps> = ({
     if (lineNumbersRef.current) {
       lineNumbersRef.current.scrollTop = e.currentTarget.scrollTop;
     }
+    autocomplete.handleScroll();
   };
 
   // Monitorear selección de texto para permitir ejecutar solo la parte resaltada
@@ -152,9 +166,15 @@ export const SqlEditor: React.FC<SqlEditorProps> = ({
   };
 
   // Atajos de teclado:
+  // Tab / Enter / Escape / Flechas: Autocompletado NetBeans si está activo
   // Ctrl + Enter: Ejecutar sentencia actual o texto seleccionado
   // Shift + Ctrl + Enter: Ejecutar todo el script
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    // Si el menú de sugerencias está abierto y procesó la tecla (Tab, Enter, Escape, Flechas)
+    if (autocomplete.handleKeyDown(e)) {
+      return;
+    }
+
     if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
       e.preventDefault();
       e.stopPropagation();
@@ -188,6 +208,62 @@ export const SqlEditor: React.FC<SqlEditorProps> = ({
           textareaRef.current.selectionStart = textareaRef.current.selectionEnd = start + 2;
         }
       }, 0);
+      return;
+    }
+
+    // Auto-cierre de comillas y delimitadores SQL estilo NetBeans
+    const PAIRS: Record<string, string> = {
+      "'": "'",
+      '"': '"',
+      '(': ')',
+      '[': ']'
+    };
+
+    const textarea = textareaRef.current;
+    if (!textarea) return;
+
+    const start = textarea.selectionStart;
+    const end = textarea.selectionEnd;
+
+    // Si escribe el caracter de cierre y ya existe inmediatamente después, avanzar cursor
+    if (["'", '"', ')', ']'].includes(e.key) && start === end && value[start] === e.key) {
+      e.preventDefault();
+      textarea.selectionStart = textarea.selectionEnd = start + 1;
+      return;
+    }
+
+    // Si abre comillas o paréntesis, insertar par completo
+    if (PAIRS[e.key] && !e.ctrlKey && !e.metaKey && !e.altKey) {
+      e.preventDefault();
+      const closeChar = PAIRS[e.key];
+      const selectedText = value.substring(start, end);
+      const newValue = value.substring(0, start) + e.key + selectedText + closeChar + value.substring(end);
+      onChange(newValue);
+
+      setTimeout(() => {
+        if (textareaRef.current) {
+          textareaRef.current.selectionStart = start + 1;
+          textareaRef.current.selectionEnd = start + 1 + selectedText.length;
+        }
+      }, 0);
+      return;
+    }
+
+    // Si presiona Backspace entre delimitadores vacíos ('', "", (), []), borrar ambos
+    if (e.key === 'Backspace' && start === end && start > 0) {
+      const prevChar = value[start - 1];
+      const nextChar = value[start];
+      if (PAIRS[prevChar] && PAIRS[prevChar] === nextChar) {
+        e.preventDefault();
+        const newValue = value.substring(0, start - 1) + value.substring(start + 1);
+        onChange(newValue);
+        setTimeout(() => {
+          if (textareaRef.current) {
+            textareaRef.current.selectionStart = textareaRef.current.selectionEnd = start - 1;
+          }
+        }, 0);
+        return;
+      }
     }
   };
 
@@ -299,17 +375,39 @@ export const SqlEditor: React.FC<SqlEditorProps> = ({
             ref={textareaRef}
             className="sqlite-code-shared sqlite-code-textarea"
             value={value}
-            onChange={(e) => onChange(e.target.value)}
+            onChange={(e) => {
+              onChange(e.target.value);
+              autocomplete.checkAutocomplete(e.target.value);
+            }}
+            onClick={() => autocomplete.checkAutocomplete()}
             onKeyDown={handleKeyDown}
             onScroll={handleScroll}
             onSelect={handleSelect}
-            onKeyUp={handleSelect}
+            onKeyUp={(e) => {
+              handleSelect(e);
+              if (!['ArrowDown', 'ArrowUp', 'Tab', 'Enter', 'Escape'].includes(e.key)) {
+                autocomplete.checkAutocomplete();
+              }
+            }}
             onMouseUp={handleSelect}
             placeholder="-- Escribe tu consulta SQL aquí"
             spellCheck={false}
             autoCapitalize="off"
             autoComplete="off"
             disabled={isRunning}
+          />
+
+          {/* Menú flotante de autocompletado y recomendaciones SQL estilo NetBeans */}
+          <CodeAutocomplete
+            items={autocomplete.filteredItems}
+            selectedIndex={autocomplete.selectedIndex}
+            onSelect={autocomplete.handleSelect}
+            onHoverItem={autocomplete.setSelectedIndex}
+            position={autocomplete.coords}
+            visible={autocomplete.isOpen}
+            onClose={autocomplete.close}
+            filterPrefix={autocomplete.currentPrefix}
+            theme="sql"
           />
         </div>
       </div>

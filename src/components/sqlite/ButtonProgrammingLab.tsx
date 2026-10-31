@@ -1,7 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { SqliteExercise, SqliteQueryResult } from '../../types/sqliteLab';
 import { sqliteService } from '../../services/sqliteService';
 import { sqliteStorageService } from '../../services/sqliteStorageService';
+import { CodeAutocomplete } from '../common/CodeAutocomplete';
+import { SQL_COMPLETIONS } from '../../data/sqlCompletions';
+import { useCodeAutocomplete } from '../../hooks/useCodeAutocomplete';
 import {
   MousePointerClick,
   Code2,
@@ -141,6 +144,20 @@ export const ButtonProgrammingLab: React.FC<ButtonProgrammingLabProps> = ({
 
   const currentButton = buttons.find(b => b.id === selectedButtonId) || buttons[0];
   const currentSql = currentButton ? buttonSqlMap[currentButton.id] || '' : '';
+
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  const autocomplete = useCodeAutocomplete({
+    dictionary: SQL_COMPLETIONS,
+    value: currentSql,
+    onChange: (newVal) => {
+      if (currentButton) {
+        handleSqlChange(currentButton.id, newVal);
+      }
+    },
+    textareaRef,
+    theme: 'sql'
+  });
 
   return (
     <div className="sqlite-btn-lab-root">
@@ -326,13 +343,92 @@ export const ButtonProgrammingLab: React.FC<ButtonProgrammingLabProps> = ({
               </div>
 
               {/* Editor de texto SQL para el botón */}
-              <div className="sqlite-btn-code-area">
+              <div className="sqlite-btn-code-area relative">
                 <textarea
+                  ref={textareaRef}
                   className="sqlite-btn-textarea"
                   value={currentSql}
-                  onChange={(e) => handleSqlChange(currentButton.id, e.target.value)}
+                  onChange={(e) => {
+                    handleSqlChange(currentButton.id, e.target.value);
+                    autocomplete.checkAutocomplete(e.target.value);
+                  }}
+                  onClick={() => autocomplete.checkAutocomplete()}
+                  onKeyDown={(e) => {
+                    if (autocomplete.handleKeyDown(e)) {
+                      return;
+                    }
+
+                    const PAIRS: Record<string, string> = {
+                      "'": "'",
+                      '"': '"',
+                      '(': ')',
+                      '[': ']'
+                    };
+
+                    const textarea = textareaRef.current;
+                    if (!textarea) return;
+
+                    const start = textarea.selectionStart;
+                    const end = textarea.selectionEnd;
+
+                    if (["'", '"', ')', ']'].includes(e.key) && start === end && currentSql[start] === e.key) {
+                      e.preventDefault();
+                      textarea.selectionStart = textarea.selectionEnd = start + 1;
+                      return;
+                    }
+
+                    if (PAIRS[e.key] && !e.ctrlKey && !e.metaKey && !e.altKey) {
+                      e.preventDefault();
+                      const closeChar = PAIRS[e.key];
+                      const selectedText = currentSql.substring(start, end);
+                      const newSql = currentSql.substring(0, start) + e.key + selectedText + closeChar + currentSql.substring(end);
+                      handleSqlChange(currentButton.id, newSql);
+
+                      setTimeout(() => {
+                        if (textareaRef.current) {
+                          textareaRef.current.selectionStart = start + 1;
+                          textareaRef.current.selectionEnd = start + 1 + selectedText.length;
+                        }
+                      }, 0);
+                      return;
+                    }
+
+                    if (e.key === 'Backspace' && start === end && start > 0) {
+                      const prevChar = currentSql[start - 1];
+                      const nextChar = currentSql[start];
+                      if (PAIRS[prevChar] && PAIRS[prevChar] === nextChar) {
+                        e.preventDefault();
+                        const newSql = currentSql.substring(0, start - 1) + currentSql.substring(start + 1);
+                        handleSqlChange(currentButton.id, newSql);
+                        setTimeout(() => {
+                          if (textareaRef.current) {
+                            textareaRef.current.selectionStart = textareaRef.current.selectionEnd = start - 1;
+                          }
+                        }, 0);
+                        return;
+                      }
+                    }
+                  }}
+                  onKeyUp={(e) => {
+                    if (!['ArrowDown', 'ArrowUp', 'Tab', 'Enter', 'Escape'].includes(e.key)) {
+                      autocomplete.checkAutocomplete();
+                    }
+                  }}
                   placeholder={`-- Escribe aquí la sentencia SQL para "${currentButton.label}"\n-- Ejemplo: ${currentButton.hint || 'INSERT / UPDATE / SELECT / DELETE'}`}
                   spellCheck={false}
+                />
+
+                {/* Menú flotante de autocompletado y recomendaciones SQL estilo NetBeans */}
+                <CodeAutocomplete
+                  items={autocomplete.filteredItems}
+                  selectedIndex={autocomplete.selectedIndex}
+                  onSelect={autocomplete.handleSelect}
+                  onHoverItem={autocomplete.setSelectedIndex}
+                  position={autocomplete.coords}
+                  visible={autocomplete.isOpen}
+                  onClose={autocomplete.close}
+                  filterPrefix={autocomplete.currentPrefix}
+                  theme="sql"
                 />
               </div>
 

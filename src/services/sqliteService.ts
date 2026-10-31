@@ -525,9 +525,10 @@ class SqliteService {
           // Si es tabla, extraer registros como INSERT INTO
           if (type === 'table') {
             try {
-              const dataRes = this.db.exec(`SELECT * FROM "${name.replace(/"/g, '""')}";`);
+              const safeTableName = /^[a-zA-Z_][a-zA-Z0-9_]*$/.test(name) ? name : `"${name.replace(/"/g, '""')}"`;
+              const dataRes = this.db.exec(`SELECT * FROM ${safeTableName};`);
               if (dataRes.length > 0 && dataRes[0].values && dataRes[0].values.length > 0) {
-                const cols = dataRes[0].columns.map(c => `"${c.replace(/"/g, '""')}"`).join(', ');
+                const cols = dataRes[0].columns.map(c => /^[a-zA-Z_][a-zA-Z0-9_]*$/.test(c) ? c : `"${c.replace(/"/g, '""')}"`).join(', ');
                 lines.push(`-- Datos para la tabla: ${name}`);
                 for (const valRow of dataRes[0].values) {
                   const formattedValues = valRow.map(v => {
@@ -536,7 +537,7 @@ class SqliteService {
                     if (typeof v === 'string') return `'${v.replace(/'/g, "''")}'`;
                     return `'${String(v)}'`;
                   }).join(', ');
-                  lines.push(`INSERT INTO "${name.replace(/"/g, '""')}" (${cols}) VALUES (${formattedValues});`);
+                  lines.push(`INSERT INTO ${safeTableName} (${cols}) VALUES (${formattedValues});`);
                 }
                 lines.push('');
               }

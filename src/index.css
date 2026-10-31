@@ -16080,3 +16080,361 @@ html.is-pwa-standalone .sqlite-lab-container {
   animation: labSheetSlideUp 0.22s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
+/* ═══════════════════════════════════════════════════════════════════════════
+   SISTEMA DE AUTOCOMPLETADO Y RECOMENDACIONES (ESTILO NETBEANS + NEO-BRUTALISM)
+   ═══════════════════════════════════════════════════════════════════════════ */
+@keyframes neoAcFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-3px) scale(0.99);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.neo-autocomplete-popup {
+  position: absolute;
+  z-index: 100;
+  display: flex;
+  background: #FFFFFF;
+  border: 2px solid #0F172A;
+  box-shadow: 4px 4px 0 #0F172A;
+  border-radius: 6px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  min-width: 480px;
+  max-width: 660px;
+  max-height: 290px;
+  overflow: hidden;
+  animation: neoAcFadeIn 0.12s cubic-bezier(0.16, 1, 0.3, 1);
+  user-select: none;
+}
+
+/* ─── Panel Izquierdo: Lista de recomendaciones ─── */
+.neo-ac-list-panel {
+  flex: 0 0 230px;
+  display: flex;
+  flex-direction: column;
+  border-right: 2px solid #0F172A;
+  background: #FFFFFF;
+  overflow: hidden;
+}
+
+.neo-ac-panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 10px;
+  background: #F1F5F9;
+  border-bottom: 1.5px solid #0F172A;
+}
+
+.neo-ac-header-title {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #0F172A;
+}
+
+.neo-ac-sparkle-icon {
+  color: #F59E0B;
+}
+
+.neo-ac-header-badge {
+  font-size: 9.5px;
+  font-weight: 800;
+  padding: 1.5px 5px;
+  background: #0F172A;
+  color: #FFFFFF;
+  border-radius: 3px;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+
+.neo-ac-items-scroll {
+  flex: 1;
+  overflow-y: auto;
+  max-height: 215px;
+  padding: 4px;
+}
+
+.neo-ac-items-scroll::-webkit-scrollbar {
+  width: 5px;
+}
+.neo-ac-items-scroll::-webkit-scrollbar-track {
+  background: #F8FAFC;
+}
+.neo-ac-items-scroll::-webkit-scrollbar-thumb {
+  background: #CBD5E1;
+  border-radius: 3px;
+}
+
+.neo-ac-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 8px;
+  border-radius: 4px;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: all 0.08s ease-in-out;
+}
+
+.neo-ac-item:hover,
+.neo-ac-item.is-selected {
+  border-color: #0F172A;
+}
+
+/* Tema Kotlin: Highlight violeta */
+.theme-kotlin .neo-ac-item.is-selected {
+  background: #F3E8FF;
+  border-color: #9333EA;
+}
+.theme-kotlin .neo-ac-item:hover:not(.is-selected) {
+  background: #FAF5FF;
+}
+
+/* Tema SQL: Highlight azul cielo */
+.theme-sql .neo-ac-item.is-selected {
+  background: #E0F2FE;
+  border-color: #0284C7;
+}
+.theme-sql .neo-ac-item:hover:not(.is-selected) {
+  background: #F0F9FF;
+}
+
+.neo-ac-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'JetBrains Mono', Consolas, monospace;
+  font-size: 9px;
+  font-weight: 800;
+  padding: 1px 4px;
+  border-radius: 3px;
+  border-width: 1px;
+  border-style: solid;
+  min-width: 26px;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.neo-ac-label {
+  font-family: 'JetBrains Mono', Consolas, monospace;
+  font-size: 12px;
+  color: #0F172A;
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.neo-ac-highlight-match {
+  color: #DC2626;
+  font-weight: 900;
+  text-decoration: underline;
+  text-decoration-thickness: 1.5px;
+  text-underline-offset: 2px;
+}
+
+.theme-kotlin .neo-ac-highlight-match {
+  color: #7E22CE;
+}
+.theme-sql .neo-ac-highlight-match {
+  color: #0369A1;
+}
+
+.neo-ac-detail {
+  font-size: 10px;
+  font-weight: 600;
+  color: #64748B;
+  flex-shrink: 0;
+}
+
+.neo-ac-list-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 4px 8px;
+  background: #F8FAFC;
+  border-top: 1px solid #E2E8F0;
+  font-size: 9.5px;
+  color: #64748B;
+}
+
+.neo-ac-kbd {
+  display: inline-block;
+  padding: 1px 3px;
+  font-size: 9px;
+  font-family: monospace;
+  font-weight: 700;
+  color: #0F172A;
+  background: #E2E8F0;
+  border: 1px solid #CBD5E1;
+  border-radius: 2px;
+  box-shadow: 0 1px 0 rgba(15, 23, 42, 0.2);
+}
+
+/* ─── Panel Derecho: Documentación / Explicación NetBeans ─── */
+.neo-ac-doc-panel {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background: #F8FAFC;
+  min-width: 260px;
+  max-width: 400px;
+  overflow-y: auto;
+  padding: 8px 10px;
+}
+
+.neo-ac-doc-panel::-webkit-scrollbar {
+  width: 5px;
+}
+.neo-ac-doc-panel::-webkit-scrollbar-thumb {
+  background: #CBD5E1;
+  border-radius: 3px;
+}
+
+.neo-ac-doc-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  padding-bottom: 6px;
+  border-bottom: 1.5px solid #E2E8F0;
+}
+
+.neo-ac-doc-title-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.neo-ac-doc-kind-badge {
+  font-size: 9px;
+  font-weight: 800;
+  padding: 1px 5px;
+  background: #0F172A;
+  color: #FFFFFF;
+  border-radius: 2px;
+  letter-spacing: 0.5px;
+}
+
+.neo-ac-doc-name {
+  font-family: 'JetBrains Mono', Consolas, monospace;
+  font-size: 13px;
+  font-weight: 800;
+  color: #0F172A;
+}
+
+.neo-ac-doc-detail-tag {
+  font-size: 10px;
+  font-weight: 700;
+  color: #0284C7;
+  background: #E0F2FE;
+  padding: 1px 5px;
+  border-radius: 3px;
+  border: 1px solid #BAE6FD;
+}
+
+.neo-ac-signature-box {
+  margin: 6px 0;
+  padding: 5px 8px;
+  background: #FFFFFF;
+  border: 1.5px solid #0F172A;
+  border-radius: 4px;
+  box-shadow: 2px 2px 0 #0F172A;
+}
+
+.neo-ac-signature-code {
+  font-family: 'JetBrains Mono', Consolas, monospace;
+  font-size: 11px;
+  font-weight: 700;
+  color: #0F172A;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.neo-ac-doc-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding-top: 2px;
+}
+
+.neo-ac-description {
+  font-size: 11.5px;
+  line-height: 16px;
+  color: #334155;
+  margin: 0;
+}
+
+.neo-ac-example-section {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  margin-top: 2px;
+}
+
+.neo-ac-example-title {
+  font-size: 10px;
+  font-weight: 800;
+  text-transform: uppercase;
+  color: #64748B;
+  letter-spacing: 0.5px;
+}
+
+.neo-ac-example-code {
+  margin: 0;
+  padding: 5px 7px;
+  background: #0F172A;
+  color: #F8FAFC;
+  border-radius: 4px;
+  font-family: 'JetBrains Mono', Consolas, monospace;
+  font-size: 10.5px;
+  line-height: 15px;
+  white-space: pre-wrap;
+  word-break: break-word;
+  max-height: 80px;
+  overflow-y: auto;
+}
+
+.neo-ac-doc-footer {
+  margin-top: 6px;
+  padding-top: 5px;
+  border-top: 1px dashed #CBD5E1;
+}
+
+.neo-ac-doc-hint {
+  font-size: 9.5px;
+  color: #64748B;
+  font-style: italic;
+  display: flex;
+  align-items: center;
+}
+
+@media (max-width: 640px) {
+  .neo-autocomplete-popup {
+    min-width: 290px;
+    max-width: 90vw;
+    flex-direction: column;
+    max-height: 340px;
+  }
+  .neo-ac-list-panel {
+    flex: none;
+    border-right: none;
+    border-bottom: 2px solid #0F172A;
+    max-height: 140px;
+  }
+  .neo-ac-doc-panel {
+    max-height: 160px;
+  }
+}
+
+

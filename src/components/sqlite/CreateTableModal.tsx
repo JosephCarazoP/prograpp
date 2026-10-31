@@ -208,7 +208,7 @@ export const CreateTableModal: React.FC<CreateTableModalProps> = ({
 
     columns.forEach((col) => {
       const colName = col.name.trim().replace(/[^a-zA-Z0-9_]/g, '') || 'columna';
-      let def = `  "${colName}" ${col.type}`;
+      let def = `  ${colName} ${col.type}`;
 
       if (col.isPk && pkCols.length === 1) {
         def += ' PRIMARY KEY';
@@ -235,14 +235,14 @@ export const CreateTableModal: React.FC<CreateTableModalProps> = ({
 
     // Si hay llave primaria compuesta
     if (pkCols.length > 1) {
-      const pkList = pkCols.map((c) => `"${c.name.trim()}"`).join(', ');
+      const pkList = pkCols.map((c) => c.name.trim()).join(', ');
       lines.push(`  PRIMARY KEY (${pkList})`);
     }
 
     // Claves foráneas (FK)
     foreignKeys.forEach((fk) => {
       if (fk.fromColumn && fk.toTable && fk.toColumn) {
-        let fkDef = `  FOREIGN KEY ("${fk.fromColumn}") REFERENCES "${fk.toTable}"("${fk.toColumn}")`;
+        let fkDef = `  FOREIGN KEY (${fk.fromColumn}) REFERENCES ${fk.toTable}(${fk.toColumn})`;
         if (fk.onDelete && fk.onDelete !== 'NO ACTION') {
           fkDef += ` ON DELETE ${fk.onDelete}`;
         }
@@ -253,7 +253,7 @@ export const CreateTableModal: React.FC<CreateTableModalProps> = ({
       }
     });
 
-    return `CREATE TABLE "${cleanTableName}" (\n${lines.join(',\n')}\n);`;
+    return `CREATE TABLE ${cleanTableName} (\n${lines.join(',\n')}\n);`;
   };
 
   const generatedSql = generateSql();
@@ -286,16 +286,16 @@ export const CreateTableModal: React.FC<CreateTableModalProps> = ({
         // En SQLite, para modificar estructura de tabla existente:
         // Si el nombre no cambió y la tabla está vacía, o mediante procedimiento transaccional seguro
         const tempName = `temp_${cleanTableName}_${Date.now()}`;
-        const createTempSql = generatedSql.replace(`"${cleanTableName}"`, `"${tempName}"`);
+        const createTempSql = generatedSql.replace(new RegExp(`\\b${cleanTableName}\\b`), tempName);
         
         // Procedimiento seguro estándar de SQLite:
         const migrationScript = `
           BEGIN TRANSACTION;
           ${createTempSql}
           -- Copiar datos de columnas coincidentes:
-          INSERT INTO "${tempName}" SELECT * FROM "${editTable.name}";
-          DROP TABLE "${editTable.name}";
-          ALTER TABLE "${tempName}" RENAME TO "${cleanTableName}";
+          INSERT INTO ${tempName} SELECT * FROM ${editTable.name};
+          DROP TABLE ${editTable.name};
+          ALTER TABLE ${tempName} RENAME TO ${cleanTableName};
           COMMIT;
         `;
         

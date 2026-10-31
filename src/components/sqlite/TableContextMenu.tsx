@@ -66,8 +66,8 @@ export const TableContextMenu: React.FC<TableContextMenuProps> = ({
   if (!isOpen) return null;
 
   // Ajustar posición para evitar salirse de pantalla
-  const menuWidth = 230;
-  const menuHeight = 290;
+  const menuWidth = 240;
+  const menuHeight = 370;
   const posX = Math.min(x, window.innerWidth - menuWidth - 16);
   const posY = Math.min(y, window.innerHeight - menuHeight - 16);
 
@@ -84,6 +84,8 @@ export const TableContextMenu: React.FC<TableContextMenuProps> = ({
         boxShadow: '4px 4px 0px #000000',
         borderRadius: 12,
         width: menuWidth,
+        maxHeight: 'calc(100vh - 24px)',
+        overflowY: 'auto',
         padding: '6px',
         userSelect: 'none',
         animation: 'sqliteDropdownPop 0.12s cubic-bezier(0.16, 1, 0.3, 1)'
@@ -155,7 +157,7 @@ export const TableContextMenu: React.FC<TableContextMenuProps> = ({
         type="button"
         className="sqlite-ctx-item"
         onClick={() => {
-          onInsertQuery(`SELECT * FROM "${table.name}" LIMIT 50;`);
+          onInsertQuery(`SELECT * FROM ${table.name};`);
           onClose();
         }}
       >
@@ -167,14 +169,54 @@ export const TableContextMenu: React.FC<TableContextMenuProps> = ({
         type="button"
         className="sqlite-ctx-item"
         onClick={() => {
-          const colNames = table.columns.map(c => `"${c.name}"`).join(', ');
-          const valPlaceholders = table.columns.map(() => '?').join(', ');
-          onInsertQuery(`INSERT INTO "${table.name}" (${colNames})\nVALUES (${valPlaceholders});`);
+          const colNames = table.columns.map(c => c.name).join(', ');
+          const valPlaceholders = table.columns.map(c => {
+            const t = (c.type || '').toUpperCase();
+            if (t.includes('INT')) return '1';
+            if (t.includes('REAL') || t.includes('FLOAT') || t.includes('DOUB') || t.includes('NUM')) return '10.5';
+            return "'ejemplo'";
+          }).join(', ');
+          onInsertQuery(`INSERT INTO ${table.name} (${colNames})\nVALUES (${valPlaceholders});`);
           onClose();
         }}
       >
         <PlusCircle size={13} className="text-blue-600" />
         <span>Generar INSERT</span>
+      </button>
+
+      <button
+        type="button"
+        className="sqlite-ctx-item"
+        onClick={() => {
+          const nonPkCols = table.columns.filter(c => c.pk === 0);
+          const targetCols = nonPkCols.length > 0 ? nonPkCols : table.columns;
+          const setAssignments = targetCols.map(c => {
+            const t = (c.type || '').toUpperCase();
+            const val = t.includes('INT') ? '1' : t.includes('REAL') || t.includes('FLOAT') ? '10.5' : "'nuevo_valor'";
+            return `${c.name} = ${val}`;
+          }).join(', ');
+          const pkCol = table.columns.find(c => c.pk > 0);
+          const whereClause = pkCol ? `${pkCol.name} = 1` : 'id = 1';
+          onInsertQuery(`UPDATE ${table.name}\nSET ${setAssignments}\nWHERE ${whereClause};`);
+          onClose();
+        }}
+      >
+        <Edit size={13} className="text-amber-600" />
+        <span>Generar UPDATE</span>
+      </button>
+
+      <button
+        type="button"
+        className="sqlite-ctx-item"
+        onClick={() => {
+          const pkCol = table.columns.find(c => c.pk > 0);
+          const whereClause = pkCol ? `${pkCol.name} = 1` : 'id = 1';
+          onInsertQuery(`DELETE FROM ${table.name}\nWHERE ${whereClause};`);
+          onClose();
+        }}
+      >
+        <Trash2 size={13} className="text-rose-600" />
+        <span>Generar DELETE</span>
       </button>
 
       <div style={{ height: 1, background: '#E2E8F0', margin: '4px 0' }} />

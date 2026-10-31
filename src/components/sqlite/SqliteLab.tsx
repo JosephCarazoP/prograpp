@@ -562,9 +562,9 @@ export const SqliteLab: React.FC<SqliteLabProps> = ({
     setMobileTab('editor');
   };
 
-  // Ver datos de una tabla (SELECT * ... LIMIT 100) directamente en la tabla de resultados
+  // Ver datos de una tabla (SELECT * FROM tabla;) directamente en la tabla de resultados
   const handleViewTableData = (table: TableSchemaInfo) => {
-    const sql = `SELECT * FROM "${table.name}" LIMIT 100;`;
+    const sql = `SELECT * FROM ${table.name};`;
     const result = sqliteService.execute(sql);
     setLastResult(result);
     soundService.playToken();
@@ -585,7 +585,7 @@ export const SqliteLab: React.FC<SqliteLabProps> = ({
   // Confirmar eliminación de tabla (DROP TABLE)
   const handleConfirmDropTable = async (tableName: string) => {
     try {
-      const result = sqliteService.execute(`DROP TABLE IF EXISTS "${tableName}";`);
+      const result = sqliteService.execute(`DROP TABLE IF EXISTS ${tableName};`);
       if (result.error) {
         alert(`Error al eliminar tabla: ${result.error}`);
         return;
