@@ -146,11 +146,11 @@ service cloud.firestore {
       allow delete: if isAdmin();
     }
 
-    // Reportes de incidencias técnicas en preguntas (Estudiantes envían, Docente administra)
+    // Reportes de incidencias técnicas en preguntas (Estudiantes reportan agrupado, Docente administra)
     match /questionReports/{reportId} {
-      allow create: if isAuthenticated() && request.resource.data.studentId == request.auth.uid;
-      allow read: if isAdmin() || (isAuthenticated() && resource.data.studentId == request.auth.uid);
-      allow update, delete: if isAdmin();
+      allow read: if true;
+      allow create, update: if true;
+      allow delete: if isAdmin();
     }
   }
 }

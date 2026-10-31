@@ -3072,30 +3072,41 @@ export const AcademicDashboard: React.FC<AcademicDashboardProps> = ({
                 </div>
 
                 {/* Métricas por estado de reporte */}
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))', gap: 10 }}>
-                  <div style={{ background: '#F8FAFC', border: '2px solid #000000', borderRadius: 10, padding: '10px 12px' }}>
-                    <div style={{ fontSize: '0.72rem', color: '#64748B', fontWeight: 800, textTransform: 'uppercase' }}>TOTAL REPORTES</div>
-                    <div style={{ fontSize: '1.45rem', fontWeight: 900, color: '#0F172A', marginTop: 2 }}>{questionReports.length}</div>
-                  </div>
-                  <div style={{ background: '#FEF2F2', border: '2px solid #EF4444', borderRadius: 10, padding: '10px 12px' }}>
-                    <div style={{ fontSize: '0.72rem', color: '#B91C1C', fontWeight: 800, textTransform: 'uppercase' }}>PENDIENTES</div>
-                    <div style={{ fontSize: '1.45rem', fontWeight: 900, color: '#DC2626', marginTop: 2 }}>
-                      {questionReports.filter(r => r.status === 'pending').length}
+                {(() => {
+                  const totalStudentIncidences = questionReports.reduce(
+                    (acc, r) => acc + (r.reportCount || r.reporters?.length || 1),
+                    0
+                  );
+                  return (
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))', gap: 10 }}>
+                      <div style={{ background: '#F8FAFC', border: '2px solid #000000', borderRadius: 10, padding: '10px 12px' }}>
+                        <div style={{ fontSize: '0.72rem', color: '#64748B', fontWeight: 800, textTransform: 'uppercase' }}>PREGUNTAS CON BUG</div>
+                        <div style={{ fontSize: '1.45rem', fontWeight: 900, color: '#0F172A', marginTop: 2 }}>{questionReports.length}</div>
+                        <div style={{ fontSize: '0.68rem', color: '#64748B', fontWeight: 700, marginTop: 2 }}>
+                          {totalStudentIncidences} {totalStudentIncidences === 1 ? 'reporte total' : 'reportes totales'}
+                        </div>
+                      </div>
+                      <div style={{ background: '#FEF2F2', border: '2px solid #EF4444', borderRadius: 10, padding: '10px 12px' }}>
+                        <div style={{ fontSize: '0.72rem', color: '#B91C1C', fontWeight: 800, textTransform: 'uppercase' }}>PENDIENTES</div>
+                        <div style={{ fontSize: '1.45rem', fontWeight: 900, color: '#DC2626', marginTop: 2 }}>
+                          {questionReports.filter(r => r.status === 'pending').length}
+                        </div>
+                      </div>
+                      <div style={{ background: '#EFF6FF', border: '2px solid #3B82F6', borderRadius: 10, padding: '10px 12px' }}>
+                        <div style={{ fontSize: '0.72rem', color: '#1D4ED8', fontWeight: 800, textTransform: 'uppercase' }}>EN REVISIÓN</div>
+                        <div style={{ fontSize: '1.45rem', fontWeight: 900, color: '#2563EB', marginTop: 2 }}>
+                          {questionReports.filter(r => r.status === 'reviewed').length}
+                        </div>
+                      </div>
+                      <div style={{ background: '#F0FDF4', border: '2px solid #22C55E', borderRadius: 10, padding: '10px 12px' }}>
+                        <div style={{ fontSize: '0.72rem', color: '#15803D', fontWeight: 800, textTransform: 'uppercase' }}>RESUELTOS</div>
+                        <div style={{ fontSize: '1.45rem', fontWeight: 900, color: '#16A34A', marginTop: 2 }}>
+                          {questionReports.filter(r => r.status === 'resolved').length}
+                        </div>
+                      </div>
                     </div>
-                  </div>
-                  <div style={{ background: '#EFF6FF', border: '2px solid #3B82F6', borderRadius: 10, padding: '10px 12px' }}>
-                    <div style={{ fontSize: '0.72rem', color: '#1D4ED8', fontWeight: 800, textTransform: 'uppercase' }}>EN REVISIÓN</div>
-                    <div style={{ fontSize: '1.45rem', fontWeight: 900, color: '#2563EB', marginTop: 2 }}>
-                      {questionReports.filter(r => r.status === 'reviewed').length}
-                    </div>
-                  </div>
-                  <div style={{ background: '#F0FDF4', border: '2px solid #22C55E', borderRadius: 10, padding: '10px 12px' }}>
-                    <div style={{ fontSize: '0.72rem', color: '#15803D', fontWeight: 800, textTransform: 'uppercase' }}>RESUELTOS</div>
-                    <div style={{ fontSize: '1.45rem', fontWeight: 900, color: '#16A34A', marginTop: 2 }}>
-                      {questionReports.filter(r => r.status === 'resolved').length}
-                    </div>
-                  </div>
-                </div>
+                  );
+                })()}
 
                 {/* Barra de Filtros y Buscador */}
                 <div style={{ display: 'flex', gap: 10, marginTop: 14, flexWrap: 'wrap', alignItems: 'center' }}>
@@ -3203,48 +3214,8 @@ export const AcademicDashboard: React.FC<AcademicDashboardProps> = ({
 
               {/* Lista de Fichas de Reportes */}
               <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-                {questionReports
-                  .filter(r => reportFilterStatus === 'all' || r.status === reportFilterStatus)
-                  .filter(r => reportFilterPath === 'all' || r.pathId === reportFilterPath)
-                  .filter(r => {
-                    if (!reportSearchTerm.trim()) return true;
-                    const term = reportSearchTerm.toLowerCase();
-                    const nameMatch = (r.studentName || '').toLowerCase().includes(term);
-                    const codeMatch = (r.studentCode || '').toLowerCase().includes(term);
-                    const promptMatch = (r.prompt || '').toLowerCase().includes(term);
-                    const idMatch = (r.exerciseId || '').toLowerCase().includes(term);
-                    const commentMatch = (r.comment || '').toLowerCase().includes(term);
-                    const reasonMatch = (r.reasonLabel || '').toLowerCase().includes(term);
-                    const lessonMatch = (r.lessonTitle || '').toLowerCase().includes(term);
-                    return nameMatch || codeMatch || promptMatch || idMatch || commentMatch || reasonMatch || lessonMatch;
-                  })
-                  .length === 0 ? (
-                  <div className="academic-card" style={{ textAlign: 'center', padding: '36px 20px' }}>
-                    <div
-                      style={{
-                        width: 44,
-                        height: 44,
-                        borderRadius: '50%',
-                        background: '#DCFCE7',
-                        border: '2px solid #000000',
-                        display: 'inline-flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        color: '#15803D',
-                        marginBottom: 10
-                      }}
-                    >
-                      <CheckCircle2 size={24} strokeWidth={2.8} />
-                    </div>
-                    <h4 style={{ margin: '0 0 6px 0', fontSize: '1.05rem', fontWeight: 900, color: '#0F172A' }}>
-                      No hay reportes de preguntas con los filtros seleccionados
-                    </h4>
-                    <p style={{ margin: 0, fontSize: '0.84rem', color: '#64748B' }}>
-                      No se encontraron incidencias activas en los ejercicios según la búsqueda o filtros aplicados.
-                    </p>
-                  </div>
-                ) : (
-                  questionReports
+                {(() => {
+                  const filteredReports = questionReports
                     .filter(r => reportFilterStatus === 'all' || r.status === reportFilterStatus)
                     .filter(r => reportFilterPath === 'all' || r.pathId === reportFilterPath)
                     .filter(r => {
@@ -3257,252 +3228,379 @@ export const AcademicDashboard: React.FC<AcademicDashboardProps> = ({
                       const commentMatch = (r.comment || '').toLowerCase().includes(term);
                       const reasonMatch = (r.reasonLabel || '').toLowerCase().includes(term);
                       const lessonMatch = (r.lessonTitle || '').toLowerCase().includes(term);
-                      return nameMatch || codeMatch || promptMatch || idMatch || commentMatch || reasonMatch || lessonMatch;
-                    })
-                    .map(rep => {
-                      const isReviewed = rep.status === 'reviewed';
-                      const isResolved = rep.status === 'resolved';
+                      const reportersMatch = r.reporters?.some(repItem =>
+                        (repItem.studentName || '').toLowerCase().includes(term) ||
+                        (repItem.studentCode || '').toLowerCase().includes(term) ||
+                        (repItem.comment || '').toLowerCase().includes(term) ||
+                        (repItem.reasonLabel || '').toLowerCase().includes(term)
+                      );
+                      return nameMatch || codeMatch || promptMatch || idMatch || commentMatch || reasonMatch || lessonMatch || reportersMatch;
+                    });
 
-                      return (
+                  if (filteredReports.length === 0) {
+                    return (
+                      <div className="academic-card" style={{ textAlign: 'center', padding: '36px 20px' }}>
                         <div
-                          key={rep.reportId}
-                          className="academic-card"
                           style={{
-                            border: '3px solid #000000',
-                            boxShadow: '6px 6px 0px #000000',
-                            borderRadius: '14px',
-                            padding: '16px',
-                            display: 'flex',
-                            flexDirection: 'column',
-                            gap: 14,
-                            background: '#FFFFFF'
+                            width: 44,
+                            height: 44,
+                            borderRadius: '50%',
+                            background: '#DCFCE7',
+                            border: '2px solid #000000',
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            color: '#15803D',
+                            marginBottom: 10
                           }}
                         >
-                          {/* ═══ 1. BARRA SUPERIOR DE LA FICHA (ESTILO VENTANA / CONSOLA) ═══ */}
-                          <div
-                            style={{
-                              display: 'flex',
-                              alignItems: 'center',
-                              justifyContent: 'space-between',
-                              flexWrap: 'wrap',
-                              gap: 10,
-                              paddingBottom: 10,
-                              borderBottom: '2px solid #000000'
-                            }}
-                          >
-                            {/* Píldoras de contexto técnico */}
-                            <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
-                              {/* Ventana de controles simulados */}
-                              <div style={{ display: 'flex', gap: 4, marginRight: 6 }}>
-                                <div style={{ width: 10, height: 10, borderRadius: '50%', background: '#EF4444', border: '1px solid #000000' }} />
-                                <div style={{ width: 10, height: 10, borderRadius: '50%', background: '#F59E0B', border: '1px solid #000000' }} />
-                                <div style={{ width: 10, height: 10, borderRadius: '50%', background: '#10B981', border: '1px solid #000000' }} />
-                              </div>
+                          <CheckCircle2 size={24} strokeWidth={2.8} />
+                        </div>
+                        <h4 style={{ margin: '0 0 6px 0', fontSize: '1.05rem', fontWeight: 900, color: '#0F172A' }}>
+                          No hay reportes de preguntas con los filtros seleccionados
+                        </h4>
+                        <p style={{ margin: 0, fontSize: '0.84rem', color: '#64748B' }}>
+                          No se encontraron incidencias activas en los ejercicios según la búsqueda o filtros aplicados.
+                        </p>
+                      </div>
+                    );
+                  }
 
-                              <span
-                                style={{
-                                  background: rep.pathId === 'sql' ? '#EEF2FF' : '#E0F2FE',
-                                  color: rep.pathId === 'sql' ? '#4F46E5' : '#0284C7',
-                                  border: '1.5px solid #000000',
-                                  borderRadius: 6,
-                                  padding: '2px 8px',
-                                  fontSize: '0.72rem',
-                                  fontWeight: 900,
-                                  textTransform: 'uppercase'
-                                }}
-                              >
-                                {rep.pathId}
-                              </span>
+                  return filteredReports.map(rep => {
+                    const isReviewed = rep.status === 'reviewed';
+                    const isResolved = rep.status === 'resolved';
 
-                              <span
-                                style={{
-                                  background: '#F1F5F9',
-                                  border: '1.5px solid #000000',
-                                  borderRadius: 6,
-                                  padding: '2px 8px',
-                                  fontSize: '0.72rem',
-                                  fontWeight: 800,
-                                  color: '#0F172A'
-                                }}
-                              >
-                                {rep.lessonTitle}
-                              </span>
+                    const reportersList = (rep.reporters && rep.reporters.length > 0)
+                      ? rep.reporters
+                      : [{
+                          studentId: rep.studentId,
+                          studentName: rep.studentName || 'Estudiante',
+                          studentEmail: rep.studentEmail,
+                          studentCode: rep.studentCode,
+                          reason: rep.reason,
+                          reasonLabel: rep.reasonLabel,
+                          comment: rep.comment,
+                          userAnswer: rep.userAnswer,
+                          timestamp: rep.timestamp || Date.now()
+                        }];
 
-                              <span
-                                style={{
-                                  background: '#FEF3C7',
-                                  border: '1.5px solid #000000',
-                                  borderRadius: 6,
-                                  padding: '2px 8px',
-                                  fontSize: '0.72rem',
-                                  fontWeight: 800,
-                                  color: '#B45309'
-                                }}
-                              >
-                                Tipo: {rep.exerciseType}
-                              </span>
+                    const totalReportersCount = rep.reportCount || reportersList.length;
 
-                              {/* Botón para copiar ID del ejercicio para buscarlo en VSCode */}
-                              <button
-                                type="button"
-                                onClick={() => {
-                                  if (navigator?.clipboard) {
-                                    navigator.clipboard.writeText(rep.exerciseId);
-                                    setCopiedReportId(rep.exerciseId);
-                                    soundService.playToken();
-                                    setTimeout(() => setCopiedReportId(null), 2000);
-                                  }
-                                }}
-                                style={{
-                                  background: copiedReportId === rep.exerciseId ? '#DCFCE7' : '#FFFFFF',
-                                  color: copiedReportId === rep.exerciseId ? '#15803D' : '#0F172A',
-                                  border: '1.5px solid #000000',
-                                  boxShadow: '1.5px 1.5px 0px #000000',
-                                  borderRadius: 6,
-                                  padding: '2px 8px',
-                                  fontSize: '0.72rem',
-                                  fontWeight: 800,
-                                  cursor: 'pointer',
-                                  display: 'inline-flex',
-                                  alignItems: 'center',
-                                  gap: 4
-                                }}
-                                title="Copiar ID del ejercicio para buscarlo en VSCode"
-                              >
-                                <Copy size={12} strokeWidth={2.6} />
-                                <span>{copiedReportId === rep.exerciseId ? '¡Copiado!' : `ID: ${rep.exerciseId}`}</span>
-                              </button>
+                    return (
+                      <div
+                        key={rep.reportId}
+                        className="academic-card"
+                        style={{
+                          border: '3px solid #000000',
+                          boxShadow: '6px 6px 0px #000000',
+                          borderRadius: '14px',
+                          padding: '16px',
+                          display: 'flex',
+                          flexDirection: 'column',
+                          gap: 14,
+                          background: '#FFFFFF'
+                        }}
+                      >
+                        {/* ═══ 1. BARRA SUPERIOR DE LA FICHA (ESTILO VENTANA / CONSOLA) ═══ */}
+                        <div
+                          style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'space-between',
+                            flexWrap: 'wrap',
+                            gap: 10,
+                            paddingBottom: 10,
+                            borderBottom: '2px solid #000000'
+                          }}
+                        >
+                          {/* Píldoras de contexto técnico */}
+                          <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
+                            {/* Ventana de controles simulados */}
+                            <div style={{ display: 'flex', gap: 4, marginRight: 6 }}>
+                              <div style={{ width: 10, height: 10, borderRadius: '50%', background: '#EF4444', border: '1px solid #000000' }} />
+                              <div style={{ width: 10, height: 10, borderRadius: '50%', background: '#F59E0B', border: '1px solid #000000' }} />
+                              <div style={{ width: 10, height: 10, borderRadius: '50%', background: '#10B981', border: '1px solid #000000' }} />
                             </div>
 
-                            {/* Estado y fecha */}
-                            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                              <span style={{ fontSize: '0.74rem', color: '#64748B', fontWeight: 600 }}>
-                                {new Date(rep.timestamp).toLocaleString()}
-                              </span>
+                            <span
+                              style={{
+                                background: rep.pathId === 'sql' ? '#EEF2FF' : '#E0F2FE',
+                                color: rep.pathId === 'sql' ? '#4F46E5' : '#0284C7',
+                                border: '1.5px solid #000000',
+                                borderRadius: 6,
+                                padding: '2px 8px',
+                                fontSize: '0.72rem',
+                                fontWeight: 900,
+                                textTransform: 'uppercase'
+                              }}
+                            >
+                              {rep.pathId}
+                            </span>
 
-                              <select
-                                value={rep.status}
-                                onChange={async (e) => {
-                                  const newStatus = e.target.value as 'pending' | 'reviewed' | 'resolved';
+                            <span
+                              style={{
+                                background: '#F1F5F9',
+                                border: '1.5px solid #000000',
+                                borderRadius: 6,
+                                padding: '2px 8px',
+                                fontSize: '0.72rem',
+                                fontWeight: 800,
+                                color: '#0F172A'
+                              }}
+                            >
+                              {rep.lessonTitle}
+                            </span>
+
+                            <span
+                              style={{
+                                background: '#FEF3C7',
+                                border: '1.5px solid #000000',
+                                borderRadius: 6,
+                                padding: '2px 8px',
+                                fontSize: '0.72rem',
+                                fontWeight: 800,
+                                color: '#B45309'
+                              }}
+                            >
+                              Tipo: {rep.exerciseType}
+                            </span>
+
+                            {/* Badge de reportes concurrentes / agrupados */}
+                            <span
+                              style={{
+                                background: totalReportersCount > 1 ? '#FEE2E2' : '#F1F5F9',
+                                color: totalReportersCount > 1 ? '#DC2626' : '#475569',
+                                border: '1.5px solid #000000',
+                                borderRadius: 6,
+                                padding: '2px 8px',
+                                fontSize: '0.72rem',
+                                fontWeight: 900
+                              }}
+                            >
+                              {totalReportersCount > 1 ? `${totalReportersCount} reportes` : '1 reporte'}
+                            </span>
+
+                            {/* Botón para copiar ID del ejercicio para buscarlo en VSCode */}
+                            <button
+                              type="button"
+                              onClick={() => {
+                                if (navigator?.clipboard) {
+                                  navigator.clipboard.writeText(rep.exerciseId);
+                                  setCopiedReportId(rep.exerciseId);
                                   soundService.playToken();
-                                  await questionReportService.updateReportStatus(rep.reportId, newStatus);
-                                  setQuestionReports(prev =>
-                                    prev.map(r => r.reportId === rep.reportId ? { ...r, status: newStatus } : r)
-                                  );
-                                }}
-                                style={{
-                                  background: isResolved ? '#DCFCE7' : isReviewed ? '#DBEAFE' : '#FEE2E2',
-                                  color: isResolved ? '#15803D' : isReviewed ? '#1D4ED8' : '#B91C1C',
-                                  border: '2px solid #000000',
-                                  boxShadow: '2px 2px 0px #000000',
-                                  borderRadius: 8,
-                                  padding: '3px 8px',
-                                  fontSize: '0.76rem',
-                                  fontWeight: 900,
-                                  cursor: 'pointer'
-                                }}
-                              >
-                                <option value="pending">Pendiente</option>
-                                <option value="reviewed">En Revisión</option>
-                                <option value="resolved">Resuelto</option>
-                              </select>
+                                  setTimeout(() => setCopiedReportId(null), 2000);
+                                }
+                              }}
+                              style={{
+                                background: copiedReportId === rep.exerciseId ? '#DCFCE7' : '#FFFFFF',
+                                color: copiedReportId === rep.exerciseId ? '#15803D' : '#0F172A',
+                                border: '1.5px solid #000000',
+                                boxShadow: '1.5px 1.5px 0px #000000',
+                                borderRadius: 6,
+                                padding: '2px 8px',
+                                fontSize: '0.72rem',
+                                fontWeight: 800,
+                                cursor: 'pointer',
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                gap: 4
+                              }}
+                              title="Copiar ID del ejercicio para buscarlo en el código fuente"
+                            >
+                              <Copy size={12} strokeWidth={2.6} />
+                              <span>{copiedReportId === rep.exerciseId ? '¡Copiado!' : `ID: ${rep.exerciseId}`}</span>
+                            </button>
+                          </div>
+
+                          {/* Estado y fecha */}
+                          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                            <span style={{ fontSize: '0.74rem', color: '#64748B', fontWeight: 600 }}>
+                              {new Date(rep.lastReportedAt || rep.timestamp).toLocaleString()}
+                            </span>
+
+                            <select
+                              value={rep.status}
+                              onChange={async (e) => {
+                                const newStatus = e.target.value as 'pending' | 'reviewed' | 'resolved';
+                                soundService.playToken();
+                                await questionReportService.updateReportStatus(rep.reportId, newStatus);
+                                setQuestionReports(prev =>
+                                  prev.map(r => r.reportId === rep.reportId ? { ...r, status: newStatus } : r)
+                                );
+                              }}
+                              style={{
+                                background: isResolved ? '#DCFCE7' : isReviewed ? '#DBEAFE' : '#FEE2E2',
+                                color: isResolved ? '#15803D' : isReviewed ? '#1D4ED8' : '#B91C1C',
+                                border: '2px solid #000000',
+                                boxShadow: '2px 2px 0px #000000',
+                                borderRadius: 8,
+                                padding: '3px 8px',
+                                fontSize: '0.76rem',
+                                fontWeight: 900,
+                                cursor: 'pointer'
+                              }}
+                            >
+                              <option value="pending">Pendiente</option>
+                              <option value="reviewed">En Revisión</option>
+                              <option value="resolved">Resuelto</option>
+                            </select>
+                          </div>
+                        </div>
+
+                        {/* ═══ 2. REPORTADA POR (EN PEQUEÑO PARA QUE NO ESTORBE) Y MOTIVOS ═══ */}
+                        <div
+                          style={{
+                            background: '#F8FAFC',
+                            border: '1.5px solid #000000',
+                            borderRadius: 10,
+                            padding: '10px 12px',
+                            display: 'flex',
+                            flexDirection: 'column',
+                            gap: 8
+                          }}
+                        >
+                          {/* Fila de Reportada por: con badges pequeños de estudiantes */}
+                          <div>
+                            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 6, flexWrap: 'wrap', gap: 6 }}>
+                              <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                                <span style={{ fontSize: '0.74rem', fontWeight: 900, textTransform: 'uppercase', color: '#475569', letterSpacing: '0.5px' }}>
+                                  Reportada por:
+                                </span>
+                                <span
+                                  style={{
+                                    background: reportersList.length > 1 ? '#FEE2E2' : '#E2E8F0',
+                                    color: reportersList.length > 1 ? '#DC2626' : '#475569',
+                                    border: '1px solid #000000',
+                                    borderRadius: 4,
+                                    padding: '1px 6px',
+                                    fontSize: '0.68rem',
+                                    fontWeight: 800
+                                  }}
+                                >
+                                  {reportersList.length} {reportersList.length === 1 ? 'estudiante' : 'estudiantes'}
+                                </span>
+                              </div>
+
+                              {reportersList.length > 1 && (
+                                <span style={{ fontSize: '0.68rem', color: '#DC2626', fontWeight: 800 }}>
+                                  Múltiples alumnos detectaron este problema
+                                </span>
+                              )}
+                            </div>
+
+                            {/* Badges de alumnos en formato pequeño y ordenado */}
+                            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, alignItems: 'center' }}>
+                              {reportersList.map((r, rIdx) => (
+                                <div
+                                  key={r.studentId + '_' + rIdx}
+                                  style={{
+                                    display: 'inline-flex',
+                                    alignItems: 'center',
+                                    gap: 5,
+                                    background: '#FFFFFF',
+                                    border: '1.5px solid #000000',
+                                    boxShadow: '1.5px 1.5px 0px #000000',
+                                    borderRadius: 6,
+                                    padding: '2px 8px',
+                                    fontSize: '0.72rem',
+                                    color: '#0F172A',
+                                    lineHeight: 1.2
+                                  }}
+                                >
+                                  <div
+                                    style={{
+                                      width: 16,
+                                      height: 16,
+                                      borderRadius: '50%',
+                                      background: '#0F172A',
+                                      color: '#FFFFFF',
+                                      display: 'flex',
+                                      alignItems: 'center',
+                                      justifyContent: 'center',
+                                      fontSize: '0.6rem',
+                                      fontWeight: 900
+                                    }}
+                                  >
+                                    {r.studentName.charAt(0).toUpperCase()}
+                                  </div>
+                                  <span style={{ fontWeight: 800 }}>{r.studentName}</span>
+                                  {r.studentCode && (
+                                    <span style={{ color: '#64748B', fontWeight: 700, fontSize: '0.68rem' }}>
+                                      ({r.studentCode})
+                                    </span>
+                                  )}
+                                  {r.studentEmail && (
+                                    <span style={{ color: '#94A3B8', fontSize: '0.64rem' }}>
+                                      · {r.studentEmail}
+                                    </span>
+                                  )}
+                                </div>
+                              ))}
                             </div>
                           </div>
 
-                          {/* ═══ 2. ALUMNO QUE REPORTÓ Y MOTIVO IDENTIFICADO ═══ */}
-                          <div
-                            style={{
-                              background: '#F8FAFC',
-                              border: '1.5px solid #000000',
-                              borderRadius: 10,
-                              padding: '10px 12px',
-                              display: 'flex',
-                              flexDirection: 'column',
-                              gap: 8
-                            }}
-                          >
-                            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 8 }}>
-                              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                                <div
-                                  style={{
-                                    width: 28,
-                                    height: 28,
-                                    borderRadius: '50%',
-                                    background: '#0F172A',
-                                    color: '#FFFFFF',
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    justifyContent: 'center',
-                                    fontSize: '0.72rem',
-                                    fontWeight: 900,
-                                    border: '1.5px solid #000000'
-                                  }}
-                                >
-                                  {rep.studentName.charAt(0).toUpperCase()}
-                                </div>
-                                <div>
-                                  <span style={{ fontSize: '0.86rem', fontWeight: 900, color: '#0F172A' }}>
-                                    {rep.studentName}
-                                  </span>
-                                  {rep.studentCode && (
-                                    <span style={{ fontSize: '0.76rem', color: '#64748B', fontWeight: 700, marginLeft: 6 }}>
-                                      ({rep.studentCode})
-                                    </span>
-                                  )}
-                                  {rep.studentEmail && (
-                                    <span style={{ fontSize: '0.74rem', color: '#94A3B8', marginLeft: 6 }}>
-                                      · {rep.studentEmail}
-                                    </span>
-                                  )}
-                                </div>
-                              </div>
-
-                              <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                                <span style={{ fontSize: '0.74rem', fontWeight: 800, color: '#64748B' }}>Motivo:</span>
-                                <span
-                                  style={{
-                                    background: '#FEE2E2',
-                                    color: '#B91C1C',
-                                    border: '1.5px solid #DC2626',
-                                    borderRadius: 6,
-                                    padding: '2px 8px',
-                                    fontSize: '0.74rem',
-                                    fontWeight: 900
-                                  }}
-                                >
-                                  {rep.reasonLabel}
-                                </span>
-                              </div>
-                            </div>
-
-                            {/* Comentario específico del alumno */}
-                            {rep.comment ? (
+                          {/* Desglose compacto de comentarios y motivos por alumno */}
+                          <div style={{ display: 'flex', flexDirection: 'column', gap: 6, marginTop: 2 }}>
+                            {reportersList.map((r, rIdx) => (
                               <div
+                                key={'detail_' + r.studentId + '_' + rIdx}
                                 style={{
                                   background: '#FFF1F2',
-                                  border: '1.5px solid #FDA4AF',
+                                  border: '1px solid #FECDD3',
                                   borderRadius: 8,
-                                  padding: '8px 10px',
-                                  fontSize: '0.82rem',
-                                  color: '#881337',
-                                  fontWeight: 600,
+                                  padding: '7px 10px',
+                                  fontSize: '0.78rem',
                                   lineHeight: 1.35
                                 }}
                               >
-                                <strong style={{ color: '#BE123C' }}>Comentario del estudiante:</strong> "{rep.comment}"
-                              </div>
-                            ) : (
-                              <div style={{ fontSize: '0.74rem', color: '#94A3B8', fontStyle: 'italic' }}>
-                                (El alumno envió el reporte directo mediante el selector sin agregar comentario de texto adicional)
-                              </div>
-                            )}
+                                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 6, marginBottom: 2 }}>
+                                  <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                                    <strong style={{ color: '#9F1239', fontSize: '0.80rem' }}>{r.studentName}</strong>
+                                    <span style={{ fontSize: '0.68rem', color: '#94A3B8' }}>
+                                      {new Date(r.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                    </span>
+                                  </div>
 
-                            {rep.deviceInfo && (
-                              <div style={{ fontSize: '0.68rem', color: '#94A3B8' }}>
-                                Dispositivo: {rep.deviceInfo}
+                                  <span
+                                    style={{
+                                      background: '#FEE2E2',
+                                      color: '#B91C1C',
+                                      border: '1px solid #DC2626',
+                                      borderRadius: 4,
+                                      padding: '1px 6px',
+                                      fontSize: '0.68rem',
+                                      fontWeight: 800
+                                    }}
+                                  >
+                                    {r.reasonLabel}
+                                  </span>
+                                </div>
+
+                                {r.comment ? (
+                                  <div style={{ color: '#881337', marginTop: 3 }}>
+                                    <span style={{ fontWeight: 700 }}>Comentario:</span> "{r.comment}"
+                                  </div>
+                                ) : (
+                                  <div style={{ color: '#94A3B8', fontSize: '0.70rem', fontStyle: 'italic', marginTop: 2 }}>
+                                    (Sin comentario de texto adicional)
+                                  </div>
+                                )}
+
+                                {r.userAnswer && (
+                                  <div style={{ color: '#475569', fontSize: '0.70rem', marginTop: 3 }}>
+                                    <span style={{ fontWeight: 700 }}>Respuesta que marcó el alumno:</span> {r.userAnswer}
+                                  </div>
+                                )}
                               </div>
-                            )}
+                            ))}
                           </div>
+
+                          {rep.deviceInfo && (
+                            <div style={{ fontSize: '0.68rem', color: '#94A3B8' }}>
+                              Dispositivo: {rep.deviceInfo}
+                            </div>
+                          )}
+                        </div>
 
                           {/* ═══ 3. "CAPTURA DE PANTALLA" INTERACTIVA DEL EJERCICIO COMPLETO ═══ */}
                           <div
@@ -3957,8 +4055,8 @@ export const AcademicDashboard: React.FC<AcademicDashboardProps> = ({
                           </div>
                         </div>
                       );
-                    })
-                )}
+                    });
+                  })()}
               </div>
             </div>
           )}

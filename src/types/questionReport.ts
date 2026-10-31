@@ -7,12 +7,30 @@ export type QuestionReportReason =
   | 'ui_issue'           // Falla visual, interfaz congelada o botón no responde
   | 'other';             // Otro problema o sugerencia
 
-export interface QuestionReport {
-  reportId: string;
+export interface QuestionReporter {
   studentId: string;
   studentName: string;
   studentEmail?: string;
   studentCode?: string;
+  reason: QuestionReportReason;
+  reasonLabel: string;
+  comment?: string;
+  userAnswer?: string;
+  timestamp: number;
+}
+
+export interface QuestionReport {
+  reportId: string;
+  // Alumno del primer o más reciente reporte (compatibilidad directa)
+  studentId: string;
+  studentName: string;
+  studentEmail?: string;
+  studentCode?: string;
+
+  // Lista agregada de todos los estudiantes que han reportado esta misma pregunta
+  reporters?: QuestionReporter[];
+  reportCount?: number;
+  lastReportedAt?: number;
 
   // Identificación del contexto pedagógico
   pathId: 'kotlin' | 'sql';

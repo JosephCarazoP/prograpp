@@ -239,7 +239,7 @@ export const QuestionReportModal: React.FC<QuestionReportModalProps> = ({
 
     const currentReasonObj = REPORT_REASONS.find(r => r.key === selectedReason) || REPORT_REASONS[0];
     const pathId: 'kotlin' | 'sql' = (lesson?.path === 'sql' || user.currentPath === 'sql') ? 'sql' : 'kotlin';
-    const reportId = `rep_${exercise.id}_${user.uid}_${Date.now()}`;
+    const reportId = questionReportService.getDeterministicReportId(pathId, exercise.id);
 
     const report: QuestionReport = {
       reportId,
