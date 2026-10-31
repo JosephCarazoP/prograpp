@@ -239,6 +239,14 @@ export const notificationService = {
     const dismissedLocal = user?.uid ? storageService.getItem<string[]>('dismissed_notifs_' + user.uid, []) : [];
 
     const userNotifs = all.filter(n => {
+      // Los reportes de errores son exclusivos del Seguimiento Docente; no deben aparecer en la bandeja de notificaciones
+      if (
+        n.sender === 'Detector de Errores' ||
+        n.title?.startsWith('🚩 Reporte en') ||
+        n.title?.startsWith('🚩 [x')
+      ) {
+        return false;
+      }
       // Si el alumno la eliminó de su bandeja personal, no se le muestra
       if ((user?.uid && n.dismissedBy?.includes(user.uid)) || dismissedLocal.includes(n.id)) {
         return false;

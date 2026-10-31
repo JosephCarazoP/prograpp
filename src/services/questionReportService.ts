@@ -11,7 +11,6 @@ import {
 import { db, isLocalMockMode } from '../config/firebase';
 import { QuestionReport, QuestionReporter } from '../types/questionReport';
 import { storageService } from './storageService';
-import { notificationService } from './notificationService';
 
 const STORAGE_KEY = 'question_reports';
 
@@ -231,23 +230,8 @@ export const questionReportService = {
           // No crítico
         }
 
-        // 5. Notificación docente en tiempo real
-        try {
-          const isMultiple = consolidatedReport.reportCount! > 1;
-          await notificationService.sendNotification({
-            title: isMultiple
-              ? `🚩 [x${consolidatedReport.reportCount}] Reporte en ${report.pathId === 'sql' ? 'SQL' : 'Kotlin'}: ${report.lessonTitle}`
-              : `🚩 Reporte en ${report.pathId === 'sql' ? 'SQL' : 'Kotlin'}: ${report.lessonTitle}`,
-            message: isMultiple
-              ? `${report.studentName} y otros ${consolidatedReport.reportCount! - 1} alumnos reportaron este ejercicio. Motivo: "${report.reasonLabel}".`
-              : `${report.studentName} (${report.studentCode || 'Estudiante'}) reportó: "${report.reasonLabel}". Pregunta: ${report.prompt.slice(0, 75)}...`,
-            type: 'urgent_alert',
-            targetType: 'all',
-            sender: 'Detector de Errores'
-          });
-        } catch (notifErr) {
-          console.warn('[questionReportService] No se pudo enviar notificación push:', notifErr);
-        }
+        // Los reportes no se envían a notificaciones generales para no interrumpir a los alumnos;
+        // quedan registrados exclusivamente en el panel de Seguimiento para el profesor.
       } catch (err) {
         console.error('[questionReportService] Error al sincronizar con Firestore:', err);
       }

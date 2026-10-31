@@ -13,7 +13,8 @@ import {
   Database,
   Edit3,
   RotateCcw,
-  AlertTriangle
+  AlertTriangle,
+  Flag
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import {
@@ -25,12 +26,14 @@ import {
 } from '../utils/codeRunner';
 import { TheoryLesson } from '../types/theory';
 import { UserProfile } from '../types/user';
+import { DEFAULT_PROFILE } from '../services/userService';
 import { soundService } from '../services/soundService';
 import { leagueService } from '../services/leagueService';
 import { VSCodeSnippet } from './VSCodeSnippet';
 import { ConsoleDevAvatar } from './ConsoleAvatar';
 import { getLessonById } from '../content';
 import { FormattedText } from './FormattedText';
+import { QuestionReportModal } from './QuestionReportModal';
 
 /* ═══ LOGOS VECTORIALES OFICIALES ═══ */
 const KotlinLogo: React.FC<{ size?: number }> = ({ size = 20 }) => (
@@ -106,6 +109,7 @@ export const TheoryViewer: React.FC<TheoryViewerProps> = ({
   const [selectedQuizOption, setSelectedQuizOption] = useState<number | null>(null);
   const [isQuizAnswerChecked, setIsQuizAnswerChecked] = useState(false);
   const [isQuizCompleted, setIsQuizCompleted] = useState(false);
+  const [isReportModalOpen, setIsReportModalOpen] = useState(false);
 
   // Extraer exactamente 3 preguntas conceptuales ágiles del banco de la lección
   const quickQuizQuestions: QuickQuizItem[] = useMemo(() => {
@@ -228,6 +232,26 @@ export const TheoryViewer: React.FC<TheoryViewerProps> = ({
 
       if (onCompleteTheory) {
         await onCompleteTheory(theory.lessonId);
+      }
+    }
+  };
+
+  // Omitir/saltar de inmediato una pregunta reportada por bug en el Quiz Exprés
+  const handleSkipReportedQuizQuestion = () => {
+    soundService.playToken();
+    if (quizIndex < quickQuizQuestions.length - 1) {
+      setQuizIndex(prev => prev + 1);
+      setSelectedQuizOption(null);
+      setIsQuizAnswerChecked(false);
+    } else {
+      soundService.playWin();
+      confetti({ particleCount: 90, spread: 80, origin: { y: 0.55 } });
+      setIsQuizCompleted(true);
+      if (user?.uid) {
+        leagueService.recordQuizCompleted(user.uid, theory.lessonId);
+      }
+      if (onCompleteTheory) {
+        onCompleteTheory(theory.lessonId);
       }
     }
   };
@@ -370,22 +394,51 @@ export const TheoryViewer: React.FC<TheoryViewerProps> = ({
         >
           {!isQuizCompleted ? (
             <div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-                <span
-                  style={{
-                    background: '#4ADE80',
-                    border: '2px solid #000000',
-                    boxShadow: '2px 2px 0px #000000',
-                    color: '#000000',
-                    fontSize: '0.74rem',
-                    fontWeight: 900,
-                    padding: '3px 10px',
-                    borderRadius: '8px',
-                    textTransform: 'uppercase'
-                  }}
-                >
-                  Quiz de Validación • Pregunta {quizIndex + 1} de {quickQuizQuestions.length}
-                </span>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px', flexWrap: 'wrap', gap: '8px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+                  <span
+                    style={{
+                      background: '#4ADE80',
+                      border: '2px solid #000000',
+                      boxShadow: '2px 2px 0px #000000',
+                      color: '#000000',
+                      fontSize: '0.74rem',
+                      fontWeight: 900,
+                      padding: '3px 10px',
+                      borderRadius: '8px',
+                      textTransform: 'uppercase'
+                    }}
+                  >
+                    Quiz de Validación • Pregunta {quizIndex + 1} de {quickQuizQuestions.length}
+                  </span>
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      soundService.playToken();
+                      setIsReportModalOpen(true);
+                    }}
+                    style={{
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '4px',
+                      background: '#FFFFFF',
+                      border: '1.5px solid #000000',
+                      boxShadow: '2px 2px 0px #000000',
+                      borderRadius: '8px',
+                      padding: '3px 8px',
+                      fontSize: '0.74rem',
+                      fontWeight: 800,
+                      color: '#DC2626',
+                      cursor: 'pointer'
+                    }}
+                    className="active:translate-x-[1px] active:translate-y-[1px] active:shadow-none hover:bg-red-50"
+                    title="Reportar problema con esta pregunta"
+                  >
+                    <Flag size={12} strokeWidth={2.4} fill="#FEE2E2" />
+                    <span>Reportar</span>
+                  </button>
+                </div>
 
                 <div style={{ display: 'flex', gap: '5px' }}>
                   {quickQuizQuestions.map((_, i) => (
@@ -1713,6 +1766,35 @@ export const TheoryViewer: React.FC<TheoryViewerProps> = ({
             </button>
           </div>
         </article>
+      )}
+
+      {/* Modal para reportar problemas en el quiz exprés de la materia */}
+      {isReportModalOpen && currentQuizExercise && (
+        <QuestionReportModal
+          isOpen={isReportModalOpen}
+          onClose={() => setIsReportModalOpen(false)}
+          user={user || DEFAULT_PROFILE}
+          lesson={{
+            id: theory.lessonId,
+            title: theory.title,
+            unit: theory.unitId,
+            path: isKotlin ? 'kotlin' : 'sql'
+          }}
+          exercise={{
+            id: currentQuizExercise.id,
+            type: 'predict_output',
+            prompt: currentQuizExercise.prompt,
+            codeSnippet: currentQuizExercise.codeSnippet,
+            options: currentQuizExercise.options,
+            explanation: currentQuizExercise.explanation,
+            correctOptionIndex: currentQuizExercise.correctIndex
+          }}
+          selectedOptionIndex={selectedQuizOption}
+          userAnswer={selectedQuizOption !== null ? currentQuizExercise.options[selectedQuizOption] : undefined}
+          feedbackState={isQuizAnswerChecked ? (selectedQuizOption === currentQuizExercise.correctIndex ? 'success' : 'error') : 'idle'}
+          feedbackExplanation={currentQuizExercise.explanation}
+          onReportSubmitted={handleSkipReportedQuizQuestion}
+        />
       )}
     </div>
   );

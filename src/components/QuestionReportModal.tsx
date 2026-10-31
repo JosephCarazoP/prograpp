@@ -319,8 +319,8 @@ export const QuestionReportModal: React.FC<QuestionReportModalProps> = ({
       aria-modal="true"
       aria-labelledby="report-modal-title"
       onClick={(e) => {
-        if (e.target === e.currentTarget && !isSubmitting && !isSent) {
-          onClose();
+        if (e.target === e.currentTarget && !isSubmitting) {
+          handleFinishAndClose();
         }
       }}
     >
@@ -392,7 +392,7 @@ export const QuestionReportModal: React.FC<QuestionReportModalProps> = ({
             onClick={() => {
               if (!isSubmitting) {
                 soundService.playToken();
-                onClose();
+                handleFinishAndClose();
               }
             }}
             disabled={isSubmitting}
