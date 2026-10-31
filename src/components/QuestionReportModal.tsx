@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useRef } from 'react';
 import {
   X,
   Flag,
@@ -8,7 +8,8 @@ import {
   HelpCircle,
   Bug,
   FileText,
-  Layers
+  Layers,
+  ArrowRight
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { UserProfile } from '../types/user';
@@ -116,6 +117,23 @@ export const QuestionReportModal: React.FC<QuestionReportModalProps> = ({
   const [comment, setComment] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSent, setIsSent] = useState(false);
+  const submittedReportRef = useRef<QuestionReport | null>(null);
+  const timerRef = useRef<any>(null);
+
+  const handleFinishAndClose = () => {
+    if (timerRef.current) {
+      clearTimeout(timerRef.current);
+      timerRef.current = null;
+    }
+    const reportToEmit = submittedReportRef.current;
+    setIsSent(false);
+    setIsSubmitting(false);
+    setComment('');
+    onClose();
+    if (reportToEmit && onReportSubmitted) {
+      onReportSubmitted(reportToEmit);
+    }
+  };
 
   // Extracción exhaustiva y determinística de la pregunta, opciones y respuestas
   const details = useMemo(() => {
@@ -270,17 +288,12 @@ export const QuestionReportModal: React.FC<QuestionReportModalProps> = ({
         // Ignorar si confetti falla
       }
 
+      submittedReportRef.current = report;
       setIsSent(true);
-      if (onReportSubmitted) {
-        onReportSubmitted(report);
-      }
 
-      setTimeout(() => {
-        setIsSent(false);
-        setIsSubmitting(false);
-        setComment('');
-        onClose();
-      }, 2200);
+      timerRef.current = setTimeout(() => {
+        handleFinishAndClose();
+      }, 1900);
     } catch (err) {
       console.error('[QuestionReportModal] Error al enviar reporte:', err);
       setIsSubmitting(false);
@@ -434,11 +447,34 @@ export const QuestionReportModal: React.FC<QuestionReportModalProps> = ({
                 <CheckCircle2 size={32} strokeWidth={2.8} />
               </div>
               <h3 style={{ margin: 0, fontSize: '1.25rem', fontWeight: 900, color: '#0F172A' }}>
-                Reporte registrado con éxito
+                ¡Reporte Registrado con Éxito!
               </h3>
-              <p style={{ margin: 0, fontSize: '0.86rem', color: '#475569', maxWidth: '380px', lineHeight: 1.45, fontWeight: 600 }}>
-                Se envió el enunciado, las opciones y la respuesta esperada al sistema para su revisión y corrección técnica.
+              <p style={{ margin: 0, fontSize: '0.88rem', color: '#334155', maxWidth: '420px', lineHeight: 1.45, fontWeight: 700 }}>
+                Se enviaron todos los detalles al profesor para su corrección. Esta pregunta ha sido omitida para que continúes aprendiendo sin bloqueos ni penalizaciones.
               </p>
+              <button
+                type="button"
+                onClick={handleFinishAndClose}
+                style={{
+                  marginTop: '6px',
+                  background: '#22C55E',
+                  color: '#FFFFFF',
+                  border: '2.5px solid #000000',
+                  boxShadow: '3px 3px 0px #000000',
+                  borderRadius: '12px',
+                  padding: '10px 24px',
+                  fontSize: '0.92rem',
+                  fontWeight: 900,
+                  cursor: 'pointer',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '8px'
+                }}
+                className="active:translate-x-[1px] active:translate-y-[1px] active:shadow-none hover:bg-green-600"
+              >
+                <span>Continuar Reto</span>
+                <ArrowRight size={17} strokeWidth={2.8} />
+              </button>
             </div>
           ) : (
             <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>

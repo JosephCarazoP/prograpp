@@ -174,6 +174,22 @@ export const TheoryCheckpointModal: React.FC<TheoryCheckpointModalProps> = ({
     }
   };
 
+  // Omitir/saltar pregunta reportada en el micro-quiz para evitar bloqueos
+  const handleSkipReportedQuestion = () => {
+    soundService.playToken();
+    if (currentQuizIndex + 1 < quizQuestions.length) {
+      setCurrentQuizIndex(prev => prev + 1);
+      setSelectedOption(null);
+      setIsAnswerChecked(false);
+      setIsCorrect(false);
+    } else {
+      // Si era la última pregunta del micro-quiz, desbloquear directamente
+      soundService.playWin();
+      confetti({ particleCount: 70, spread: 65, origin: { y: 0.6 } });
+      setStep('unlocked');
+    }
+  };
+
   const primarySection = theory?.sections[0];
 
   return (
@@ -897,6 +913,7 @@ export const TheoryCheckpointModal: React.FC<TheoryCheckpointModalProps> = ({
           userAnswer={selectedOption !== null ? currentQuestion.options[selectedOption] : undefined}
           feedbackState={isAnswerChecked ? (isCorrect ? 'success' : 'error') : 'idle'}
           feedbackExplanation={currentQuestion.explanation}
+          onReportSubmitted={handleSkipReportedQuestion}
         />
       )}
     </div>

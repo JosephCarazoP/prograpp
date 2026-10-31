@@ -55,6 +55,7 @@ import { AcademicDashboard } from './components/AcademicDashboard';
 import { EvaluationPage } from './components/EvaluationPage';
 import { ActivityOpinionModal } from './components/ActivityOpinionModal';
 import { QuestionReportModal } from './components/QuestionReportModal';
+import { QuestionReport } from './types/questionReport';
 import { StreakCelebrationModal } from './components/StreakCelebrationModal';
 import { StorePage } from './components/StorePage';
 import { SeasonPathPage } from './components/SeasonPathPage';
@@ -1249,6 +1250,57 @@ export default function App() {
       } else {
         setOpinionActivityId(null);
       }
+    }
+  };
+
+  // Omitir/saltar de inmediato una pregunta reportada por bug (Anti-bloqueo y justicia pedagógica)
+  const handleSkipReportedExercise = (report: QuestionReport) => {
+    if (!activeLesson || !currentExercise) return;
+
+    // 1. Si el alumno había marcado una opción errónea previa al reporte, revertir el mistake
+    // para no perjudicar la nota, vidas ni las estrellas de la lección.
+    if (feedbackState === 'error') {
+      setLessonMistakes(prev => Math.max(0, prev - 1));
+    }
+
+    // 2. Limpiar del resto de la cola cualquier re-aparición futura de esta pregunta reportada
+    const cleanedQueue = lessonQueue.filter((ex, idx) => idx <= currentQueueIndex || ex.id !== currentExercise.id);
+    setLessonQueue(cleanedQueue);
+
+    // 3. Registrar el intento académico como omitido por reporte técnico para el profesor
+    if (user.uid && user.uid !== 'guest_user_1') {
+      academicService.recordAttempt({
+        attemptId: `att_${user.uid}_${currentExercise.id}_${Date.now()}`,
+        studentId: user.uid,
+        studentCode: user.studentCode || 'E01',
+        sessionId: activeSessionId,
+        pathId: activeLesson.path,
+        unitId: activeLesson.unit,
+        lessonId: activeLesson.id,
+        activityId: currentExercise.id,
+        contentVersion: '1.0.0',
+        theme: activeLesson.title,
+        difficulty: 'medium',
+        attemptNumber: (exerciseAttemptsMap[currentExercise.id] || 0) + 1,
+        userAnswer: `[Pregunta omitida por reporte técnico: ${report.reasonLabel}]`,
+        status: 'correct',
+        score: currentExercise.xpReward,
+        maxScore: currentExercise.xpReward,
+        hintUsed: false,
+        timestamp: Date.now()
+      }).catch(err => console.warn('Error al registrar intento omitido:', err));
+    }
+
+    // 4. Saltar a la siguiente pregunta o finalizar la lección si era la última
+    if (currentQueueIndex < cleanedQueue.length - 1) {
+      soundService.playToken();
+      setCurrentQueueIndex(prev => prev + 1);
+      resetExerciseState();
+      setFeedbackState('idle');
+      setFeedbackExplanation('');
+    } else {
+      // Era la última pregunta: completar la lección
+      handleContinue();
     }
   };
 
@@ -2791,6 +2843,7 @@ export default function App() {
           selectedTokenIndices={selectedTokenIndices}
           feedbackState={feedbackState}
           feedbackExplanation={feedbackExplanation}
+          onReportSubmitted={handleSkipReportedExercise}
         />
       )}
 
