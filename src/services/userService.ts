@@ -1,7 +1,14 @@
 import { doc, getDoc, setDoc, collection, getDocs, deleteDoc } from 'firebase/firestore';
-import { db, isLocalMockMode } from '../config/firebase';
+import { app, db, auth, isLocalMockMode } from '../config/firebase';
 import { UserProfile, LeagueTier } from '../types/user';
 import { storageService } from './storageService';
+
+export interface DeleteStudentResult {
+  firestoreDeleted: boolean;
+  authDeleted: boolean;
+  message?: string;
+  warning?: string;
+}
 
 export const DEFAULT_POWERUPS = {
   teacherHint: 2,
@@ -411,27 +418,128 @@ export const userService = {
     await this.updateProfile(updated);
   },
 
-  // Eliminar estudiante de Firestore y limpiar cachés locales (Solo Administrador)
-  async deleteStudent(uid: string): Promise<void> {
+  // Eliminar estudiante de Firestore y de Firebase Authentication (Solo Administrador)
+  async deleteStudent(uid: string): Promise<DeleteStudentResult> {
+    let firestoreDeleted = false;
+    let authDeleted = false;
+    let warningMsg: string | undefined = undefined;
+
+    // 1. Limpieza en Firestore (lado del cliente como administrador)
     if (!isLocalMockMode && db) {
       try {
         const userDocRef = doc(db, 'users', uid);
         await deleteDoc(userDocRef);
+
         // Eliminar presencia si existe
         try {
           const presenceRef = doc(db, 'presence', uid);
           await deleteDoc(presenceRef);
         } catch {}
+
+        // Eliminar perfil público si existe
+        try {
+          const publicRef = doc(db, 'publicProfiles', uid);
+          await deleteDoc(publicRef);
+        } catch {}
+
+        firestoreDeleted = true;
       } catch (err) {
-        console.warn('[userService] Error al eliminar usuario de Firestore:', err);
+        console.warn('[userService] Error al eliminar usuario de Firestore vía SDK cliente:', err);
       }
+    } else {
+      // Modo local / mock
+      firestoreDeleted = true;
     }
+
     // Limpiar claves locales asociadas
     try {
       storageService.removeItem('academic_attempts_' + uid);
       storageService.removeItem('academic_evaluations_' + uid);
       storageService.removeItem('user_presence_' + uid);
     } catch {}
+
+    // En modo mock local, consideramos la cuenta como eliminada localmente
+    if (isLocalMockMode) {
+      return {
+        firestoreDeleted: true,
+        authDeleted: true,
+        message: 'Estudiante eliminado de Firestore y de Authentication (Modo Local / Mock).'
+      };
+    }
+
+    // 2. Eliminar de Firebase Authentication a través del Backend
+    const currentUser = auth?.currentUser;
+    let idToken: string | null = null;
+    if (currentUser) {
+      try {
+        idToken = await currentUser.getIdToken(true);
+      } catch (tokErr) {
+        console.warn('[userService] No se pudo obtener ID token del administrador:', tokErr);
+      }
+    }
+
+    // Intento A: Invocar Vercel Serverless Function (/api/delete-student)
+    if (idToken) {
+      try {
+        const response = await fetch('/api/delete-student', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${idToken}`
+          },
+          body: JSON.stringify({ uid })
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          if (data.authDeleted || data.success) {
+            authDeleted = true;
+            firestoreDeleted = true;
+          } else if (data.message || data.error) {
+            warningMsg = data.message || data.error;
+          }
+        } else if (response.status === 404) {
+          // No está desplegado en Vercel o la ruta no existe en este host
+          throw new Error('ROUTE_NOT_FOUND');
+        } else {
+          const errorData = await response.json().catch(() => ({}));
+          warningMsg = errorData.message || errorData.error || `HTTP ${response.status}`;
+        }
+      } catch (fetchErr: any) {
+        if (fetchErr?.message !== 'ROUTE_NOT_FOUND') {
+          console.warn('[userService] Error llamando a /api/delete-student:', fetchErr);
+        }
+      }
+    }
+
+    // Intento B: Si no se eliminó en Intento A, intentar invocar Firebase Cloud Function ('deleteStudent')
+    if (!authDeleted && app) {
+      try {
+        const { getFunctions, httpsCallable } = await import('firebase/functions');
+        const functions = getFunctions(app);
+        const deleteStudentFn = httpsCallable<{ uid: string }, { success: boolean; authDeleted?: boolean; firestoreDeleted?: boolean; message?: string }>(functions, 'deleteStudent');
+        const res = await deleteStudentFn({ uid });
+        if (res.data?.success || res.data?.authDeleted) {
+          authDeleted = true;
+          firestoreDeleted = true;
+          warningMsg = undefined;
+        }
+      } catch (cfErr: any) {
+        console.warn('[userService] Error llamando a Cloud Function deleteStudent:', cfErr);
+        if (!warningMsg) {
+          warningMsg = cfErr?.message || 'No se pudo contactar el servicio de backend para Authentication.';
+        }
+      }
+    }
+
+    return {
+      firestoreDeleted,
+      authDeleted,
+      message: authDeleted
+        ? 'Estudiante eliminado exitosamente de Firestore y de Firebase Authentication.'
+        : 'Estudiante eliminado de Firestore.',
+      warning: authDeleted ? undefined : warningMsg
+    };
   }
 };
 

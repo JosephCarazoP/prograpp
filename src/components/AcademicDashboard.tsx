@@ -492,16 +492,21 @@ export const AcademicDashboard: React.FC<AcademicDashboardProps> = ({
     soundService.playWin();
   };
 
-  // Confirmar eliminación permanente de estudiante (Firestore)
+  // Confirmar eliminación permanente de estudiante (Firestore y Authentication)
   const handleConfirmDeleteStudent = async () => {
     if (!studentToDelete) return;
     setIsDeletingStudent(true);
     soundService.playToken();
     try {
-      await userService.deleteStudent(studentToDelete.uid);
+      const result = await userService.deleteStudent(studentToDelete.uid);
       setStudents(prev => prev.filter(s => s.uid !== studentToDelete.uid));
-      setDeleteSuccessMsg(`El estudiante ${studentToDelete.displayName} fue eliminado de la plataforma.`);
-      setTimeout(() => setDeleteSuccessMsg(''), 5000);
+      if (result.authDeleted) {
+        setDeleteSuccessMsg(`El estudiante ${studentToDelete.displayName} fue eliminado permanentemente de Firestore y de Firebase Authentication.`);
+      } else {
+        const detail = result.warning ? ` (${result.warning})` : '';
+        setDeleteSuccessMsg(`El estudiante ${studentToDelete.displayName} fue eliminado de Firestore. Nota sobre Authentication: Configurar credenciales en Vercel${detail}.`);
+      }
+      setTimeout(() => setDeleteSuccessMsg(''), 8000);
       if (selectedStudentUid === studentToDelete.uid) {
         setSelectedStudentUid(null);
         setActiveTab('group');
@@ -1605,7 +1610,7 @@ export const AcademicDashboard: React.FC<AcademicDashboardProps> = ({
                                 setStudentToDelete(st);
                               }}
                               className="academic-card-del-btn"
-                              title="Eliminar este estudiante de la plataforma (Firestore)"
+                              title="Eliminar este estudiante permanentemente (Firestore y Authentication)"
                               aria-label="Eliminar Estudiante"
                             >
                               <Trash2 size={17} strokeWidth={2.2} />
@@ -1761,7 +1766,7 @@ export const AcademicDashboard: React.FC<AcademicDashboardProps> = ({
                                       borderRadius: 8,
                                       cursor: 'pointer'
                                     }}
-                                    title={`Eliminar a ${st.displayName} permanentemente`}
+                                    title={`Eliminar a ${st.displayName} permanentemente (Firestore y Authentication)`}
                                     aria-label={`Eliminar a ${st.displayName}`}
                                   >
                                     <Trash2 size={14} color="#EF4444" />
@@ -1986,7 +1991,7 @@ export const AcademicDashboard: React.FC<AcademicDashboardProps> = ({
                         alignItems: 'center',
                         gap: 6
                       }}
-                      title="Eliminar permanentemente este alumno de la base de datos Firestore"
+                      title="Eliminar permanentemente este alumno de Firestore y Firebase Authentication"
                     >
                       <Trash2 size={15} /> <span>Eliminar Alumno</span>
                     </button>
@@ -5041,7 +5046,7 @@ export const AcademicDashboard: React.FC<AcademicDashboardProps> = ({
 
             <div style={{ background: '#FEF08A', border: '2px solid #000000', boxShadow: '2px 2px 0px #000000', borderRadius: 10, padding: '12px 14px', marginBottom: 20 }}>
               <p style={{ margin: 0, fontSize: '0.82rem', color: '#000000', fontWeight: 700, lineHeight: 1.45 }}>
-                <strong>Resuelve el desfase de Firebase:</strong> Al borrar un usuario en Firebase Authentication, sus documentos en Firestore permanecen. Esta opción elimina definitivamente su ficha en Firestore, avances, intentos y notas para que no vuelva a aparecer en Seguimiento.
+                <strong>Eliminación dual permanente:</strong> Al confirmar, el estudiante será eliminado automáticamente de <strong>Firestore</strong> (perfil, notas, progreso e intentos) y de <strong>Firebase Authentication</strong> (impidiendo accesos futuros y liberando su correo electrónico).
               </p>
             </div>
 

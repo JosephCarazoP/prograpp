@@ -87,7 +87,60 @@ export default defineConfig({
       devOptions: {
         enabled: true
       }
-    })
+    }),
+    {
+      name: 'api-delete-student-dev',
+      configureServer(server) {
+        server.middlewares.use('/api/delete-student', async (req, res) => {
+          if (req.method === 'OPTIONS') {
+            res.setHeader('Access-Control-Allow-Origin', '*');
+            res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+            res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+            res.statusCode = 200;
+            res.end();
+            return;
+          }
+          if (req.method !== 'POST') {
+            res.statusCode = 405;
+            res.setHeader('Content-Type', 'application/json');
+            res.end(JSON.stringify({ error: 'Method not allowed' }));
+            return;
+          }
+
+          let body = '';
+          req.on('data', (chunk: Buffer) => { body += chunk.toString(); });
+          req.on('end', async () => {
+            res.setHeader('Content-Type', 'application/json');
+            try {
+              const parsedBody = JSON.parse(body || '{}');
+              const dynamicImport = new Function('specifier', 'return import(specifier)');
+              const handlerModule = await dynamicImport('./api/delete-student.js');
+              const handler = handlerModule.default || handlerModule;
+              const fakeRes = {
+                setHeader: (k: string, v: string) => res.setHeader(k, v),
+                status: (code: number) => {
+                  res.statusCode = code;
+                  return fakeRes;
+                },
+                json: (data: any) => {
+                  res.end(JSON.stringify(data));
+                },
+                end: () => res.end()
+              };
+              (req as any).body = parsedBody;
+              await handler(req as any, fakeRes);
+            } catch (importErr: any) {
+              res.statusCode = 200;
+              res.end(JSON.stringify({
+                success: false,
+                authDeleted: false,
+                message: 'Servidor local: ' + (importErr?.message || 'Configurar credenciales')
+              }));
+            }
+          });
+        });
+      }
+    }
   ],
   server: {
     port: 3000,
