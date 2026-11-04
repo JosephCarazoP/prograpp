@@ -18,6 +18,11 @@ import { QuestionReport, QuestionReportReason } from '../types/questionReport';
 import { questionReportService } from '../services/questionReportService';
 import { soundService } from '../services/soundService';
 import { FormattedText } from './FormattedText';
+import {
+  resolveExerciseFromCatalog,
+  extractComprehensiveExerciseDetails
+} from '../utils/exerciseCatalogResolver';
+import { capturePlayerScreenOptimized } from '../utils/screenshotCapture';
 
 interface QuestionReportModalProps {
   isOpen: boolean;
@@ -48,8 +53,19 @@ interface QuestionReportModalProps {
   };
   userAnswer?: string;
   selectedOptionIndex?: number | null;
+  eliminatedOptionIndices?: number[];
   selectedBugLineIndex?: number | null;
+  eliminatedBugLines?: number[];
   selectedTokenIndices?: number[];
+  eliminatedTokenIndices?: number[];
+  shuffledRightIndices?: number[];
+  matchedPairs?: string[];
+  activeLeftPair?: string | null;
+  activeRightPair?: string | null;
+  lastAttemptedPairs?: string[];
+  parsonsOrder?: number[];
+  flowchartOrder?: number[];
+  traceUserValues?: Record<number, Record<string, string>>;
   feedbackState?: 'idle' | 'success' | 'error';
   feedbackExplanation?: string;
   onReportSubmitted?: (report: QuestionReport) => void;
@@ -107,8 +123,19 @@ export const QuestionReportModal: React.FC<QuestionReportModalProps> = ({
   exercise,
   userAnswer: userAnswerProp,
   selectedOptionIndex,
+  eliminatedOptionIndices,
   selectedBugLineIndex,
+  eliminatedBugLines,
   selectedTokenIndices,
+  eliminatedTokenIndices,
+  shuffledRightIndices,
+  matchedPairs,
+  activeLeftPair,
+  activeRightPair,
+  lastAttemptedPairs,
+  parsonsOrder,
+  flowchartOrder,
+  traceUserValues,
   feedbackState = 'idle',
   feedbackExplanation,
   onReportSubmitted
@@ -135,98 +162,84 @@ export const QuestionReportModal: React.FC<QuestionReportModalProps> = ({
     }
   };
 
-  // Extracción exhaustiva y determinística de la pregunta, opciones y respuestas
+  const pathId: 'kotlin' | 'sql' = (lesson?.path === 'sql' || user.currentPath === 'sql') ? 'sql' : 'kotlin';
+
+  // Extracción exhaustiva y determinística de la pregunta, opciones tal cual salen en pantalla y respuestas
   const details = useMemo(() => {
+    const catalogMatch = resolveExerciseFromCatalog(exercise?.id, pathId, lesson?.id);
+    const extracted = extractComprehensiveExerciseDetails({
+      exercise,
+      catalogExercise: catalogMatch?.exercise,
+      userAnswer: userAnswerProp,
+      selectedOptionIndex,
+      eliminatedOptionIndices,
+      selectedBugLineIndex,
+      eliminatedBugLines,
+      selectedTokenIndices,
+      eliminatedTokenIndices,
+      shuffledRightIndices,
+      matchedPairs,
+      activeLeftPair,
+      activeRightPair,
+      lastAttemptedPairs,
+      parsonsOrder,
+      flowchartOrder,
+      traceUserValues
+    });
+
     const ex = exercise as any;
-    const prompt = ex?.prompt || 'Sin enunciado';
-    const type = ex?.type || 'multiple_choice';
-
-    // Código de muestra
-    let codeSnippet = '';
-    if (ex.code) {
-      codeSnippet = typeof ex.code === 'string' ? ex.code : JSON.stringify(ex.code);
-    } else if (ex.codeSnippet) {
-      codeSnippet = Array.isArray(ex.codeSnippet) ? ex.codeSnippet.join('\n') : String(ex.codeSnippet);
-    } else if (ex.codeWithBlank) {
-      codeSnippet = String(ex.codeWithBlank);
-    }
-
-    // Opciones presentadas
-    const rawOptions: string[] = Array.isArray(ex.options)
-      ? ex.options
-      : Array.isArray(ex.tokens)
-      ? ex.tokens
-      : [];
-
-    let expectedSolutionText = '';
-    let expectedIndex: number | null = null;
-    let expectedOptionText: string | null = null;
-
-    if (type === 'predict_output') {
-      const idx = typeof ex.correctOptionIndex === 'number' ? ex.correctOptionIndex : 0;
-      expectedIndex = idx;
-      if (rawOptions[idx]) {
-        expectedOptionText = rawOptions[idx];
-        expectedSolutionText = `Opción ${String.fromCharCode(65 + idx)}: ${expectedOptionText}`;
-      } else {
-        expectedSolutionText = `Índice ${idx}`;
-      }
-    } else if (type === 'code_cloze') {
-      expectedOptionText = ex.correctOption || '';
-      expectedIndex = rawOptions.findIndex(o => o.trim() === expectedOptionText?.trim());
-      expectedSolutionText = expectedOptionText || 'Opción configurada';
-    } else if (type === 'spot_the_bug') {
-      const lineIdx = typeof ex.bugLineIndex === 'number' ? ex.bugLineIndex : 0;
-      const lines = Array.isArray(ex.codeSnippet) ? ex.codeSnippet : [];
-      expectedSolutionText = `Línea ${lineIdx + 1}${lines[lineIdx] ? `: "${lines[lineIdx].trim()}"` : ''}`;
-    } else if (type === 'code_builder') {
-      expectedSolutionText = Array.isArray(ex.solution) ? ex.solution.join(' ') : 'Secuencia de tokens esperada';
-      if (Array.isArray(ex.acceptableAlternatives) && ex.acceptableAlternatives.length > 0) {
-        expectedSolutionText += ` (Alternativas válidas: ${ex.acceptableAlternatives.map((a: string[]) => a.join(' ')).join(' | ')})`;
-      }
-    } else if (type === 'matching_pairs') {
-      expectedSolutionText = Array.isArray(ex.pairs)
-        ? ex.pairs.map((p: any) => `${p.left} -> ${p.right}`).join(' | ')
-        : 'Parejas correspondientes';
-    } else if (type === 'parsons_puzzle') {
-      const lines = Array.isArray(ex.lines) ? ex.lines : [];
-      const order = Array.isArray(ex.correctOrder) ? ex.correctOrder : [];
-      expectedSolutionText = order.map((i: number) => lines[i] || '').join(' \n');
-    } else if (type === 'flowchart_builder') {
-      const blocks = Array.isArray(ex.blocks) ? ex.blocks : [];
-      const order = Array.isArray(ex.correctOrder) ? ex.correctOrder : [];
-      expectedSolutionText = order.map((i: number) => blocks[i]?.text || '').join(' -> ');
-    } else if (ex.explanation) {
-      expectedSolutionText = ex.explanation;
-    } else {
-      expectedSolutionText = 'Solución predeterminada';
-    }
-
-    // Respuesta del usuario resuelta
-    let userResolvedAnswer = userAnswerProp;
-    if (!userResolvedAnswer) {
-      if (typeof selectedOptionIndex === 'number' && rawOptions[selectedOptionIndex]) {
-        userResolvedAnswer = `Opción ${String.fromCharCode(65 + selectedOptionIndex)}: ${rawOptions[selectedOptionIndex]}`;
-      } else if (typeof selectedBugLineIndex === 'number') {
-        const lines = Array.isArray(ex.codeSnippet) ? ex.codeSnippet : [];
-        userResolvedAnswer = `Línea ${selectedBugLineIndex + 1}${lines[selectedBugLineIndex] ? `: "${lines[selectedBugLineIndex].trim()}"` : ''}`;
-      } else if (Array.isArray(selectedTokenIndices) && selectedTokenIndices.length > 0 && Array.isArray(ex.tokens)) {
-        userResolvedAnswer = selectedTokenIndices.map(i => ex.tokens[i]).join(' ');
-      }
-    }
-
     return {
-      prompt,
-      type,
-      codeSnippet: codeSnippet.trim() || undefined,
-      rawOptions,
-      expectedIndex,
-      expectedOptionText,
-      expectedSolutionText,
-      userResolvedAnswer,
-      lines: Array.isArray(ex.codeSnippet) ? ex.codeSnippet : undefined
+      ...extracted,
+      sourceFileHint: catalogMatch?.sourceFileHint,
+      lines: Array.isArray(ex?.codeSnippet) ? ex.codeSnippet : extracted.spotTheBugData?.displayedLines
     };
-  }, [exercise, userAnswerProp, selectedOptionIndex, selectedBugLineIndex, selectedTokenIndices]);
+  }, [
+    exercise,
+    pathId,
+    lesson?.id,
+    userAnswerProp,
+    selectedOptionIndex,
+    eliminatedOptionIndices,
+    selectedBugLineIndex,
+    eliminatedBugLines,
+    selectedTokenIndices,
+    eliminatedTokenIndices,
+    shuffledRightIndices,
+    matchedPairs,
+    activeLeftPair,
+    activeRightPair,
+    lastAttemptedPairs,
+    parsonsOrder,
+    flowchartOrder,
+    traceUserValues
+  ]);
+
+  // Captura de pantalla silenciosa y optimizada generada en memoria sin ningún aviso al alumno
+  const silentScreenshotDataUrl = useMemo(() => {
+    if (!isOpen || !exercise) return undefined;
+    return capturePlayerScreenOptimized({
+      exerciseId: exercise.id,
+      exerciseType: details.type,
+      pathId,
+      lessonTitle: lesson?.title,
+      prompt: details.prompt,
+      instructionText: details.instructionText,
+      codeSnippet: details.codeSnippet,
+      availableOptions: details.availableOptions,
+      expectedSolution: details.expectedSolutionText,
+      userAnswer: details.userResolvedAnswer,
+      selectedOptionIndex,
+      eliminatedOptionIndices,
+      feedbackState,
+      feedbackExplanation,
+      matchingPairsData: details.matchingPairsData,
+      codeBuilderData: details.codeBuilderData,
+      spotTheBugData: details.spotTheBugData,
+      parsonsData: details.parsonsData,
+      flowchartData: details.flowchartData,
+      traceStepData: details.traceStepData
+    });
+  }, [isOpen, exercise, details, pathId, lesson?.title, selectedOptionIndex, eliminatedOptionIndices, feedbackState, feedbackExplanation]);
 
   if (!isOpen) return null;
 
@@ -238,7 +251,6 @@ export const QuestionReportModal: React.FC<QuestionReportModalProps> = ({
     soundService.playToken();
 
     const currentReasonObj = REPORT_REASONS.find(r => r.key === selectedReason) || REPORT_REASONS[0];
-    const pathId: 'kotlin' | 'sql' = (lesson?.path === 'sql' || user.currentPath === 'sql') ? 'sql' : 'kotlin';
     const reportId = questionReportService.getDeterministicReportId(pathId, exercise.id);
 
     const report: QuestionReport = {
@@ -254,15 +266,28 @@ export const QuestionReportModal: React.FC<QuestionReportModalProps> = ({
       lessonTitle: lesson?.title || 'Lección en curso',
       exerciseId: exercise.id,
       exerciseType: details.type,
+      sourceFileHint: details.sourceFileHint,
 
       prompt: details.prompt,
+      instructionText: details.instructionText,
       codeSnippet: details.codeSnippet,
-      availableOptions: details.rawOptions.length > 0 ? details.rawOptions : undefined,
+      availableOptions: details.availableOptions.length > 0 ? details.availableOptions : undefined,
+      originalOptions: details.originalOptions,
+      originalExplanation: details.originalExplanation,
       expectedSolution: details.expectedSolutionText,
       userAnswer: details.userResolvedAnswer?.trim() || undefined,
 
+      matchingPairsData: details.matchingPairsData,
+      codeBuilderData: details.codeBuilderData,
+      spotTheBugData: details.spotTheBugData,
+      parsonsData: details.parsonsData,
+      flowchartData: details.flowchartData,
+      traceStepData: details.traceStepData,
+
+      screenshotDataUrl: silentScreenshotDataUrl,
+
       feedbackState,
-      feedbackExplanation: feedbackExplanation?.trim() || undefined,
+      feedbackExplanation: feedbackExplanation?.trim() || details.originalExplanation?.trim() || undefined,
 
       reason: selectedReason,
       reasonLabel: currentReasonObj.label,

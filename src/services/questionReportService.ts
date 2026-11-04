@@ -11,8 +11,31 @@ import {
 import { db, isLocalMockMode } from '../config/firebase';
 import { QuestionReport, QuestionReporter } from '../types/questionReport';
 import { storageService } from './storageService';
+import { enrichQuestionReportWithCatalog } from '../utils/exerciseCatalogResolver';
 
 const STORAGE_KEY = 'question_reports';
+
+/**
+ * Limpia recursivamente valores undefined para evitar errores de serialización en Firestore.
+ */
+function stripUndefinedDeep<T>(obj: T): T {
+  if (obj === null || obj === undefined) return obj;
+  if (Array.isArray(obj)) {
+    return obj
+      .filter(v => v !== undefined)
+      .map(v => stripUndefinedDeep(v)) as unknown as T;
+  }
+  if (typeof obj === 'object') {
+    const cleaned: Record<string, any> = {};
+    for (const [k, v] of Object.entries(obj as Record<string, any>)) {
+      if (v !== undefined) {
+        cleaned[k] = stripUndefinedDeep(v);
+      }
+    }
+    return cleaned as T;
+  }
+  return obj;
+}
 
 export const questionReportService = {
   /**
@@ -25,21 +48,26 @@ export const questionReportService = {
   },
 
   /**
-   * Consolida y agrupa una lista de reportes por (ruta + exerciseId).
-   * Si varios alumnos reportaron la misma pregunta, se agrupan en una única
-   * ficha técnica con la lista completa de reporteros en pequeño.
+   * Consolida, agrupa y enriquece retroactivamente una lista de reportes por (ruta + exerciseId).
+   * Tanto los reportes antiguos como los nuevos quedan completados con el enunciado, código,
+   * opciones exactas (4 opciones, relación, completar, etc.) y solución del catálogo.
    */
   consolidateReportsList(reports: QuestionReport[]): QuestionReport[] {
     const map = new Map<string, QuestionReport>();
 
-    for (const rep of reports) {
-      if (!rep || !rep.exerciseId) continue;
+    for (const rawRep of reports) {
+      if (!rawRep || !rawRep.exerciseId) continue;
+      const rep = enrichQuestionReportWithCatalog(rawRep);
       const key = `${rep.pathId || 'kotlin'}_${rep.exerciseId}`;
 
       // Extraer reporteros del documento actual
       const currentReporters: QuestionReporter[] =
         Array.isArray(rep.reporters) && rep.reporters.length > 0
-          ? [...rep.reporters]
+          ? rep.reporters.map(r => ({
+              ...r,
+              availableOptions: r.availableOptions || rep.availableOptions,
+              screenshotDataUrl: r.screenshotDataUrl || rep.screenshotDataUrl
+            }))
           : rep.studentId
           ? [
               {
@@ -51,6 +79,11 @@ export const questionReportService = {
                 reasonLabel: rep.reasonLabel,
                 comment: rep.comment,
                 userAnswer: rep.userAnswer,
+                availableOptions: rep.availableOptions,
+                codeSnippet: rep.codeSnippet,
+                feedbackState: rep.feedbackState,
+                feedbackExplanation: rep.feedbackExplanation,
+                screenshotDataUrl: rep.screenshotDataUrl,
                 timestamp: rep.timestamp || Date.now()
               }
             ]
@@ -71,9 +104,13 @@ export const questionReportService = {
         for (const nr of currentReporters) {
           const matchIdx = existingReporters.findIndex(r => r.studentId === nr.studentId);
           if (matchIdx >= 0) {
-            // Actualizar si este reporte es más reciente
             if ((nr.timestamp || 0) >= (existingReporters[matchIdx].timestamp || 0)) {
-              existingReporters[matchIdx] = nr;
+              existingReporters[matchIdx] = {
+                ...existingReporters[matchIdx],
+                ...nr,
+                screenshotDataUrl: nr.screenshotDataUrl || existingReporters[matchIdx].screenshotDataUrl,
+                availableOptions: nr.availableOptions || existingReporters[matchIdx].availableOptions
+              };
             }
           } else {
             existingReporters.push(nr);
@@ -87,6 +124,32 @@ export const questionReportService = {
           rep.lastReportedAt || rep.timestamp || 0
         );
 
+        // Conservar captura de pantalla y datos más completos
+        if (rep.screenshotDataUrl && !existing.screenshotDataUrl) {
+          existing.screenshotDataUrl = rep.screenshotDataUrl;
+        }
+        if (rep.availableOptions && rep.availableOptions.length > 0 && (!existing.availableOptions || existing.availableOptions.length === 0)) {
+          existing.availableOptions = rep.availableOptions;
+        }
+        if (rep.matchingPairsData && !existing.matchingPairsData) {
+          existing.matchingPairsData = rep.matchingPairsData;
+        }
+        if (rep.codeBuilderData && !existing.codeBuilderData) {
+          existing.codeBuilderData = rep.codeBuilderData;
+        }
+        if (rep.spotTheBugData && !existing.spotTheBugData) {
+          existing.spotTheBugData = rep.spotTheBugData;
+        }
+        if (rep.parsonsData && !existing.parsonsData) {
+          existing.parsonsData = rep.parsonsData;
+        }
+        if (rep.flowchartData && !existing.flowchartData) {
+          existing.flowchartData = rep.flowchartData;
+        }
+        if (rep.traceStepData && !existing.traceStepData) {
+          existing.traceStepData = rep.traceStepData;
+        }
+
         // Si alguno está pendiente, marcar toda la ficha como pendiente para revisión docente
         if (rep.status === 'pending' || existing.status === 'pending') {
           existing.status = 'pending';
@@ -94,18 +157,21 @@ export const questionReportService = {
       }
     }
 
-    return Array.from(map.values()).sort((a, b) => {
-      const timeA = a.lastReportedAt || a.timestamp || 0;
-      const timeB = b.lastReportedAt || b.timestamp || 0;
-      return timeB - timeA;
-    });
+    return Array.from(map.values())
+      .map(enrichQuestionReportWithCatalog)
+      .sort((a, b) => {
+        const timeA = a.lastReportedAt || a.timestamp || 0;
+        const timeB = b.lastReportedAt || b.timestamp || 0;
+        return timeB - timeA;
+      });
   },
 
   /**
    * Guarda un reporte de pregunta agrupándolo automáticamente con reportes previos
    * de la misma pregunta, tanto en LocalStorage como en Firestore.
    */
-  async saveReport(report: QuestionReport): Promise<void> {
+  async saveReport(rawReport: QuestionReport): Promise<void> {
+    const report = enrichQuestionReportWithCatalog(rawReport);
     const targetReportId =
       report.reportId || this.getDeterministicReportId(report.pathId, report.exerciseId);
 
@@ -118,6 +184,11 @@ export const questionReportService = {
       reasonLabel: report.reasonLabel,
       comment: report.comment,
       userAnswer: report.userAnswer,
+      availableOptions: report.availableOptions,
+      codeSnippet: report.codeSnippet,
+      feedbackState: report.feedbackState,
+      feedbackExplanation: report.feedbackExplanation,
+      screenshotDataUrl: report.screenshotDataUrl,
       timestamp: report.timestamp || Date.now()
     };
 
@@ -156,6 +227,11 @@ export const questionReportService = {
             reasonLabel: existingDoc.reasonLabel,
             comment: existingDoc.comment,
             userAnswer: existingDoc.userAnswer,
+            availableOptions: existingDoc.availableOptions,
+            codeSnippet: existingDoc.codeSnippet,
+            feedbackState: existingDoc.feedbackState,
+            feedbackExplanation: existingDoc.feedbackExplanation,
+            screenshotDataUrl: existingDoc.screenshotDataUrl,
             timestamp: existingDoc.timestamp
           }
         ];
@@ -169,7 +245,14 @@ export const questionReportService = {
       reporters.push(currentReporter);
     }
 
-    const consolidatedReport: QuestionReport = {
+    // Limitar capturas históricas por documento si hubiera más de 5 alumnos reportando la misma pregunta
+    if (reporters.length > 5) {
+      reporters = reporters.map((r, i) =>
+        i < reporters.length - 5 ? { ...r, screenshotDataUrl: undefined } : r
+      );
+    }
+
+    const consolidatedReport = enrichQuestionReportWithCatalog({
       ...(existingDoc || report),
       reportId: targetReportId,
       exerciseId: report.exerciseId,
@@ -178,10 +261,21 @@ export const questionReportService = {
       lessonTitle: report.lessonTitle,
       unitId: report.unitId,
       exerciseType: report.exerciseType,
-      prompt: report.prompt || (existingDoc?.prompt || ''),
+      sourceFileHint: report.sourceFileHint || existingDoc?.sourceFileHint,
+      prompt: report.prompt || existingDoc?.prompt || '',
+      instructionText: report.instructionText || existingDoc?.instructionText,
       codeSnippet: report.codeSnippet || existingDoc?.codeSnippet,
       availableOptions: report.availableOptions || existingDoc?.availableOptions,
-      expectedSolution: report.expectedSolution || (existingDoc?.expectedSolution || ''),
+      originalOptions: report.originalOptions || existingDoc?.originalOptions,
+      originalExplanation: report.originalExplanation || existingDoc?.originalExplanation,
+      expectedSolution: report.expectedSolution || existingDoc?.expectedSolution || '',
+      matchingPairsData: report.matchingPairsData || existingDoc?.matchingPairsData,
+      codeBuilderData: report.codeBuilderData || existingDoc?.codeBuilderData,
+      spotTheBugData: report.spotTheBugData || existingDoc?.spotTheBugData,
+      parsonsData: report.parsonsData || existingDoc?.parsonsData,
+      flowchartData: report.flowchartData || existingDoc?.flowchartData,
+      traceStepData: report.traceStepData || existingDoc?.traceStepData,
+      screenshotDataUrl: report.screenshotDataUrl || existingDoc?.screenshotDataUrl,
       feedbackState: report.feedbackState || existingDoc?.feedbackState,
       feedbackExplanation: report.feedbackExplanation || existingDoc?.feedbackExplanation,
 
@@ -200,38 +294,37 @@ export const questionReportService = {
       timestamp: existingDoc?.timestamp || currentReporter.timestamp,
       lastReportedAt: currentReporter.timestamp,
       status: existingDoc?.status === 'resolved' ? 'pending' : (existingDoc?.status || 'pending')
-    };
+    });
+
+    const cleanConsolidated = stripUndefinedDeep(consolidatedReport);
 
     // 3. Persistencia local inmediata (offline-first)
     const filteredLocal = local.filter(
       r => r.reportId !== targetReportId && !(r.pathId === report.pathId && r.exerciseId === report.exerciseId)
     );
-    filteredLocal.unshift(consolidatedReport);
+    filteredLocal.unshift(cleanConsolidated);
     storageService.setItem(STORAGE_KEY, filteredLocal);
 
     // Guardar en la caché individual del alumno
     const userLocal = storageService.getItem<QuestionReport[]>(`${STORAGE_KEY}_${report.studentId}`, []);
     const filteredUserLocal = userLocal.filter(r => r.exerciseId !== report.exerciseId);
-    filteredUserLocal.unshift(consolidatedReport);
+    filteredUserLocal.unshift(cleanConsolidated);
     storageService.setItem(`${STORAGE_KEY}_${report.studentId}`, filteredUserLocal);
 
     // 4. Persistencia en la nube (Firestore)
     if (!isLocalMockMode && db) {
       try {
         const reportRef = doc(db, 'questionReports', targetReportId);
-        await setDoc(reportRef, consolidatedReport, { merge: true });
+        await setDoc(reportRef, cleanConsolidated, { merge: true });
         console.log('[questionReportService] Reporte agrupado guardado exitosamente en Firestore:', targetReportId);
 
         // Subcolección de auditoría del estudiante
         try {
           const userReportRef = doc(db, 'users', report.studentId, 'questionReports', targetReportId);
-          await setDoc(userReportRef, consolidatedReport, { merge: true });
+          await setDoc(userReportRef, cleanConsolidated, { merge: true });
         } catch {
           // No crítico
         }
-
-        // Los reportes no se envían a notificaciones generales para no interrumpir a los alumnos;
-        // quedan registrados exclusivamente en el panel de Seguimiento para el profesor.
       } catch (err) {
         console.error('[questionReportService] Error al sincronizar con Firestore:', err);
       }

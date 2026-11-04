@@ -353,6 +353,7 @@ export default function App() {
   const [activeLeftPair, setActiveLeftPair] = useState<string | null>(null);
   const [activeRightPair, setActiveRightPair] = useState<string | null>(null);
   const [matchedPairs, setMatchedPairs] = useState<string[]>([]);
+  const [lastAttemptedPairs, setLastAttemptedPairs] = useState<string[]>([]);
   const [shuffledRightIndices, setShuffledRightIndices] = useState<number[]>([]);
   const [traceInputsReady, setTraceInputsReady] = useState(false);
   const [traceUserValues, setTraceUserValues] = useState<Record<number, Record<string, string>>>({});
@@ -836,6 +837,7 @@ export default function App() {
     setActiveLeftPair(null);
     setActiveRightPair(null);
     setMatchedPairs([]);
+    setLastAttemptedPairs([]);
     setShuffledRightIndices([]);
     setTraceInputsReady(false);
     setTraceUserValues({});
@@ -1323,11 +1325,13 @@ export default function App() {
   };
 
   const checkPairMatch = (left: string, right: string) => {
+    setLastAttemptedPairs(prev => [...prev, `Intentó unir: "${left}" con "${right}"`]);
     if (currentExercise?.type !== 'matching_pairs') return;
     const pair = currentExercise.pairs.find(p => p.left === left && p.right === right);
     if (pair) {
       soundService.playToken();
       setMatchedPairs(prev => [...prev, left, right]);
+      setLastAttemptedPairs(prev => [...prev, `"${left}" <-> "${right}" (Correcto)`]);
     } else {
       soundService.playError();
     }
@@ -2841,6 +2845,17 @@ export default function App() {
           selectedOptionIndex={selectedOption}
           selectedBugLineIndex={selectedBugLine}
           selectedTokenIndices={selectedTokenIndices}
+          eliminatedOptionIndices={eliminatedOptionIndices}
+          eliminatedBugLines={eliminatedBugLines}
+          eliminatedTokenIndices={eliminatedTokenIndices}
+          shuffledRightIndices={shuffledRightIndices}
+          matchedPairs={matchedPairs}
+          activeLeftPair={activeLeftPair}
+          activeRightPair={activeRightPair}
+          lastAttemptedPairs={lastAttemptedPairs}
+          parsonsOrder={parsonsOrder}
+          flowchartOrder={flowchartOrder}
+          traceUserValues={traceUserValues}
           feedbackState={feedbackState}
           feedbackExplanation={feedbackExplanation}
           onReportSubmitted={handleSkipReportedExercise}

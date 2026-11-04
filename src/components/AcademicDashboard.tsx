@@ -78,6 +78,7 @@ import { TeacherSubmissionsView } from './sqlite/TeacherSubmissionsView';
 import { QuestionReport } from '../types/questionReport';
 import { questionReportService } from '../services/questionReportService';
 import { FormattedText } from './FormattedText';
+import { enrichQuestionReportWithCatalog, formatReportsAsTxt } from '../utils/exerciseCatalogResolver';
 
 interface AcademicDashboardProps {
   currentUser: UserProfile;
@@ -112,6 +113,13 @@ export const AcademicDashboard: React.FC<AcademicDashboardProps> = ({
   const [reportSearchTerm, setReportSearchTerm] = useState('');
   const [copiedReportId, setCopiedReportId] = useState<string | null>(null);
   const [reportAdminNotes, setReportAdminNotes] = useState<Record<string, string>>({});
+  const [selectedReportIds, setSelectedReportIds] = useState<string[]>([]);
+  const [copiedTxtBatch, setCopiedTxtBatch] = useState(false);
+  const [previewScreenshotModal, setPreviewScreenshotModal] = useState<{
+    dataUrl: string;
+    title: string;
+    studentName?: string;
+  } | null>(null);
   const [students, setStudents] = useState<UserProfile[]>([]);
   const [attempts, setAttempts] = useState<ExerciseAttempt[]>([]);
   const [evaluations, setEvaluations] = useState<AcademicEvaluation[]>([]);
@@ -3221,6 +3229,7 @@ export const AcademicDashboard: React.FC<AcademicDashboardProps> = ({
               <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
                 {(() => {
                   const filteredReports = questionReports
+                    .map(enrichQuestionReportWithCatalog)
                     .filter(r => reportFilterStatus === 'all' || r.status === reportFilterStatus)
                     .filter(r => reportFilterPath === 'all' || r.pathId === reportFilterPath)
                     .filter(r => {
@@ -3271,797 +3280,1266 @@ export const AcademicDashboard: React.FC<AcademicDashboardProps> = ({
                     );
                   }
 
-                  return filteredReports.map(rep => {
-                    const isReviewed = rep.status === 'reviewed';
-                    const isResolved = rep.status === 'resolved';
+                  const allVisibleIds = filteredReports.map(r => r.reportId);
+                  const selectedVisibleReports = filteredReports.filter(r => selectedReportIds.includes(r.reportId));
+                  const isAllVisibleSelected =
+                    allVisibleIds.length > 0 && allVisibleIds.every(id => selectedReportIds.includes(id));
+                  const reportsForExport =
+                    selectedVisibleReports.length > 0 ? selectedVisibleReports : filteredReports;
 
-                    const reportersList = (rep.reporters && rep.reporters.length > 0)
-                      ? rep.reporters
-                      : [{
-                          studentId: rep.studentId,
-                          studentName: rep.studentName || 'Estudiante',
-                          studentEmail: rep.studentEmail,
-                          studentCode: rep.studentCode,
-                          reason: rep.reason,
-                          reasonLabel: rep.reasonLabel,
-                          comment: rep.comment,
-                          userAnswer: rep.userAnswer,
-                          timestamp: rep.timestamp || Date.now()
-                        }];
+                  const handleToggleSelectAll = () => {
+                    soundService.playToken();
+                    if (isAllVisibleSelected) {
+                      setSelectedReportIds(prev => prev.filter(id => !allVisibleIds.includes(id)));
+                    } else {
+                      setSelectedReportIds(prev => Array.from(new Set([...prev, ...allVisibleIds])));
+                    }
+                  };
 
-                    const totalReportersCount = rep.reportCount || reportersList.length;
+                  const handleSelectPendingOnly = () => {
+                    soundService.playToken();
+                    const pendingIds = filteredReports.filter(r => r.status === 'pending').map(r => r.reportId);
+                    setSelectedReportIds(pendingIds);
+                  };
 
-                    return (
+                  const handleDownloadTxt = () => {
+                    soundService.playWin();
+                    const txtContent = formatReportsAsTxt(reportsForExport);
+                    const blob = new Blob([txtContent], { type: 'text/plain;charset=utf-8' });
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    const datePart = new Date().toISOString().slice(0, 10);
+                    a.href = url;
+                    a.download = `reportes_preguntas_${datePart}_${reportsForExport.length}.txt`;
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    URL.revokeObjectURL(url);
+                  };
+
+                  const handleCopyTxtToClipboard = () => {
+                    soundService.playWin();
+                    const txtContent = formatReportsAsTxt(reportsForExport);
+                    if (navigator?.clipboard) {
+                      navigator.clipboard.writeText(txtContent);
+                      setCopiedTxtBatch(true);
+                      setTimeout(() => setCopiedTxtBatch(false), 3000);
+                    }
+                  };
+
+                  return (
+                    <>
+                      {/* ═══ BARRA DE SELECCIÓN MASIVA Y EXPORTACIÓN AUTOMÁTICA A .TXT ═══ */}
                       <div
-                        key={rep.reportId}
                         className="academic-card"
                         style={{
-                          border: '3px solid #000000',
-                          boxShadow: '6px 6px 0px #000000',
-                          borderRadius: '14px',
-                          padding: '16px',
+                          background: '#FFFBEB',
+                          border: '2.5px solid #000000',
+                          boxShadow: '4px 4px 0px #000000',
+                          borderRadius: 12,
+                          padding: '12px 16px',
                           display: 'flex',
-                          flexDirection: 'column',
-                          gap: 14,
-                          background: '#FFFFFF'
+                          alignItems: 'center',
+                          justifyContent: 'space-between',
+                          flexWrap: 'wrap',
+                          gap: 12
                         }}
                       >
-                        {/* ═══ 1. BARRA SUPERIOR DE LA FICHA (ESTILO VENTANA / CONSOLA) ═══ */}
-                        <div
-                          style={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'space-between',
-                            flexWrap: 'wrap',
-                            gap: 10,
-                            paddingBottom: 10,
-                            borderBottom: '2px solid #000000'
-                          }}
-                        >
-                          {/* Píldoras de contexto técnico */}
-                          <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
-                            {/* Ventana de controles simulados */}
-                            <div style={{ display: 'flex', gap: 4, marginRight: 6 }}>
-                              <div style={{ width: 10, height: 10, borderRadius: '50%', background: '#EF4444', border: '1px solid #000000' }} />
-                              <div style={{ width: 10, height: 10, borderRadius: '50%', background: '#F59E0B', border: '1px solid #000000' }} />
-                              <div style={{ width: 10, height: 10, borderRadius: '50%', background: '#10B981', border: '1px solid #000000' }} />
-                            </div>
-
-                            <span
-                              style={{
-                                background: rep.pathId === 'sql' ? '#EEF2FF' : '#E0F2FE',
-                                color: rep.pathId === 'sql' ? '#4F46E5' : '#0284C7',
-                                border: '1.5px solid #000000',
-                                borderRadius: 6,
-                                padding: '2px 8px',
-                                fontSize: '0.72rem',
-                                fontWeight: 900,
-                                textTransform: 'uppercase'
-                              }}
-                            >
-                              {rep.pathId}
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
+                          <button
+                            type="button"
+                            onClick={handleToggleSelectAll}
+                            style={{
+                              background: isAllVisibleSelected ? '#0F172A' : '#FFFFFF',
+                              color: isAllVisibleSelected ? '#FFFFFF' : '#0F172A',
+                              border: '2px solid #000000',
+                              boxShadow: '2px 2px 0px #000000',
+                              borderRadius: 8,
+                              padding: '7px 12px',
+                              fontSize: '0.78rem',
+                              fontWeight: 900,
+                              cursor: 'pointer',
+                              display: 'inline-flex',
+                              alignItems: 'center',
+                              gap: 6
+                            }}
+                          >
+                            {isAllVisibleSelected ? <CheckSquare size={15} strokeWidth={2.6} /> : <Square size={15} strokeWidth={2.6} />}
+                            <span>
+                              {isAllVisibleSelected
+                                ? `Deseleccionar Todos (${allVisibleIds.length})`
+                                : `Seleccionar Todos (${allVisibleIds.length})`}
                             </span>
+                          </button>
 
-                            <span
-                              style={{
-                                background: '#F1F5F9',
-                                border: '1.5px solid #000000',
-                                borderRadius: 6,
-                                padding: '2px 8px',
-                                fontSize: '0.72rem',
-                                fontWeight: 800,
-                                color: '#0F172A'
-                              }}
-                            >
-                              {rep.lessonTitle}
-                            </span>
+                          <button
+                            type="button"
+                            onClick={handleSelectPendingOnly}
+                            style={{
+                              background: '#FEF2F2',
+                              color: '#B91C1C',
+                              border: '2px solid #000000',
+                              boxShadow: '2px 2px 0px #000000',
+                              borderRadius: 8,
+                              padding: '7px 12px',
+                              fontSize: '0.76rem',
+                              fontWeight: 800,
+                              cursor: 'pointer'
+                            }}
+                          >
+                            Seleccionar Solo Pendientes ({filteredReports.filter(r => r.status === 'pending').length})
+                          </button>
 
-                            <span
-                              style={{
-                                background: '#FEF3C7',
-                                border: '1.5px solid #000000',
-                                borderRadius: 6,
-                                padding: '2px 8px',
-                                fontSize: '0.72rem',
-                                fontWeight: 800,
-                                color: '#B45309'
-                              }}
-                            >
-                              Tipo: {rep.exerciseType}
-                            </span>
-
-                            {/* Badge de reportes concurrentes / agrupados */}
-                            <span
-                              style={{
-                                background: totalReportersCount > 1 ? '#FEE2E2' : '#F1F5F9',
-                                color: totalReportersCount > 1 ? '#DC2626' : '#475569',
-                                border: '1.5px solid #000000',
-                                borderRadius: 6,
-                                padding: '2px 8px',
-                                fontSize: '0.72rem',
-                                fontWeight: 900
-                              }}
-                            >
-                              {totalReportersCount > 1 ? `${totalReportersCount} reportes` : '1 reporte'}
-                            </span>
-
-                            {/* Botón para copiar ID del ejercicio para buscarlo en VSCode */}
+                          {selectedReportIds.length > 0 && (
                             <button
                               type="button"
                               onClick={() => {
-                                if (navigator?.clipboard) {
-                                  navigator.clipboard.writeText(rep.exerciseId);
-                                  setCopiedReportId(rep.exerciseId);
-                                  soundService.playToken();
-                                  setTimeout(() => setCopiedReportId(null), 2000);
-                                }
-                              }}
-                              style={{
-                                background: copiedReportId === rep.exerciseId ? '#DCFCE7' : '#FFFFFF',
-                                color: copiedReportId === rep.exerciseId ? '#15803D' : '#0F172A',
-                                border: '1.5px solid #000000',
-                                boxShadow: '1.5px 1.5px 0px #000000',
-                                borderRadius: 6,
-                                padding: '2px 8px',
-                                fontSize: '0.72rem',
-                                fontWeight: 800,
-                                cursor: 'pointer',
-                                display: 'inline-flex',
-                                alignItems: 'center',
-                                gap: 4
-                              }}
-                              title="Copiar ID del ejercicio para buscarlo en el código fuente"
-                            >
-                              <Copy size={12} strokeWidth={2.6} />
-                              <span>{copiedReportId === rep.exerciseId ? '¡Copiado!' : `ID: ${rep.exerciseId}`}</span>
-                            </button>
-                          </div>
-
-                          {/* Estado y fecha */}
-                          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                            <span style={{ fontSize: '0.74rem', color: '#64748B', fontWeight: 600 }}>
-                              {new Date(rep.lastReportedAt || rep.timestamp).toLocaleString()}
-                            </span>
-
-                            <select
-                              value={rep.status}
-                              onChange={async (e) => {
-                                const newStatus = e.target.value as 'pending' | 'reviewed' | 'resolved';
                                 soundService.playToken();
-                                await questionReportService.updateReportStatus(rep.reportId, newStatus);
-                                setQuestionReports(prev =>
-                                  prev.map(r => r.reportId === rep.reportId ? { ...r, status: newStatus } : r)
-                                );
+                                setSelectedReportIds([]);
                               }}
                               style={{
-                                background: isResolved ? '#DCFCE7' : isReviewed ? '#DBEAFE' : '#FEE2E2',
-                                color: isResolved ? '#15803D' : isReviewed ? '#1D4ED8' : '#B91C1C',
-                                border: '2px solid #000000',
-                                boxShadow: '2px 2px 0px #000000',
+                                background: '#FFFFFF',
+                                color: '#64748B',
+                                border: '1.5px solid #000000',
                                 borderRadius: 8,
-                                padding: '3px 8px',
-                                fontSize: '0.76rem',
-                                fontWeight: 900,
+                                padding: '6px 10px',
+                                fontSize: '0.74rem',
+                                fontWeight: 800,
                                 cursor: 'pointer'
                               }}
                             >
-                              <option value="pending">Pendiente</option>
-                              <option value="reviewed">En Revisión</option>
-                              <option value="resolved">Resuelto</option>
-                            </select>
-                          </div>
-                        </div>
-
-                        {/* ═══ 2. REPORTADA POR (EN PEQUEÑO PARA QUE NO ESTORBE) Y MOTIVOS ═══ */}
-                        <div
-                          style={{
-                            background: '#F8FAFC',
-                            border: '1.5px solid #000000',
-                            borderRadius: 10,
-                            padding: '10px 12px',
-                            display: 'flex',
-                            flexDirection: 'column',
-                            gap: 8
-                          }}
-                        >
-                          {/* Fila de Reportada por: con badges pequeños de estudiantes */}
-                          <div>
-                            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 6, flexWrap: 'wrap', gap: 6 }}>
-                              <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                                <span style={{ fontSize: '0.74rem', fontWeight: 900, textTransform: 'uppercase', color: '#475569', letterSpacing: '0.5px' }}>
-                                  Reportada por:
-                                </span>
-                                <span
-                                  style={{
-                                    background: reportersList.length > 1 ? '#FEE2E2' : '#E2E8F0',
-                                    color: reportersList.length > 1 ? '#DC2626' : '#475569',
-                                    border: '1px solid #000000',
-                                    borderRadius: 4,
-                                    padding: '1px 6px',
-                                    fontSize: '0.68rem',
-                                    fontWeight: 800
-                                  }}
-                                >
-                                  {reportersList.length} {reportersList.length === 1 ? 'estudiante' : 'estudiantes'}
-                                </span>
-                              </div>
-
-                              {reportersList.length > 1 && (
-                                <span style={{ fontSize: '0.68rem', color: '#DC2626', fontWeight: 800 }}>
-                                  Múltiples alumnos detectaron este problema
-                                </span>
-                              )}
-                            </div>
-
-                            {/* Badges de alumnos en formato pequeño y ordenado */}
-                            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, alignItems: 'center' }}>
-                              {reportersList.map((r, rIdx) => (
-                                <div
-                                  key={r.studentId + '_' + rIdx}
-                                  style={{
-                                    display: 'inline-flex',
-                                    alignItems: 'center',
-                                    gap: 5,
-                                    background: '#FFFFFF',
-                                    border: '1.5px solid #000000',
-                                    boxShadow: '1.5px 1.5px 0px #000000',
-                                    borderRadius: 6,
-                                    padding: '2px 8px',
-                                    fontSize: '0.72rem',
-                                    color: '#0F172A',
-                                    lineHeight: 1.2
-                                  }}
-                                >
-                                  <div
-                                    style={{
-                                      width: 16,
-                                      height: 16,
-                                      borderRadius: '50%',
-                                      background: '#0F172A',
-                                      color: '#FFFFFF',
-                                      display: 'flex',
-                                      alignItems: 'center',
-                                      justifyContent: 'center',
-                                      fontSize: '0.6rem',
-                                      fontWeight: 900
-                                    }}
-                                  >
-                                    {r.studentName.charAt(0).toUpperCase()}
-                                  </div>
-                                  <span style={{ fontWeight: 800 }}>{r.studentName}</span>
-                                  {r.studentCode && (
-                                    <span style={{ color: '#64748B', fontWeight: 700, fontSize: '0.68rem' }}>
-                                      ({r.studentCode})
-                                    </span>
-                                  )}
-                                  {r.studentEmail && (
-                                    <span style={{ color: '#94A3B8', fontSize: '0.64rem' }}>
-                                      · {r.studentEmail}
-                                    </span>
-                                  )}
-                                </div>
-                              ))}
-                            </div>
-                          </div>
-
-                          {/* Desglose compacto de comentarios y motivos por alumno */}
-                          <div style={{ display: 'flex', flexDirection: 'column', gap: 6, marginTop: 2 }}>
-                            {reportersList.map((r, rIdx) => (
-                              <div
-                                key={'detail_' + r.studentId + '_' + rIdx}
-                                style={{
-                                  background: '#FFF1F2',
-                                  border: '1px solid #FECDD3',
-                                  borderRadius: 8,
-                                  padding: '7px 10px',
-                                  fontSize: '0.78rem',
-                                  lineHeight: 1.35
-                                }}
-                              >
-                                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 6, marginBottom: 2 }}>
-                                  <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                                    <strong style={{ color: '#9F1239', fontSize: '0.80rem' }}>{r.studentName}</strong>
-                                    <span style={{ fontSize: '0.68rem', color: '#94A3B8' }}>
-                                      {new Date(r.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                                    </span>
-                                  </div>
-
-                                  <span
-                                    style={{
-                                      background: '#FEE2E2',
-                                      color: '#B91C1C',
-                                      border: '1px solid #DC2626',
-                                      borderRadius: 4,
-                                      padding: '1px 6px',
-                                      fontSize: '0.68rem',
-                                      fontWeight: 800
-                                    }}
-                                  >
-                                    {r.reasonLabel}
-                                  </span>
-                                </div>
-
-                                {r.comment ? (
-                                  <div style={{ color: '#881337', marginTop: 3 }}>
-                                    <span style={{ fontWeight: 700 }}>Comentario:</span> "{r.comment}"
-                                  </div>
-                                ) : (
-                                  <div style={{ color: '#94A3B8', fontSize: '0.70rem', fontStyle: 'italic', marginTop: 2 }}>
-                                    (Sin comentario de texto adicional)
-                                  </div>
-                                )}
-
-                                {r.userAnswer && (
-                                  <div style={{ color: '#475569', fontSize: '0.70rem', marginTop: 3 }}>
-                                    <span style={{ fontWeight: 700 }}>Respuesta que marcó el alumno:</span> {r.userAnswer}
-                                  </div>
-                                )}
-                              </div>
-                            ))}
-                          </div>
-
-                          {rep.deviceInfo && (
-                            <div style={{ fontSize: '0.68rem', color: '#94A3B8' }}>
-                              Dispositivo: {rep.deviceInfo}
-                            </div>
+                              Limpiar selección ({selectedReportIds.length})
+                            </button>
                           )}
                         </div>
 
-                          {/* ═══ 3. "CAPTURA DE PANTALLA" INTERACTIVA DEL EJERCICIO COMPLETO ═══ */}
-                          <div
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+                          <button
+                            type="button"
+                            onClick={handleCopyTxtToClipboard}
                             style={{
+                              background: copiedTxtBatch ? '#DCFCE7' : '#FFFFFF',
+                              color: copiedTxtBatch ? '#15803D' : '#0F172A',
                               border: '2px solid #000000',
-                              boxShadow: '4px 4px 0px #000000',
-                              borderRadius: 12,
-                              overflow: 'hidden',
-                              background: '#FFFFFF'
+                              boxShadow: '2.5px 2.5px 0px #000000',
+                              borderRadius: 10,
+                              padding: '8px 14px',
+                              fontSize: '0.8rem',
+                              fontWeight: 900,
+                              cursor: 'pointer',
+                              display: 'inline-flex',
+                              alignItems: 'center',
+                              gap: 6
+                            }}
+                            title="Copia todo el informe técnico en texto plano para pegarlo directo en el asistente"
+                          >
+                            {copiedTxtBatch ? <Check size={15} strokeWidth={2.8} /> : <Copy size={15} strokeWidth={2.6} />}
+                            <span>
+                              {copiedTxtBatch
+                                ? '¡TXT Copiado al Portapapeles!'
+                                : `Copiar TXT para Pegar (${reportsForExport.length})`}
+                            </span>
+                          </button>
+
+                          <button
+                            type="button"
+                            onClick={handleDownloadTxt}
+                            style={{
+                              background: '#16A34A',
+                              color: '#FFFFFF',
+                              border: '2px solid #000000',
+                              boxShadow: '2.5px 2.5px 0px #000000',
+                              borderRadius: 10,
+                              padding: '8px 16px',
+                              fontSize: '0.82rem',
+                              fontWeight: 900,
+                              cursor: 'pointer',
+                              display: 'inline-flex',
+                              alignItems: 'center',
+                              gap: 6
+                            }}
+                            title="Descarga un archivo .txt con ID, enunciado, opciones exactas y respuestas de los reportes seleccionados"
+                          >
+                            <FileText size={15} strokeWidth={2.6} />
+                            <span>
+                              Descargar .TXT Automático ({selectedVisibleReports.length > 0 ? `${selectedVisibleReports.length} selec.` : `Todos: ${reportsForExport.length}`})
+                            </span>
+                          </button>
+                        </div>
+                      </div>
+
+                      {filteredReports.map(rep => {
+                        const isReviewed = rep.status === 'reviewed';
+                        const isResolved = rep.status === 'resolved';
+                        const isReportChecked = selectedReportIds.includes(rep.reportId);
+
+                        const reportersList = (rep.reporters && rep.reporters.length > 0)
+                          ? rep.reporters
+                          : [{
+                              studentId: rep.studentId,
+                              studentName: rep.studentName || 'Estudiante',
+                              studentEmail: rep.studentEmail,
+                              studentCode: rep.studentCode,
+                              reason: rep.reason,
+                              reasonLabel: rep.reasonLabel,
+                              comment: rep.comment,
+                              userAnswer: rep.userAnswer,
+                              availableOptions: rep.availableOptions,
+                              screenshotDataUrl: rep.screenshotDataUrl,
+                              timestamp: rep.timestamp || Date.now()
+                            }];
+
+                        const totalReportersCount = rep.reportCount || reportersList.length;
+                        const activeScreenshot =
+                          rep.screenshotDataUrl ||
+                          reportersList.find(r => r.screenshotDataUrl)?.screenshotDataUrl;
+
+                        return (
+                          <div
+                            key={rep.reportId}
+                            className="academic-card"
+                            style={{
+                              border: isReportChecked ? '3px solid #0284C7' : '3px solid #000000',
+                              boxShadow: isReportChecked ? '6px 6px 0px #0284C7' : '6px 6px 0px #000000',
+                              borderRadius: '14px',
+                              padding: '16px',
+                              display: 'flex',
+                              flexDirection: 'column',
+                              gap: 14,
+                              background: isReportChecked ? '#F8FDFF' : '#FFFFFF'
                             }}
                           >
-                            {/* Barra de título del ejercicio simulado */}
+                            {/* ═══ 1. BARRA SUPERIOR DE LA FICHA (CON CHECKBOX DE SELECCIÓN INDIVIDUAL) ═══ */}
                             <div
                               style={{
-                                background: '#0F172A',
-                                color: '#FFFFFF',
-                                padding: '8px 12px',
                                 display: 'flex',
                                 alignItems: 'center',
                                 justifyContent: 'space-between',
-                                fontSize: '0.76rem',
-                                fontWeight: 800,
-                                letterSpacing: '0.5px'
+                                flexWrap: 'wrap',
+                                gap: 10,
+                                paddingBottom: 10,
+                                borderBottom: '2px solid #000000'
                               }}
                             >
-                              <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                                <Terminal size={14} color="#38BDF8" strokeWidth={2.6} />
-                                <span>SIMULACIÓN VISUAL DEL EJERCICIO</span>
-                              </div>
-                              <span style={{ color: '#94A3B8', fontSize: '0.7rem' }}>
-                                Vista del docente para corrección
-                              </span>
-                            </div>
-
-                            <div style={{ padding: '14px', display: 'flex', flexDirection: 'column', gap: 12 }}>
-                              {/* ENUNCIADO DE LA PREGUNTA */}
-                              <div>
-                                <div style={{ fontSize: '0.72rem', textTransform: 'uppercase', letterSpacing: '0.6px', fontWeight: 900, color: '#64748B', marginBottom: 4 }}>
-                                  Enunciado de la Pregunta:
-                                </div>
-                                <div
+                              {/* Checkbox individual + Píldoras de contexto técnico */}
+                              <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    soundService.playToken();
+                                    setSelectedReportIds(prev =>
+                                      prev.includes(rep.reportId)
+                                        ? prev.filter(id => id !== rep.reportId)
+                                        : [...prev, rep.reportId]
+                                    );
+                                  }}
                                   style={{
-                                    fontSize: '0.98rem',
+                                    background: isReportChecked ? '#0284C7' : '#FFFFFF',
+                                    color: isReportChecked ? '#FFFFFF' : '#0F172A',
+                                    border: '2px solid #000000',
+                                    boxShadow: '1.5px 1.5px 0px #000000',
+                                    borderRadius: 6,
+                                    padding: '3px 8px',
+                                    fontSize: '0.74rem',
                                     fontWeight: 900,
-                                    color: '#0F172A',
-                                    lineHeight: 1.4,
-                                    background: '#F8FAFC',
-                                    border: '1.5px solid #CBD5E1',
-                                    borderRadius: 8,
-                                    padding: '10px 12px'
+                                    cursor: 'pointer',
+                                    display: 'inline-flex',
+                                    alignItems: 'center',
+                                    gap: 5,
+                                    marginRight: 4
+                                  }}
+                                  title="Seleccionar o deseleccionar esta pregunta para exportar en el .TXT"
+                                >
+                                  {isReportChecked ? <CheckSquare size={14} strokeWidth={2.8} /> : <Square size={14} strokeWidth={2.6} />}
+                                  <span>{isReportChecked ? 'Seleccionado' : 'Seleccionar'}</span>
+                                </button>
+
+                                <span
+                                  style={{
+                                    background: rep.pathId === 'sql' ? '#EEF2FF' : '#E0F2FE',
+                                    color: rep.pathId === 'sql' ? '#4F46E5' : '#0284C7',
+                                    border: '1.5px solid #000000',
+                                    borderRadius: 6,
+                                    padding: '2px 8px',
+                                    fontSize: '0.72rem',
+                                    fontWeight: 900,
+                                    textTransform: 'uppercase'
                                   }}
                                 >
-                                  <FormattedText text={rep.prompt} inline />
+                                  {rep.pathId}{rep.unitId ? ` · U${rep.unitId}` : ''}
+                                </span>
+
+                                <span
+                                  style={{
+                                    background: '#F1F5F9',
+                                    border: '1.5px solid #000000',
+                                    borderRadius: 6,
+                                    padding: '2px 8px',
+                                    fontSize: '0.72rem',
+                                    fontWeight: 800,
+                                    color: '#0F172A'
+                                  }}
+                                >
+                                  {rep.lessonTitle} ({rep.lessonId})
+                                </span>
+
+                                <span
+                                  style={{
+                                    background: '#FEF3C7',
+                                    border: '1.5px solid #000000',
+                                    borderRadius: 6,
+                                    padding: '2px 8px',
+                                    fontSize: '0.72rem',
+                                    fontWeight: 800,
+                                    color: '#B45309'
+                                  }}
+                                >
+                                  Tipo: {rep.exerciseType}
+                                </span>
+
+                                <span
+                                  style={{
+                                    background: totalReportersCount > 1 ? '#FEE2E2' : '#F1F5F9',
+                                    color: totalReportersCount > 1 ? '#DC2626' : '#475569',
+                                    border: '1.5px solid #000000',
+                                    borderRadius: 6,
+                                    padding: '2px 8px',
+                                    fontSize: '0.72rem',
+                                    fontWeight: 900
+                                  }}
+                                >
+                                  {totalReportersCount > 1 ? `${totalReportersCount} reportes` : '1 reporte'}
+                                </span>
+
+                                {/* Botón para copiar ID exacto de la pregunta */}
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    if (navigator?.clipboard) {
+                                      navigator.clipboard.writeText(rep.exerciseId);
+                                      setCopiedReportId(rep.exerciseId);
+                                      soundService.playToken();
+                                      setTimeout(() => setCopiedReportId(null), 2000);
+                                    }
+                                  }}
+                                  style={{
+                                    background: copiedReportId === rep.exerciseId ? '#DCFCE7' : '#0F172A',
+                                    color: copiedReportId === rep.exerciseId ? '#15803D' : '#FFFFFF',
+                                    border: '1.5px solid #000000',
+                                    boxShadow: '1.5px 1.5px 0px #000000',
+                                    borderRadius: 6,
+                                    padding: '2px 9px',
+                                    fontSize: '0.74rem',
+                                    fontWeight: 900,
+                                    cursor: 'pointer',
+                                    display: 'inline-flex',
+                                    alignItems: 'center',
+                                    gap: 4,
+                                    fontFamily: 'monospace'
+                                  }}
+                                  title="Copiar ID exacto de la pregunta"
+                                >
+                                  <Copy size={12} strokeWidth={2.6} />
+                                  <span>{copiedReportId === rep.exerciseId ? '¡ID Copiado!' : `ID: ${rep.exerciseId}`}</span>
+                                </button>
+                              </div>
+
+                              {/* Estado y fecha */}
+                              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                                <span style={{ fontSize: '0.74rem', color: '#64748B', fontWeight: 600 }}>
+                                  {new Date(rep.lastReportedAt || rep.timestamp).toLocaleString()}
+                                </span>
+
+                                <select
+                                  value={rep.status}
+                                  onChange={async (e) => {
+                                    const newStatus = e.target.value as 'pending' | 'reviewed' | 'resolved';
+                                    soundService.playToken();
+                                    await questionReportService.updateReportStatus(rep.reportId, newStatus);
+                                    setQuestionReports(prev =>
+                                      prev.map(r => r.reportId === rep.reportId ? { ...r, status: newStatus } : r)
+                                    );
+                                  }}
+                                  style={{
+                                    background: isResolved ? '#DCFCE7' : isReviewed ? '#DBEAFE' : '#FEE2E2',
+                                    color: isResolved ? '#15803D' : isReviewed ? '#1D4ED8' : '#B91C1C',
+                                    border: '2px solid #000000',
+                                    boxShadow: '2px 2px 0px #000000',
+                                    borderRadius: 8,
+                                    padding: '3px 8px',
+                                    fontSize: '0.76rem',
+                                    fontWeight: 900,
+                                    cursor: 'pointer'
+                                  }}
+                                >
+                                  <option value="pending">Pendiente</option>
+                                  <option value="reviewed">En Revisión</option>
+                                  <option value="resolved">Resuelto</option>
+                                </select>
+                              </div>
+                            </div>
+
+                            {/* Ruta del archivo fuente en código si se conoce */}
+                            {rep.sourceFileHint && (
+                              <div
+                                style={{
+                                  fontSize: '0.73rem',
+                                  color: '#475569',
+                                  background: '#F1F5F9',
+                                  border: '1px dashed #94A3B8',
+                                  borderRadius: 6,
+                                  padding: '4px 10px',
+                                  fontFamily: 'monospace',
+                                  fontWeight: 700
+                                }}
+                              >
+                                Archivo fuente: {rep.sourceFileHint}
+                              </div>
+                            )}
+
+                            {/* ═══ 2. REPORTADA POR Y LO QUE MARCÓ CADA ALUMNO ═══ */}
+                            <div
+                              style={{
+                                background: '#F8FAFC',
+                                border: '1.5px solid #000000',
+                                borderRadius: 10,
+                                padding: '10px 12px',
+                                display: 'flex',
+                                flexDirection: 'column',
+                                gap: 8
+                              }}
+                            >
+                              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 6 }}>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                                  <span style={{ fontSize: '0.74rem', fontWeight: 900, textTransform: 'uppercase', color: '#475569', letterSpacing: '0.5px' }}>
+                                    Reportada por ({reportersList.length}):
+                                  </span>
                                 </div>
                               </div>
 
-                              {/* CÓDIGO DE LA PREGUNTA (CON NÚMEROS DE LÍNEA) */}
-                              {rep.codeSnippet && (
+                              <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                                {reportersList.map((r, rIdx) => (
+                                  <div
+                                    key={'detail_' + r.studentId + '_' + rIdx}
+                                    style={{
+                                      background: '#FFF1F2',
+                                      border: '1.5px solid #FECDD3',
+                                      borderRadius: 8,
+                                      padding: '8px 10px',
+                                      fontSize: '0.78rem',
+                                      lineHeight: 1.4
+                                    }}
+                                  >
+                                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 6, marginBottom: 4 }}>
+                                      <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                                        <strong style={{ color: '#9F1239', fontSize: '0.82rem' }}>{r.studentName}</strong>
+                                        {r.studentCode && (
+                                          <span style={{ color: '#64748B', fontWeight: 800, fontSize: '0.72rem' }}>
+                                            ({r.studentCode})
+                                          </span>
+                                        )}
+                                        <span style={{ fontSize: '0.7rem', color: '#94A3B8' }}>
+                                          · {new Date(r.timestamp).toLocaleString()}
+                                        </span>
+                                      </div>
+
+                                      <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                                        <span
+                                          style={{
+                                            background: '#FEE2E2',
+                                            color: '#B91C1C',
+                                            border: '1px solid #DC2626',
+                                            borderRadius: 4,
+                                            padding: '1px 6px',
+                                            fontSize: '0.68rem',
+                                            fontWeight: 800
+                                          }}
+                                        >
+                                          {r.reasonLabel}
+                                        </span>
+
+                                        {r.screenshotDataUrl && (
+                                          <button
+                                            type="button"
+                                            onClick={() => {
+                                              soundService.playToken();
+                                              setPreviewScreenshotModal({
+                                                dataUrl: r.screenshotDataUrl!,
+                                                title: `ID: ${rep.exerciseId} (${rep.lessonTitle})`,
+                                                studentName: r.studentName
+                                              });
+                                            }}
+                                            style={{
+                                              background: '#0F172A',
+                                              color: '#FFFFFF',
+                                              border: '1px solid #000000',
+                                              borderRadius: 4,
+                                              padding: '2px 7px',
+                                              fontSize: '0.68rem',
+                                              fontWeight: 800,
+                                              cursor: 'pointer',
+                                              display: 'inline-flex',
+                                              alignItems: 'center',
+                                              gap: 4
+                                            }}
+                                          >
+                                            <Eye size={11} />
+                                            <span>Ver Captura de {r.studentName.split(' ')[0]}</span>
+                                          </button>
+                                        )}
+                                      </div>
+                                    </div>
+
+                                    <div style={{ color: '#0F172A', fontSize: '0.78rem', marginTop: 2, fontFamily: 'monospace', background: '#FFFFFF', padding: '4px 8px', borderRadius: 6, border: '1px solid #E2E8F0' }}>
+                                      <strong style={{ color: '#0369A1' }}>Qué marcó el alumno:</strong>{' '}
+                                      {r.userAnswer || rep.userAnswer || '(No había marcado opción antes de tocar Reportar)'}
+                                    </div>
+
+                                    {r.availableOptions && r.availableOptions.length > 0 && (
+                                      <div style={{ color: '#334155', fontSize: '0.73rem', marginTop: 4, fontFamily: 'monospace' }}>
+                                        <strong>Opciones exactas que tenía este alumno en ese momento:</strong>{' '}
+                                        {r.availableOptions.map((o, i) => `[${String.fromCharCode(65 + i)}] ${o}`).join('  |  ')}
+                                      </div>
+                                    )}
+
+                                    {r.comment ? (
+                                      <div style={{ color: '#881337', marginTop: 4 }}>
+                                        <span style={{ fontWeight: 800 }}>Comentario del alumno:</span> "{r.comment}"
+                                      </div>
+                                    ) : (
+                                      <div style={{ color: '#94A3B8', fontSize: '0.70rem', fontStyle: 'italic', marginTop: 2 }}>
+                                        (Sin comentario escrito por el alumno)
+                                      </div>
+                                    )}
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+
+                            {/* ═══ 3. DETALLE EXACTO DE LA PREGUNTA, ENUNCIADO, OPCIONES QUE SALEN Y SCREENSHOT ═══ */}
+                            <div
+                              style={{
+                                border: '2px solid #000000',
+                                boxShadow: '4px 4px 0px #000000',
+                                borderRadius: 12,
+                                overflow: 'hidden',
+                                background: '#FFFFFF'
+                              }}
+                            >
+                              <div
+                                style={{
+                                  background: '#0F172A',
+                                  color: '#FFFFFF',
+                                  padding: '8px 12px',
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  justifyContent: 'space-between',
+                                  flexWrap: 'wrap',
+                                  gap: 8,
+                                  fontSize: '0.76rem',
+                                  fontWeight: 800,
+                                  letterSpacing: '0.5px'
+                                }}
+                              >
+                                <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                                  <Terminal size={14} color="#38BDF8" strokeWidth={2.6} />
+                                  <span>RADIOGRAFÍA EXACTA DE LA PREGUNTA Y OPCIONES EN PANTALLA (ID: {rep.exerciseId})</span>
+                                </div>
+                                <span style={{ color: '#38BDF8', fontSize: '0.72rem', fontFamily: 'monospace' }}>
+                                  Tipo: {rep.exerciseType}
+                                </span>
+                              </div>
+
+                              <div style={{ padding: '14px', display: 'flex', flexDirection: 'column', gap: 14 }}>
+                                {/* ENUNCIADO Y CONTEXTO DE LA PREGUNTA */}
                                 <div>
                                   <div style={{ fontSize: '0.72rem', textTransform: 'uppercase', letterSpacing: '0.6px', fontWeight: 900, color: '#64748B', marginBottom: 4 }}>
-                                    Código del Ejercicio:
+                                    Pregunta / Enunciado que le sale al estudiante:
                                   </div>
                                   <div
                                     style={{
-                                      background: '#0F172A',
+                                      fontSize: '0.96rem',
+                                      fontWeight: 900,
+                                      color: '#0F172A',
+                                      lineHeight: 1.45,
+                                      background: '#F8FAFC',
                                       border: '2px solid #000000',
                                       borderRadius: 8,
-                                      padding: '10px',
-                                      fontSize: '0.78rem',
-                                      fontFamily: 'monospace',
-                                      color: '#F8FAFC',
-                                      overflowX: 'auto',
-                                      display: 'flex',
-                                      flexDirection: 'column',
-                                      gap: 3
+                                      padding: '10px 12px'
                                     }}
                                   >
-                                    {rep.codeSnippet.split('\n').map((line, idx) => {
-                                      // Si es spot_the_bug, resaltar la línea que contiene el bug según la solución esperada
-                                      const isExpectedBugLine = rep.expectedSolution.includes(`Línea ${idx + 1}`);
-                                      const isUserSelectedLine = rep.userAnswer && rep.userAnswer.includes(`Línea ${idx + 1}`);
-
-                                      return (
-                                        <div
-                                          key={idx}
-                                          style={{
-                                            display: 'flex',
-                                            alignItems: 'center',
-                                            gap: 8,
-                                            padding: '2px 4px',
-                                            borderRadius: 4,
-                                            background: isExpectedBugLine
-                                              ? 'rgba(34, 197, 94, 0.25)'
-                                              : isUserSelectedLine
-                                              ? 'rgba(239, 68, 68, 0.25)'
-                                              : 'transparent',
-                                            border: isExpectedBugLine
-                                              ? '1px solid #22C55E'
-                                              : isUserSelectedLine
-                                              ? '1px solid #EF4444'
-                                              : '1px solid transparent'
-                                          }}
-                                        >
-                                          <span style={{ color: '#64748B', width: 24, textAlign: 'right', flexShrink: 0 }}>
-                                            {idx + 1}.
-                                          </span>
-                                          <span style={{ flex: 1, whiteSpace: 'pre' }}>{line}</span>
-                                          {isExpectedBugLine && (
-                                            <span style={{ background: '#22C55E', color: '#000000', padding: '1px 6px', borderRadius: 4, fontSize: '0.65rem', fontWeight: 900 }}>
-                                              BUG ESPERADO EN SISTEMA
-                                            </span>
-                                          )}
-                                          {isUserSelectedLine && (
-                                            <span style={{ background: '#EF4444', color: '#FFFFFF', padding: '1px 6px', borderRadius: 4, fontSize: '0.65rem', fontWeight: 900 }}>
-                                              LÍNEA TOCADA POR EL ALUMNO
-                                            </span>
-                                          )}
-                                        </div>
-                                      );
-                                    })}
+                                    <FormattedText text={rep.prompt} inline />
+                                    {rep.instructionText && (
+                                      <div style={{ marginTop: 6, fontSize: '0.78rem', color: '#0284C7', fontWeight: 700 }}>
+                                        Instrucción en pantalla: {rep.instructionText}
+                                      </div>
+                                    )}
+                                    {rep.flowchartData?.targetProblem && (
+                                      <div style={{ marginTop: 6, fontSize: '0.8rem', color: '#4F46E5', fontWeight: 800 }}>
+                                        Problema del diagrama: {rep.flowchartData.targetProblem}
+                                      </div>
+                                    )}
                                   </div>
                                 </div>
-                              )}
 
-                              {/* OPCIONES DE RESPUESTA PRESENTADAS AL ALUMNO */}
-                              {rep.availableOptions && rep.availableOptions.length > 0 && (
-                                <div>
-                                  <div style={{ fontSize: '0.72rem', textTransform: 'uppercase', letterSpacing: '0.6px', fontWeight: 900, color: '#64748B', marginBottom: 6 }}>
-                                    Opciones Disponibles y Calce con la Solución:
+                                {/* CÓDIGO DEL EJERCICIO (CON LÍNEAS NUMERADAS) */}
+                                {rep.codeSnippet && (
+                                  <div>
+                                    <div style={{ fontSize: '0.72rem', textTransform: 'uppercase', letterSpacing: '0.6px', fontWeight: 900, color: '#64748B', marginBottom: 4 }}>
+                                      Código / Fragmento que aparece en la pregunta:
+                                    </div>
+                                    <div
+                                      style={{
+                                        background: '#0F172A',
+                                        border: '2px solid #000000',
+                                        borderRadius: 8,
+                                        padding: '10px',
+                                        fontSize: '0.8rem',
+                                        fontFamily: 'monospace',
+                                        color: '#F8FAFC',
+                                        overflowX: 'auto',
+                                        display: 'flex',
+                                        flexDirection: 'column',
+                                        gap: 3
+                                      }}
+                                    >
+                                      {rep.codeSnippet.split('\n').map((line, idx) => {
+                                        const isExpectedBugLine =
+                                          rep.spotTheBugData?.bugLineIndex === idx ||
+                                          rep.expectedSolution.includes(`Línea ${idx + 1}`);
+                                        const isUserSelectedLine =
+                                          rep.spotTheBugData?.selectedLineIndex === idx ||
+                                          Boolean(rep.userAnswer && rep.userAnswer.includes(`Línea ${idx + 1}`));
+
+                                        return (
+                                          <div
+                                            key={idx}
+                                            style={{
+                                              display: 'flex',
+                                              alignItems: 'center',
+                                              gap: 8,
+                                              padding: '2px 6px',
+                                              borderRadius: 4,
+                                              background: isExpectedBugLine
+                                                ? 'rgba(34, 197, 94, 0.25)'
+                                                : isUserSelectedLine
+                                                ? 'rgba(239, 68, 68, 0.25)'
+                                                : 'transparent',
+                                              border: isExpectedBugLine
+                                                ? '1px solid #22C55E'
+                                                : isUserSelectedLine
+                                                ? '1px solid #EF4444'
+                                                : '1px solid transparent'
+                                            }}
+                                          >
+                                            <span style={{ color: '#64748B', width: 24, textAlign: 'right', flexShrink: 0 }}>
+                                              {idx + 1}.
+                                            </span>
+                                            <span style={{ flex: 1, whiteSpace: 'pre' }}>{line}</span>
+                                            {isExpectedBugLine && (
+                                              <span style={{ background: '#22C55E', color: '#000000', padding: '1px 6px', borderRadius: 4, fontSize: '0.65rem', fontWeight: 900 }}>
+                                                BUG SISTEMA (Línea {idx + 1})
+                                              </span>
+                                            )}
+                                            {isUserSelectedLine && (
+                                              <span style={{ background: '#EF4444', color: '#FFFFFF', padding: '1px 6px', borderRadius: 4, fontSize: '0.65rem', fontWeight: 900 }}>
+                                                MARCADA POR ALUMNO
+                                              </span>
+                                            )}
+                                          </div>
+                                        );
+                                      })}
+                                    </div>
                                   </div>
-                                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: 8 }}>
-                                    {rep.availableOptions.map((opt, idx) => {
-                                      const letter = String.fromCharCode(65 + idx);
-                                      const isSystemExpected =
-                                        rep.expectedSolution.includes(opt.trim()) ||
-                                        rep.expectedSolution.includes(`Opción ${letter}`);
-                                      const isUserSelection =
-                                        rep.userAnswer &&
-                                        (rep.userAnswer.includes(opt.trim()) || rep.userAnswer.includes(`Opción ${letter}`));
+                                )}
 
-                                      return (
-                                        <div
+                                {/* ═══ DESGLOSE EXACTO DE OPCIONES SEGÚN EL TIPO DE PREGUNTA ═══ */}
+
+                                {/* CASO A: RELACIÓN DE PAREJAS (matching_pairs) */}
+                                {rep.matchingPairsData && (
+                                  <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                                    <div style={{ fontSize: '0.74rem', textTransform: 'uppercase', letterSpacing: '0.6px', fontWeight: 900, color: '#0F172A' }}>
+                                      Opciones de Relación (Parejas) tal cual le salen al estudiante:
+                                    </div>
+                                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 12 }}>
+                                      <div style={{ background: '#F8FAFC', border: '2px solid #000000', borderRadius: 8, padding: 10 }}>
+                                        <div style={{ fontSize: '0.72rem', fontWeight: 900, color: '#0284C7', marginBottom: 6, textTransform: 'uppercase' }}>
+                                          Columna Izquierda (En pantalla):
+                                        </div>
+                                        {rep.matchingPairsData.leftColumn.map((item, idx) => (
+                                          <div key={idx} style={{ padding: '5px 8px', background: '#FFFFFF', border: '1.5px solid #CBD5E1', borderRadius: 6, marginBottom: 5, fontFamily: 'monospace', fontSize: '0.8rem', fontWeight: 800 }}>
+                                            {idx + 1}. {item}
+                                          </div>
+                                        ))}
+                                      </div>
+
+                                      <div style={{ background: '#F8FAFC', border: '2px solid #000000', borderRadius: 8, padding: 10 }}>
+                                        <div style={{ fontSize: '0.72rem', fontWeight: 900, color: '#4F46E5', marginBottom: 6, textTransform: 'uppercase' }}>
+                                          Columna Derecha (Orden en pantalla):
+                                        </div>
+                                        {rep.matchingPairsData.rightColumn.map((item, idx) => (
+                                          <div key={idx} style={{ padding: '5px 8px', background: '#FFFFFF', border: '1.5px solid #CBD5E1', borderRadius: 6, marginBottom: 5, fontFamily: 'monospace', fontSize: '0.8rem', fontWeight: 800 }}>
+                                            {String.fromCharCode(65 + idx)}. {item}
+                                          </div>
+                                        ))}
+                                      </div>
+
+                                      <div style={{ background: '#F0FDF4', border: '2px solid #16A34A', borderRadius: 8, padding: 10 }}>
+                                        <div style={{ fontSize: '0.72rem', fontWeight: 900, color: '#15803D', marginBottom: 6, textTransform: 'uppercase' }}>
+                                          Parejas Correctas en el Sistema:
+                                        </div>
+                                        {rep.matchingPairsData.expectedPairs.map((pair, idx) => (
+                                          <div key={idx} style={{ padding: '5px 8px', background: '#FFFFFF', border: '1.5px solid #86EFAC', borderRadius: 6, marginBottom: 5, fontFamily: 'monospace', fontSize: '0.78rem', fontWeight: 800, color: '#14532D' }}>
+                                            {pair.left}  ➔  {pair.right}
+                                          </div>
+                                        ))}
+                                      </div>
+                                    </div>
+                                  </div>
+                                )}
+
+                                {/* CASO B: COMPLETAR / ARMAR CÓDIGO CON FICHAS (code_builder) */}
+                                {rep.codeBuilderData && (
+                                  <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                                    <div style={{ fontSize: '0.74rem', textTransform: 'uppercase', letterSpacing: '0.6px', fontWeight: 900, color: '#0F172A' }}>
+                                      Fichas / Tokens que le salen al estudiante en el banco ({rep.codeBuilderData.displayedTokens.length} fichas):
+                                    </div>
+                                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, background: '#F8FAFC', border: '2px solid #000000', borderRadius: 8, padding: 10 }}>
+                                      {rep.codeBuilderData.displayedTokens.map((tok, idx) => (
+                                        <span
                                           key={idx}
                                           style={{
-                                            display: 'flex',
-                                            alignItems: 'center',
-                                            justifyContent: 'space-between',
-                                            gap: 8,
-                                            padding: '8px 10px',
-                                            borderRadius: 8,
-                                            border: `2px solid ${
-                                              isSystemExpected ? '#16A34A' : isUserSelection ? '#EF4444' : '#CBD5E1'
-                                            }`,
-                                            background: isSystemExpected
-                                              ? '#F0FDF4'
-                                              : isUserSelection
-                                              ? '#FEF2F2'
-                                              : '#FFFFFF',
-                                            fontSize: '0.8rem'
+                                            background: '#FFFFFF',
+                                            border: '1.5px solid #000000',
+                                            boxShadow: '1.5px 1.5px 0px #000000',
+                                            borderRadius: 6,
+                                            padding: '4px 10px',
+                                            fontFamily: 'monospace',
+                                            fontSize: '0.82rem',
+                                            fontWeight: 900,
+                                            color: '#0F172A'
                                           }}
                                         >
-                                          <div style={{ display: 'flex', alignItems: 'center', gap: 8, minWidth: 0 }}>
-                                            <span
-                                              style={{
-                                                width: 22,
-                                                height: 22,
-                                                borderRadius: 6,
-                                                background: isSystemExpected
-                                                  ? '#16A34A'
-                                                  : isUserSelection
-                                                  ? '#EF4444'
-                                                  : '#FFFFFF',
-                                                color: isSystemExpected || isUserSelection ? '#FFFFFF' : '#0F172A',
-                                                fontWeight: 900,
-                                                fontSize: '0.72rem',
-                                                display: 'flex',
-                                                alignItems: 'center',
-                                                justifyContent: 'center',
-                                                border: '1.5px solid #000000',
-                                                flexShrink: 0
-                                              }}
-                                            >
-                                              {letter}
-                                            </span>
-                                            <span
-                                              style={{
-                                                fontWeight: isSystemExpected || isUserSelection ? 800 : 500,
-                                                color: '#0F172A',
-                                                fontFamily: 'monospace',
-                                                wordBreak: 'break-word'
-                                              }}
-                                            >
-                                              {opt}
-                                            </span>
-                                          </div>
+                                          <span style={{ color: '#64748B', fontSize: '0.7rem', marginRight: 4 }}>[{idx + 1}]</span>
+                                          {tok}
+                                        </span>
+                                      ))}
+                                    </div>
+                                  </div>
+                                )}
 
-                                          <div style={{ display: 'flex', alignItems: 'center', gap: 4, flexShrink: 0 }}>
-                                            {isSystemExpected && (
+                                {/* CASO C: ORDENAR LÍNEAS O DIAGRAMA DE FLUJO (parsons_puzzle / flowchart_builder) */}
+                                {(rep.parsonsData || rep.flowchartData) && (
+                                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: 10 }}>
+                                    <div style={{ background: '#F8FAFC', border: '2px solid #000000', borderRadius: 8, padding: 10 }}>
+                                      <div style={{ fontSize: '0.72rem', fontWeight: 900, color: '#0369A1', marginBottom: 6, textTransform: 'uppercase' }}>
+                                        Bloques / Orden en la pantalla del alumno:
+                                      </div>
+                                      {(rep.parsonsData ? rep.parsonsData.userOrderLines : rep.flowchartData?.userOrderBlocks || []).map((line, idx) => (
+                                        <div key={idx} style={{ padding: '5px 8px', background: '#FFFFFF', border: '1px solid #CBD5E1', borderRadius: 6, marginBottom: 4, fontFamily: 'monospace', fontSize: '0.78rem', fontWeight: 700 }}>
+                                          {line}
+                                        </div>
+                                      ))}
+                                    </div>
+                                    <div style={{ background: '#F0FDF4', border: '2px solid #16A34A', borderRadius: 8, padding: 10 }}>
+                                      <div style={{ fontSize: '0.72rem', fontWeight: 900, color: '#15803D', marginBottom: 6, textTransform: 'uppercase' }}>
+                                        Orden Correcto Configurado en Sistema:
+                                      </div>
+                                      {(rep.parsonsData ? rep.parsonsData.expectedOrderLines : rep.flowchartData?.expectedOrderBlocks || []).map((line, idx) => (
+                                        <div key={idx} style={{ padding: '5px 8px', background: '#FFFFFF', border: '1px solid #86EFAC', borderRadius: 6, marginBottom: 4, fontFamily: 'monospace', fontSize: '0.78rem', fontWeight: 800, color: '#14532D' }}>
+                                          {line}
+                                        </div>
+                                      ))}
+                                    </div>
+                                  </div>
+                                )}
+
+                                {/* CASO D: 4 OPCIONES / SELECCIÓN MÚLTIPLE / CODE CLOZE / TABLA DE TRAZA */}
+                                {!rep.matchingPairsData && !rep.codeBuilderData && !rep.parsonsData && !rep.flowchartData && rep.availableOptions && rep.availableOptions.length > 0 && (
+                                  <div>
+                                    <div style={{ fontSize: '0.72rem', textTransform: 'uppercase', letterSpacing: '0.6px', fontWeight: 900, color: '#64748B', marginBottom: 6 }}>
+                                      Opciones Exactas que le salen al estudiante en pantalla:
+                                    </div>
+                                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: 8 }}>
+                                      {rep.availableOptions.map((opt, idx) => {
+                                        const letter = String.fromCharCode(65 + idx);
+                                        const cleanOpt = opt.replace(/\s*\[Descartada.*$/, '').trim();
+                                        const isSystemExpected =
+                                          rep.expectedSolution.includes(cleanOpt) ||
+                                          rep.expectedSolution.includes(`Opción ${letter}`);
+                                        const isUserSelection =
+                                          rep.userAnswer &&
+                                          (rep.userAnswer.includes(cleanOpt) || rep.userAnswer.includes(`Opción ${letter}`));
+
+                                        return (
+                                          <div
+                                            key={idx}
+                                            style={{
+                                              display: 'flex',
+                                              alignItems: 'center',
+                                              justifyContent: 'space-between',
+                                              gap: 8,
+                                              padding: '8px 10px',
+                                              borderRadius: 8,
+                                              border: `2px solid ${
+                                                isSystemExpected ? '#16A34A' : isUserSelection ? '#EF4444' : '#000000'
+                                              }`,
+                                              background: isSystemExpected
+                                                ? '#F0FDF4'
+                                                : isUserSelection
+                                                ? '#FEF2F2'
+                                                : '#FFFFFF',
+                                              fontSize: '0.8rem'
+                                            }}
+                                          >
+                                            <div style={{ display: 'flex', alignItems: 'center', gap: 8, minWidth: 0 }}>
                                               <span
                                                 style={{
-                                                  background: '#DCFCE7',
-                                                  color: '#15803D',
-                                                  border: '1.5px solid #16A34A',
-                                                  padding: '1px 6px',
+                                                  width: 24,
+                                                  height: 24,
                                                   borderRadius: 6,
-                                                  fontSize: '0.66rem',
+                                                  background: isSystemExpected
+                                                    ? '#16A34A'
+                                                    : isUserSelection
+                                                    ? '#EF4444'
+                                                    : '#F1F5F9',
+                                                  color: isSystemExpected || isUserSelection ? '#FFFFFF' : '#0F172A',
                                                   fontWeight: 900,
-                                                  display: 'inline-flex',
+                                                  fontSize: '0.74rem',
+                                                  display: 'flex',
                                                   alignItems: 'center',
-                                                  gap: 3
+                                                  justifyContent: 'center',
+                                                  border: '1.5px solid #000000',
+                                                  flexShrink: 0
                                                 }}
                                               >
-                                                <Check size={11} strokeWidth={3} />
-                                                SOLUCIÓN DEL SISTEMA
+                                                {letter}
                                               </span>
-                                            )}
-                                            {isUserSelection && (
                                               <span
                                                 style={{
-                                                  background: isSystemExpected ? '#EFF6FF' : '#FEE2E2',
-                                                  color: isSystemExpected ? '#1D4ED8' : '#B91C1C',
-                                                  border: `1.5px solid ${isSystemExpected ? '#2563EB' : '#EF4444'}`,
-                                                  padding: '1px 6px',
-                                                  borderRadius: 6,
-                                                  fontSize: '0.66rem',
-                                                  fontWeight: 900
+                                                  fontWeight: isSystemExpected || isUserSelection ? 900 : 700,
+                                                  color: '#0F172A',
+                                                  fontFamily: 'monospace',
+                                                  wordBreak: 'break-word'
                                                 }}
                                               >
-                                                SELECCIÓN ALUMNO
+                                                {opt}
                                               </span>
-                                            )}
+                                            </div>
+
+                                            <div style={{ display: 'flex', alignItems: 'center', gap: 4, flexShrink: 0 }}>
+                                              {isSystemExpected && (
+                                                <span
+                                                  style={{
+                                                    background: '#DCFCE7',
+                                                    color: '#15803D',
+                                                    border: '1.5px solid #16A34A',
+                                                    padding: '1px 6px',
+                                                    borderRadius: 6,
+                                                    fontSize: '0.66rem',
+                                                    fontWeight: 900,
+                                                    display: 'inline-flex',
+                                                    alignItems: 'center',
+                                                    gap: 3
+                                                  }}
+                                                >
+                                                  <Check size={11} strokeWidth={3} />
+                                                  CORRECTA SISTEMA
+                                                </span>
+                                              )}
+                                              {isUserSelection && (
+                                                <span
+                                                  style={{
+                                                    background: isSystemExpected ? '#EFF6FF' : '#FEE2E2',
+                                                    color: isSystemExpected ? '#1D4ED8' : '#B91C1C',
+                                                    border: `1.5px solid ${isSystemExpected ? '#2563EB' : '#EF4444'}`,
+                                                    padding: '1px 6px',
+                                                    borderRadius: 6,
+                                                    fontSize: '0.66rem',
+                                                    fontWeight: 900
+                                                  }}
+                                                >
+                                                  MARCÓ EL ALUMNO
+                                                </span>
+                                              )}
+                                            </div>
                                           </div>
-                                        </div>
-                                      );
-                                    })}
+                                        );
+                                      })}
+                                    </div>
                                   </div>
-                                </div>
-                              )}
+                                )}
 
-                              {/* COMPARATIVA DIRECTA: SOLUCIÓN DEL SISTEMA VS RESPUESTA DEL ALUMNO */}
-                              <div
-                                style={{
-                                  display: 'grid',
-                                  gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
-                                  gap: 10,
-                                  marginTop: 2
-                                }}
-                              >
-                                {/* Solución Esperada por la App */}
+                                {/* COMPARATIVA DIRECTA: SOLUCIÓN DEL SISTEMA VS RESPUESTA DEL ALUMNO */}
                                 <div
                                   style={{
-                                    background: '#F0FDF4',
-                                    border: '2px solid #16A34A',
-                                    borderRadius: 10,
-                                    padding: '10px 12px',
-                                    display: 'flex',
-                                    flexDirection: 'column',
-                                    gap: 4
+                                    display: 'grid',
+                                    gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
+                                    gap: 10,
+                                    marginTop: 2
                                   }}
                                 >
-                                  <div style={{ fontSize: '0.72rem', textTransform: 'uppercase', letterSpacing: '0.6px', fontWeight: 900, color: '#166534', display: 'flex', alignItems: 'center', gap: 4 }}>
-                                    <CheckCircle2 size={13} strokeWidth={2.6} />
-                                    <span>Solución Esperada en la App (Backend):</span>
+                                  <div
+                                    style={{
+                                      background: '#F0FDF4',
+                                      border: '2px solid #16A34A',
+                                      borderRadius: 10,
+                                      padding: '10px 12px',
+                                      display: 'flex',
+                                      flexDirection: 'column',
+                                      gap: 4
+                                    }}
+                                  >
+                                    <div style={{ fontSize: '0.72rem', textTransform: 'uppercase', letterSpacing: '0.6px', fontWeight: 900, color: '#166534', display: 'flex', alignItems: 'center', gap: 4 }}>
+                                      <CheckCircle2 size={13} strokeWidth={2.6} />
+                                      <span>Solución Esperada en la App (Backend):</span>
+                                    </div>
+                                    <div style={{ color: '#14532D', fontWeight: 800, fontSize: '0.86rem', wordBreak: 'break-word', fontFamily: 'monospace' }}>
+                                      {rep.expectedSolution}
+                                    </div>
                                   </div>
-                                  <div style={{ color: '#14532D', fontWeight: 800, fontSize: '0.86rem', wordBreak: 'break-word', fontFamily: 'monospace' }}>
-                                    {rep.expectedSolution}
+
+                                  <div
+                                    style={{
+                                      background: '#F0F9FF',
+                                      border: '2px solid #0284C7',
+                                      borderRadius: 10,
+                                      padding: '10px 12px',
+                                      display: 'flex',
+                                      flexDirection: 'column',
+                                      gap: 4
+                                    }}
+                                  >
+                                    <div style={{ fontSize: '0.72rem', textTransform: 'uppercase', letterSpacing: '0.6px', fontWeight: 900, color: '#0369A1', display: 'flex', alignItems: 'center', gap: 4 }}>
+                                      <AlertCircle size={13} strokeWidth={2.6} />
+                                      <span>Lo que Marcó el Estudiante al Reportar:</span>
+                                    </div>
+                                    <div style={{ color: '#075985', fontWeight: 800, fontSize: '0.86rem', wordBreak: 'break-word', fontFamily: 'monospace' }}>
+                                      {rep.userAnswer || '(El estudiante no había marcado respuesta al tocar la bandera)'}
+                                    </div>
                                   </div>
                                 </div>
 
-                                {/* Respuesta enviada o marcada por el alumno */}
-                                <div
+                                {/* CAPTURA DE PANTALLA AUTOMÁTICA OPTIMIZADA (PARA REPORTES NUEVOS) */}
+                                {activeScreenshot && (
+                                  <div
+                                    style={{
+                                      background: '#F8FAFC',
+                                      border: '2px solid #000000',
+                                      borderRadius: 10,
+                                      padding: '10px 12px',
+                                      display: 'flex',
+                                      flexDirection: 'column',
+                                      gap: 8
+                                    }}
+                                  >
+                                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 8 }}>
+                                      <span style={{ fontSize: '0.74rem', fontWeight: 900, textTransform: 'uppercase', color: '#0F172A' }}>
+                                        Captura Automática de la Pantalla del Jugador (Optimizada):
+                                      </span>
+                                      <button
+                                        type="button"
+                                        onClick={() => {
+                                          soundService.playToken();
+                                          setPreviewScreenshotModal({
+                                            dataUrl: activeScreenshot,
+                                            title: `ID: ${rep.exerciseId} - ${rep.lessonTitle}`,
+                                            studentName: rep.studentName
+                                          });
+                                        }}
+                                        style={{
+                                          background: '#0F172A',
+                                          color: '#FFFFFF',
+                                          border: '1.5px solid #000000',
+                                          borderRadius: 6,
+                                          padding: '4px 10px',
+                                          fontSize: '0.72rem',
+                                          fontWeight: 800,
+                                          cursor: 'pointer',
+                                          display: 'inline-flex',
+                                          alignItems: 'center',
+                                          gap: 5
+                                        }}
+                                      >
+                                        <Eye size={13} />
+                                        <span>Ampliar Captura en Pantalla Completa</span>
+                                      </button>
+                                    </div>
+                                    <div
+                                      onClick={() =>
+                                        setPreviewScreenshotModal({
+                                          dataUrl: activeScreenshot,
+                                          title: `ID: ${rep.exerciseId} - ${rep.lessonTitle}`,
+                                          studentName: rep.studentName
+                                        })
+                                      }
+                                      style={{
+                                        cursor: 'zoom-in',
+                                        border: '2px solid #000000',
+                                        borderRadius: 8,
+                                        overflow: 'hidden',
+                                        maxHeight: 280,
+                                        display: 'flex',
+                                        justifyContent: 'center',
+                                        background: '#0F172A'
+                                      }}
+                                    >
+                                      <img
+                                        src={activeScreenshot}
+                                        alt={`Captura de pantalla de ${rep.exerciseId}`}
+                                        style={{ maxWidth: '100%', maxHeight: 276, objectFit: 'contain', display: 'block' }}
+                                      />
+                                    </div>
+                                  </div>
+                                )}
+
+                                {/* Feedback Pedagógico / Explicación del sistema */}
+                                {(rep.feedbackExplanation || rep.originalExplanation) && (
+                                  <div
+                                    style={{
+                                      background: '#FFFBEB',
+                                      border: '1.5px solid #F59E0B',
+                                      borderRadius: 8,
+                                      padding: '8px 10px',
+                                      fontSize: '0.78rem',
+                                      color: '#92400E'
+                                    }}
+                                  >
+                                    <strong>Explicación configurada en el sistema:</strong> {rep.feedbackExplanation || rep.originalExplanation}
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+
+                            {/* ═══ 4. HERRAMIENTAS DE CORRECCIÓN Y NOTAS DEL DOCENTE ═══ */}
+                            <div
+                              style={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'space-between',
+                                flexWrap: 'wrap',
+                                gap: 10,
+                                paddingTop: 8,
+                                borderTop: '1.5px solid #E2E8F0'
+                              }}
+                            >
+                              <div style={{ display: 'flex', alignItems: 'center', gap: 6, flex: '1 1 300px' }}>
+                                <input
+                                  type="text"
+                                  defaultValue={rep.adminNotes || ''}
+                                  placeholder="Nota de corrección (ej: 'Modificado índice en lección 3', 'Corregido')..."
+                                  onChange={(e) => {
+                                    const val = e.target.value;
+                                    setReportAdminNotes(prev => ({ ...prev, [rep.reportId]: val }));
+                                  }}
                                   style={{
-                                    background: '#F0F9FF',
-                                    border: '2px solid #0284C7',
-                                    borderRadius: 10,
-                                    padding: '10px 12px',
-                                    display: 'flex',
-                                    flexDirection: 'column',
-                                    gap: 4
+                                    flex: 1,
+                                    padding: '6px 10px',
+                                    borderRadius: 8,
+                                    border: '1.5px solid #000000',
+                                    fontSize: '0.78rem',
+                                    fontFamily: 'inherit',
+                                    outline: 'none'
+                                  }}
+                                />
+                                <button
+                                  type="button"
+                                  onClick={async () => {
+                                    const note = reportAdminNotes[rep.reportId] !== undefined ? reportAdminNotes[rep.reportId] : (rep.adminNotes || '');
+                                    soundService.playToken();
+                                    await questionReportService.updateReportStatus(rep.reportId, rep.status, note);
+                                    setQuestionReports(prev =>
+                                      prev.map(r => r.reportId === rep.reportId ? { ...r, adminNotes: note } : r)
+                                    );
+                                    alert('Nota de corrección guardada.');
+                                  }}
+                                  style={{
+                                    background: '#FFFFFF',
+                                    color: '#0F172A',
+                                    border: '1.5px solid #000000',
+                                    boxShadow: '1.5px 1.5px 0px #000000',
+                                    borderRadius: 8,
+                                    padding: '6px 10px',
+                                    fontSize: '0.74rem',
+                                    fontWeight: 800,
+                                    cursor: 'pointer',
+                                    whiteSpace: 'nowrap'
                                   }}
                                 >
-                                  <div style={{ fontSize: '0.72rem', textTransform: 'uppercase', letterSpacing: '0.6px', fontWeight: 900, color: '#0369A1', display: 'flex', alignItems: 'center', gap: 4 }}>
-                                    <AlertCircle size={13} strokeWidth={2.6} />
-                                    <span>Respuesta del Alumno al Reportar:</span>
-                                  </div>
-                                  <div style={{ color: '#075985', fontWeight: 800, fontSize: '0.86rem', wordBreak: 'break-word', fontFamily: 'monospace' }}>
-                                    {rep.userAnswer || '(El estudiante no había marcado respuesta al tocar la bandera)'}
-                                  </div>
-                                </div>
+                                  Guardar Nota
+                                </button>
                               </div>
 
-                              {/* Feedback Pedagógico (si estaba activo al momento de reportar) */}
-                              {rep.feedbackExplanation && (
-                                <div
+                              <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
+                                {rep.status !== 'reviewed' && (
+                                  <button
+                                    type="button"
+                                    onClick={async () => {
+                                      soundService.playToken();
+                                      await questionReportService.updateReportStatus(rep.reportId, 'reviewed');
+                                      setQuestionReports(prev =>
+                                        prev.map(r => r.reportId === rep.reportId ? { ...r, status: 'reviewed' } : r)
+                                      );
+                                    }}
+                                    style={{
+                                      background: '#EFF6FF',
+                                      color: '#1D4ED8',
+                                      border: '1.5px solid #2563EB',
+                                      boxShadow: '1.5px 1.5px 0px #2563EB',
+                                      borderRadius: 8,
+                                      padding: '6px 12px',
+                                      fontSize: '0.76rem',
+                                      fontWeight: 900,
+                                      cursor: 'pointer'
+                                    }}
+                                  >
+                                    En Revisión
+                                  </button>
+                                )}
+
+                                {rep.status !== 'resolved' && (
+                                  <button
+                                    type="button"
+                                    onClick={async () => {
+                                      soundService.playWin();
+                                      await questionReportService.updateReportStatus(rep.reportId, 'resolved');
+                                      setQuestionReports(prev =>
+                                        prev.map(r => r.reportId === rep.reportId ? { ...r, status: 'resolved' } : r)
+                                      );
+                                    }}
+                                    style={{
+                                      background: '#F0FDF4',
+                                      color: '#15803D',
+                                      border: '1.5px solid #16A34A',
+                                      boxShadow: '1.5px 1.5px 0px #16A34A',
+                                      borderRadius: 8,
+                                      padding: '6px 12px',
+                                      fontSize: '0.76rem',
+                                      fontWeight: 900,
+                                      cursor: 'pointer'
+                                    }}
+                                  >
+                                    Marcar Resuelto
+                                  </button>
+                                )}
+
+                                <button
+                                  type="button"
+                                  onClick={async () => {
+                                    if (window.confirm(`¿Seguro que deseas eliminar el reporte del ejercicio ${rep.exerciseId}?`)) {
+                                      soundService.playToken();
+                                      await questionReportService.deleteReport(rep.reportId);
+                                      setQuestionReports(prev => prev.filter(r => r.reportId !== rep.reportId));
+                                      setSelectedReportIds(prev => prev.filter(id => id !== rep.reportId));
+                                    }
+                                  }}
                                   style={{
-                                    background: '#FFFBEB',
-                                    border: '1.5px solid #F59E0B',
+                                    background: '#FFFFFF',
+                                    color: '#DC2626',
+                                    border: '1.5px solid #DC2626',
+                                    boxShadow: '1.5px 1.5px 0px #DC2626',
                                     borderRadius: 8,
-                                    padding: '8px 10px',
-                                    fontSize: '0.78rem',
-                                    color: '#92400E'
+                                    padding: '6px 10px',
+                                    fontSize: '0.74rem',
+                                    fontWeight: 800,
+                                    cursor: 'pointer',
+                                    display: 'inline-flex',
+                                    alignItems: 'center',
+                                    gap: 4
                                   }}
                                 >
-                                  <strong>Explicación del sistema mostrada al alumno:</strong> {rep.feedbackExplanation}
-                                </div>
-                              )}
+                                  <Trash2 size={13} strokeWidth={2.4} />
+                                  <span>Eliminar</span>
+                                </button>
+                              </div>
                             </div>
                           </div>
+                        );
+                      })}
 
-                          {/* ═══ 4. HERRAMIENTAS DE CORRECCIÓN Y NOTAS DEL DOCENTE ═══ */}
+                      {/* MODAL VISOR DE CAPTURA DE PANTALLA DEL JUGADOR */}
+                      {previewScreenshotModal && (
+                        <div
+                          onClick={() => setPreviewScreenshotModal(null)}
+                          style={{
+                            position: 'fixed',
+                            inset: 0,
+                            background: 'rgba(0, 0, 0, 0.78)',
+                            zIndex: 99999,
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            padding: 16
+                          }}
+                        >
                           <div
+                            onClick={(e) => e.stopPropagation()}
                             style={{
+                              background: '#FFFFFF',
+                              border: '3px solid #000000',
+                              boxShadow: '8px 8px 0px #000000',
+                              borderRadius: 14,
+                              maxWidth: 740,
+                              width: '100%',
+                              maxHeight: '92vh',
                               display: 'flex',
-                              alignItems: 'center',
-                              justifyContent: 'space-between',
-                              flexWrap: 'wrap',
-                              gap: 10,
-                              paddingTop: 8,
-                              borderTop: '1.5px solid #E2E8F0'
+                              flexDirection: 'column',
+                              overflow: 'hidden'
                             }}
                           >
-                            {/* Campo de notas de corrección del docente */}
-                            <div style={{ display: 'flex', alignItems: 'center', gap: 6, flex: '1 1 300px' }}>
-                              <input
-                                type="text"
-                                defaultValue={rep.adminNotes || ''}
-                                placeholder="Nota de corrección (ej: 'Modificado índice en lección 3', 'Corregido')..."
-                                onChange={(e) => {
-                                  const val = e.target.value;
-                                  setReportAdminNotes(prev => ({ ...prev, [rep.reportId]: val }));
-                                }}
-                                style={{
-                                  flex: 1,
-                                  padding: '6px 10px',
-                                  borderRadius: 8,
-                                  border: '1.5px solid #000000',
-                                  fontSize: '0.78rem',
-                                  fontFamily: 'inherit',
-                                  outline: 'none'
-                                }}
-                              />
+                            <div
+                              style={{
+                                padding: '12px 16px',
+                                background: '#0F172A',
+                                color: '#FFFFFF',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'space-between',
+                                gap: 10
+                              }}
+                            >
+                              <div>
+                                <div style={{ fontSize: '0.9rem', fontWeight: 900 }}>
+                                  Captura de Pantalla del Estudiante: {previewScreenshotModal.title}
+                                </div>
+                                {previewScreenshotModal.studentName && (
+                                  <div style={{ fontSize: '0.74rem', color: '#94A3B8' }}>
+                                    Reportado por: {previewScreenshotModal.studentName}
+                                  </div>
+                                )}
+                              </div>
                               <button
                                 type="button"
-                                onClick={async () => {
-                                  const note = reportAdminNotes[rep.reportId] !== undefined ? reportAdminNotes[rep.reportId] : (rep.adminNotes || '');
-                                  soundService.playToken();
-                                  await questionReportService.updateReportStatus(rep.reportId, rep.status, note);
-                                  setQuestionReports(prev =>
-                                    prev.map(r => r.reportId === rep.reportId ? { ...r, adminNotes: note } : r)
-                                  );
-                                  alert('Nota de corrección guardada.');
-                                }}
+                                onClick={() => setPreviewScreenshotModal(null)}
                                 style={{
-                                  background: '#FFFFFF',
-                                  color: '#0F172A',
-                                  border: '1.5px solid #000000',
-                                  boxShadow: '1.5px 1.5px 0px #000000',
+                                  background: '#EF4444',
+                                  color: '#FFFFFF',
+                                  border: '2px solid #000000',
                                   borderRadius: 8,
-                                  padding: '6px 10px',
-                                  fontSize: '0.74rem',
-                                  fontWeight: 800,
-                                  cursor: 'pointer',
-                                  whiteSpace: 'nowrap'
+                                  width: 32,
+                                  height: 32,
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  justifyContent: 'center',
+                                  cursor: 'pointer'
                                 }}
                               >
-                                Guardar Nota
+                                <X size={18} strokeWidth={2.8} />
                               </button>
                             </div>
-
-                            {/* Botones de acción rápida */}
-                            <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
-                              {rep.status !== 'reviewed' && (
-                                <button
-                                  type="button"
-                                  onClick={async () => {
-                                    soundService.playToken();
-                                    await questionReportService.updateReportStatus(rep.reportId, 'reviewed');
-                                    setQuestionReports(prev =>
-                                      prev.map(r => r.reportId === rep.reportId ? { ...r, status: 'reviewed' } : r)
-                                    );
-                                  }}
-                                  style={{
-                                    background: '#EFF6FF',
-                                    color: '#1D4ED8',
-                                    border: '1.5px solid #2563EB',
-                                    boxShadow: '1.5px 1.5px 0px #2563EB',
-                                    borderRadius: 8,
-                                    padding: '6px 12px',
-                                    fontSize: '0.76rem',
-                                    fontWeight: 900,
-                                    cursor: 'pointer'
-                                  }}
-                                >
-                                  En Revisión
-                                </button>
-                              )}
-
-                              {rep.status !== 'resolved' && (
-                                <button
-                                  type="button"
-                                  onClick={async () => {
-                                    soundService.playWin();
-                                    await questionReportService.updateReportStatus(rep.reportId, 'resolved');
-                                    setQuestionReports(prev =>
-                                      prev.map(r => r.reportId === rep.reportId ? { ...r, status: 'resolved' } : r)
-                                    );
-                                  }}
-                                  style={{
-                                    background: '#F0FDF4',
-                                    color: '#15803D',
-                                    border: '1.5px solid #16A34A',
-                                    boxShadow: '1.5px 1.5px 0px #16A34A',
-                                    borderRadius: 8,
-                                    padding: '6px 12px',
-                                    fontSize: '0.76rem',
-                                    fontWeight: 900,
-                                    cursor: 'pointer'
-                                  }}
-                                >
-                                  Marcar Resuelto
-                                </button>
-                              )}
-
-                              <button
-                                type="button"
-                                onClick={async () => {
-                                  if (window.confirm(`¿Seguro que deseas eliminar el reporte del ejercicio ${rep.exerciseId}?`)) {
-                                    soundService.playToken();
-                                    await questionReportService.deleteReport(rep.reportId);
-                                    setQuestionReports(prev => prev.filter(r => r.reportId !== rep.reportId));
-                                  }
-                                }}
-                                style={{
-                                  background: '#FFFFFF',
-                                  color: '#DC2626',
-                                  border: '1.5px solid #DC2626',
-                                  boxShadow: '1.5px 1.5px 0px #DC2626',
-                                  borderRadius: 8,
-                                  padding: '6px 10px',
-                                  fontSize: '0.74rem',
-                                  fontWeight: 800,
-                                  cursor: 'pointer',
-                                  display: 'inline-flex',
-                                  alignItems: 'center',
-                                  gap: 4
-                                }}
-                              >
-                                <Trash2 size={13} strokeWidth={2.4} />
-                                <span>Eliminar</span>
-                              </button>
+                            <div style={{ padding: 14, overflowY: 'auto', background: '#1E293B', display: 'flex', justifyContent: 'center' }}>
+                              <img
+                                src={previewScreenshotModal.dataUrl}
+                                alt="Captura de pantalla completa"
+                                style={{ maxWidth: '100%', height: 'auto', borderRadius: 8, border: '2px solid #000000' }}
+                              />
                             </div>
                           </div>
                         </div>
-                      );
-                    });
-                  })()}
+                      )}
+                    </>
+                  );
+                })()}
               </div>
             </div>
           )}

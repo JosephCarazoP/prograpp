@@ -16,7 +16,56 @@ export interface QuestionReporter {
   reasonLabel: string;
   comment?: string;
   userAnswer?: string;
+  availableOptions?: string[];
+  codeSnippet?: string;
+  feedbackState?: 'idle' | 'success' | 'error';
+  feedbackExplanation?: string;
+  screenshotDataUrl?: string;
   timestamp: number;
+}
+
+export interface MatchingPairsReportData {
+  leftColumn: string[];
+  rightColumn: string[];
+  expectedPairs: { left: string; right: string }[];
+  userMatched?: string[];
+  lastAttempts?: string[];
+  activeLeft?: string | null;
+  activeRight?: string | null;
+}
+
+export interface CodeBuilderReportData {
+  displayedTokens: string[];
+  selectedTokens: string[];
+  expectedSolution: string[];
+  acceptableAlternatives?: string[][];
+  eliminatedTokens?: string[];
+}
+
+export interface SpotTheBugReportData {
+  displayedLines: string[];
+  bugLineIndex: number;
+  selectedLineIndex?: number | null;
+  eliminatedLines?: number[];
+}
+
+export interface ParsonsReportData {
+  displayedLines: string[];
+  userOrderLines: string[];
+  expectedOrderLines: string[];
+}
+
+export interface FlowchartReportData {
+  displayedBlocks: string[];
+  userOrderBlocks: string[];
+  expectedOrderBlocks: string[];
+  targetProblem?: string;
+  flowTitle?: string;
+}
+
+export interface TraceStepReportData {
+  expectedSummary: string[];
+  userSummary?: string[];
 }
 
 export interface QuestionReport {
@@ -39,13 +88,30 @@ export interface QuestionReport {
   lessonTitle: string;
   exerciseId: string;
   exerciseType: string;
+  sourceFileHint?: string;
 
-  // Contenido de la pregunta
+  // Contenido exacto de la pregunta tal cual le sale al alumno
   prompt: string;
+  instructionText?: string;
   codeSnippet?: string;
   availableOptions?: string[];
   expectedSolution: string;
   userAnswer?: string;
+
+  // Datos originales del banco de preguntas (para comparar contra lo barajado en pantalla)
+  originalOptions?: string[];
+  originalExplanation?: string;
+
+  // Estructuras detalladas según el tipo de ejercicio (4 opciones, relación, completar, etc.)
+  matchingPairsData?: MatchingPairsReportData;
+  codeBuilderData?: CodeBuilderReportData;
+  spotTheBugData?: SpotTheBugReportData;
+  parsonsData?: ParsonsReportData;
+  flowchartData?: FlowchartReportData;
+  traceStepData?: TraceStepReportData;
+
+  // Captura de pantalla silenciosa y optimizada del jugador al momento de reportar
+  screenshotDataUrl?: string;
 
   // Estado del feedback pedagógico en el momento de reportar
   feedbackState?: 'idle' | 'success' | 'error';
