@@ -2305,6 +2305,44 @@ button, a, input, select, .path-node, .token-chip, .pair-card {
   border-bottom-width: 2px;
 }
 
+/* Botón Olvidé mi Contraseña */
+.auth-forgot-link {
+  background: none;
+  border: none;
+  color: #1CB0F6;
+  font-family: var(--font-ui);
+  font-size: 0.8rem;
+  font-weight: 800;
+  cursor: var(--cursor-dev-pointer);
+  padding: 2px 4px;
+  border-radius: 6px;
+  transition: all 0.15s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.auth-forgot-link:hover {
+  color: #0284C7;
+  text-decoration: underline;
+}
+
+/* Caja de Éxito / Info estilo Duolingo */
+.auth-success-box {
+  background: #D7FFB8;
+  border: 2px solid #86EFAC;
+  border-bottom: 4px solid #58CC02;
+  border-radius: 16px;
+  color: #15803D;
+  padding: 12px 14px;
+  font-size: 0.86rem;
+  font-weight: 800;
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
 /* Caja de Error estilo Duolingo (Respuesta Incorrecta) */
 .auth-error-box {
   background: #FFDFE0;

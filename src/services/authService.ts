@@ -1,6 +1,7 @@
 import {
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
+  sendPasswordResetEmail,
   signOut,
   updateProfile as updateFirebaseProfile,
   onAuthStateChanged,
@@ -91,6 +92,20 @@ export const authService = {
     await updateFirebaseProfile(cred.user, { displayName });
     storageService.setItem('last_authenticated_uid', cred.user.uid);
     return cred.user.uid;
+  },
+
+  // Enviar correo de restablecimiento de contraseña
+  async sendPasswordReset(email: string): Promise<void> {
+    const cleanEmail = email.trim();
+    if (!cleanEmail) {
+      throw new Error('Ingresa un correo electrónico válido.');
+    }
+    if (isLocalMockMode || !auth) {
+      // Simulación en modo mock/offline local
+      console.log(`[authService] Enlace de restablecimiento simulado enviado a: ${cleanEmail}`);
+      return;
+    }
+    await sendPasswordResetEmail(auth, cleanEmail);
   },
 
   // Reautenticación de seguridad reciente (para operaciones administrativas críticas)

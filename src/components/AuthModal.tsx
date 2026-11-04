@@ -14,6 +14,8 @@ import {
   AlertCircle,
   Check,
   LogIn,
+  KeyRound,
+  ArrowLeft,
   Sparkles
 } from 'lucide-react';
 import { authService } from '../services/authService';
@@ -66,6 +68,8 @@ export const AuthModal: React.FC<AuthModalProps> = ({
   isMandatory = false
 }) => {
   const [isRegister, setIsRegister] = useState(false);
+  const [isForgotPassword, setIsForgotPassword] = useState(false);
+  const [resetSuccessMessage, setResetSuccessMessage] = useState('');
   const [selectedAvatar, setSelectedAvatar] = useState('robot_byte');
 
   // Campos de formulario
@@ -214,6 +218,44 @@ export const AuthModal: React.FC<AuthModalProps> = ({
     }
   };
 
+  const handlePasswordReset = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError('');
+    setResetSuccessMessage('');
+
+    const cleanEmail = email.trim().toLowerCase();
+    if (!cleanEmail) {
+      setError('Por favor ingresa tu correo electrónico para enviarte el enlace.');
+      soundService.playError();
+      return;
+    }
+
+    setLoading(true);
+    soundService.playToken();
+
+    try {
+      await authService.sendPasswordReset(cleanEmail);
+      soundService.playWin();
+      setResetSuccessMessage(
+        `Hemos enviado las instrucciones para restablecer tu contraseña a ${cleanEmail}. Por favor revisa tu bandeja de entrada o spam.`
+      );
+    } catch (err: unknown) {
+      soundService.playError();
+      const message = err instanceof Error ? err.message : 'No se pudo enviar el correo de recuperación.';
+      let readableError = message.replace('Firebase: ', '');
+
+      if (readableError.includes('auth/user-not-found')) {
+        readableError = 'No encontramos ninguna cuenta con ese correo electrónico.';
+      } else if (readableError.includes('auth/invalid-email')) {
+        readableError = 'El formato del correo electrónico no es válido.';
+      }
+
+      setError(readableError);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="auth-backdrop" role="dialog" aria-modal="true" aria-labelledby="auth-modal-title">
       <div className={`auth-card ${isRegister ? 'register-mode' : ''}`}>
@@ -233,36 +275,38 @@ export const AuthModal: React.FC<AuthModalProps> = ({
         )}
 
         {/* Pestañas Segmentadas 3D (Duolingo Switcher) */}
-        <div className="auth-nav-tabs">
-          <button
-            type="button"
-            className={`auth-tab-btn ${!isRegister ? 'active' : ''}`}
-            onClick={() => {
-              if (isRegister) {
-                soundService.playToken();
-                setIsRegister(false);
-                setError('');
-              }
-            }}
-          >
-            <LogIn size={17} strokeWidth={2.8} />
-            <span>Iniciar Sesión</span>
-          </button>
-          <button
-            type="button"
-            className={`auth-tab-btn ${isRegister ? 'active tab-register' : ''}`}
-            onClick={() => {
-              if (!isRegister) {
-                soundService.playToken();
-                setIsRegister(true);
-                setError('');
-              }
-            }}
-          >
-            <Sparkles size={17} strokeWidth={2.8} />
-            <span>Registrarse</span>
-          </button>
-        </div>
+        {!isForgotPassword && (
+          <div className="auth-nav-tabs">
+            <button
+              type="button"
+              className={`auth-tab-btn ${!isRegister ? 'active' : ''}`}
+              onClick={() => {
+                if (isRegister) {
+                  soundService.playToken();
+                  setIsRegister(false);
+                  setError('');
+                }
+              }}
+            >
+              <LogIn size={17} strokeWidth={2.8} />
+              <span>Iniciar Sesión</span>
+            </button>
+            <button
+              type="button"
+              className={`auth-tab-btn ${isRegister ? 'active tab-register' : ''}`}
+              onClick={() => {
+                if (!isRegister) {
+                  soundService.playToken();
+                  setIsRegister(true);
+                  setError('');
+                }
+              }}
+            >
+              <Sparkles size={17} strokeWidth={2.8} />
+              <span>Registrarse</span>
+            </button>
+          </div>
+        )}
 
         {/* Hero Duolingo 3D: Avatar Oficial del Juego y Bocadillo de Diálogo */}
         <div className="auth-duo-hero">
@@ -282,16 +326,24 @@ export const AuthModal: React.FC<AuthModalProps> = ({
           </div>
           <div className="duo-speech-bubble">
             <h2 id="auth-modal-title" className="duo-speech-title">
-              {isRegister ? '¡Crea tu Perfil!' : '¡Hola de nuevo! 👋'}
+              {isForgotPassword
+                ? '¿Olvidaste tu contraseña? 🔑'
+                : isRegister
+                ? '¡Crea tu Perfil!'
+                : '¡Hola de nuevo! 👋'}
             </h2>
             <p className="duo-speech-desc">
-              {isRegister ? currentGreeting.register : currentGreeting.login}
+              {isForgotPassword
+                ? 'Ingresa tu correo institucional registrado y te enviaremos un enlace de recuperación seguro.'
+                : isRegister
+                ? currentGreeting.register
+                : currentGreeting.login}
             </p>
           </div>
         </div>
 
         {/* Selector 3D de Avatar en Modo Registro */}
-        {isRegister && (
+        {!isForgotPassword && isRegister && (
           <div className="auth-avatar-picker-section">
             <div className="auth-avatar-picker-header">
               <span className="auth-avatar-picker-title">
@@ -337,8 +389,70 @@ export const AuthModal: React.FC<AuthModalProps> = ({
           </div>
         )}
 
+        {/* Mensaje de Éxito al restablecer contraseña */}
+        {resetSuccessMessage && (
+          <div className="auth-success-box" role="status">
+            <CheckCircle2 size={20} strokeWidth={2.5} style={{ flexShrink: 0 }} />
+            <span>{resetSuccessMessage}</span>
+          </div>
+        )}
+
         {/* Formulario */}
-        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+        {isForgotPassword ? (
+          /* Modo Olvidé mi Contraseña */
+          <form onSubmit={handlePasswordReset} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+            <div className="auth-field">
+              <label className="auth-label" htmlFor="reset-email">
+                <span>Correo Electrónico Registrado</span>
+              </label>
+              <div className="auth-input-wrapper">
+                <Mail size={18} color="#94A3B8" strokeWidth={2.5} />
+                <input
+                  id="reset-email"
+                  type="email"
+                  placeholder="estudiante@institucion.edu"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  autoComplete="email"
+                  required
+                />
+              </div>
+            </div>
+
+            <button
+              type="submit"
+              className="auth-btn-primary"
+              disabled={loading}
+              style={{ background: '#1CB0F6', borderColor: '#1899D6', borderBottomColor: '#1899D6' }}
+            >
+              {loading ? (
+                <span>Enviando enlace...</span>
+              ) : (
+                <>
+                  <KeyRound size={20} strokeWidth={2.8} />
+                  <span>Enviar Enlace de Recuperación</span>
+                </>
+              )}
+            </button>
+
+            <div style={{ textAlign: 'center', marginTop: '10px' }}>
+              <button
+                type="button"
+                className="auth-btn-secondary"
+                onClick={() => {
+                  soundService.playToken();
+                  setIsForgotPassword(false);
+                  setError('');
+                  setResetSuccessMessage('');
+                }}
+              >
+                <ArrowLeft size={16} strokeWidth={2.8} />
+                <span>Volver al inicio de sesión</span>
+              </button>
+            </div>
+          </form>
+        ) : (
+          <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
           {isRegister ? (
             <>
               {/* Nombre(s) */}
@@ -529,9 +643,24 @@ export const AuthModal: React.FC<AuthModalProps> = ({
               </div>
 
               <div className="auth-field">
-                <label className="auth-label" htmlFor="login-pass">
-                  <span>Contraseña</span>
-                </label>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <label className="auth-label" htmlFor="login-pass" style={{ margin: 0 }}>
+                    <span>Contraseña</span>
+                  </label>
+                  <button
+                    type="button"
+                    className="auth-forgot-link"
+                    onClick={() => {
+                      soundService.playToken();
+                      setIsForgotPassword(true);
+                      setError('');
+                      setResetSuccessMessage('');
+                    }}
+                  >
+                    <KeyRound size={13} strokeWidth={2.5} />
+                    <span>¿Olvidaste tu contraseña?</span>
+                  </button>
+                </div>
                 <div className="auth-input-wrapper">
                   <Lock size={18} color="#94A3B8" strokeWidth={2.5} />
                   <input
@@ -578,55 +707,58 @@ export const AuthModal: React.FC<AuthModalProps> = ({
             </div>
           </div>
 
-          {/* Botón Principal 3D Duolingo (Mechanical Press Effect) */}
-          <button
-            type="submit"
-            className="auth-btn-primary"
-            disabled={loading}
-          >
-            {loading ? (
-              <span>Procesando...</span>
-            ) : isRegister ? (
-              <>
-                <span>Crear Cuenta y Comenzar</span>
-                <ArrowRight size={20} strokeWidth={3} />
-              </>
-            ) : (
-              <>
-                <span>Iniciar Sesión</span>
-                <ArrowRight size={20} strokeWidth={3} />
-              </>
-            )}
-          </button>
-        </form>
+            {/* Botón Principal 3D Duolingo (Mechanical Press Effect) */}
+            <button
+              type="submit"
+              className="auth-btn-primary"
+              disabled={loading}
+            >
+              {loading ? (
+                <span>Procesando...</span>
+              ) : isRegister ? (
+                <>
+                  <span>Crear Cuenta y Comenzar</span>
+                  <ArrowRight size={20} strokeWidth={3} />
+                </>
+              ) : (
+                <>
+                  <span>Iniciar Sesión</span>
+                  <ArrowRight size={20} strokeWidth={3} />
+                </>
+              )}
+            </button>
+          </form>
+        )}
 
         {/* Alternador 3D de pie de formulario */}
-        <div style={{ textAlign: 'center', marginTop: '18px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8 }}>
-          <span style={{ color: '#64748B', fontSize: '0.84rem', fontWeight: 700 }}>
-            {isRegister ? '¿Ya tienes una cuenta registrada?' : '¿Eres un estudiante nuevo?'}
-          </span>
-          <button
-            type="button"
-            className="auth-btn-secondary"
-            onClick={() => {
-              soundService.playToken();
-              setIsRegister(!isRegister);
-              setError('');
-            }}
-          >
-            {isRegister ? (
-              <>
-                <LogIn size={16} strokeWidth={2.8} />
-                <span>Inicia sesión aquí</span>
-              </>
-            ) : (
-              <>
-                <Sparkles size={16} strokeWidth={2.8} />
-                <span>Crea tu cuenta oficial</span>
-              </>
-            )}
-          </button>
-        </div>
+        {!isForgotPassword && (
+          <div style={{ textAlign: 'center', marginTop: '18px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8 }}>
+            <span style={{ color: '#64748B', fontSize: '0.84rem', fontWeight: 700 }}>
+              {isRegister ? '¿Ya tienes una cuenta registrada?' : '¿Eres un estudiante nuevo?'}
+            </span>
+            <button
+              type="button"
+              className="auth-btn-secondary"
+              onClick={() => {
+                soundService.playToken();
+                setIsRegister(!isRegister);
+                setError('');
+              }}
+            >
+              {isRegister ? (
+                <>
+                  <LogIn size={16} strokeWidth={2.8} />
+                  <span>Inicia sesión aquí</span>
+                </>
+              ) : (
+                <>
+                  <Sparkles size={16} strokeWidth={2.8} />
+                  <span>Crea tu cuenta oficial</span>
+                </>
+              )}
+            </button>
+          </div>
+        )}
 
         {/* Garantía de Confidencialidad y Ética 3D */}
         <div className="auth-ethics-box">
