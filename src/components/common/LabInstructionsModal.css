@@ -1,0 +1,1527 @@
+/* ==========================================================================
+   Utilidades para LabInstructionsModal (generado automáticamente).
+   El proyecto no usa Tailwind, así que aquí se definen SOLO las clases que
+   usa el modal, limitadas al contenedor .lab-instr-root para no afectar
+   al resto de la aplicación.
+   ========================================================================== */
+
+.lab-instr-root,
+.lab-instr-root *,
+.lab-instr-root *::before,
+.lab-instr-root *::after {
+  box-sizing: border-box;
+}
+
+.lab-instr-root h1,
+.lab-instr-root h2,
+.lab-instr-root h3,
+.lab-instr-root h4,
+.lab-instr-root p,
+.lab-instr-root pre {
+  margin: 0;
+}
+
+.lab-instr-root button {
+  font-family: inherit;
+}
+
+.lab-instr-root img {
+  max-width: 100%;
+  display: block;
+}
+
+.lab-instr-root .border,
+.lab-instr-root.border {
+  border-style:solid;
+  border-width:1px;
+}
+
+.lab-instr-root .border-2,
+.lab-instr-root.border-2 {
+  border-style:solid;
+  border-width:2px;
+}
+
+.lab-instr-root .border-3,
+.lab-instr-root.border-3 {
+  border-style:solid;
+  border-width:3px;
+}
+
+.lab-instr-root .border-b,
+.lab-instr-root.border-b {
+  border-style:solid;
+  border-bottom-width:1px;
+}
+
+.lab-instr-root .border-b-0,
+.lab-instr-root.border-b-0 {
+  border-style:solid;
+  border-bottom-width:0;
+}
+
+.lab-instr-root .border-b-2,
+.lab-instr-root.border-b-2 {
+  border-style:solid;
+  border-bottom-width:2px;
+}
+
+.lab-instr-root .border-b-3,
+.lab-instr-root.border-b-3 {
+  border-style:solid;
+  border-bottom-width:3px;
+}
+
+.lab-instr-root .border-l-4,
+.lab-instr-root.border-l-4 {
+  border-style:solid;
+  border-left-width:4px;
+}
+
+.lab-instr-root .border-t-2,
+.lab-instr-root.border-t-2 {
+  border-style:solid;
+  border-top-width:2px;
+}
+
+.lab-instr-root .border-t-3,
+.lab-instr-root.border-t-3 {
+  border-style:solid;
+  border-top-width:3px;
+}
+
+.lab-instr-root .absolute,
+.lab-instr-root.absolute {
+  position:absolute;
+}
+
+.lab-instr-root .accent-amber-600,
+.lab-instr-root.accent-amber-600 {
+  accent-color:#d97706;
+}
+
+.lab-instr-root .backdrop-blur-xs,
+.lab-instr-root.backdrop-blur-xs {
+  backdrop-filter:blur(2px);
+  -webkit-backdrop-filter:blur(2px);
+}
+
+.lab-instr-root .bg-\[\#F8FAFC\],
+.lab-instr-root.bg-\[\#F8FAFC\] {
+  background-color:#F8FAFC;
+}
+
+.lab-instr-root .bg-amber-100,
+.lab-instr-root.bg-amber-100 {
+  background-color:#fef3c7;
+}
+
+.lab-instr-root .bg-amber-200,
+.lab-instr-root.bg-amber-200 {
+  background-color:#fde68a;
+}
+
+.lab-instr-root .bg-amber-300,
+.lab-instr-root.bg-amber-300 {
+  background-color:#fcd34d;
+}
+
+.lab-instr-root .bg-amber-50,
+.lab-instr-root.bg-amber-50 {
+  background-color:#fffbeb;
+}
+
+.lab-instr-root .bg-black\/65,
+.lab-instr-root.bg-black\/65 {
+  background-color:rgba(0, 0, 0, 0.65);
+}
+
+.lab-instr-root .bg-black\/85,
+.lab-instr-root.bg-black\/85 {
+  background-color:rgba(0, 0, 0, 0.85);
+}
+
+.lab-instr-root .bg-emerald-100,
+.lab-instr-root.bg-emerald-100 {
+  background-color:#d1fae5;
+}
+
+.lab-instr-root .bg-emerald-300,
+.lab-instr-root.bg-emerald-300 {
+  background-color:#6ee7b7;
+}
+
+.lab-instr-root .bg-emerald-400,
+.lab-instr-root.bg-emerald-400 {
+  background-color:#34d399;
+}
+
+.lab-instr-root .bg-emerald-500,
+.lab-instr-root.bg-emerald-500 {
+  background-color:#10b981;
+}
+
+.lab-instr-root .bg-gradient-to-r,
+.lab-instr-root.bg-gradient-to-r {
+  background-image:linear-gradient(to right, var(--lab-tw-from, transparent), var(--lab-tw-to, transparent));
+}
+
+.lab-instr-root .bg-purple-100,
+.lab-instr-root.bg-purple-100 {
+  background-color:#f3e8ff;
+}
+
+.lab-instr-root .bg-purple-600,
+.lab-instr-root.bg-purple-600 {
+  background-color:#9333ea;
+}
+
+.lab-instr-root .bg-red-100,
+.lab-instr-root.bg-red-100 {
+  background-color:#fee2e2;
+}
+
+.lab-instr-root .bg-red-50,
+.lab-instr-root.bg-red-50 {
+  background-color:#fef2f2;
+}
+
+.lab-instr-root .bg-red-500,
+.lab-instr-root.bg-red-500 {
+  background-color:#ef4444;
+}
+
+.lab-instr-root .bg-red-600,
+.lab-instr-root.bg-red-600 {
+  background-color:#dc2626;
+}
+
+.lab-instr-root .bg-sky-100,
+.lab-instr-root.bg-sky-100 {
+  background-color:#e0f2fe;
+}
+
+.lab-instr-root .bg-sky-50,
+.lab-instr-root.bg-sky-50 {
+  background-color:#f0f9ff;
+}
+
+.lab-instr-root .bg-sky-500,
+.lab-instr-root.bg-sky-500 {
+  background-color:#0ea5e9;
+}
+
+.lab-instr-root .bg-slate-100,
+.lab-instr-root.bg-slate-100 {
+  background-color:#f1f5f9;
+}
+
+.lab-instr-root .bg-slate-50,
+.lab-instr-root.bg-slate-50 {
+  background-color:#f8fafc;
+}
+
+.lab-instr-root .bg-slate-700,
+.lab-instr-root.bg-slate-700 {
+  background-color:#334155;
+}
+
+.lab-instr-root .bg-slate-800,
+.lab-instr-root.bg-slate-800 {
+  background-color:#1e293b;
+}
+
+.lab-instr-root .bg-slate-900,
+.lab-instr-root.bg-slate-900 {
+  background-color:#0f172a;
+}
+
+.lab-instr-root .bg-slate-900\/5,
+.lab-instr-root.bg-slate-900\/5 {
+  background-color:rgba(15, 23, 42, 0.05);
+}
+
+.lab-instr-root .bg-transparent,
+.lab-instr-root.bg-transparent {
+  background-color:transparent;
+}
+
+.lab-instr-root .bg-white,
+.lab-instr-root.bg-white {
+  background-color:#ffffff;
+}
+
+.lab-instr-root .bg-white\/20,
+.lab-instr-root.bg-white\/20 {
+  background-color:rgba(255, 255, 255, 0.2);
+}
+
+.lab-instr-root .block,
+.lab-instr-root.block {
+  display:block;
+}
+
+.lab-instr-root .border-amber-500,
+.lab-instr-root.border-amber-500 {
+  border-color:#f59e0b;
+}
+
+.lab-instr-root .border-black,
+.lab-instr-root.border-black {
+  border-color:#000000;
+}
+
+.lab-instr-root .border-emerald-300,
+.lab-instr-root.border-emerald-300 {
+  border-color:#6ee7b7;
+}
+
+.lab-instr-root .border-purple-300,
+.lab-instr-root.border-purple-300 {
+  border-color:#d8b4fe;
+}
+
+.lab-instr-root .border-slate-100,
+.lab-instr-root.border-slate-100 {
+  border-color:#f1f5f9;
+}
+
+.lab-instr-root .border-slate-200,
+.lab-instr-root.border-slate-200 {
+  border-color:#e2e8f0;
+}
+
+.lab-instr-root .border-slate-600,
+.lab-instr-root.border-slate-600 {
+  border-color:#475569;
+}
+
+.lab-instr-root .border-slate-700,
+.lab-instr-root.border-slate-700 {
+  border-color:#334155;
+}
+
+.lab-instr-root .border-slate-900,
+.lab-instr-root.border-slate-900 {
+  border-color:#0f172a;
+}
+
+.lab-instr-root .border-white,
+.lab-instr-root.border-white {
+  border-color:#ffffff;
+}
+
+.lab-instr-root .break-all,
+.lab-instr-root.break-all {
+  word-break:break-all;
+}
+
+.lab-instr-root .cursor-pointer,
+.lab-instr-root.cursor-pointer {
+  cursor:pointer;
+}
+
+.lab-instr-root .cursor-zoom-in,
+.lab-instr-root.cursor-zoom-in {
+  cursor:zoom-in;
+}
+
+.lab-instr-root .decoration-2,
+.lab-instr-root.decoration-2 {
+  text-decoration-thickness:2px;
+}
+
+.lab-instr-root .fixed,
+.lab-instr-root.fixed {
+  position:fixed;
+}
+
+.lab-instr-root .flex,
+.lab-instr-root.flex {
+  display:flex;
+}
+
+.lab-instr-root .flex-1,
+.lab-instr-root.flex-1 {
+  flex:1 1 0%;
+}
+
+.lab-instr-root .flex-col,
+.lab-instr-root.flex-col {
+  flex-direction:column;
+}
+
+.lab-instr-root .flex-shrink-0,
+.lab-instr-root.flex-shrink-0 {
+  flex-shrink:0;
+}
+
+.lab-instr-root .flex-wrap,
+.lab-instr-root.flex-wrap {
+  flex-wrap:wrap;
+}
+
+.lab-instr-root .font-black,
+.lab-instr-root.font-black {
+  font-weight:900;
+}
+
+.lab-instr-root .font-bold,
+.lab-instr-root.font-bold {
+  font-weight:700;
+}
+
+.lab-instr-root .font-extrabold,
+.lab-instr-root.font-extrabold {
+  font-weight:800;
+}
+
+.lab-instr-root .font-medium,
+.lab-instr-root.font-medium {
+  font-weight:500;
+}
+
+.lab-instr-root .font-mono,
+.lab-instr-root.font-mono {
+  font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Courier New",monospace;
+}
+
+.lab-instr-root .font-semibold,
+.lab-instr-root.font-semibold {
+  font-weight:600;
+}
+
+.lab-instr-root .from-slate-50,
+.lab-instr-root.from-slate-50 {
+  --lab-tw-from:#f8fafc;
+}
+
+.lab-instr-root .gap-1,
+.lab-instr-root.gap-1 {
+  gap:0.25rem;
+}
+
+.lab-instr-root .gap-1\.5,
+.lab-instr-root.gap-1\.5 {
+  gap:0.375rem;
+}
+
+.lab-instr-root .gap-2,
+.lab-instr-root.gap-2 {
+  gap:0.5rem;
+}
+
+.lab-instr-root .gap-2\.5,
+.lab-instr-root.gap-2\.5 {
+  gap:0.625rem;
+}
+
+.lab-instr-root .gap-3,
+.lab-instr-root.gap-3 {
+  gap:0.75rem;
+}
+
+.lab-instr-root .gap-4,
+.lab-instr-root.gap-4 {
+  gap:1rem;
+}
+
+.lab-instr-root .grid,
+.lab-instr-root.grid {
+  display:grid;
+}
+
+.lab-instr-root .grid-cols-1,
+.lab-instr-root.grid-cols-1 {
+  grid-template-columns:repeat(1,minmax(0,1fr));
+}
+
+.lab-instr-root .grid-cols-2,
+.lab-instr-root.grid-cols-2 {
+  grid-template-columns:repeat(2,minmax(0,1fr));
+}
+
+.lab-instr-root .h-10,
+.lab-instr-root.h-10 {
+  height:2.5rem;
+}
+
+.lab-instr-root .h-11,
+.lab-instr-root.h-11 {
+  height:2.75rem;
+}
+
+.lab-instr-root .h-12,
+.lab-instr-root.h-12 {
+  height:3rem;
+}
+
+.lab-instr-root .h-14,
+.lab-instr-root.h-14 {
+  height:3.5rem;
+}
+
+.lab-instr-root .h-2,
+.lab-instr-root.h-2 {
+  height:0.5rem;
+}
+
+.lab-instr-root .h-28,
+.lab-instr-root.h-28 {
+  height:7rem;
+}
+
+.lab-instr-root .h-4,
+.lab-instr-root.h-4 {
+  height:1rem;
+}
+
+.lab-instr-root .h-5,
+.lab-instr-root.h-5 {
+  height:1.25rem;
+}
+
+.lab-instr-root .h-9,
+.lab-instr-root.h-9 {
+  height:2.25rem;
+}
+
+.lab-instr-root .h-\[22px\],
+.lab-instr-root.h-\[22px\] {
+  height:22px;
+}
+
+.lab-instr-root .h-full,
+.lab-instr-root.h-full {
+  height:100%;
+}
+
+.lab-instr-root .hidden,
+.lab-instr-root.hidden {
+  display:none;
+}
+
+.lab-instr-root .inline,
+.lab-instr-root.inline {
+  display:inline;
+}
+
+.lab-instr-root .inline-block,
+.lab-instr-root.inline-block {
+  display:inline-block;
+}
+
+.lab-instr-root .inline-flex,
+.lab-instr-root.inline-flex {
+  display:inline-flex;
+}
+
+.lab-instr-root .inset-0,
+.lab-instr-root.inset-0 {
+  inset:0;
+}
+
+.lab-instr-root .italic,
+.lab-instr-root.italic {
+  font-style:italic;
+}
+
+.lab-instr-root .items-center,
+.lab-instr-root.items-center {
+  align-items:center;
+}
+
+.lab-instr-root .items-end,
+.lab-instr-root.items-end {
+  align-items:flex-end;
+}
+
+.lab-instr-root .items-start,
+.lab-instr-root.items-start {
+  align-items:flex-start;
+}
+
+.lab-instr-root .justify-between,
+.lab-instr-root.justify-between {
+  justify-content:space-between;
+}
+
+.lab-instr-root .justify-center,
+.lab-instr-root.justify-center {
+  justify-content:center;
+}
+
+.lab-instr-root .justify-end,
+.lab-instr-root.justify-end {
+  justify-content:flex-end;
+}
+
+.lab-instr-root .leading-relaxed,
+.lab-instr-root.leading-relaxed {
+  line-height:1.625;
+}
+
+.lab-instr-root .leading-snug,
+.lab-instr-root.leading-snug {
+  line-height:1.375;
+}
+
+.lab-instr-root .leading-tight,
+.lab-instr-root.leading-tight {
+  line-height:1.25;
+}
+
+.lab-instr-root .line-clamp-3,
+.lab-instr-root.line-clamp-3 {
+  overflow:hidden;
+  display:-webkit-box;
+  -webkit-box-orient:vertical;
+  -webkit-line-clamp:3;
+}
+
+.lab-instr-root .max-h-48,
+.lab-instr-root.max-h-48 {
+  max-height:12rem;
+}
+
+.lab-instr-root .max-h-80,
+.lab-instr-root.max-h-80 {
+  max-height:20rem;
+}
+
+.lab-instr-root .max-h-\[460px\],
+.lab-instr-root.max-h-\[460px\] {
+  max-height:460px;
+}
+
+.lab-instr-root .max-h-\[90vh\],
+.lab-instr-root.max-h-\[90vh\] {
+  max-height:90vh;
+}
+
+.lab-instr-root .max-w-4xl,
+.lab-instr-root.max-w-4xl {
+  max-width:56rem;
+}
+
+.lab-instr-root .max-w-full,
+.lab-instr-root.max-w-full {
+  max-width:100%;
+}
+
+.lab-instr-root .max-w-md,
+.lab-instr-root.max-w-md {
+  max-width:28rem;
+}
+
+.lab-instr-root .mb-1,
+.lab-instr-root.mb-1 {
+  margin-bottom:0.25rem;
+}
+
+.lab-instr-root .mb-1\.5,
+.lab-instr-root.mb-1\.5 {
+  margin-bottom:0.375rem;
+}
+
+.lab-instr-root .min-w-0,
+.lab-instr-root.min-w-0 {
+  min-width:0;
+}
+
+.lab-instr-root .min-w-\[22px\],
+.lab-instr-root.min-w-\[22px\] {
+  min-width:22px;
+}
+
+.lab-instr-root .mt-0\.5,
+.lab-instr-root.mt-0\.5 {
+  margin-top:0.125rem;
+}
+
+.lab-instr-root .mt-1,
+.lab-instr-root.mt-1 {
+  margin-top:0.25rem;
+}
+
+.lab-instr-root .mt-2,
+.lab-instr-root.mt-2 {
+  margin-top:0.5rem;
+}
+
+.lab-instr-root .mx-0\.5,
+.lab-instr-root.mx-0\.5 {
+  margin-left:0.125rem;
+  margin-right:0.125rem;
+}
+
+.lab-instr-root .mx-auto,
+.lab-instr-root.mx-auto {
+  margin-left:auto;
+  margin-right:auto;
+}
+
+.lab-instr-root .object-contain,
+.lab-instr-root.object-contain {
+  object-fit:contain;
+}
+
+.lab-instr-root .object-cover,
+.lab-instr-root.object-cover {
+  object-fit:cover;
+}
+
+.lab-instr-root .opacity-90,
+.lab-instr-root.opacity-90 {
+  opacity:0.9;
+}
+
+.lab-instr-root .overflow-hidden,
+.lab-instr-root.overflow-hidden {
+  overflow:hidden;
+}
+
+.lab-instr-root .overflow-x-auto,
+.lab-instr-root.overflow-x-auto {
+  overflow-x:auto;
+}
+
+.lab-instr-root .overflow-y-auto,
+.lab-instr-root.overflow-y-auto {
+  overflow-y:auto;
+}
+
+.lab-instr-root .p-1,
+.lab-instr-root.p-1 {
+  padding:0.25rem;
+}
+
+.lab-instr-root .p-1\.5,
+.lab-instr-root.p-1\.5 {
+  padding:0.375rem;
+}
+
+.lab-instr-root .p-2,
+.lab-instr-root.p-2 {
+  padding:0.5rem;
+}
+
+.lab-instr-root .p-2\.5,
+.lab-instr-root.p-2\.5 {
+  padding:0.625rem;
+}
+
+.lab-instr-root .p-3,
+.lab-instr-root.p-3 {
+  padding:0.75rem;
+}
+
+.lab-instr-root .p-3\.5,
+.lab-instr-root.p-3\.5 {
+  padding:0.875rem;
+}
+
+.lab-instr-root .p-4,
+.lab-instr-root.p-4 {
+  padding:1rem;
+}
+
+.lab-instr-root .p-5,
+.lab-instr-root.p-5 {
+  padding:1.25rem;
+}
+
+.lab-instr-root .p-8,
+.lab-instr-root.p-8 {
+  padding:2rem;
+}
+
+.lab-instr-root .pb-1,
+.lab-instr-root.pb-1 {
+  padding-bottom:0.25rem;
+}
+
+.lab-instr-root .pb-3,
+.lab-instr-root.pb-3 {
+  padding-bottom:0.75rem;
+}
+
+.lab-instr-root .pl-1,
+.lab-instr-root.pl-1 {
+  padding-left:0.25rem;
+}
+
+.lab-instr-root .pl-2,
+.lab-instr-root.pl-2 {
+  padding-left:0.5rem;
+}
+
+.lab-instr-root .pt-1,
+.lab-instr-root.pt-1 {
+  padding-top:0.25rem;
+}
+
+.lab-instr-root .pt-1\.5,
+.lab-instr-root.pt-1\.5 {
+  padding-top:0.375rem;
+}
+
+.lab-instr-root .pt-2,
+.lab-instr-root.pt-2 {
+  padding-top:0.5rem;
+}
+
+.lab-instr-root .pt-3,
+.lab-instr-root.pt-3 {
+  padding-top:0.75rem;
+}
+
+.lab-instr-root .px-1,
+.lab-instr-root.px-1 {
+  padding-left:0.25rem;
+  padding-right:0.25rem;
+}
+
+.lab-instr-root .px-1\.5,
+.lab-instr-root.px-1\.5 {
+  padding-left:0.375rem;
+  padding-right:0.375rem;
+}
+
+.lab-instr-root .px-2,
+.lab-instr-root.px-2 {
+  padding-left:0.5rem;
+  padding-right:0.5rem;
+}
+
+.lab-instr-root .px-2\.5,
+.lab-instr-root.px-2\.5 {
+  padding-left:0.625rem;
+  padding-right:0.625rem;
+}
+
+.lab-instr-root .px-3,
+.lab-instr-root.px-3 {
+  padding-left:0.75rem;
+  padding-right:0.75rem;
+}
+
+.lab-instr-root .px-3\.5,
+.lab-instr-root.px-3\.5 {
+  padding-left:0.875rem;
+  padding-right:0.875rem;
+}
+
+.lab-instr-root .px-4,
+.lab-instr-root.px-4 {
+  padding-left:1rem;
+  padding-right:1rem;
+}
+
+.lab-instr-root .px-5,
+.lab-instr-root.px-5 {
+  padding-left:1.25rem;
+  padding-right:1.25rem;
+}
+
+.lab-instr-root .px-6,
+.lab-instr-root.px-6 {
+  padding-left:1.5rem;
+  padding-right:1.5rem;
+}
+
+.lab-instr-root .py-0\.5,
+.lab-instr-root.py-0\.5 {
+  padding-top:0.125rem;
+  padding-bottom:0.125rem;
+}
+
+.lab-instr-root .py-1,
+.lab-instr-root.py-1 {
+  padding-top:0.25rem;
+  padding-bottom:0.25rem;
+}
+
+.lab-instr-root .py-1\.5,
+.lab-instr-root.py-1\.5 {
+  padding-top:0.375rem;
+  padding-bottom:0.375rem;
+}
+
+.lab-instr-root .py-2,
+.lab-instr-root.py-2 {
+  padding-top:0.5rem;
+  padding-bottom:0.5rem;
+}
+
+.lab-instr-root .py-2\.5,
+.lab-instr-root.py-2\.5 {
+  padding-top:0.625rem;
+  padding-bottom:0.625rem;
+}
+
+.lab-instr-root .py-3\.5,
+.lab-instr-root.py-3\.5 {
+  padding-top:0.875rem;
+  padding-bottom:0.875rem;
+}
+
+.lab-instr-root .relative,
+.lab-instr-root.relative {
+  position:relative;
+}
+
+.lab-instr-root .right-1\.5,
+.lab-instr-root.right-1\.5 {
+  right:0.375rem;
+}
+
+.lab-instr-root .rounded,
+.lab-instr-root.rounded {
+  border-radius:0.25rem;
+}
+
+.lab-instr-root .rounded-2xl,
+.lab-instr-root.rounded-2xl {
+  border-radius:1rem;
+}
+
+.lab-instr-root .rounded-b-xl,
+.lab-instr-root.rounded-b-xl {
+  border-bottom-left-radius:0.75rem;
+  border-bottom-right-radius:0.75rem;
+}
+
+.lab-instr-root .rounded-full,
+.lab-instr-root.rounded-full {
+  border-radius:9999px;
+}
+
+.lab-instr-root .rounded-lg,
+.lab-instr-root.rounded-lg {
+  border-radius:0.5rem;
+}
+
+.lab-instr-root .rounded-md,
+.lab-instr-root.rounded-md {
+  border-radius:0.375rem;
+}
+
+.lab-instr-root .rounded-r-lg,
+.lab-instr-root.rounded-r-lg {
+  border-top-right-radius:0.5rem;
+  border-bottom-right-radius:0.5rem;
+}
+
+.lab-instr-root .rounded-sm,
+.lab-instr-root.rounded-sm {
+  border-radius:0.125rem;
+}
+
+.lab-instr-root .rounded-t-xl,
+.lab-instr-root.rounded-t-xl {
+  border-top-left-radius:0.75rem;
+  border-top-right-radius:0.75rem;
+}
+
+.lab-instr-root .rounded-xl,
+.lab-instr-root.rounded-xl {
+  border-radius:0.75rem;
+}
+
+.lab-instr-root .select-none,
+.lab-instr-root.select-none {
+  user-select:none;
+}
+
+.lab-instr-root .shadow,
+.lab-instr-root.shadow {
+  box-shadow:0 1px 3px 0 rgba(0,0,0,0.1),0 1px 2px -1px rgba(0,0,0,0.1);
+}
+
+.lab-instr-root .shadow-2xl,
+.lab-instr-root.shadow-2xl {
+  box-shadow:0 25px 50px -12px rgba(0,0,0,0.25);
+}
+
+.lab-instr-root .shadow-\[2px_2px_0px_\#000\],
+.lab-instr-root.shadow-\[2px_2px_0px_\#000\] {
+  box-shadow:2px 2px 0px #000;
+}
+
+.lab-instr-root .shadow-\[3px_3px_0px_\#000\],
+.lab-instr-root.shadow-\[3px_3px_0px_\#000\] {
+  box-shadow:3px 3px 0px #000;
+}
+
+.lab-instr-root .shadow-\[4px_4px_0px_\#000\],
+.lab-instr-root.shadow-\[4px_4px_0px_\#000\] {
+  box-shadow:4px 4px 0px #000;
+}
+
+.lab-instr-root .shadow-\[5px_5px_0px_\#000000\],
+.lab-instr-root.shadow-\[5px_5px_0px_\#000000\] {
+  box-shadow:5px 5px 0px #000000;
+}
+
+.lab-instr-root .shadow-\[5px_5px_0px_\#000\],
+.lab-instr-root.shadow-\[5px_5px_0px_\#000\] {
+  box-shadow:5px 5px 0px #000;
+}
+
+.lab-instr-root .shadow-\[6px_6px_0px_\#000000\],
+.lab-instr-root.shadow-\[6px_6px_0px_\#000000\] {
+  box-shadow:6px 6px 0px #000000;
+}
+
+.lab-instr-root .shadow-\[8px_8px_0px_\#000000\],
+.lab-instr-root.shadow-\[8px_8px_0px_\#000000\] {
+  box-shadow:8px 8px 0px #000000;
+}
+
+.lab-instr-root .shadow-sm,
+.lab-instr-root.shadow-sm {
+  box-shadow:0 1px 2px 0 rgba(0,0,0,0.05);
+}
+
+.lab-instr-root .space-y-2 > * + *,
+.lab-instr-root.space-y-2 > * + * {
+  margin-top:0.5rem;
+}
+
+.lab-instr-root .space-y-2\.5 > * + *,
+.lab-instr-root.space-y-2\.5 > * + * {
+  margin-top:0.625rem;
+}
+
+.lab-instr-root .space-y-3 > * + *,
+.lab-instr-root.space-y-3 > * + * {
+  margin-top:0.75rem;
+}
+
+.lab-instr-root .space-y-4 > * + *,
+.lab-instr-root.space-y-4 > * + * {
+  margin-top:1rem;
+}
+
+.lab-instr-root .space-y-5 > * + *,
+.lab-instr-root.space-y-5 > * + * {
+  margin-top:1.25rem;
+}
+
+.lab-instr-root .text-\[10px\],
+.lab-instr-root.text-\[10px\] {
+  font-size:10px;
+}
+
+.lab-instr-root .text-\[11px\],
+.lab-instr-root.text-\[11px\] {
+  font-size:11px;
+}
+
+.lab-instr-root .text-\[15px\],
+.lab-instr-root.text-\[15px\] {
+  font-size:15px;
+}
+
+.lab-instr-root .text-amber-300,
+.lab-instr-root.text-amber-300 {
+  color:#fcd34d;
+}
+
+.lab-instr-root .text-amber-700,
+.lab-instr-root.text-amber-700 {
+  color:#b45309;
+}
+
+.lab-instr-root .text-amber-950,
+.lab-instr-root.text-amber-950 {
+  color:#451a03;
+}
+
+.lab-instr-root .text-base,
+.lab-instr-root.text-base {
+  font-size:1rem;
+  line-height:1.5rem;
+}
+
+.lab-instr-root .text-black,
+.lab-instr-root.text-black {
+  color:#000000;
+}
+
+.lab-instr-root .text-center,
+.lab-instr-root.text-center {
+  text-align:center;
+}
+
+.lab-instr-root .text-emerald-300,
+.lab-instr-root.text-emerald-300 {
+  color:#6ee7b7;
+}
+
+.lab-instr-root .text-emerald-400,
+.lab-instr-root.text-emerald-400 {
+  color:#34d399;
+}
+
+.lab-instr-root .text-emerald-700,
+.lab-instr-root.text-emerald-700 {
+  color:#047857;
+}
+
+.lab-instr-root .text-emerald-900,
+.lab-instr-root.text-emerald-900 {
+  color:#064e3b;
+}
+
+.lab-instr-root .text-lg,
+.lab-instr-root.text-lg {
+  font-size:1.125rem;
+  line-height:1.75rem;
+}
+
+.lab-instr-root .text-purple-700,
+.lab-instr-root.text-purple-700 {
+  color:#7e22ce;
+}
+
+.lab-instr-root .text-purple-900,
+.lab-instr-root.text-purple-900 {
+  color:#581c87;
+}
+
+.lab-instr-root .text-red-700,
+.lab-instr-root.text-red-700 {
+  color:#b91c1c;
+}
+
+.lab-instr-root .text-red-800,
+.lab-instr-root.text-red-800 {
+  color:#991b1b;
+}
+
+.lab-instr-root .text-red-900,
+.lab-instr-root.text-red-900 {
+  color:#7f1d1d;
+}
+
+.lab-instr-root .text-sky-300,
+.lab-instr-root.text-sky-300 {
+  color:#7dd3fc;
+}
+
+.lab-instr-root .text-sky-600,
+.lab-instr-root.text-sky-600 {
+  color:#0284c7;
+}
+
+.lab-instr-root .text-sky-700,
+.lab-instr-root.text-sky-700 {
+  color:#0369a1;
+}
+
+.lab-instr-root .text-sky-900,
+.lab-instr-root.text-sky-900 {
+  color:#0c4a6e;
+}
+
+.lab-instr-root .text-slate-100,
+.lab-instr-root.text-slate-100 {
+  color:#f1f5f9;
+}
+
+.lab-instr-root .text-slate-400,
+.lab-instr-root.text-slate-400 {
+  color:#94a3b8;
+}
+
+.lab-instr-root .text-slate-500,
+.lab-instr-root.text-slate-500 {
+  color:#64748b;
+}
+
+.lab-instr-root .text-slate-600,
+.lab-instr-root.text-slate-600 {
+  color:#475569;
+}
+
+.lab-instr-root .text-slate-700,
+.lab-instr-root.text-slate-700 {
+  color:#334155;
+}
+
+.lab-instr-root .text-slate-800,
+.lab-instr-root.text-slate-800 {
+  color:#1e293b;
+}
+
+.lab-instr-root .text-slate-900,
+.lab-instr-root.text-slate-900 {
+  color:#0f172a;
+}
+
+.lab-instr-root .text-sm,
+.lab-instr-root.text-sm {
+  font-size:0.875rem;
+  line-height:1.25rem;
+}
+
+.lab-instr-root .text-white,
+.lab-instr-root.text-white {
+  color:#ffffff;
+}
+
+.lab-instr-root .text-white\/95,
+.lab-instr-root.text-white\/95 {
+  color:rgba(255, 255, 255, 0.95);
+}
+
+.lab-instr-root .text-xl,
+.lab-instr-root.text-xl {
+  font-size:1.25rem;
+  line-height:1.75rem;
+}
+
+.lab-instr-root .text-xs,
+.lab-instr-root.text-xs {
+  font-size:0.75rem;
+  line-height:1rem;
+}
+
+.lab-instr-root .to-white,
+.lab-instr-root.to-white {
+  --lab-tw-to:#ffffff;
+}
+
+.lab-instr-root .top-1\.5,
+.lab-instr-root.top-1\.5 {
+  top:0.375rem;
+}
+
+.lab-instr-root .tracking-tight,
+.lab-instr-root.tracking-tight {
+  letter-spacing:-0.025em;
+}
+
+.lab-instr-root .tracking-wider,
+.lab-instr-root.tracking-wider {
+  letter-spacing:0.05em;
+}
+
+.lab-instr-root .transition-all,
+.lab-instr-root.transition-all {
+  transition:all 150ms cubic-bezier(0.4,0,0.2,1);
+}
+
+.lab-instr-root .transition-colors,
+.lab-instr-root.transition-colors {
+  transition:color,background-color,border-color 150ms cubic-bezier(0.4,0,0.2,1);
+}
+
+.lab-instr-root .transition-opacity,
+.lab-instr-root.transition-opacity {
+  transition:opacity 150ms cubic-bezier(0.4,0,0.2,1);
+}
+
+.lab-instr-root .transition-transform,
+.lab-instr-root.transition-transform {
+  transition:transform 150ms cubic-bezier(0.4,0,0.2,1);
+}
+
+.lab-instr-root .truncate,
+.lab-instr-root.truncate {
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+
+.lab-instr-root .underline,
+.lab-instr-root.underline {
+  text-decoration-line:underline;
+}
+
+.lab-instr-root .underline-offset-2,
+.lab-instr-root.underline-offset-2 {
+  text-underline-offset:2px;
+}
+
+.lab-instr-root .uppercase,
+.lab-instr-root.uppercase {
+  text-transform:uppercase;
+}
+
+.lab-instr-root .w-10,
+.lab-instr-root.w-10 {
+  width:2.5rem;
+}
+
+.lab-instr-root .w-11,
+.lab-instr-root.w-11 {
+  width:2.75rem;
+}
+
+.lab-instr-root .w-12,
+.lab-instr-root.w-12 {
+  width:3rem;
+}
+
+.lab-instr-root .w-14,
+.lab-instr-root.w-14 {
+  width:3.5rem;
+}
+
+.lab-instr-root .w-2,
+.lab-instr-root.w-2 {
+  width:0.5rem;
+}
+
+.lab-instr-root .w-4,
+.lab-instr-root.w-4 {
+  width:1rem;
+}
+
+.lab-instr-root .w-9,
+.lab-instr-root.w-9 {
+  width:2.25rem;
+}
+
+.lab-instr-root .w-full,
+.lab-instr-root.w-full {
+  width:100%;
+}
+
+.lab-instr-root .whitespace-pre-wrap,
+.lab-instr-root.whitespace-pre-wrap {
+  white-space:pre-wrap;
+}
+
+.lab-instr-root .z-\[100000\],
+.lab-instr-root.z-\[100000\] {
+  z-index:100000;
+}
+
+.lab-instr-root .z-\[99980\],
+.lab-instr-root.z-\[99980\] {
+  z-index:99980;
+}
+
+.lab-instr-root .active\:translate-y-0\.5:active,
+.lab-instr-root.active\:translate-y-0\.5:active {
+  transform:translateY(0.125rem);
+}
+
+.lab-instr-root .disabled\:opacity-50:disabled,
+.lab-instr-root.disabled\:opacity-50:disabled {
+  opacity:0.5;
+}
+
+.lab-instr-root .focus\:bg-amber-50\/20:focus,
+.lab-instr-root.focus\:bg-amber-50\/20:focus {
+  background-color:rgba(255, 251, 235, 0.2);
+}
+
+.lab-instr-root .focus\:outline-none:focus,
+.lab-instr-root.focus\:outline-none:focus {
+  outline:2px solid transparent;
+  outline-offset:2px;
+}
+
+.lab-instr-root .group:hover .group-hover\:scale-\[1\.01\],
+.lab-instr-root.group:hover .group-hover\:scale-\[1\.01\] {
+  transform:scale(1.01);
+}
+
+.lab-instr-root .group:hover .group-hover\:text-sky-700,
+.lab-instr-root.group:hover .group-hover\:text-sky-700 {
+  color:#0369a1;
+}
+
+.lab-instr-root .group:hover .group-hover\:translate-x-0\.5,
+.lab-instr-root.group:hover .group-hover\:translate-x-0\.5 {
+  transform:translateX(0.125rem);
+}
+
+.lab-instr-root .hover\:bg-amber-100:hover,
+.lab-instr-root.hover\:bg-amber-100:hover {
+  background-color:#fef3c7;
+}
+
+.lab-instr-root .hover\:bg-amber-200:hover,
+.lab-instr-root.hover\:bg-amber-200:hover {
+  background-color:#fde68a;
+}
+
+.lab-instr-root .hover\:bg-amber-50\/40:hover,
+.lab-instr-root.hover\:bg-amber-50\/40:hover {
+  background-color:rgba(255, 251, 235, 0.4);
+}
+
+.lab-instr-root .hover\:bg-emerald-300:hover,
+.lab-instr-root.hover\:bg-emerald-300:hover {
+  background-color:#6ee7b7;
+}
+
+.lab-instr-root .hover\:bg-emerald-600:hover,
+.lab-instr-root.hover\:bg-emerald-600:hover {
+  background-color:#059669;
+}
+
+.lab-instr-root .hover\:bg-purple-700:hover,
+.lab-instr-root.hover\:bg-purple-700:hover {
+  background-color:#7e22ce;
+}
+
+.lab-instr-root .hover\:bg-red-100:hover,
+.lab-instr-root.hover\:bg-red-100:hover {
+  background-color:#fee2e2;
+}
+
+.lab-instr-root .hover\:bg-red-200:hover,
+.lab-instr-root.hover\:bg-red-200:hover {
+  background-color:#fecaca;
+}
+
+.lab-instr-root .hover\:bg-red-600:hover,
+.lab-instr-root.hover\:bg-red-600:hover {
+  background-color:#dc2626;
+}
+
+.lab-instr-root .hover\:bg-sky-100:hover,
+.lab-instr-root.hover\:bg-sky-100:hover {
+  background-color:#e0f2fe;
+}
+
+.lab-instr-root .hover\:bg-sky-200:hover,
+.lab-instr-root.hover\:bg-sky-200:hover {
+  background-color:#bae6fd;
+}
+
+.lab-instr-root .hover\:bg-sky-600:hover,
+.lab-instr-root.hover\:bg-sky-600:hover {
+  background-color:#0284c7;
+}
+
+.lab-instr-root .hover\:bg-slate-100:hover,
+.lab-instr-root.hover\:bg-slate-100:hover {
+  background-color:#f1f5f9;
+}
+
+.lab-instr-root .hover\:bg-slate-600:hover,
+.lab-instr-root.hover\:bg-slate-600:hover {
+  background-color:#475569;
+}
+
+.lab-instr-root .hover\:bg-white\/30:hover,
+.lab-instr-root.hover\:bg-white\/30:hover {
+  background-color:rgba(255, 255, 255, 0.3);
+}
+
+.lab-instr-root .hover\:opacity-95:hover,
+.lab-instr-root.hover\:opacity-95:hover {
+  opacity:0.95;
+}
+
+.lab-instr-root .hover\:text-sky-800:hover,
+.lab-instr-root.hover\:text-sky-800:hover {
+  color:#075985;
+}
+
+.lab-instr-root .hover\:text-slate-700:hover,
+.lab-instr-root.hover\:text-slate-700:hover {
+  color:#334155;
+}
+
+.lab-instr-root .hover\:translate-y-\[-2px\]:hover,
+.lab-instr-root.hover\:translate-y-\[-2px\]:hover {
+  transform:translateY(-2px);
+}
+
+@media (min-width: 768px) {
+.lab-instr-root .md\:grid-cols-2,
+.lab-instr-root.md\:grid-cols-2 {
+  grid-template-columns:repeat(2,minmax(0,1fr));
+}
+}
+
+@media (min-width: 640px) {
+.lab-instr-root .sm\:grid-cols-2,
+.lab-instr-root.sm\:grid-cols-2 {
+  grid-template-columns:repeat(2,minmax(0,1fr));
+}
+}
+
+@media (min-width: 640px) {
+.lab-instr-root .sm\:grid-cols-3,
+.lab-instr-root.sm\:grid-cols-3 {
+  grid-template-columns:repeat(3,minmax(0,1fr));
+}
+}
+
+@media (min-width: 640px) {
+.lab-instr-root .sm\:p-4,
+.lab-instr-root.sm\:p-4 {
+  padding:1rem;
+}
+}
+
+@media (min-width: 640px) {
+.lab-instr-root .sm\:p-5,
+.lab-instr-root.sm\:p-5 {
+  padding:1.25rem;
+}
+}
+
+@media (min-width: 640px) {
+.lab-instr-root .sm\:p-6,
+.lab-instr-root.sm\:p-6 {
+  padding:1.5rem;
+}
+}
+
+@media (min-width: 640px) {
+.lab-instr-root .sm\:px-6,
+.lab-instr-root.sm\:px-6 {
+  padding-left:1.5rem;
+  padding-right:1.5rem;
+}
+}
+
+@media (min-width: 640px) {
+.lab-instr-root .sm\:text-2xl,
+.lab-instr-root.sm\:text-2xl {
+  font-size:1.5rem;
+  line-height:2rem;
+}
+}
+
+@media (min-width: 640px) {
+.lab-instr-root .sm\:text-base,
+.lab-instr-root.sm\:text-base {
+  font-size:1rem;
+  line-height:1.5rem;
+}
+}
+
+@media (min-width: 640px) {
+.lab-instr-root .sm\:text-lg,
+.lab-instr-root.sm\:text-lg {
+  font-size:1.125rem;
+  line-height:1.75rem;
+}
+}
+
+@media (min-width: 640px) {
+.lab-instr-root .sm\:text-sm,
+.lab-instr-root.sm\:text-sm {
+  font-size:0.875rem;
+  line-height:1.25rem;
+}
+}
+
+@media (min-width: 640px) {
+.lab-instr-root .sm\:w-56,
+.lab-instr-root.sm\:w-56 {
+  width:14rem;
+}
+}

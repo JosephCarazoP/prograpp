@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
+import './LabInstructionsModal.css';
 import {
   LabInstructionPost,
   LabInstructionScript,
@@ -570,6 +571,7 @@ export const LabInstructionsModal: React.FC<LabInstructionsModalProps> = ({
   if (isFloatingMode && selectedPost) {
     return createPortal(
       <div
+        className="lab-instr-root"
         style={{
           position: 'fixed',
           right: 16,
@@ -740,7 +742,7 @@ export const LabInstructionsModal: React.FC<LabInstructionsModalProps> = ({
   // ═══ MODAL PRINCIPAL (MURO DE TARGETS + PUBLICACIÓN ESTILO FACEBOOK + COMPOSER DEL PROFESOR) ═══
   return createPortal(
     <div
-      className="fixed inset-0 z-[99980] bg-black/65 backdrop-blur-xs flex items-center justify-center p-2 sm:p-4"
+      className="lab-instr-root fixed inset-0 z-[99980] bg-black/65 backdrop-blur-xs flex items-center justify-center p-2 sm:p-4"
       onClick={onClose}
     >
       <div
@@ -804,7 +806,6 @@ export const LabInstructionsModal: React.FC<LabInstructionsModalProps> = ({
             <div className="bg-white border-3 border-black rounded-2xl shadow-[5px_5px_0px_#000] overflow-hidden">
               <div className="px-5 py-3.5 bg-amber-100 border-b-2 border-black flex items-center justify-between flex-wrap gap-2">
                 <div className="flex items-center gap-2">
-                  <Sparkles size={18} className="text-amber-700" />
                   <h3 className="font-black text-slate-900 text-sm sm:text-base uppercase">
                     {editingPostId ? 'Editar Publicación de Ejercicio' : 'Nueva Publicación de Ejercicio'}
                   </h3>
