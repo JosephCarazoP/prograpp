@@ -6,6 +6,7 @@ import {
   KotlinAutoCheckResult,
   KotlinAutoCheckItem
 } from '../types/kotlinLab';
+import { tryRunKotlinLocally } from './kotlinLocalRunner';
 
 export const SUPPORTED_KOTLIN_VERSIONS = [
   { id: '2.1.0', label: 'Kotlin 2.1.0 (Reciente)' },
@@ -13,7 +14,10 @@ export const SUPPORTED_KOTLIN_VERSIONS = [
   { id: '1.9.24', label: 'Kotlin 1.9.24 (LTS)' }
 ];
 
-export const DEFAULT_KOTLIN_VERSION = '2.1.0';
+export const DEFAULT_KOTLIN_VERSION = '2.0.21';
+
+// Caché en memoria de compilaciones recientes para respuesta instantánea
+const compilationResultCache = new Map<string, KotlinRunResult>();
 
 /**
  * Limpia los tags XML de streaming (<outStream>, <errStream>) del motor de JetBrains
@@ -29,7 +33,8 @@ export function cleanKotlinStreamOutput(raw: string): string {
 }
 
 /**
- * Ejecuta código Kotlin a través de la API oficial de Kotlin Playground
+ * Ejecuta código Kotlin combinando ejecución instantánea en el navegador (< 10ms)
+ * para código estándar de Kotlin y compilación remota paralela en la API de JetBrains para casos avanzados.
  */
 export async function runKotlinCode(
   files: KotlinFile[],
@@ -38,7 +43,29 @@ export async function runKotlinCode(
 ): Promise<KotlinRunResult> {
   const startTime = performance.now();
 
-  // Preparar payload para la API de JetBrains
+  // 1. Revisar caché de compilación para ejecuciones repetidas (instantáneo)
+  const cacheKey = JSON.stringify({
+    v: version,
+    a: args.trim(),
+    f: files.map(f => [f.name, f.content])
+  });
+
+  const cached = compilationResultCache.get(cacheKey);
+  if (cached) {
+    return {
+      ...cached,
+      executionTimeMs: Math.max(1, Math.round(performance.now() - startTime))
+    };
+  }
+
+  // 2. Vía rápida local (< 10ms) para programas estándar de Kotlin
+  const localResult = tryRunKotlinLocally(files, args, version);
+  if (localResult !== null) {
+    compilationResultCache.set(cacheKey, localResult);
+    return localResult;
+  }
+
+  // 3. Fallback a la API oficial de Kotlin Playground en paralelo (sin esperas secuenciales)
   const payload = {
     args: args.trim(),
     files: files.map(f => ({
@@ -47,34 +74,43 @@ export async function runKotlinCode(
     }))
   };
 
-  const endpoints = [
-    `/api/kotlin-compiler/${version}/compiler/run`,
+  const primaryEndpoints = [
     `https://api.kotlinlang.org/api/${version}/compiler/run`,
     `https://api.kotlinlang.org/api/2.0.21/compiler/run`,
-    `https://api.kotlinlang.org/api/1.9.24/compiler/run`
+    `/api/kotlin-compiler/${version}/compiler/run`
   ];
+
+  // Evitar duplicados si version === '2.0.21'
+  const uniqueEndpoints = Array.from(new Set(primaryEndpoints));
 
   let lastError: Error | null = null;
   let responseData: any = null;
 
-  for (const endpoint of endpoints) {
+  const fetchEndpoint = async (endpoint: string): Promise<any> => {
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), 8000);
     try {
       const response = await fetch(endpoint, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify(payload)
+        body: JSON.stringify(payload),
+        signal: controller.signal
       });
-
-      if (response.ok) {
-        responseData = await response.json();
-        break;
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}`);
       }
-    } catch (err: any) {
-      lastError = err;
-      // Intenta con el siguiente endpoint de respaldo
+      return await response.json();
+    } finally {
+      clearTimeout(timer);
     }
+  };
+
+  try {
+    responseData = await Promise.any(uniqueEndpoints.map(ep => fetchEndpoint(ep)));
+  } catch (aggErr: any) {
+    lastError = aggErr?.errors?.[0] || aggErr;
   }
 
   const executionTimeMs = Math.round(performance.now() - startTime);
@@ -123,7 +159,7 @@ export async function runKotlinCode(
   const hasErrors = compilerErrors.some(e => e.severity === 'ERROR');
   const hasException = Boolean(responseData.exception);
 
-  return {
+  const finalResult: KotlinRunResult = {
     output: cleanedOutput,
     rawText: responseData.text || '',
     errors: compilerErrors,
@@ -132,6 +168,9 @@ export async function runKotlinCode(
     success: !hasErrors && !hasException,
     compilerVersion: version
   };
+
+  compilationResultCache.set(cacheKey, finalResult);
+  return finalResult;
 }
 
 /**

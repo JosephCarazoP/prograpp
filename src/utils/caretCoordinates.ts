@@ -82,11 +82,14 @@ export function getCaretCoordinates(
 
   const top = span.offsetTop - element.scrollTop;
   const left = span.offsetLeft - element.scrollLeft;
+  const rect = element.getBoundingClientRect();
 
   return {
     top,
     left,
-    lineHeight: parsedLineHeight
+    lineHeight: parsedLineHeight,
+    viewportTop: rect.top + top,
+    viewportLeft: rect.left + left
   };
 }
 
@@ -106,8 +109,8 @@ export function getCurrentWordPrefix(
   let start = cursorOffset;
   while (start > 0) {
     const char = text[start - 1];
-    // Aceptamos letras, números, guiones bajos
-    if (/^[a-zA-Z0-9_]$/.test(char)) {
+    // Aceptamos letras, números, guiones bajos y ':' para parámetros SQL (:id)
+    if (/^[a-zA-Z0-9_:]$/.test(char)) {
       start--;
     } else {
       break;

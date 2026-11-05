@@ -5,11 +5,13 @@ import { soundService } from '../../services/soundService';
 interface TraceStepProps {
   exercise: TraceStepType;
   onAnswerChange: (isReady: boolean, userValues: Record<number, Record<string, string>>) => void;
+  externalValues?: Record<number, Record<string, string>>;
 }
 
 export const TraceStepComponent: React.FC<TraceStepProps> = ({
   exercise,
-  onAnswerChange
+  onAnswerChange,
+  externalValues
 }) => {
   const [userInputs, setUserInputs] = useState<Record<number, Record<string, string>>>({});
 
@@ -18,6 +20,13 @@ export const TraceStepComponent: React.FC<TraceStepProps> = ({
     setUserInputs({});
     onAnswerChange(false, {});
   }, [exercise.id]);
+
+  // Sincronizar cuando un comodín rellena valores automáticamente
+  useEffect(() => {
+    if (externalValues && Object.keys(externalValues).length > 0) {
+      setUserInputs(externalValues);
+    }
+  }, [externalValues]);
 
   const handleInputChange = (iteration: number, varName: string, value: string) => {
     soundService.playToken();

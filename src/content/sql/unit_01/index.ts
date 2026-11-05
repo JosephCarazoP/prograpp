@@ -12,8 +12,8 @@ export const SQL_UNIT_01_LESSONS: Lesson[] = [
       {
         "id": "sql-u01-l01-e01",
         "type": "predict_output",
-        "prompt": "¿Cuál es el resultado exacto en consola tras evaluar la siguiente instrucción sobre \"Datos e información\"?",
-        "code": "SELECT COUNT(*) FROM estudiantes;",
+        "prompt": "Observa los registros de la tabla \"estudiantes\" y determina el resultado exacto de la consulta:",
+        "code": "-- Tabla estudiantes (5 registros):\n-- | id | nombre          | carrera                | semestre | promedio |\n-- | 1  | Valeria Morales | Ingeniería de Software | 3        | 9.4      |\n-- | 2  | Diego Fernández | Ciberseguridad         | 5        | 8.7      |\n-- | 3  | Camila Gómez    | Ciencia de Datos       | 4        | 9.8      |\n-- | 4  | Mateo Rojas     | Ciberseguridad         | 2        | 8.3      |\n-- | 5  | Lucía Vargas    | Computación            | 6        | 9.1      |\n\nSELECT COUNT(*) FROM estudiantes;",
         "options": [
           "5",
           "0",
@@ -42,7 +42,7 @@ export const SQL_UNIT_01_LESSONS: Lesson[] = [
       {
         "id": "sql-u01-l01-e03",
         "type": "code_builder",
-        "prompt": "Ordena los bloques para construir la sentencia correcta de: \"Datos e información\":",
+        "prompt": "Ordena los bloques para construir la consulta SELECT válida (SELECT nombre, promedio FROM estudiantes):",
         "tokens": [
           "SELECT",
           "nombre, promedio",
@@ -62,7 +62,11 @@ export const SQL_UNIT_01_LESSONS: Lesson[] = [
         "id": "sql-u01-l01-e04",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea que contiene el error en este código de \"Datos e información\":",
-        "codeSnippet": [ "SELECT nombre", "IN estudiantes", "WHERE id = 1" ],
+        "codeSnippet": [
+          "SELECT nombre",
+          "IN estudiantes",
+          "WHERE id = 1"
+        ],
         "bugLineIndex": 1,
         "explanation": "Almacenar datos desordenados en hojas de cálculo sin validaciones provoca duplicados e inconsistencias.",
         "xpReward": 15
@@ -125,7 +129,7 @@ export const SQL_UNIT_01_LESSONS: Lesson[] = [
       {
         "id": "sql-u01-l01-e08",
         "type": "code_builder",
-        "prompt": "Construye la instrucción sintáctica complementaria para \"Datos e información\":",
+        "prompt": "Ordena los bloques para consultar las columnas \"id\" y \"nombre\" de la tabla \"estudiantes\" (finalizando con punto y coma):",
         "tokens": [
           "SELECT",
           "id,",
@@ -149,7 +153,11 @@ export const SQL_UNIT_01_LESSONS: Lesson[] = [
         "id": "sql-u01-l01-e09",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea con el error de diseño o sintaxis en \"Datos e información\":",
-        "codeSnippet": [ "-- Consulta sobre el esquema educativo", "SELECT id, nombre FROM estudiantes", "WHERE id == 10;" ],
+        "codeSnippet": [
+          "-- Consulta sobre el esquema educativo",
+          "SELECT id, nombre FROM estudiantes",
+          "WHERE id == 10;"
+        ],
         "bugLineIndex": 2,
         "explanation": "Almacenar datos desordenados en hojas de cálculo sin validaciones provoca duplicados e inconsistencias.",
         "xpReward": 15
@@ -192,8 +200,8 @@ export const SQL_UNIT_01_LESSONS: Lesson[] = [
       {
         "id": "sql-u01-l02-e01",
         "type": "predict_output",
-        "prompt": "¿Cuál es el resultado exacto en consola tras evaluar la siguiente instrucción sobre \"Qué es una base de datos y para qué sirve\"?",
-        "code": "SELECT creditos FROM asignaturas WHERE id = 101;",
+        "prompt": "Observa los registros de la tabla \"asignaturas\" y determina el resultado exacto de la consulta:",
+        "code": "-- Tabla asignaturas (5 registros, 4 columnas):\n-- | id  | nombre                  | creditos | departamento   |\n-- | 101 | Bases de Datos I        | 4        | Informática    |\n-- | 102 | Estructuras de Datos    | 5        | Informática    |\n-- | 103 | Inteligencia Artificial | 4        | Computación    |\n-- | 104 | Cálculo Diferencial     | 4        | Matemáticas    |\n-- | 105 | Seguridad en Redes      | 3        | Ciberseguridad |\n\nSELECT creditos FROM asignaturas WHERE id = 101;",
         "options": [
           "4",
           "5",
@@ -222,7 +230,7 @@ export const SQL_UNIT_01_LESSONS: Lesson[] = [
       {
         "id": "sql-u01-l02-e03",
         "type": "code_builder",
-        "prompt": "Ordena los bloques para construir la sentencia correcta de: \"Qué es una base de datos y para qué sirve\":",
+        "prompt": "Ordena los bloques para construir la consulta SELECT válida (SELECT * FROM asignaturas;):",
         "tokens": [
           "SELECT",
           "*",
@@ -244,7 +252,11 @@ export const SQL_UNIT_01_LESSONS: Lesson[] = [
         "id": "sql-u01-l02-e04",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea que contiene el error en este código de \"Qué es una base de datos y para qué sirve\":",
-        "codeSnippet": [ "-- Consulta sobre estudiantes", "GET * FROM asignaturas", "ORDER BY id ASC;" ],
+        "codeSnippet": [
+          "-- Consulta sobre estudiantes",
+          "GET * FROM asignaturas",
+          "ORDER BY id ASC;"
+        ],
         "bugLineIndex": 1,
         "explanation": "Usar archivos de texto plano (.txt) para sistemas multiusuario: provocarán bloqueos y pérdida de datos ante caídas.",
         "xpReward": 15
@@ -307,7 +319,7 @@ export const SQL_UNIT_01_LESSONS: Lesson[] = [
       {
         "id": "sql-u01-l02-e08",
         "type": "code_builder",
-        "prompt": "Construye la instrucción sintáctica complementaria para \"Qué es una base de datos y para qué sirve\":",
+        "prompt": "Ordena los bloques para consultar las columnas \"id\" y \"nombre\" de la tabla \"estudiantes\" (finalizando con punto y coma):",
         "tokens": [
           "SELECT",
           "id,",
@@ -331,7 +343,11 @@ export const SQL_UNIT_01_LESSONS: Lesson[] = [
         "id": "sql-u01-l02-e09",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea con el error de diseño o sintaxis en \"Qué es una base de datos y para qué sirve\":",
-        "codeSnippet": [ "-- Consulta sobre el esquema educativo", "SELECT id, nombre FROM estudiantes", "WHERE id == 10;" ],
+        "codeSnippet": [
+          "-- Consulta sobre el esquema educativo",
+          "SELECT id, nombre FROM estudiantes",
+          "WHERE id == 10;"
+        ],
         "bugLineIndex": 2,
         "explanation": "Usar archivos de texto plano (.txt) para sistemas multiusuario: provocarán bloqueos y pérdida de datos ante caídas.",
         "xpReward": 15
@@ -374,8 +390,8 @@ export const SQL_UNIT_01_LESSONS: Lesson[] = [
       {
         "id": "sql-u01-l03-e01",
         "type": "predict_output",
-        "prompt": "¿Cuál es el resultado exacto en consola tras evaluar la siguiente instrucción sobre \"Bases de datos relacionales\"?",
-        "code": "SELECT nombre FROM estudiantes WHERE id = 2;",
+        "prompt": "Observa los registros de la tabla \"estudiantes\" y determina el resultado exacto de la consulta:",
+        "code": "-- Tabla estudiantes (5 registros):\n-- | id | nombre          | carrera                | semestre | promedio |\n-- | 1  | Valeria Morales | Ingeniería de Software | 3        | 9.4      |\n-- | 2  | Diego Fernández | Ciberseguridad         | 5        | 8.7      |\n-- | 3  | Camila Gómez    | Ciencia de Datos       | 4        | 9.8      |\n-- | 4  | Mateo Rojas     | Ciberseguridad         | 2        | 8.3      |\n-- | 5  | Lucía Vargas    | Computación            | 6        | 9.1      |\n\nSELECT nombre FROM estudiantes WHERE id = 2;",
         "options": [
           "Diego Fernández",
           "Valeria Morales",
@@ -404,7 +420,7 @@ export const SQL_UNIT_01_LESSONS: Lesson[] = [
       {
         "id": "sql-u01-l03-e03",
         "type": "code_builder",
-        "prompt": "Ordena los bloques para construir la sentencia correcta de: \"Bases de datos relacionales\":",
+        "prompt": "Ordena los bloques para consultar las columnas \"id\" y \"nombre\" de la tabla \"estudiantes\" (finalizando con punto y coma):",
         "tokens": [
           "SELECT",
           "id, nombre",
@@ -424,7 +440,11 @@ export const SQL_UNIT_01_LESSONS: Lesson[] = [
         "id": "sql-u01-l03-e04",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea que contiene el error en este código de \"Bases de datos relacionales\":",
-        "codeSnippet": [ "-- Consulta sobre estudiantes", "SELECT * TABLE estudiantes", "ORDER BY id ASC;" ],
+        "codeSnippet": [
+          "-- Consulta sobre estudiantes",
+          "SELECT * TABLE estudiantes",
+          "ORDER BY id ASC;"
+        ],
         "bugLineIndex": 1,
         "explanation": "Repetir la carrera o el email en todas las tablas: si cambia la carrera, tendrías que actualizar cientos de filas.",
         "xpReward": 15
@@ -487,7 +507,7 @@ export const SQL_UNIT_01_LESSONS: Lesson[] = [
       {
         "id": "sql-u01-l03-e08",
         "type": "code_builder",
-        "prompt": "Construye la instrucción sintáctica complementaria para \"Bases de datos relacionales\":",
+        "prompt": "Ordena los bloques para consultar las columnas \"id\" y \"nombre\" de la tabla \"estudiantes\" (finalizando con punto y coma):",
         "tokens": [
           "SELECT",
           "id,",
@@ -511,7 +531,11 @@ export const SQL_UNIT_01_LESSONS: Lesson[] = [
         "id": "sql-u01-l03-e09",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea con el error de diseño o sintaxis en \"Bases de datos relacionales\":",
-        "codeSnippet": [ "-- Consulta sobre el esquema educativo", "SELECT id, nombre FROM estudiantes", "WHERE id == 10;" ],
+        "codeSnippet": [
+          "-- Consulta sobre el esquema educativo",
+          "SELECT id, nombre FROM estudiantes",
+          "WHERE id == 10;"
+        ],
         "bugLineIndex": 2,
         "explanation": "Repetir la carrera o el email en todas las tablas: si cambia la carrera, tendrías que actualizar cientos de filas.",
         "xpReward": 15
@@ -554,8 +578,8 @@ export const SQL_UNIT_01_LESSONS: Lesson[] = [
       {
         "id": "sql-u01-l04-e01",
         "type": "predict_output",
-        "prompt": "¿Cuál es el resultado exacto en consola tras evaluar la siguiente instrucción sobre \"Tablas, columnas y filas\"?",
-        "code": "SELECT id FROM estudiantes WHERE nombre = 'Camila Gómez';",
+        "prompt": "Observa los registros de la tabla \"estudiantes\" y determina el resultado exacto de la consulta:",
+        "code": "-- Tabla estudiantes (5 registros):\n-- | id | nombre          | carrera                | semestre | promedio |\n-- | 1  | Valeria Morales | Ingeniería de Software | 3        | 9.4      |\n-- | 2  | Diego Fernández | Ciberseguridad         | 5        | 8.7      |\n-- | 3  | Camila Gómez    | Ciencia de Datos       | 4        | 9.8      |\n-- | 4  | Mateo Rojas     | Ciberseguridad         | 2        | 8.3      |\n-- | 5  | Lucía Vargas    | Computación            | 6        | 9.1      |\n\nSELECT id FROM estudiantes WHERE nombre = 'Camila Gómez';",
         "options": [
           "3",
           "1",
@@ -584,7 +608,7 @@ export const SQL_UNIT_01_LESSONS: Lesson[] = [
       {
         "id": "sql-u01-l04-e03",
         "type": "code_builder",
-        "prompt": "Ordena los bloques para construir la sentencia correcta de: \"Tablas, columnas y filas\":",
+        "prompt": "Ordena los bloques para construir la consulta SELECT válida (SELECT id, carrera FROM estudiantes):",
         "tokens": [
           "SELECT",
           "id, carrera",
@@ -604,7 +628,11 @@ export const SQL_UNIT_01_LESSONS: Lesson[] = [
         "id": "sql-u01-l04-e04",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea que contiene el error en este código de \"Tablas, columnas y filas\":",
-        "codeSnippet": [ "-- Consulta sobre estudiantes", "SELECT FROM estudiantes", "ORDER BY id ASC;" ],
+        "codeSnippet": [
+          "-- Consulta sobre estudiantes",
+          "SELECT FROM estudiantes",
+          "ORDER BY id ASC;"
+        ],
         "bugLineIndex": 1,
         "explanation": "Guardar múltiples valores dentro de una sola celda (ej. \"Juan, Pedro, Ana\") viola la primera forma normal.",
         "xpReward": 15
@@ -667,7 +695,7 @@ export const SQL_UNIT_01_LESSONS: Lesson[] = [
       {
         "id": "sql-u01-l04-e08",
         "type": "code_builder",
-        "prompt": "Construye la instrucción sintáctica complementaria para \"Tablas, columnas y filas\":",
+        "prompt": "Ordena los bloques para consultar las columnas \"id\" y \"nombre\" de la tabla \"estudiantes\" (finalizando con punto y coma):",
         "tokens": [
           "SELECT",
           "id,",
@@ -691,7 +719,11 @@ export const SQL_UNIT_01_LESSONS: Lesson[] = [
         "id": "sql-u01-l04-e09",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea con el error de diseño o sintaxis en \"Tablas, columnas y filas\":",
-        "codeSnippet": [ "-- Consulta sobre el esquema educativo", "SELECT id, nombre FROM estudiantes", "WHERE id == 10;" ],
+        "codeSnippet": [
+          "-- Consulta sobre el esquema educativo",
+          "SELECT id, nombre FROM estudiantes",
+          "WHERE id == 10;"
+        ],
         "bugLineIndex": 2,
         "explanation": "Guardar múltiples valores dentro de una sola celda (ej. \"Juan, Pedro, Ana\") viola la primera forma normal.",
         "xpReward": 15
@@ -734,8 +766,8 @@ export const SQL_UNIT_01_LESSONS: Lesson[] = [
       {
         "id": "sql-u01-l05-e01",
         "type": "predict_output",
-        "prompt": "¿Cuál es el resultado exacto en consola tras evaluar la siguiente instrucción sobre \"Estructura de una tabla frente a sus registros\"?",
-        "code": "SELECT count(*) FROM asignaturas;",
+        "prompt": "Observa los registros de la tabla \"asignaturas\" y determina el resultado exacto de la consulta:",
+        "code": "-- Tabla asignaturas (5 registros, 4 columnas):\n-- | id  | nombre                  | creditos | departamento   |\n-- | 101 | Bases de Datos I        | 4        | Informática    |\n-- | 102 | Estructuras de Datos    | 5        | Informática    |\n-- | 103 | Inteligencia Artificial | 4        | Computación    |\n-- | 104 | Cálculo Diferencial     | 4        | Matemáticas    |\n-- | 105 | Seguridad en Redes      | 3        | Ciberseguridad |\n\nSELECT count(*) FROM asignaturas;",
         "options": [
           "5",
           "0",
@@ -764,7 +796,7 @@ export const SQL_UNIT_01_LESSONS: Lesson[] = [
       {
         "id": "sql-u01-l05-e03",
         "type": "code_builder",
-        "prompt": "Ordena los bloques para construir la sentencia correcta de: \"Estructura de una tabla frente a sus registros\":",
+        "prompt": "Ordena los bloques para crear la estructura de la tabla 'cursos' con una columna llamada 'id' de tipo entero (INTEGER):",
         "tokens": [
           "CREATE",
           "TABLE",
@@ -783,16 +815,20 @@ export const SQL_UNIT_01_LESSONS: Lesson[] = [
           "INTEGER",
           ")"
         ],
-        "explanation": "El comando CREATE TABLE define la estructura; los comandos INSERT, UPDATE y DELETE gestionan los registros.",
+        "explanation": "En CREATE TABLE primero va el nombre de la tabla ('cursos') y entre paréntesis el nombre de la columna ('id') seguido de su tipo ('INTEGER').",
         "xpReward": 15
       },
       {
         "id": "sql-u01-l05-e04",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea que contiene el error en este código de \"Estructura de una tabla frente a sus registros\":",
-        "codeSnippet": [ "-- Definición de tabla", "CREATE RECORD estudiantes", "-- Fin de sentencia" ],
+        "codeSnippet": [
+          "-- Definición de tabla",
+          "CREATE RECORD estudiantes",
+          "-- Fin de sentencia"
+        ],
         "bugLineIndex": 1,
-        "explanation": "Confundir DROP TABLE (destruye la estructura completa) con DELETE FROM (borra los registros manteniendo la tabla).",
+        "explanation": "En SQL se utiliza CREATE TABLE para definir la estructura de una tabla; CREATE RECORD no existe.",
         "xpReward": 15
       },
       {
@@ -802,22 +838,22 @@ export const SQL_UNIT_01_LESSONS: Lesson[] = [
         "pairs": [
           {
             "left": "Esquema (DDL)",
-            "right": "esqueleto lógico que define nombres, tipos y restricciones."
+            "right": "Esqueleto lógico que define columnas, tipos y restricciones."
           },
           {
             "left": "Datos (DML)",
-            "right": "las instancias físicas almacenadas en cada fila."
+            "right": "Las filas o registros almacenados dentro de la tabla."
           },
           {
-            "left": "Principio 3",
-            "right": "Modificar la estructura requiere comandos ALTER TABLE."
+            "left": "ALTER TABLE",
+            "right": "Comando DDL para modificar la estructura de una tabla existente."
           },
           {
-            "left": "Buena práctica",
-            "right": "El comando CREATE TABLE define la estructura; los co..."
+            "left": "CREATE TABLE",
+            "right": "Comando DDL que define inicialmente la estructura de la tabla."
           }
         ],
-        "explanation": "Dominio de los conceptos esenciales y fundamentos teóricos de la lección.",
+        "explanation": "Los comandos DDL (CREATE, ALTER, DROP) definen la estructura; los comandos DML (INSERT, UPDATE, DELETE) manipulan los registros.",
         "xpReward": 15
       },
       {
@@ -838,22 +874,22 @@ export const SQL_UNIT_01_LESSONS: Lesson[] = [
       {
         "id": "sql-u01-l05-e07",
         "type": "predict_output",
-        "prompt": "¿Qué resultado se obtendrá al evaluar la siguiente instrucción sobre \"Estructura de una tabla frente a sus registros\"?",
+        "prompt": "¿Qué resultado se obtendrá al ejecutar la siguiente sentencia DDL que crea la estructura de la tabla 'aulas'?",
         "code": "CREATE TABLE IF NOT EXISTS aulas (\n    id INTEGER PRIMARY KEY,\n    codigo TEXT NOT NULL,\n    capacidad INTEGER\n);",
         "options": [
-          "Query OK, 0 rows affected (Eng",
+          "Tabla creada exitosamente (0 filas afectadas)",
           "Error de sintaxis",
           "null / Sin registros",
           "Excepción de tipo"
         ],
         "correctOptionIndex": 0,
-        "explanation": "La salida corresponde con el comportamiento documentado: Query OK, 0 rows affected (Eng",
+        "explanation": "CREATE TABLE IF NOT EXISTS crea la estructura de la tabla sin insertar filas todavía (0 filas afectadas).",
         "xpReward": 10
       },
       {
         "id": "sql-u01-l05-e08",
         "type": "code_builder",
-        "prompt": "Construye la instrucción sintáctica complementaria para \"Estructura de una tabla frente a sus registros\":",
+        "prompt": "Ordena los bloques para consultar las columnas 'id' y 'nombre' de la tabla 'estudiantes':",
         "tokens": [
           "SELECT",
           "id,",
@@ -870,41 +906,45 @@ export const SQL_UNIT_01_LESSONS: Lesson[] = [
           "estudiantes",
           ";"
         ],
-        "explanation": "Orden gramatical correcto respetando las convenciones del lenguaje.",
+        "explanation": "SELECT especifica las columnas ('id, nombre') y FROM indica la tabla ('estudiantes').",
         "xpReward": 15
       },
       {
         "id": "sql-u01-l05-e09",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea con el error de diseño o sintaxis en \"Estructura de una tabla frente a sus registros\":",
-        "codeSnippet": [ "-- Consulta sobre el esquema educativo", "SELECT id, nombre FROM estudiantes", "WHERE id == 10;" ],
+        "codeSnippet": [
+          "-- Consulta sobre el esquema educativo",
+          "SELECT id, nombre FROM estudiantes",
+          "WHERE id == 10;"
+        ],
         "bugLineIndex": 2,
-        "explanation": "Confundir DROP TABLE (destruye la estructura completa) con DELETE FROM (borra los registros manteniendo la tabla).",
+        "explanation": "En SQL estándar el operador de igualdad en WHERE es un solo signo '=' (WHERE id = 10;).",
         "xpReward": 15
       },
       {
         "id": "sql-u01-l05-e10",
         "type": "matching_pairs",
-        "prompt": "Empareja cada aspecto de \"Estructura de una tabla frente a sus registros\" con su rol o impacto en el sistema:",
+        "prompt": "Empareja cada comando SQL con su efecto sobre la estructura o los registros de una tabla:",
         "pairs": [
           {
-            "left": "Propósito técnico",
-            "right": "Distingue entre el esquema DDL (la estructura de col..."
+            "left": "CREATE TABLE",
+            "right": "Crea la estructura de columnas y tipos de una nueva tabla."
           },
           {
-            "left": "Riesgo crítico",
-            "right": "Confundir DROP TABLE (destruye la estructura complet..."
+            "left": "DROP TABLE",
+            "right": "Elimina por completo la tabla y su estructura del sistema."
           },
           {
-            "left": "Recomendación",
-            "right": "El comando CREATE TABLE define la estructura; los co..."
+            "left": "DELETE FROM",
+            "right": "Borra registros (filas) pero conserva la estructura de la tabla."
           },
           {
-            "left": "Ámbito de aplicación",
-            "right": "Motor relacional SQLite"
+            "left": "INSERT INTO",
+            "right": "Agrega nuevos registros (filas) dentro de la tabla existente."
           }
         ],
-        "explanation": "Consolidación de buenas prácticas y prevención de errores críticos en el código.",
+        "explanation": "Es fundamental no confundir DROP TABLE (destruye la tabla completa) con DELETE FROM (solo vacía las filas).",
         "xpReward": 15
       }
     ]
@@ -920,8 +960,8 @@ export const SQL_UNIT_01_LESSONS: Lesson[] = [
       {
         "id": "sql-u01-l06-e01",
         "type": "predict_output",
-        "prompt": "¿Cuál es el resultado exacto en consola tras evaluar la siguiente instrucción sobre \"Diferencia entre SQL y SQLite\"?",
-        "code": "SELECT departamento FROM asignaturas WHERE id = 104;",
+        "prompt": "Observa los registros de la tabla 'asignaturas' y determina qué devolverá en consola la consulta SQL:",
+        "code": "-- Tabla asignaturas (id, nombre, departamento):\n-- | 102 | Programación I | Informática        |\n-- | 103 | Redes          | Telecomunicaciones |\n-- | 104 | Álgebra Lineal | Matemáticas        |\n\nSELECT departamento FROM asignaturas WHERE id = 104;",
         "options": [
           "Matemáticas",
           "Informática",
@@ -929,7 +969,7 @@ export const SQL_UNIT_01_LESSONS: Lesson[] = [
           "null"
         ],
         "correctOptionIndex": 0,
-        "explanation": "SQL (Structured Query Language): lenguaje declarativo estándar ISO/ANSI.",
+        "explanation": "La consulta filtra la fila con id = 104 ('Álgebra Lineal') y proyecta únicamente su columna departamento: 'Matemáticas'.",
         "xpReward": 10
       },
       {
@@ -950,7 +990,7 @@ export const SQL_UNIT_01_LESSONS: Lesson[] = [
       {
         "id": "sql-u01-l06-e03",
         "type": "code_builder",
-        "prompt": "Ordena los bloques para construir la sentencia correcta de: \"Diferencia entre SQL y SQLite\":",
+        "prompt": "Ordena los bloques para construir la consulta SELECT válida (SELECT nombre FROM asignaturas):",
         "tokens": [
           "SELECT",
           "nombre",
@@ -970,7 +1010,11 @@ export const SQL_UNIT_01_LESSONS: Lesson[] = [
         "id": "sql-u01-l06-e04",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea que contiene el error en este código de \"Diferencia entre SQL y SQLite\":",
-        "codeSnippet": [ "-- Consulta sobre estudiantes", "CONNECT SERVER sqlite.server.net", "ORDER BY id ASC;" ],
+        "codeSnippet": [
+          "-- Consulta sobre estudiantes",
+          "CONNECT SERVER sqlite.server.net",
+          "ORDER BY id ASC;"
+        ],
         "bugLineIndex": 1,
         "explanation": "Creer que necesitas instalar un servidor pesado como MySQL para aprender: SQLite corre directamente en memoria o en un archivo local.",
         "xpReward": 15
@@ -1033,7 +1077,7 @@ export const SQL_UNIT_01_LESSONS: Lesson[] = [
       {
         "id": "sql-u01-l06-e08",
         "type": "code_builder",
-        "prompt": "Construye la instrucción sintáctica complementaria para \"Diferencia entre SQL y SQLite\":",
+        "prompt": "Ordena los bloques para consultar las columnas \"id\" y \"nombre\" de la tabla \"estudiantes\" (finalizando con punto y coma):",
         "tokens": [
           "SELECT",
           "id,",
@@ -1057,7 +1101,11 @@ export const SQL_UNIT_01_LESSONS: Lesson[] = [
         "id": "sql-u01-l06-e09",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea con el error de diseño o sintaxis en \"Diferencia entre SQL y SQLite\":",
-        "codeSnippet": [ "-- Consulta sobre el esquema educativo", "SELECT id, nombre FROM estudiantes", "WHERE id == 10;" ],
+        "codeSnippet": [
+          "-- Consulta sobre el esquema educativo",
+          "SELECT id, nombre FROM estudiantes",
+          "WHERE id == 10;"
+        ],
         "bugLineIndex": 2,
         "explanation": "Creer que necesitas instalar un servidor pesado como MySQL para aprender: SQLite corre directamente en memoria o en un archivo local.",
         "xpReward": 15

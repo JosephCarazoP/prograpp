@@ -12,8 +12,8 @@ export const SQL_UNIT_06_LESSONS: Lesson[] = [
       {
         "id": "sql-u06-l01-e01",
         "type": "predict_output",
-        "prompt": "¿Cuál es el resultado exacto en consola tras evaluar la siguiente instrucción sobre \"SELECT ... FROM\"?",
-        "code": "SELECT COUNT(*) FROM estudiantes;",
+        "prompt": "Observa los registros de la tabla \"estudiantes\" y determina el resultado exacto de la consulta:",
+        "code": "-- Tabla estudiantes (5 registros):\n-- | id | nombre          | carrera                | semestre | promedio |\n-- | 1  | Valeria Morales | Ingeniería de Software | 3        | 9.4      |\n-- | 2  | Diego Fernández | Ciberseguridad         | 5        | 8.7      |\n-- | 3  | Camila Gómez    | Ciencia de Datos       | 4        | 9.8      |\n-- | 4  | Mateo Rojas     | Ciberseguridad         | 2        | 8.3      |\n-- | 5  | Lucía Vargas    | Computación            | 6        | 9.1      |\n\nSELECT COUNT(*) FROM estudiantes;",
         "options": [
           "5",
           "0",
@@ -42,7 +42,7 @@ export const SQL_UNIT_06_LESSONS: Lesson[] = [
       {
         "id": "sql-u06-l01-e03",
         "type": "code_builder",
-        "prompt": "Ordena los bloques para construir la sentencia correcta de: \"SELECT ... FROM\":",
+        "prompt": "Ordena los bloques para construir la consulta SELECT válida (SELECT nombre FROM estudiantes):",
         "tokens": [
           "SELECT",
           "nombre",
@@ -62,7 +62,11 @@ export const SQL_UNIT_06_LESSONS: Lesson[] = [
         "id": "sql-u06-l01-e04",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea que contiene el error en este código de \"SELECT ... FROM\":",
-        "codeSnippet": [ "-- Consulta sobre estudiantes", "SELECT FROM estudiantes", "ORDER BY id ASC;" ],
+        "codeSnippet": [
+          "-- Consulta sobre estudiantes",
+          "SELECT FROM estudiantes",
+          "ORDER BY id ASC;"
+        ],
         "bugLineIndex": 1,
         "explanation": "Escribir la cláusula FROM antes de SELECT o inventar nombres de columnas inexistentes.",
         "xpReward": 15
@@ -125,7 +129,7 @@ export const SQL_UNIT_06_LESSONS: Lesson[] = [
       {
         "id": "sql-u06-l01-e08",
         "type": "code_builder",
-        "prompt": "Construye la instrucción sintáctica complementaria para \"SELECT ... FROM\":",
+        "prompt": "Ordena los bloques para consultar las columnas \"id\" y \"nombre\" de la tabla \"estudiantes\" (finalizando con punto y coma):",
         "tokens": [
           "SELECT",
           "id,",
@@ -149,7 +153,11 @@ export const SQL_UNIT_06_LESSONS: Lesson[] = [
         "id": "sql-u06-l01-e09",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea con el error de diseño o sintaxis en \"SELECT ... FROM\":",
-        "codeSnippet": [ "-- Consulta sobre el esquema educativo", "SELECT id, nombre FROM estudiantes", "WHERE id == 10;" ],
+        "codeSnippet": [
+          "-- Consulta sobre el esquema educativo",
+          "SELECT id, nombre FROM estudiantes",
+          "WHERE id == 10;"
+        ],
         "bugLineIndex": 2,
         "explanation": "Escribir la cláusula FROM antes de SELECT o inventar nombres de columnas inexistentes.",
         "xpReward": 15
@@ -192,8 +200,8 @@ export const SQL_UNIT_06_LESSONS: Lesson[] = [
       {
         "id": "sql-u06-l02-e01",
         "type": "predict_output",
-        "prompt": "¿Cuál es el resultado exacto en consola tras evaluar la siguiente instrucción sobre \"Seleccionar todas las columnas con *\"?",
-        "code": "SELECT * FROM asignaturas WHERE id = 101;",
+        "prompt": "Observa los registros de la tabla \"asignaturas\" y determina el resultado exacto de la consulta:",
+        "code": "-- Tabla asignaturas (5 registros, 4 columnas):\n-- | id  | nombre                  | creditos | departamento   |\n-- | 101 | Bases de Datos I        | 4        | Informática    |\n-- | 102 | Estructuras de Datos    | 5        | Informática    |\n-- | 103 | Inteligencia Artificial | 4        | Computación    |\n-- | 104 | Cálculo Diferencial     | 4        | Matemáticas    |\n-- | 105 | Seguridad en Redes      | 3        | Ciberseguridad |\n\nSELECT * FROM asignaturas WHERE id = 101;",
         "options": [
           "1 row with 4 columns",
           "4 rows",
@@ -222,7 +230,7 @@ export const SQL_UNIT_06_LESSONS: Lesson[] = [
       {
         "id": "sql-u06-l02-e03",
         "type": "code_builder",
-        "prompt": "Ordena los bloques para construir la sentencia correcta de: \"Seleccionar todas las columnas con *\":",
+        "prompt": "Ordena los bloques para construir la consulta SELECT válida (SELECT * FROM matriculas):",
         "tokens": [
           "SELECT",
           "*",
@@ -242,7 +250,11 @@ export const SQL_UNIT_06_LESSONS: Lesson[] = [
         "id": "sql-u06-l02-e04",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea que contiene el error en este código de \"Seleccionar todas las columnas con *\":",
-        "codeSnippet": [ "-- Consulta sobre estudiantes", "SELECT ALL FROM estudiantes", "ORDER BY id ASC;" ],
+        "codeSnippet": [
+          "-- Consulta sobre estudiantes",
+          "SELECT ALL FROM estudiantes",
+          "ORDER BY id ASC;"
+        ],
         "bugLineIndex": 1,
         "explanation": "Evita SELECT * en aplicaciones de producción con millones de filas: transferir columnas que no necesitas satura la red.",
         "xpReward": 15
@@ -305,7 +317,7 @@ export const SQL_UNIT_06_LESSONS: Lesson[] = [
       {
         "id": "sql-u06-l02-e08",
         "type": "code_builder",
-        "prompt": "Construye la instrucción sintáctica complementaria para \"Seleccionar todas las columnas con *\":",
+        "prompt": "Ordena los bloques para consultar las columnas \"id\" y \"nombre\" de la tabla \"estudiantes\" (finalizando con punto y coma):",
         "tokens": [
           "SELECT",
           "id,",
@@ -329,7 +341,11 @@ export const SQL_UNIT_06_LESSONS: Lesson[] = [
         "id": "sql-u06-l02-e09",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea con el error de diseño o sintaxis en \"Seleccionar todas las columnas con *\":",
-        "codeSnippet": [ "-- Consulta sobre el esquema educativo", "SELECT id, nombre FROM estudiantes", "WHERE id == 10;" ],
+        "codeSnippet": [
+          "-- Consulta sobre el esquema educativo",
+          "SELECT id, nombre FROM estudiantes",
+          "WHERE id == 10;"
+        ],
         "bugLineIndex": 2,
         "explanation": "Evita SELECT * en aplicaciones de producción con millones de filas: transferir columnas que no necesitas satura la red.",
         "xpReward": 15
@@ -372,8 +388,8 @@ export const SQL_UNIT_06_LESSONS: Lesson[] = [
       {
         "id": "sql-u06-l03-e01",
         "type": "predict_output",
-        "prompt": "¿Cuál es el resultado exacto en consola tras evaluar la siguiente instrucción sobre \"Seleccionar columnas específicas\"?",
-        "code": "SELECT carrera FROM estudiantes WHERE id = 1;",
+        "prompt": "Observa los registros de la tabla \"estudiantes\" y determina el resultado exacto de la consulta:",
+        "code": "-- Tabla estudiantes (5 registros):\n-- | id | nombre          | carrera                | semestre | promedio |\n-- | 1  | Valeria Morales | Ingeniería de Software | 3        | 9.4      |\n-- | 2  | Diego Fernández | Ciberseguridad         | 5        | 8.7      |\n-- | 3  | Camila Gómez    | Ciencia de Datos       | 4        | 9.8      |\n-- | 4  | Mateo Rojas     | Ciberseguridad         | 2        | 8.3      |\n-- | 5  | Lucía Vargas    | Computación            | 6        | 9.1      |\n\nSELECT carrera FROM estudiantes WHERE id = 1;",
         "options": [
           "Ingeniería de Software",
           "Valeria",
@@ -402,7 +418,7 @@ export const SQL_UNIT_06_LESSONS: Lesson[] = [
       {
         "id": "sql-u06-l03-e03",
         "type": "code_builder",
-        "prompt": "Ordena los bloques para construir la sentencia correcta de: \"Seleccionar columnas específicas\":",
+        "prompt": "Ordena los bloques para consultar las columnas \"id\" y \"nombre\" de la tabla \"estudiantes\" (finalizando con punto y coma):",
         "tokens": [
           "SELECT",
           "id, nombre",
@@ -422,7 +438,11 @@ export const SQL_UNIT_06_LESSONS: Lesson[] = [
         "id": "sql-u06-l03-e04",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea que contiene el error en este código de \"Seleccionar columnas específicas\":",
-        "codeSnippet": [ "-- Consulta sobre estudiantes", "SELECT nombre, carrera, FROM estudiantes // Coma huérfana antes de FROM", "ORDER BY id ASC;" ],
+        "codeSnippet": [
+          "-- Consulta sobre estudiantes",
+          "SELECT nombre, carrera, FROM estudiantes // Coma huérfana antes de FROM",
+          "ORDER BY id ASC;"
+        ],
         "bugLineIndex": 1,
         "explanation": "Poner una coma después de la última columna antes de la cláusula FROM (ej. `SELECT a, b, FROM t`).",
         "xpReward": 15
@@ -485,7 +505,7 @@ export const SQL_UNIT_06_LESSONS: Lesson[] = [
       {
         "id": "sql-u06-l03-e08",
         "type": "code_builder",
-        "prompt": "Construye la instrucción sintáctica complementaria para \"Seleccionar columnas específicas\":",
+        "prompt": "Ordena los bloques para consultar las columnas \"id\" y \"nombre\" de la tabla \"estudiantes\" (finalizando con punto y coma):",
         "tokens": [
           "SELECT",
           "id,",
@@ -509,7 +529,11 @@ export const SQL_UNIT_06_LESSONS: Lesson[] = [
         "id": "sql-u06-l03-e09",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea con el error de diseño o sintaxis en \"Seleccionar columnas específicas\":",
-        "codeSnippet": [ "-- Consulta sobre el esquema educativo", "SELECT id, nombre FROM estudiantes", "WHERE id == 10;" ],
+        "codeSnippet": [
+          "-- Consulta sobre el esquema educativo",
+          "SELECT id, nombre FROM estudiantes",
+          "WHERE id == 10;"
+        ],
         "bugLineIndex": 2,
         "explanation": "Poner una coma después de la última columna antes de la cláusula FROM (ej. `SELECT a, b, FROM t`).",
         "xpReward": 15
@@ -552,8 +576,8 @@ export const SQL_UNIT_06_LESSONS: Lesson[] = [
       {
         "id": "sql-u06-l04-e01",
         "type": "predict_output",
-        "prompt": "¿Cuál es el resultado exacto en consola tras evaluar la siguiente instrucción sobre \"Alias con AS\"?",
-        "code": "SELECT nombre AS alumno FROM estudiantes WHERE id = 1;",
+        "prompt": "Observa los registros de la tabla \"estudiantes\" y determina el resultado exacto de la consulta:",
+        "code": "-- Tabla estudiantes (5 registros):\n-- | id | nombre          | carrera                | semestre | promedio |\n-- | 1  | Valeria Morales | Ingeniería de Software | 3        | 9.4      |\n-- | 2  | Diego Fernández | Ciberseguridad         | 5        | 8.7      |\n-- | 3  | Camila Gómez    | Ciencia de Datos       | 4        | 9.8      |\n-- | 4  | Mateo Rojas     | Ciberseguridad         | 2        | 8.3      |\n-- | 5  | Lucía Vargas    | Computación            | 6        | 9.1      |\n\nSELECT nombre AS alumno FROM estudiantes WHERE id = 1;",
         "options": [
           "Valeria Morales (columna alumno)",
           "Valeria Morales (columna nombre)",
@@ -582,7 +606,7 @@ export const SQL_UNIT_06_LESSONS: Lesson[] = [
       {
         "id": "sql-u06-l04-e03",
         "type": "code_builder",
-        "prompt": "Ordena los bloques para construir la sentencia correcta de: \"Alias con AS\":",
+        "prompt": "Ordena los bloques para construir la consulta SELECT válida (SELECT nombre AS estudiante FROM estudiantes):",
         "tokens": [
           "SELECT",
           "nombre",
@@ -606,7 +630,11 @@ export const SQL_UNIT_06_LESSONS: Lesson[] = [
         "id": "sql-u06-l04-e04",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea que contiene el error en este código de \"Alias con AS\":",
-        "codeSnippet": [ "-- Consulta sobre estudiantes", "SELECT nombre TO estudiante FROM estudiantes", "ORDER BY id ASC;" ],
+        "codeSnippet": [
+          "-- Consulta sobre estudiantes",
+          "SELECT nombre TO estudiante FROM estudiantes",
+          "ORDER BY id ASC;"
+        ],
         "bugLineIndex": 1,
         "explanation": "El alias solo existe en el reporte final: en la cláusula WHERE no puedes filtrar usando el alias recién creado.",
         "xpReward": 15
@@ -669,7 +697,7 @@ export const SQL_UNIT_06_LESSONS: Lesson[] = [
       {
         "id": "sql-u06-l04-e08",
         "type": "code_builder",
-        "prompt": "Construye la instrucción sintáctica complementaria para \"Alias con AS\":",
+        "prompt": "Ordena los bloques para consultar las columnas \"id\" y \"nombre\" de la tabla \"estudiantes\" (finalizando con punto y coma):",
         "tokens": [
           "SELECT",
           "id,",
@@ -693,7 +721,11 @@ export const SQL_UNIT_06_LESSONS: Lesson[] = [
         "id": "sql-u06-l04-e09",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea con el error de diseño o sintaxis en \"Alias con AS\":",
-        "codeSnippet": [ "-- Consulta sobre el esquema educativo", "SELECT id, nombre FROM estudiantes", "WHERE id == 10;" ],
+        "codeSnippet": [
+          "-- Consulta sobre el esquema educativo",
+          "SELECT id, nombre FROM estudiantes",
+          "WHERE id == 10;"
+        ],
         "bugLineIndex": 2,
         "explanation": "El alias solo existe en el reporte final: en la cláusula WHERE no puedes filtrar usando el alias recién creado.",
         "xpReward": 15
@@ -766,7 +798,7 @@ export const SQL_UNIT_06_LESSONS: Lesson[] = [
       {
         "id": "sql-u06-l05-e03",
         "type": "code_builder",
-        "prompt": "Ordena los bloques para construir la sentencia correcta de: \"Columnas calculadas\":",
+        "prompt": "Ordena los bloques para construir la consulta SELECT válida (SELECT precio * 1.13 AS precio_con_iva):",
         "tokens": [
           "SELECT",
           "precio * 1.13",
@@ -786,7 +818,11 @@ export const SQL_UNIT_06_LESSONS: Lesson[] = [
         "id": "sql-u06-l05-e04",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea que contiene el error en este código de \"Columnas calculadas\":",
-        "codeSnippet": [ "-- Consulta sobre estudiantes", "SELECT nombre, creditos * FROM asignaturas", "ORDER BY id ASC;" ],
+        "codeSnippet": [
+          "-- Consulta sobre estudiantes",
+          "SELECT nombre, creditos * FROM asignaturas",
+          "ORDER BY id ASC;"
+        ],
         "bugLineIndex": 1,
         "explanation": "Olvidar ponerle un alias con AS: si no pones alias, el encabezado de la columna será la fórmula cruda `creditos * 16`.",
         "xpReward": 15
@@ -849,7 +885,7 @@ export const SQL_UNIT_06_LESSONS: Lesson[] = [
       {
         "id": "sql-u06-l05-e08",
         "type": "code_builder",
-        "prompt": "Construye la instrucción sintáctica complementaria para \"Columnas calculadas\":",
+        "prompt": "Ordena los bloques para consultar las columnas \"id\" y \"nombre\" de la tabla \"estudiantes\" (finalizando con punto y coma):",
         "tokens": [
           "SELECT",
           "id,",
@@ -873,7 +909,11 @@ export const SQL_UNIT_06_LESSONS: Lesson[] = [
         "id": "sql-u06-l05-e09",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea con el error de diseño o sintaxis en \"Columnas calculadas\":",
-        "codeSnippet": [ "-- Consulta sobre el esquema educativo", "SELECT id, nombre FROM estudiantes", "WHERE id == 10;" ],
+        "codeSnippet": [
+          "-- Consulta sobre el esquema educativo",
+          "SELECT id, nombre FROM estudiantes",
+          "WHERE id == 10;"
+        ],
         "bugLineIndex": 2,
         "explanation": "Olvidar ponerle un alias con AS: si no pones alias, el encabezado de la columna será la fórmula cruda `creditos * 16`.",
         "xpReward": 15
@@ -916,8 +956,8 @@ export const SQL_UNIT_06_LESSONS: Lesson[] = [
       {
         "id": "sql-u06-l06-e01",
         "type": "predict_output",
-        "prompt": "¿Cuál es el resultado exacto en consola tras evaluar la siguiente instrucción sobre \"DISTINCT\"?",
-        "code": "SELECT COUNT(DISTINCT carrera) FROM estudiantes;",
+        "prompt": "Observa los registros de la tabla \"estudiantes\" y determina el resultado exacto de la consulta:",
+        "code": "-- Tabla estudiantes (5 registros):\n-- | id | nombre          | carrera                | semestre | promedio |\n-- | 1  | Valeria Morales | Ingeniería de Software | 3        | 9.4      |\n-- | 2  | Diego Fernández | Ciberseguridad         | 5        | 8.7      |\n-- | 3  | Camila Gómez    | Ciencia de Datos       | 4        | 9.8      |\n-- | 4  | Mateo Rojas     | Ciberseguridad         | 2        | 8.3      |\n-- | 5  | Lucía Vargas    | Computación            | 6        | 9.1      |\n\nSELECT COUNT(DISTINCT carrera) FROM estudiantes;",
         "options": [
           "4",
           "5",
@@ -946,7 +986,7 @@ export const SQL_UNIT_06_LESSONS: Lesson[] = [
       {
         "id": "sql-u06-l06-e03",
         "type": "code_builder",
-        "prompt": "Ordena los bloques para construir la sentencia correcta de: \"DISTINCT\":",
+        "prompt": "Ordena los bloques para construir la consulta SELECT válida (SELECT DISTINCT departamento FROM asignaturas):",
         "tokens": [
           "SELECT",
           "DISTINCT",
@@ -968,7 +1008,11 @@ export const SQL_UNIT_06_LESSONS: Lesson[] = [
         "id": "sql-u06-l06-e04",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea que contiene el error en este código de \"DISTINCT\":",
-        "codeSnippet": [ "-- Consulta sobre estudiantes", "SELECT departamento DISTINCT FROM asignaturas // DISTINCT va justo después de SELECT", "ORDER BY id ASC;" ],
+        "codeSnippet": [
+          "-- Consulta sobre estudiantes",
+          "SELECT departamento DISTINCT FROM asignaturas // DISTINCT va justo después de SELECT",
+          "ORDER BY id ASC;"
+        ],
         "bugLineIndex": 1,
         "explanation": "Usar DISTINCT por pereza para tapar consultas con JOINs mal diseñados que generan duplicados indeseados.",
         "xpReward": 15
@@ -1031,7 +1075,7 @@ export const SQL_UNIT_06_LESSONS: Lesson[] = [
       {
         "id": "sql-u06-l06-e08",
         "type": "code_builder",
-        "prompt": "Construye la instrucción sintáctica complementaria para \"DISTINCT\":",
+        "prompt": "Ordena los bloques para consultar las columnas \"id\" y \"nombre\" de la tabla \"estudiantes\" (finalizando con punto y coma):",
         "tokens": [
           "SELECT",
           "id,",
@@ -1055,7 +1099,11 @@ export const SQL_UNIT_06_LESSONS: Lesson[] = [
         "id": "sql-u06-l06-e09",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea con el error de diseño o sintaxis en \"DISTINCT\":",
-        "codeSnippet": [ "-- Consulta sobre el esquema educativo", "SELECT id, nombre FROM estudiantes", "WHERE id == 10;" ],
+        "codeSnippet": [
+          "-- Consulta sobre el esquema educativo",
+          "SELECT id, nombre FROM estudiantes",
+          "WHERE id == 10;"
+        ],
         "bugLineIndex": 2,
         "explanation": "Usar DISTINCT por pereza para tapar consultas con JOINs mal diseñados que generan duplicados indeseados.",
         "xpReward": 15
@@ -1098,8 +1146,8 @@ export const SQL_UNIT_06_LESSONS: Lesson[] = [
       {
         "id": "sql-u06-l07-e01",
         "type": "predict_output",
-        "prompt": "¿Cuál es el resultado exacto en consola tras evaluar la siguiente instrucción sobre \"Interpretar el resultado de una consulta\"?",
-        "code": "SELECT nombre FROM estudiantes WHERE promedio > 10.0;",
+        "prompt": "Observa los registros de la tabla \"estudiantes\" y determina el resultado exacto de la consulta:",
+        "code": "-- Tabla estudiantes (5 registros):\n-- | id | nombre          | carrera                | semestre | promedio |\n-- | 1  | Valeria Morales | Ingeniería de Software | 3        | 9.4      |\n-- | 2  | Diego Fernández | Ciberseguridad         | 5        | 8.7      |\n-- | 3  | Camila Gómez    | Ciencia de Datos       | 4        | 9.8      |\n-- | 4  | Mateo Rojas     | Ciberseguridad         | 2        | 8.3      |\n-- | 5  | Lucía Vargas    | Computación            | 6        | 9.1      |\n\nSELECT nombre FROM estudiantes WHERE promedio > 10.0;",
         "options": [
           "0 rows in set (vacío)",
           "Error de consulta",
@@ -1128,7 +1176,7 @@ export const SQL_UNIT_06_LESSONS: Lesson[] = [
       {
         "id": "sql-u06-l07-e03",
         "type": "code_builder",
-        "prompt": "Ordena los bloques para construir la sentencia correcta de: \"Interpretar el resultado de una consulta\":",
+        "prompt": "Ordena los bloques para construir la consulta SELECT válida (SELECT nombre FROM estudiantes WHERE id = 1):",
         "tokens": [
           "SELECT",
           "nombre",
@@ -1156,7 +1204,11 @@ export const SQL_UNIT_06_LESSONS: Lesson[] = [
         "id": "sql-u06-l07-e04",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea que contiene el error en este código de \"Interpretar el resultado de una consulta\":",
-        "codeSnippet": [ "-- Consulta sobre estudiantes", "SELECT * FROM estudiantes WHERE id = 999 // Devuelve 0 rows (no es error de sintaxis)", "ORDER BY id ASC;" ],
+        "codeSnippet": [
+          "-- Consulta sobre estudiantes",
+          "SELECT * FROM estudiantes WHERE id = 999 // Devuelve 0 rows (no es error de sintaxis)",
+          "ORDER BY id ASC;"
+        ],
         "bugLineIndex": 1,
         "explanation": "Confundir un conjunto vacío (0 filas) con un valor NULL dentro de una fila.",
         "xpReward": 15
@@ -1219,7 +1271,7 @@ export const SQL_UNIT_06_LESSONS: Lesson[] = [
       {
         "id": "sql-u06-l07-e08",
         "type": "code_builder",
-        "prompt": "Construye la instrucción sintáctica complementaria para \"Interpretar el resultado de una consulta\":",
+        "prompt": "Ordena los bloques para consultar las columnas \"id\" y \"nombre\" de la tabla \"estudiantes\" (finalizando con punto y coma):",
         "tokens": [
           "SELECT",
           "id,",
@@ -1243,7 +1295,11 @@ export const SQL_UNIT_06_LESSONS: Lesson[] = [
         "id": "sql-u06-l07-e09",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea con el error de diseño o sintaxis en \"Interpretar el resultado de una consulta\":",
-        "codeSnippet": [ "-- Consulta sobre el esquema educativo", "SELECT id, nombre FROM estudiantes", "WHERE id == 10;" ],
+        "codeSnippet": [
+          "-- Consulta sobre el esquema educativo",
+          "SELECT id, nombre FROM estudiantes",
+          "WHERE id == 10;"
+        ],
         "bugLineIndex": 2,
         "explanation": "Confundir un conjunto vacío (0 filas) con un valor NULL dentro de una fila.",
         "xpReward": 15

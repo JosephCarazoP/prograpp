@@ -12,8 +12,8 @@ export const SQL_UNIT_08_LESSONS: Lesson[] = [
       {
         "id": "sql-u08-l01-e01",
         "type": "predict_output",
-        "prompt": "¿Cuál es el resultado exacto en consola tras evaluar la siguiente instrucción sobre \"UPDATE y SET\"?",
-        "code": "SELECT id FROM estudiantes WHERE id = 1;",
+        "prompt": "Observa los registros de la tabla \"estudiantes\" y determina el resultado exacto de la consulta:",
+        "code": "-- Tabla estudiantes (5 registros):\n-- | id | nombre          | carrera                | semestre | promedio |\n-- | 1  | Valeria Morales | Ingeniería de Software | 3        | 9.4      |\n-- | 2  | Diego Fernández | Ciberseguridad         | 5        | 8.7      |\n-- | 3  | Camila Gómez    | Ciencia de Datos       | 4        | 9.8      |\n-- | 4  | Mateo Rojas     | Ciberseguridad         | 2        | 8.3      |\n-- | 5  | Lucía Vargas    | Computación            | 6        | 9.1      |\n\nSELECT id FROM estudiantes WHERE id = 1;",
         "options": [
           "1",
           "Valeria",
@@ -42,7 +42,7 @@ export const SQL_UNIT_08_LESSONS: Lesson[] = [
       {
         "id": "sql-u08-l01-e03",
         "type": "code_builder",
-        "prompt": "Ordena los bloques para construir la sentencia correcta de: \"UPDATE y SET\":",
+        "prompt": "Ordena los bloques para construir la sentencia UPDATE válida:",
         "tokens": [
           "UPDATE",
           "estudiantes",
@@ -74,7 +74,11 @@ export const SQL_UNIT_08_LESSONS: Lesson[] = [
         "id": "sql-u08-l01-e04",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea que contiene el error en este código de \"UPDATE y SET\":",
-        "codeSnippet": [ "-- Consulta sobre estudiantes", "UPDATE estudiantes VALUES (promedio = 10)", "ORDER BY id ASC;" ],
+        "codeSnippet": [
+          "-- Consulta sobre estudiantes",
+          "UPDATE estudiantes VALUES (promedio = 10)",
+          "ORDER BY id ASC;"
+        ],
         "bugLineIndex": 1,
         "explanation": "Ejecutar un UPDATE sin WHERE modificará TODAS las filas de la tabla de forma irreversible.",
         "xpReward": 15
@@ -137,7 +141,7 @@ export const SQL_UNIT_08_LESSONS: Lesson[] = [
       {
         "id": "sql-u08-l01-e08",
         "type": "code_builder",
-        "prompt": "Construye la instrucción sintáctica complementaria para \"UPDATE y SET\":",
+        "prompt": "Ordena los bloques para consultar las columnas \"id\" y \"nombre\" de la tabla \"estudiantes\" (finalizando con punto y coma):",
         "tokens": [
           "SELECT",
           "id,",
@@ -161,7 +165,11 @@ export const SQL_UNIT_08_LESSONS: Lesson[] = [
         "id": "sql-u08-l01-e09",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea con el error de diseño o sintaxis en \"UPDATE y SET\":",
-        "codeSnippet": [ "-- Consulta sobre el esquema educativo", "SELECT id, nombre FROM estudiantes", "WHERE id == 10;" ],
+        "codeSnippet": [
+          "-- Consulta sobre el esquema educativo",
+          "SELECT id, nombre FROM estudiantes",
+          "WHERE id == 10;"
+        ],
         "bugLineIndex": 2,
         "explanation": "Ejecutar un UPDATE sin WHERE modificará TODAS las filas de la tabla de forma irreversible.",
         "xpReward": 15
@@ -204,8 +212,8 @@ export const SQL_UNIT_08_LESSONS: Lesson[] = [
       {
         "id": "sql-u08-l02-e01",
         "type": "predict_output",
-        "prompt": "¿Cuál es el resultado exacto en consola tras evaluar la siguiente instrucción sobre \"Actualizar una o varias columnas\"?",
-        "code": "SELECT id FROM estudiantes WHERE id = 1;",
+        "prompt": "Observa los registros de la tabla \"estudiantes\" y determina el resultado exacto de la consulta:",
+        "code": "-- Tabla estudiantes (5 registros):\n-- | id | nombre          | carrera                | semestre | promedio |\n-- | 1  | Valeria Morales | Ingeniería de Software | 3        | 9.4      |\n-- | 2  | Diego Fernández | Ciberseguridad         | 5        | 8.7      |\n-- | 3  | Camila Gómez    | Ciencia de Datos       | 4        | 9.8      |\n-- | 4  | Mateo Rojas     | Ciberseguridad         | 2        | 8.3      |\n-- | 5  | Lucía Vargas    | Computación            | 6        | 9.1      |\n\nSELECT id FROM estudiantes WHERE id = 1;",
         "options": [
           "1",
           "5",
@@ -262,7 +270,11 @@ export const SQL_UNIT_08_LESSONS: Lesson[] = [
         "id": "sql-u08-l02-e04",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea que contiene el error en este código de \"Actualizar una o varias columnas\":",
-        "codeSnippet": [ "-- Consulta sobre estudiantes", "UPDATE t SET col1 = 1 AND col2 = 2", "ORDER BY id ASC;" ],
+        "codeSnippet": [
+          "-- Consulta sobre estudiantes",
+          "UPDATE t SET col1 = 1 AND col2 = 2",
+          "ORDER BY id ASC;"
+        ],
         "bugLineIndex": 1,
         "explanation": "Poner AND en vez de coma en el SET: `SET a = 1 AND b = 2` es un error de sintaxis frecuente.",
         "xpReward": 15
@@ -325,7 +337,7 @@ export const SQL_UNIT_08_LESSONS: Lesson[] = [
       {
         "id": "sql-u08-l02-e08",
         "type": "code_builder",
-        "prompt": "Construye la instrucción sintáctica complementaria para \"Actualizar una o varias columnas\":",
+        "prompt": "Ordena los bloques para consultar las columnas \"id\" y \"nombre\" de la tabla \"estudiantes\" (finalizando con punto y coma):",
         "tokens": [
           "SELECT",
           "id,",
@@ -349,7 +361,11 @@ export const SQL_UNIT_08_LESSONS: Lesson[] = [
         "id": "sql-u08-l02-e09",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea con el error de diseño o sintaxis en \"Actualizar una o varias columnas\":",
-        "codeSnippet": [ "-- Consulta sobre el esquema educativo", "SELECT id, nombre FROM estudiantes", "WHERE id == 10;" ],
+        "codeSnippet": [
+          "-- Consulta sobre el esquema educativo",
+          "SELECT id, nombre FROM estudiantes",
+          "WHERE id == 10;"
+        ],
         "bugLineIndex": 2,
         "explanation": "Poner AND en vez de coma en el SET: `SET a = 1 AND b = 2` es un error de sintaxis frecuente.",
         "xpReward": 15
@@ -422,7 +438,7 @@ export const SQL_UNIT_08_LESSONS: Lesson[] = [
       {
         "id": "sql-u08-l03-e03",
         "type": "code_builder",
-        "prompt": "Ordena los bloques para construir la sentencia correcta de: \"DELETE\":",
+        "prompt": "Ordena los bloques para construir la sentencia DELETE válida:",
         "tokens": [
           "DELETE",
           "FROM",
@@ -448,7 +464,11 @@ export const SQL_UNIT_08_LESSONS: Lesson[] = [
         "id": "sql-u08-l03-e04",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea que contiene el error en este código de \"DELETE\":",
-        "codeSnippet": [ "-- Consulta sobre estudiantes", "DELETE * FROM estudiantes // En DELETE no se pone asterisco (*)", "ORDER BY id ASC;" ],
+        "codeSnippet": [
+          "-- Consulta sobre estudiantes",
+          "DELETE * FROM estudiantes // En DELETE no se pone asterisco (*)",
+          "ORDER BY id ASC;"
+        ],
         "bugLineIndex": 1,
         "explanation": "Si omites la cláusula WHERE en un DELETE, ¡vaciarás la tabla completa borrando todos los registros!",
         "xpReward": 15
@@ -511,7 +531,7 @@ export const SQL_UNIT_08_LESSONS: Lesson[] = [
       {
         "id": "sql-u08-l03-e08",
         "type": "code_builder",
-        "prompt": "Construye la instrucción sintáctica complementaria para \"DELETE\":",
+        "prompt": "Ordena los bloques para consultar las columnas \"id\" y \"nombre\" de la tabla \"estudiantes\" (finalizando con punto y coma):",
         "tokens": [
           "SELECT",
           "id,",
@@ -535,7 +555,11 @@ export const SQL_UNIT_08_LESSONS: Lesson[] = [
         "id": "sql-u08-l03-e09",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea con el error de diseño o sintaxis en \"DELETE\":",
-        "codeSnippet": [ "-- Consulta sobre el esquema educativo", "SELECT id, nombre FROM estudiantes", "WHERE id == 10;" ],
+        "codeSnippet": [
+          "-- Consulta sobre el esquema educativo",
+          "SELECT id, nombre FROM estudiantes",
+          "WHERE id == 10;"
+        ],
         "bugLineIndex": 2,
         "explanation": "Si omites la cláusula WHERE en un DELETE, ¡vaciarás la tabla completa borrando todos los registros!",
         "xpReward": 15
@@ -628,7 +652,11 @@ export const SQL_UNIT_08_LESSONS: Lesson[] = [
         "id": "sql-u08-l04-e04",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea que contiene el error en este código de \"Uso de WHERE para delimitar cambios\":",
-        "codeSnippet": [ "-- Consulta sobre estudiantes", "UPDATE estudiantes SET carrera = \"Sistemas\"", "ORDER BY id ASC;" ],
+        "codeSnippet": [
+          "-- Consulta sobre estudiantes",
+          "UPDATE estudiantes SET carrera = \"Sistemas\"",
+          "ORDER BY id ASC;"
+        ],
         "bugLineIndex": 1,
         "explanation": "Filtrar por nombre sin considerar homónimos: `WHERE nombre = 'Carlos'` actualizará a todos los Carlos del país.",
         "xpReward": 15
@@ -691,7 +719,7 @@ export const SQL_UNIT_08_LESSONS: Lesson[] = [
       {
         "id": "sql-u08-l04-e08",
         "type": "code_builder",
-        "prompt": "Construye la instrucción sintáctica complementaria para \"Uso de WHERE para delimitar cambios\":",
+        "prompt": "Ordena los bloques para consultar las columnas \"id\" y \"nombre\" de la tabla \"estudiantes\" (finalizando con punto y coma):",
         "tokens": [
           "SELECT",
           "id,",
@@ -715,7 +743,11 @@ export const SQL_UNIT_08_LESSONS: Lesson[] = [
         "id": "sql-u08-l04-e09",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea con el error de diseño o sintaxis en \"Uso de WHERE para delimitar cambios\":",
-        "codeSnippet": [ "-- Consulta sobre el esquema educativo", "SELECT id, nombre FROM estudiantes", "WHERE id == 10;" ],
+        "codeSnippet": [
+          "-- Consulta sobre el esquema educativo",
+          "SELECT id, nombre FROM estudiantes",
+          "WHERE id == 10;"
+        ],
         "bugLineIndex": 2,
         "explanation": "Filtrar por nombre sin considerar homónimos: `WHERE nombre = 'Carlos'` actualizará a todos los Carlos del país.",
         "xpReward": 15
@@ -758,8 +790,8 @@ export const SQL_UNIT_08_LESSONS: Lesson[] = [
       {
         "id": "sql-u08-l05-e01",
         "type": "predict_output",
-        "prompt": "¿Cuál es el resultado exacto en consola tras evaluar la siguiente instrucción sobre \"Consecuencias de omitir WHERE\"?",
-        "code": "SELECT COUNT(*) FROM estudiantes;",
+        "prompt": "Observa los registros de la tabla \"estudiantes\" y determina el resultado exacto de la consulta:",
+        "code": "-- Tabla estudiantes (5 registros):\n-- | id | nombre          | carrera                | semestre | promedio |\n-- | 1  | Valeria Morales | Ingeniería de Software | 3        | 9.4      |\n-- | 2  | Diego Fernández | Ciberseguridad         | 5        | 8.7      |\n-- | 3  | Camila Gómez    | Ciencia de Datos       | 4        | 9.8      |\n-- | 4  | Mateo Rojas     | Ciberseguridad         | 2        | 8.3      |\n-- | 5  | Lucía Vargas    | Computación            | 6        | 9.1      |\n\nSELECT COUNT(*) FROM estudiantes;",
         "options": [
           "5",
           "0",
@@ -814,7 +846,11 @@ export const SQL_UNIT_08_LESSONS: Lesson[] = [
         "id": "sql-u08-l05-e04",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea que contiene el error en este código de \"Consecuencias de omitir WHERE\":",
-        "codeSnippet": [ "-- Consulta sobre estudiantes", "DELETE FROM estudiantes", "ORDER BY id ASC;" ],
+        "codeSnippet": [
+          "-- Consulta sobre estudiantes",
+          "DELETE FROM estudiantes",
+          "ORDER BY id ASC;"
+        ],
         "bugLineIndex": 1,
         "explanation": "Escribir la consulta en el cliente y presionar Ctrl+Enter antes de haber escrito la línea del WHERE.",
         "xpReward": 15
@@ -877,7 +913,7 @@ export const SQL_UNIT_08_LESSONS: Lesson[] = [
       {
         "id": "sql-u08-l05-e08",
         "type": "code_builder",
-        "prompt": "Construye la instrucción sintáctica complementaria para \"Consecuencias de omitir WHERE\":",
+        "prompt": "Ordena los bloques para consultar las columnas \"id\" y \"nombre\" de la tabla \"estudiantes\" (finalizando con punto y coma):",
         "tokens": [
           "SELECT",
           "id,",
@@ -901,7 +937,11 @@ export const SQL_UNIT_08_LESSONS: Lesson[] = [
         "id": "sql-u08-l05-e09",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea con el error de diseño o sintaxis en \"Consecuencias de omitir WHERE\":",
-        "codeSnippet": [ "-- Consulta sobre el esquema educativo", "SELECT id, nombre FROM estudiantes", "WHERE id == 10;" ],
+        "codeSnippet": [
+          "-- Consulta sobre el esquema educativo",
+          "SELECT id, nombre FROM estudiantes",
+          "WHERE id == 10;"
+        ],
         "bugLineIndex": 2,
         "explanation": "Escribir la consulta en el cliente y presionar Ctrl+Enter antes de haber escrito la línea del WHERE.",
         "xpReward": 15
@@ -974,7 +1014,7 @@ export const SQL_UNIT_08_LESSONS: Lesson[] = [
       {
         "id": "sql-u08-l06-e03",
         "type": "code_builder",
-        "prompt": "Ordena los bloques para construir la sentencia correcta de: \"Consultar con SELECT antes de modificar\":",
+        "prompt": "Ordena los bloques para construir la consulta SELECT válida (SELECT * FROM t WHERE condicion):",
         "tokens": [
           "SELECT",
           "*",
@@ -998,7 +1038,11 @@ export const SQL_UNIT_08_LESSONS: Lesson[] = [
         "id": "sql-u08-l06-e04",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea que contiene el error en este código de \"Consultar con SELECT antes de modificar\":",
-        "codeSnippet": [ "-- Consulta sobre estudiantes", "// Modificar directamente en producción sin verificar con SELECT", "ORDER BY id ASC;" ],
+        "codeSnippet": [
+          "-- Consulta sobre estudiantes",
+          "// Modificar directamente en producción sin verificar con SELECT",
+          "ORDER BY id ASC;"
+        ],
         "bugLineIndex": 1,
         "explanation": "Escribir el DELETE directamente confiando en tu memoria.",
         "xpReward": 15
@@ -1061,7 +1105,7 @@ export const SQL_UNIT_08_LESSONS: Lesson[] = [
       {
         "id": "sql-u08-l06-e08",
         "type": "code_builder",
-        "prompt": "Construye la instrucción sintáctica complementaria para \"Consultar con SELECT antes de modificar\":",
+        "prompt": "Ordena los bloques para consultar las columnas \"id\" y \"nombre\" de la tabla \"estudiantes\" (finalizando con punto y coma):",
         "tokens": [
           "SELECT",
           "id,",
@@ -1085,7 +1129,11 @@ export const SQL_UNIT_08_LESSONS: Lesson[] = [
         "id": "sql-u08-l06-e09",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea con el error de diseño o sintaxis en \"Consultar con SELECT antes de modificar\":",
-        "codeSnippet": [ "-- Consulta sobre el esquema educativo", "SELECT id, nombre FROM estudiantes", "WHERE id == 10;" ],
+        "codeSnippet": [
+          "-- Consulta sobre el esquema educativo",
+          "SELECT id, nombre FROM estudiantes",
+          "WHERE id == 10;"
+        ],
         "bugLineIndex": 2,
         "explanation": "Escribir el DELETE directamente confiando en tu memoria.",
         "xpReward": 15
@@ -1158,7 +1206,7 @@ export const SQL_UNIT_08_LESSONS: Lesson[] = [
       {
         "id": "sql-u08-l07-e03",
         "type": "code_builder",
-        "prompt": "Ordena los bloques para construir la sentencia correcta de: \"Diferencia entre DELETE y DROP TABLE\":",
+        "prompt": "Ordena los bloques para construir la sentencia DROP TABLE válida:",
         "tokens": [
           "DROP",
           "TABLE",
@@ -1180,7 +1228,11 @@ export const SQL_UNIT_08_LESSONS: Lesson[] = [
         "id": "sql-u08-l07-e04",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea que contiene el error en este código de \"Diferencia entre DELETE y DROP TABLE\":",
-        "codeSnippet": [ "-- Definición de tabla", "DELETE TABLE estudiantes", "-- Fin de sentencia" ],
+        "codeSnippet": [
+          "-- Definición de tabla",
+          "DELETE TABLE estudiantes",
+          "-- Fin de sentencia"
+        ],
         "bugLineIndex": 1,
         "explanation": "Usar DROP TABLE por error cuando solo querías reiniciar los datos: tendrás que volver a ejecutar el CREATE TABLE con todas sus llaves.",
         "xpReward": 15
@@ -1243,7 +1295,7 @@ export const SQL_UNIT_08_LESSONS: Lesson[] = [
       {
         "id": "sql-u08-l07-e08",
         "type": "code_builder",
-        "prompt": "Construye la instrucción sintáctica complementaria para \"Diferencia entre DELETE y DROP TABLE\":",
+        "prompt": "Ordena los bloques para consultar las columnas \"id\" y \"nombre\" de la tabla \"estudiantes\" (finalizando con punto y coma):",
         "tokens": [
           "SELECT",
           "id,",
@@ -1267,7 +1319,11 @@ export const SQL_UNIT_08_LESSONS: Lesson[] = [
         "id": "sql-u08-l07-e09",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea con el error de diseño o sintaxis en \"Diferencia entre DELETE y DROP TABLE\":",
-        "codeSnippet": [ "-- Consulta sobre el esquema educativo", "SELECT id, nombre FROM estudiantes", "WHERE id == 10;" ],
+        "codeSnippet": [
+          "-- Consulta sobre el esquema educativo",
+          "SELECT id, nombre FROM estudiantes",
+          "WHERE id == 10;"
+        ],
         "bugLineIndex": 2,
         "explanation": "Usar DROP TABLE por error cuando solo querías reiniciar los datos: tendrás que volver a ejecutar el CREATE TABLE con todas sus llaves.",
         "xpReward": 15

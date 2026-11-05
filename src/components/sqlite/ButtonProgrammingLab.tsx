@@ -1,10 +1,11 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { SqliteExercise, SqliteQueryResult } from '../../types/sqliteLab';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
+import { SqliteExercise, SqliteQueryResult, TableSchemaInfo } from '../../types/sqliteLab';
 import { sqliteService } from '../../services/sqliteService';
 import { sqliteStorageService } from '../../services/sqliteStorageService';
 import { CodeAutocomplete } from '../common/CodeAutocomplete';
 import { SQL_COMPLETIONS } from '../../data/sqlCompletions';
 import { useCodeAutocomplete } from '../../hooks/useCodeAutocomplete';
+import { CodeCompletionItem } from '../../types/autocomplete';
 import {
   MousePointerClick,
   Code2,
@@ -21,12 +22,14 @@ import {
 interface ButtonProgrammingLabProps {
   exercise: SqliteExercise;
   storageKey: string;
+  schemaTables?: TableSchemaInfo[];
   onDatabaseModified: () => void;
 }
 
 export const ButtonProgrammingLab: React.FC<ButtonProgrammingLabProps> = ({
   exercise,
   storageKey,
+  schemaTables = [],
   onDatabaseModified
 }) => {
   const buttonConfig = exercise.buttonConfig;
@@ -147,8 +150,52 @@ export const ButtonProgrammingLab: React.FC<ButtonProgrammingLabProps> = ({
 
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
+  const dynamicButtonDictionary = useMemo<CodeCompletionItem[]>(() => {
+    const items: CodeCompletionItem[] = [];
+    for (const tbl of schemaTables) {
+      items.push({
+        label: tbl.name,
+        insertText: tbl.name,
+        kind: 'table',
+        detail: 'Tabla BD',
+        signature: `TABLE ${tbl.name} (${tbl.columns.map(c => c.name).join(', ')})`,
+        description: `Tabla "${tbl.name}" activa en la base de datos (${tbl.rowCount} registros).`,
+        example: `SELECT * FROM ${tbl.name};`
+      });
+      for (const col of tbl.columns) {
+        items.push({
+          label: col.name,
+          insertText: col.name,
+          kind: 'column',
+          detail: `${tbl.name}.${col.type || 'COL'}`,
+          signature: `${tbl.name}.${col.name} : ${col.type || 'ANY'}`,
+          description: `Columna "${col.name}" de la tabla "${tbl.name}".`
+        });
+      }
+    }
+    for (const f of fields) {
+      items.push({
+        label: `:${f.name}`,
+        insertText: `:${f.name}`,
+        kind: 'variable',
+        detail: 'Parámetro UI',
+        signature: `:${f.name} (${f.type})`,
+        description: `Parámetro enlazado al campo "${f.label}" del formulario.`
+      });
+      items.push({
+        label: f.name,
+        insertText: f.name,
+        kind: 'column',
+        detail: 'Campo / Columna',
+        signature: `${f.name} (${f.type})`,
+        description: `Columna o campo "${f.label}" del registro.`
+      });
+    }
+    return [...items, ...SQL_COMPLETIONS];
+  }, [schemaTables, fields]);
+
   const autocomplete = useCodeAutocomplete({
-    dictionary: SQL_COMPLETIONS,
+    dictionary: dynamicButtonDictionary,
     value: currentSql,
     onChange: (newVal) => {
       if (currentButton) {

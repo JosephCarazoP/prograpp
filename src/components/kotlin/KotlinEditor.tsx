@@ -13,6 +13,7 @@ import { KotlinFile, KotlinCompilerError } from '../../types/kotlinLab';
 import { CodeAutocomplete } from '../common/CodeAutocomplete';
 import { KOTLIN_COMPLETIONS } from '../../data/kotlinCompletions';
 import { useCodeAutocomplete } from '../../hooks/useCodeAutocomplete';
+import { CodeCompletionItem } from '../../types/autocomplete';
 
 interface KotlinEditorProps {
   files: KotlinFile[];
@@ -121,9 +122,102 @@ export const KotlinEditor: React.FC<KotlinEditorProps> = ({
 
   const [copied, setCopied] = useState(false);
 
+  // Construir diccionario dinámico combinando variables, funciones y clases declaradas en los archivos del proyecto + KOTLIN_COMPLETIONS
+  const dynamicKotlinDictionary = useMemo<CodeCompletionItem[]>(() => {
+    const items: CodeCompletionItem[] = [];
+    const allKotlinText = files.map(f => f.content).join('\n');
+
+    // 1. Clases, data classes, interfaces, enums y objects declarados por el alumno
+    const classRegex = /\b(?:data\s+class|sealed\s+class|enum\s+class|abstract\s+class|open\s+class|class|interface|object)\s+([A-Za-z_][A-Za-z0-9_]*)\s*(?:\(([^)]*)\))?/g;
+    let match: RegExpExecArray | null;
+    while ((match = classRegex.exec(allKotlinText)) !== null) {
+      const clsName = match[1];
+      const ctorParams = (match[2] || '').replace(/\s+/g, ' ').trim();
+      items.push({
+        label: clsName,
+        insertText: ctorParams ? `${clsName}()` : clsName,
+        cursorOffset: ctorParams ? -1 : 0,
+        kind: 'type',
+        detail: 'Clase / Tipo Proyecto',
+        signature: `class ${clsName}${ctorParams ? `(${ctorParams})` : ''}`,
+        description: `Clase o tipo "${clsName}" definido en tu proyecto Kotlin actual.`,
+        example: ctorParams ? `val obj = ${clsName}(...)` : `val obj = ${clsName}`
+      });
+    }
+
+    // 2. Funciones declaradas en el proyecto (fun nombre(...))
+    const funRegex = /\bfun\s+([A-Za-z_][A-Za-z0-9_]*)\s*\(([^)]*)\)(?:\s*:\s*([A-Za-z0-9_<>,?]+))?/g;
+    while ((match = funRegex.exec(allKotlinText)) !== null) {
+      const fnName = match[1];
+      if (fnName === 'main') continue;
+      const params = (match[2] || '').replace(/\s+/g, ' ').trim();
+      const retType = match[3] || 'Unit';
+      items.push({
+        label: fnName,
+        insertText: `${fnName}()`,
+        cursorOffset: params.length > 0 ? -1 : 0,
+        kind: 'function',
+        detail: `${retType} (Función local)`,
+        signature: `fun ${fnName}(${params}): ${retType}`,
+        description: `Función "${fnName}" definida en tu código actual.`,
+        example: `${fnName}(${params ? '...' : ''})`
+      });
+
+      // Parámetros de la función como variables sugeribles
+      if (params) {
+        for (const rawParam of params.split(',')) {
+          const pMatch = rawParam.trim().match(/^(?:val\s+|var\s+)?([A-Za-z_][A-Za-z0-9_]*)\s*:\s*([A-Za-z0-9_<>,?]+)/);
+          if (pMatch) {
+            items.push({
+              label: pMatch[1],
+              insertText: pMatch[1],
+              kind: 'variable',
+              detail: `${pMatch[2]} (Parámetro)`,
+              signature: `${pMatch[1]}: ${pMatch[2]}`,
+              description: `Parámetro "${pMatch[1]}" de tipo ${pMatch[2]}.`
+            });
+          }
+        }
+      }
+    }
+
+    // 3. Variables y propiedades declaradas con val o var
+    const varRegex = /\b(val|var)\s+([A-Za-z_][A-Za-z0-9_]*)(?:\s*:\s*([A-Za-z0-9_<>,?]+))?(?:\s*=\s*([^\n;]+))?/g;
+    while ((match = varRegex.exec(allKotlinText)) !== null) {
+      const mutability = match[1];
+      const varName = match[2];
+      const explicitType = match[3] || '';
+      const initExpr = (match[4] || '').trim().slice(0, 40);
+      items.push({
+        label: varName,
+        insertText: varName,
+        kind: 'variable',
+        detail: `${explicitType || mutability} (Variable)`,
+        signature: `${mutability} ${varName}${explicitType ? `: ${explicitType}` : ''}${initExpr ? ` = ${initExpr}` : ''}`,
+        description: `Variable ${mutability === 'val' ? 'inmutable (val)' : 'mutable (var)'} "${varName}" declarada en tu código.`
+      });
+    }
+
+    // 4. Variables de iteración en ciclos for (item in coleccion)
+    const forVarRegex = /\bfor\s*\(\s*([A-Za-z_][A-Za-z0-9_]*)\s+in\b/g;
+    while ((match = forVarRegex.exec(allKotlinText)) !== null) {
+      const loopVar = match[1];
+      items.push({
+        label: loopVar,
+        insertText: loopVar,
+        kind: 'variable',
+        detail: 'Variable de bucle',
+        signature: `for (${loopVar} in ...)`,
+        description: `Variable de iteración "${loopVar}" del bucle for.`
+      });
+    }
+
+    return [...items, ...KOTLIN_COMPLETIONS];
+  }, [files]);
+
   // Hook de autocompletado y recomendaciones estilo NetBeans
   const autocomplete = useCodeAutocomplete({
-    dictionary: KOTLIN_COMPLETIONS,
+    dictionary: dynamicKotlinDictionary,
     value: code,
     onChange: onContentChange,
     textareaRef,

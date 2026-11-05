@@ -26,6 +26,9 @@ import { KotlinConsole } from './KotlinConsole';
 import { KotlinExercisePanel } from './KotlinExercisePanel';
 import { KotlinAutoCheckModal } from './KotlinAutoCheckModal';
 import { NewProjectModal } from './NewProjectModal';
+import { LabInstructionsModal, formatInstructionDate } from '../common/LabInstructionsModal';
+import { labInstructionService } from '../../services/labInstructionService';
+import { LabInstructionPost } from '../../types/labInstruction';
 
 import {
   Play,
@@ -45,7 +48,8 @@ import {
   Loader2,
   FileCode2,
   FolderCode,
-  X
+  X,
+  ClipboardList
 } from 'lucide-react';
 
 interface KotlinLabProps {
@@ -189,6 +193,16 @@ export const KotlinLab: React.FC<KotlinLabProps> = ({
   const [checkResult, setCheckResult] = useState<KotlinAutoCheckResult | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isResetConfirmOpen, setIsResetConfirmOpen] = useState(false);
+  const [isInstructionsOpen, setIsInstructionsOpen] = useState(false);
+  const [labInstructions, setLabInstructions] = useState<LabInstructionPost[]>([]);
+
+  // Suscripción en tiempo real a las instrucciones del Laboratorio Kotlin
+  useEffect(() => {
+    const unsubscribe = labInstructionService.subscribeToInstructions('kotlin', posts => {
+      setLabInstructions(posts);
+    });
+    return () => unsubscribe();
+  }, []);
 
   // Tab activo en vista móvil ('editor' | 'console' | 'exercise')
   const [mobileTab, setMobileTab] = useState<'editor' | 'console' | 'exercise'>('editor');
@@ -387,6 +401,14 @@ export const KotlinLab: React.FC<KotlinLabProps> = ({
     setFiles(prev =>
       prev.map(f => (f.id === activeFileId ? { ...f, content } : f))
     );
+  };
+
+  // Cargar un script Kotlin adjunto desde la sección de Instrucciones en el editor
+  const handleLoadInstructionScript = (code: string, title: string) => {
+    handleContentChange(code);
+    setMobileTab('editor');
+    setCloudNotice(`¡Código "${title || 'Script Kotlin'}" cargado en tu editor!`);
+    setTimeout(() => setCloudNotice(null), 3500);
   };
 
   // Deshacer último cambio de código
@@ -888,6 +910,45 @@ export const KotlinLab: React.FC<KotlinLabProps> = ({
             <Plus size={14} />
             <span className="sqlite-btn-label-desktop">Nuevo Proyecto</span>
             <span className="sqlite-btn-label-mobile">Nuevo</span>
+          </button>
+
+          {/* Botón Instrucciones de Ejercicios */}
+          <button
+            type="button"
+            className="kt-btn-util"
+            onClick={() => {
+              soundService.playToken();
+              setIsInstructionsOpen(true);
+            }}
+            style={{
+              background: '#FDE047',
+              color: '#000',
+              borderColor: '#000',
+              fontWeight: 900,
+              position: 'relative'
+            }}
+            title="Abrir instrucciones, enunciados y scripts del ejercicio"
+          >
+            <ClipboardList size={14} strokeWidth={2.5} />
+            <span>Instrucciones</span>
+            {labInstructions.length > 0 && (
+              <span
+                style={{
+                  background: labInstructions.some(p => formatInstructionDate(p.createdAt).isToday)
+                    ? '#10B981'
+                    : '#7C3AED',
+                  color: '#FFF',
+                  border: '1.5px solid #000',
+                  borderRadius: 999,
+                  padding: '0 6px',
+                  fontSize: 10,
+                  fontWeight: 900,
+                  lineHeight: '16px'
+                }}
+              >
+                {labInstructions.length}
+              </span>
+            )}
           </button>
 
           {/* Botón para eliminar proyecto personalizado si no es default */}
@@ -1688,6 +1749,17 @@ export const KotlinLab: React.FC<KotlinLabProps> = ({
           onRetry={() => setIsModalOpen(false)}
         />
       )}
+
+      {/* ═══ MODAL Y MURO DE INSTRUCCIONES DE EJERCICIOS (ESTILO PUBLICACIÓN) ═══ */}
+      <LabInstructionsModal
+        labType="kotlin"
+        userUid={_user.uid}
+        userEmail={_user.email}
+        userName={_user.displayName}
+        isOpen={isInstructionsOpen}
+        onClose={() => setIsInstructionsOpen(false)}
+        onLoadScriptToEditor={(code, title) => handleLoadInstructionScript(code, title)}
+      />
     </div>
   );
 };

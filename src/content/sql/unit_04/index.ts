@@ -12,8 +12,8 @@ export const SQL_UNIT_04_LESSONS: Lesson[] = [
       {
         "id": "sql-u04-l01-e01",
         "type": "predict_output",
-        "prompt": "¿Cuál es el resultado exacto en consola tras evaluar la siguiente instrucción sobre \"PRIMARY KEY\"?",
-        "code": "SELECT id FROM estudiantes WHERE id = 1;",
+        "prompt": "Observa los registros de la tabla \"estudiantes\" y determina el resultado exacto de la consulta:",
+        "code": "-- Tabla estudiantes (5 registros):\n-- | id | nombre          | carrera                | semestre | promedio |\n-- | 1  | Valeria Morales | Ingeniería de Software | 3        | 9.4      |\n-- | 2  | Diego Fernández | Ciberseguridad         | 5        | 8.7      |\n-- | 3  | Camila Gómez    | Ciencia de Datos       | 4        | 9.8      |\n-- | 4  | Mateo Rojas     | Ciberseguridad         | 2        | 8.3      |\n-- | 5  | Lucía Vargas    | Computación            | 6        | 9.1      |\n\nSELECT id FROM estudiantes WHERE id = 1;",
         "options": [
           "1",
           "Valeria",
@@ -42,7 +42,7 @@ export const SQL_UNIT_04_LESSONS: Lesson[] = [
       {
         "id": "sql-u04-l01-e03",
         "type": "code_builder",
-        "prompt": "Ordena los bloques para construir la sentencia correcta de: \"PRIMARY KEY\":",
+        "prompt": "Ordena los bloques para declarar la llave primaria (PRIMARY KEY) en la columna 'id':",
         "tokens": [
           "id",
           "INTEGER",
@@ -62,7 +62,11 @@ export const SQL_UNIT_04_LESSONS: Lesson[] = [
         "id": "sql-u04-l01-e04",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea que contiene el error en este código de \"PRIMARY KEY\":",
-        "codeSnippet": [ "-- Definición de tabla", "CREATE TABLE x (id INT PRIMARY KEY, cod INT PRIMARY KEY)", "-- Fin de sentencia" ],
+        "codeSnippet": [
+          "-- Definición de tabla",
+          "CREATE TABLE x (id INT PRIMARY KEY, cod INT PRIMARY KEY)",
+          "-- Fin de sentencia"
+        ],
         "bugLineIndex": 1,
         "explanation": "Intentar insertar dos filas con la misma PRIMARY KEY provocará el error: `UNIQUE constraint failed`.",
         "xpReward": 15
@@ -125,7 +129,7 @@ export const SQL_UNIT_04_LESSONS: Lesson[] = [
       {
         "id": "sql-u04-l01-e08",
         "type": "code_builder",
-        "prompt": "Construye la instrucción sintáctica complementaria para \"PRIMARY KEY\":",
+        "prompt": "Ordena los bloques para consultar las columnas \"id\" y \"nombre\" de la tabla \"estudiantes\" (finalizando con punto y coma):",
         "tokens": [
           "SELECT",
           "id,",
@@ -149,7 +153,11 @@ export const SQL_UNIT_04_LESSONS: Lesson[] = [
         "id": "sql-u04-l01-e09",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea con el error de diseño o sintaxis en \"PRIMARY KEY\":",
-        "codeSnippet": [ "-- Consulta sobre el esquema educativo", "SELECT id, nombre FROM estudiantes", "WHERE id == 10;" ],
+        "codeSnippet": [
+          "-- Consulta sobre el esquema educativo",
+          "SELECT id, nombre FROM estudiantes",
+          "WHERE id == 10;"
+        ],
         "bugLineIndex": 2,
         "explanation": "Intentar insertar dos filas con la misma PRIMARY KEY provocará el error: `UNIQUE constraint failed`.",
         "xpReward": 15
@@ -192,8 +200,8 @@ export const SQL_UNIT_04_LESSONS: Lesson[] = [
       {
         "id": "sql-u04-l02-e01",
         "type": "predict_output",
-        "prompt": "¿Cuál es el resultado exacto en consola tras evaluar la siguiente instrucción sobre \"INTEGER PRIMARY KEY\"?",
-        "code": "SELECT id FROM estudiantes WHERE id = 5;",
+        "prompt": "Observa los registros de la tabla \"estudiantes\" y determina el resultado exacto de la consulta:",
+        "code": "-- Tabla estudiantes (5 registros):\n-- | id | nombre          | carrera                | semestre | promedio |\n-- | 1  | Valeria Morales | Ingeniería de Software | 3        | 9.4      |\n-- | 2  | Diego Fernández | Ciberseguridad         | 5        | 8.7      |\n-- | 3  | Camila Gómez    | Ciencia de Datos       | 4        | 9.8      |\n-- | 4  | Mateo Rojas     | Ciberseguridad         | 2        | 8.3      |\n-- | 5  | Lucía Vargas    | Computación            | 6        | 9.1      |\n\nSELECT id FROM estudiantes WHERE id = 5;",
         "options": [
           "5",
           "Lucía",
@@ -222,7 +230,7 @@ export const SQL_UNIT_04_LESSONS: Lesson[] = [
       {
         "id": "sql-u04-l02-e03",
         "type": "code_builder",
-        "prompt": "Ordena los bloques para construir la sentencia correcta de: \"INTEGER PRIMARY KEY\":",
+        "prompt": "Ordena los bloques para declarar la llave primaria (PRIMARY KEY) en la columna 'id':",
         "tokens": [
           "id",
           "INTEGER",
@@ -242,7 +250,11 @@ export const SQL_UNIT_04_LESSONS: Lesson[] = [
         "id": "sql-u04-l02-e04",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea que contiene el error en este código de \"INTEGER PRIMARY KEY\":",
-        "codeSnippet": [ "-- Consulta sobre estudiantes", "id INT AUTO_INCREMENT // Sintaxis de MySQL no nativa en SQLite", "ORDER BY id ASC;" ],
+        "codeSnippet": [
+          "-- Consulta sobre estudiantes",
+          "id INT AUTO_INCREMENT // Sintaxis de MySQL no nativa en SQLite",
+          "ORDER BY id ASC;"
+        ],
         "bugLineIndex": 1,
         "explanation": "Usar la palabra AUTOINCREMENT innecesariamente: en SQLite, INTEGER PRIMARY KEY ya es autoincremental sin recargar el algoritmo.",
         "xpReward": 15
@@ -305,7 +317,7 @@ export const SQL_UNIT_04_LESSONS: Lesson[] = [
       {
         "id": "sql-u04-l02-e08",
         "type": "code_builder",
-        "prompt": "Construye la instrucción sintáctica complementaria para \"INTEGER PRIMARY KEY\":",
+        "prompt": "Ordena los bloques para consultar las columnas \"id\" y \"nombre\" de la tabla \"estudiantes\" (finalizando con punto y coma):",
         "tokens": [
           "SELECT",
           "id,",
@@ -329,7 +341,11 @@ export const SQL_UNIT_04_LESSONS: Lesson[] = [
         "id": "sql-u04-l02-e09",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea con el error de diseño o sintaxis en \"INTEGER PRIMARY KEY\":",
-        "codeSnippet": [ "-- Consulta sobre el esquema educativo", "SELECT id, nombre FROM estudiantes", "WHERE id == 10;" ],
+        "codeSnippet": [
+          "-- Consulta sobre el esquema educativo",
+          "SELECT id, nombre FROM estudiantes",
+          "WHERE id == 10;"
+        ],
         "bugLineIndex": 2,
         "explanation": "Usar la palabra AUTOINCREMENT innecesariamente: en SQLite, INTEGER PRIMARY KEY ya es autoincremental sin recargar el algoritmo.",
         "xpReward": 15
@@ -402,7 +418,7 @@ export const SQL_UNIT_04_LESSONS: Lesson[] = [
       {
         "id": "sql-u04-l03-e03",
         "type": "code_builder",
-        "prompt": "Ordena los bloques para construir la sentencia correcta de: \"FOREIGN KEY y REFERENCES\":",
+        "prompt": "Ordena los bloques para definir la restricción de llave foránea (FOREIGN KEY / REFERENCES):",
         "tokens": [
           "FOREIGN",
           "KEY",
@@ -434,7 +450,11 @@ export const SQL_UNIT_04_LESSONS: Lesson[] = [
         "id": "sql-u04-l03-e04",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea que contiene el error en este código de \"FOREIGN KEY y REFERENCES\":",
-        "codeSnippet": [ "-- Consulta sobre estudiantes", "FOREIGN KEY (user_id)", "ORDER BY id ASC;" ],
+        "codeSnippet": [
+          "-- Consulta sobre estudiantes",
+          "FOREIGN KEY (user_id)",
+          "ORDER BY id ASC;"
+        ],
         "bugLineIndex": 1,
         "explanation": "Olvidar el nombre de la tabla padre o la columna referenciada dentro de REFERENCES.",
         "xpReward": 15
@@ -497,7 +517,7 @@ export const SQL_UNIT_04_LESSONS: Lesson[] = [
       {
         "id": "sql-u04-l03-e08",
         "type": "code_builder",
-        "prompt": "Construye la instrucción sintáctica complementaria para \"FOREIGN KEY y REFERENCES\":",
+        "prompt": "Ordena los bloques para consultar las columnas \"id\" y \"nombre\" de la tabla \"estudiantes\" (finalizando con punto y coma):",
         "tokens": [
           "SELECT",
           "id,",
@@ -521,7 +541,11 @@ export const SQL_UNIT_04_LESSONS: Lesson[] = [
         "id": "sql-u04-l03-e09",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea con el error de diseño o sintaxis en \"FOREIGN KEY y REFERENCES\":",
-        "codeSnippet": [ "-- Consulta sobre el esquema educativo", "SELECT id, nombre FROM estudiantes", "WHERE id == 10;" ],
+        "codeSnippet": [
+          "-- Consulta sobre el esquema educativo",
+          "SELECT id, nombre FROM estudiantes",
+          "WHERE id == 10;"
+        ],
         "bugLineIndex": 2,
         "explanation": "Olvidar el nombre de la tabla padre o la columna referenciada dentro de REFERENCES.",
         "xpReward": 15
@@ -564,8 +588,8 @@ export const SQL_UNIT_04_LESSONS: Lesson[] = [
       {
         "id": "sql-u04-l04-e01",
         "type": "predict_output",
-        "prompt": "¿Cuál es el resultado exacto en consola tras evaluar la siguiente instrucción sobre \"NOT NULL\"?",
-        "code": "SELECT COUNT(*) FROM estudiantes WHERE nombre IS NOT NULL;",
+        "prompt": "Observa los registros de la tabla \"estudiantes\" y determina el resultado exacto de la consulta:",
+        "code": "-- Tabla estudiantes (5 registros):\n-- | id | nombre          | carrera                | semestre | promedio |\n-- | 1  | Valeria Morales | Ingeniería de Software | 3        | 9.4      |\n-- | 2  | Diego Fernández | Ciberseguridad         | 5        | 8.7      |\n-- | 3  | Camila Gómez    | Ciencia de Datos       | 4        | 9.8      |\n-- | 4  | Mateo Rojas     | Ciberseguridad         | 2        | 8.3      |\n-- | 5  | Lucía Vargas    | Computación            | 6        | 9.1      |\n\nSELECT COUNT(*) FROM estudiantes WHERE nombre IS NOT NULL;",
         "options": [
           "5",
           "0",
@@ -594,7 +618,7 @@ export const SQL_UNIT_04_LESSONS: Lesson[] = [
       {
         "id": "sql-u04-l04-e03",
         "type": "code_builder",
-        "prompt": "Ordena los bloques para construir la sentencia correcta de: \"NOT NULL\":",
+        "prompt": "Ordena los bloques para declarar la columna 'nombre' con la restricción obligatoria NOT NULL:",
         "tokens": [
           "nombre",
           "TEXT",
@@ -614,7 +638,11 @@ export const SQL_UNIT_04_LESSONS: Lesson[] = [
         "id": "sql-u04-l04-e04",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea que contiene el error en este código de \"NOT NULL\":",
-        "codeSnippet": [ "-- Consulta sobre estudiantes", "INSERT INTO contactos (id) VALUES (1) // Fallará si nombre tiene restricción NOT NULL", "ORDER BY id ASC;" ],
+        "codeSnippet": [
+          "-- Consulta sobre estudiantes",
+          "INSERT INTO contactos (id) VALUES (1) // Fallará si nombre tiene restricción NOT NULL",
+          "ORDER BY id ASC;"
+        ],
         "bugLineIndex": 1,
         "explanation": "Intentar insertar una fila omitiendo un campo NOT NULL causará el error: `NOT NULL constraint failed`.",
         "xpReward": 15
@@ -677,7 +705,7 @@ export const SQL_UNIT_04_LESSONS: Lesson[] = [
       {
         "id": "sql-u04-l04-e08",
         "type": "code_builder",
-        "prompt": "Construye la instrucción sintáctica complementaria para \"NOT NULL\":",
+        "prompt": "Ordena los bloques para consultar las columnas \"id\" y \"nombre\" de la tabla \"estudiantes\" (finalizando con punto y coma):",
         "tokens": [
           "SELECT",
           "id,",
@@ -701,7 +729,11 @@ export const SQL_UNIT_04_LESSONS: Lesson[] = [
         "id": "sql-u04-l04-e09",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea con el error de diseño o sintaxis en \"NOT NULL\":",
-        "codeSnippet": [ "-- Consulta sobre el esquema educativo", "SELECT id, nombre FROM estudiantes", "WHERE id == 10;" ],
+        "codeSnippet": [
+          "-- Consulta sobre el esquema educativo",
+          "SELECT id, nombre FROM estudiantes",
+          "WHERE id == 10;"
+        ],
         "bugLineIndex": 2,
         "explanation": "Intentar insertar una fila omitiendo un campo NOT NULL causará el error: `NOT NULL constraint failed`.",
         "xpReward": 15
@@ -744,8 +776,8 @@ export const SQL_UNIT_04_LESSONS: Lesson[] = [
       {
         "id": "sql-u04-l05-e01",
         "type": "predict_output",
-        "prompt": "¿Cuál es el resultado exacto en consola tras evaluar la siguiente instrucción sobre \"UNIQUE\"?",
-        "code": "SELECT email FROM usuarios WHERE nombre = 'Alan Turing';",
+        "prompt": "Observa los registros de la tabla \"usuarios\" y determina el resultado exacto de la consulta:",
+        "code": "-- Tabla usuarios (3 registros):\n-- | id | nombre         | email              | activo |\n-- | 1  | Alan Turing    | alan@bletchley.org | true   |\n-- | 2  | Ada Lovelace   | ada@pioneers.org   | true   |\n-- | 3  | Linus Torvalds | linus@linux.org    | true   |\n\nSELECT email FROM usuarios WHERE nombre = 'Alan Turing';",
         "options": [
           "alan@bletchley.org",
           "ada@pioneers.org",
@@ -774,7 +806,7 @@ export const SQL_UNIT_04_LESSONS: Lesson[] = [
       {
         "id": "sql-u04-l05-e03",
         "type": "code_builder",
-        "prompt": "Ordena los bloques para construir la sentencia correcta de: \"UNIQUE\":",
+        "prompt": "Ordena los bloques para declarar la columna 'email' con la restricción obligatoria NOT NULL:",
         "tokens": [
           "email",
           "TEXT",
@@ -796,7 +828,11 @@ export const SQL_UNIT_04_LESSONS: Lesson[] = [
         "id": "sql-u04-l05-e04",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea que contiene el error en este código de \"UNIQUE\":",
-        "codeSnippet": [ "-- Definición de tabla", "CREATE TABLE u (email TEXT ONLY_ONE)", "-- Fin de sentencia" ],
+        "codeSnippet": [
+          "-- Definición de tabla",
+          "CREATE TABLE u (email TEXT ONLY_ONE)",
+          "-- Fin de sentencia"
+        ],
         "bugLineIndex": 1,
         "explanation": "En SQL estándar, las columnas UNIQUE sí permiten múltiples valores NULL (a menos que añadas también NOT NULL).",
         "xpReward": 15
@@ -859,7 +895,7 @@ export const SQL_UNIT_04_LESSONS: Lesson[] = [
       {
         "id": "sql-u04-l05-e08",
         "type": "code_builder",
-        "prompt": "Construye la instrucción sintáctica complementaria para \"UNIQUE\":",
+        "prompt": "Ordena los bloques para consultar las columnas \"id\" y \"nombre\" de la tabla \"estudiantes\" (finalizando con punto y coma):",
         "tokens": [
           "SELECT",
           "id,",
@@ -883,7 +919,11 @@ export const SQL_UNIT_04_LESSONS: Lesson[] = [
         "id": "sql-u04-l05-e09",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea con el error de diseño o sintaxis en \"UNIQUE\":",
-        "codeSnippet": [ "-- Consulta sobre el esquema educativo", "SELECT id, nombre FROM estudiantes", "WHERE id == 10;" ],
+        "codeSnippet": [
+          "-- Consulta sobre el esquema educativo",
+          "SELECT id, nombre FROM estudiantes",
+          "WHERE id == 10;"
+        ],
         "bugLineIndex": 2,
         "explanation": "En SQL estándar, las columnas UNIQUE sí permiten múltiples valores NULL (a menos que añadas también NOT NULL).",
         "xpReward": 15
@@ -926,8 +966,8 @@ export const SQL_UNIT_04_LESSONS: Lesson[] = [
       {
         "id": "sql-u04-l06-e01",
         "type": "predict_output",
-        "prompt": "¿Cuál es el resultado exacto en consola tras evaluar la siguiente instrucción sobre \"CHECK\"?",
-        "code": "SELECT COUNT(*) FROM estudiantes WHERE promedio >= 0.0 AND promedio <= 10.0;",
+        "prompt": "Observa los registros de la tabla \"estudiantes\" y determina el resultado exacto de la consulta:",
+        "code": "-- Tabla estudiantes (5 registros):\n-- | id | nombre          | carrera                | semestre | promedio |\n-- | 1  | Valeria Morales | Ingeniería de Software | 3        | 9.4      |\n-- | 2  | Diego Fernández | Ciberseguridad         | 5        | 8.7      |\n-- | 3  | Camila Gómez    | Ciencia de Datos       | 4        | 9.8      |\n-- | 4  | Mateo Rojas     | Ciberseguridad         | 2        | 8.3      |\n-- | 5  | Lucía Vargas    | Computación            | 6        | 9.1      |\n\nSELECT COUNT(*) FROM estudiantes WHERE promedio >= 0.0 AND promedio <= 10.0;",
         "options": [
           "5",
           "0",
@@ -956,7 +996,7 @@ export const SQL_UNIT_04_LESSONS: Lesson[] = [
       {
         "id": "sql-u04-l06-e03",
         "type": "code_builder",
-        "prompt": "Ordena los bloques para construir la sentencia correcta de: \"CHECK\":",
+        "prompt": "Ordena los bloques para definir la restricción de validación CHECK sobre la columna:",
         "tokens": [
           "edad",
           "INTEGER",
@@ -984,7 +1024,11 @@ export const SQL_UNIT_04_LESSONS: Lesson[] = [
         "id": "sql-u04-l06-e04",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea que contiene el error en este código de \"CHECK\":",
-        "codeSnippet": [ "-- Consulta sobre estudiantes", "INSERT INTO evaluaciones (nota) VALUES (15.0) // Fallará si hay CHECK (nota <= 10.0)", "ORDER BY id ASC;" ],
+        "codeSnippet": [
+          "-- Consulta sobre estudiantes",
+          "INSERT INTO evaluaciones (nota) VALUES (15.0) // Fallará si hay CHECK (nota <= 10.0)",
+          "ORDER BY id ASC;"
+        ],
         "bugLineIndex": 1,
         "explanation": "Intentar insertar una nota de 11.5 causará el error: `CHECK constraint failed: nota >= 0.0 AND nota <= 10.0`.",
         "xpReward": 15
@@ -1047,7 +1091,7 @@ export const SQL_UNIT_04_LESSONS: Lesson[] = [
       {
         "id": "sql-u04-l06-e08",
         "type": "code_builder",
-        "prompt": "Construye la instrucción sintáctica complementaria para \"CHECK\":",
+        "prompt": "Ordena los bloques para consultar las columnas \"id\" y \"nombre\" de la tabla \"estudiantes\" (finalizando con punto y coma):",
         "tokens": [
           "SELECT",
           "id,",
@@ -1071,7 +1115,11 @@ export const SQL_UNIT_04_LESSONS: Lesson[] = [
         "id": "sql-u04-l06-e09",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea con el error de diseño o sintaxis en \"CHECK\":",
-        "codeSnippet": [ "-- Consulta sobre el esquema educativo", "SELECT id, nombre FROM estudiantes", "WHERE id == 10;" ],
+        "codeSnippet": [
+          "-- Consulta sobre el esquema educativo",
+          "SELECT id, nombre FROM estudiantes",
+          "WHERE id == 10;"
+        ],
         "bugLineIndex": 2,
         "explanation": "Intentar insertar una nota de 11.5 causará el error: `CHECK constraint failed: nota >= 0.0 AND nota <= 10.0`.",
         "xpReward": 15
@@ -1114,8 +1162,8 @@ export const SQL_UNIT_04_LESSONS: Lesson[] = [
       {
         "id": "sql-u04-l07-e01",
         "type": "predict_output",
-        "prompt": "¿Cuál es el resultado exacto en consola tras evaluar la siguiente instrucción sobre \"DEFAULT\"?",
-        "code": "SELECT activo FROM usuarios WHERE id = 1;",
+        "prompt": "Observa los registros de la tabla \"usuarios\" y determina el resultado exacto de la consulta:",
+        "code": "-- Tabla usuarios (3 registros):\n-- | id | nombre         | email              | activo |\n-- | 1  | Alan Turing    | alan@bletchley.org | true   |\n-- | 2  | Ada Lovelace   | ada@pioneers.org   | true   |\n-- | 3  | Linus Torvalds | linus@linux.org    | true   |\n\nSELECT activo FROM usuarios WHERE id = 1;",
         "options": [
           "true",
           "false",
@@ -1144,7 +1192,7 @@ export const SQL_UNIT_04_LESSONS: Lesson[] = [
       {
         "id": "sql-u04-l07-e03",
         "type": "code_builder",
-        "prompt": "Ordena los bloques para construir la sentencia correcta de: \"DEFAULT\":",
+        "prompt": "Ordena los bloques para definir la columna 'estado' con su valor por defecto (DEFAULT):",
         "tokens": [
           "estado",
           "TEXT",
@@ -1164,7 +1212,11 @@ export const SQL_UNIT_04_LESSONS: Lesson[] = [
         "id": "sql-u04-l07-e04",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea que contiene el error en este código de \"DEFAULT\":",
-        "codeSnippet": [ "-- Definición de tabla", "CREATE TABLE t (estado TEXT PRESET \"ok\")", "-- Fin de sentencia" ],
+        "codeSnippet": [
+          "-- Definición de tabla",
+          "CREATE TABLE t (estado TEXT PRESET \"ok\")",
+          "-- Fin de sentencia"
+        ],
         "bugLineIndex": 1,
         "explanation": "Si pasas explícitamente `NULL` en el INSERT, el valor predeterminado DEFAULT no se aplicará.",
         "xpReward": 15
@@ -1227,7 +1279,7 @@ export const SQL_UNIT_04_LESSONS: Lesson[] = [
       {
         "id": "sql-u04-l07-e08",
         "type": "code_builder",
-        "prompt": "Construye la instrucción sintáctica complementaria para \"DEFAULT\":",
+        "prompt": "Ordena los bloques para consultar las columnas \"id\" y \"nombre\" de la tabla \"estudiantes\" (finalizando con punto y coma):",
         "tokens": [
           "SELECT",
           "id,",
@@ -1251,7 +1303,11 @@ export const SQL_UNIT_04_LESSONS: Lesson[] = [
         "id": "sql-u04-l07-e09",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea con el error de diseño o sintaxis en \"DEFAULT\":",
-        "codeSnippet": [ "-- Consulta sobre el esquema educativo", "SELECT id, nombre FROM estudiantes", "WHERE id == 10;" ],
+        "codeSnippet": [
+          "-- Consulta sobre el esquema educativo",
+          "SELECT id, nombre FROM estudiantes",
+          "WHERE id == 10;"
+        ],
         "bugLineIndex": 2,
         "explanation": "Si pasas explícitamente `NULL` en el INSERT, el valor predeterminado DEFAULT no se aplicará.",
         "xpReward": 15
@@ -1344,7 +1400,11 @@ export const SQL_UNIT_04_LESSONS: Lesson[] = [
         "id": "sql-u04-l08-e04",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea que contiene el error en este código de \"Diferencia entre NULL, cero, texto vacío y valor predeterminado\":",
-        "codeSnippet": [ "-- Consulta sobre estudiantes", "SELECT * FROM estudiantes WHERE telefono = NULL", "ORDER BY id ASC;" ],
+        "codeSnippet": [
+          "-- Consulta sobre estudiantes",
+          "SELECT * FROM estudiantes WHERE telefono = NULL",
+          "ORDER BY id ASC;"
+        ],
         "bugLineIndex": 1,
         "explanation": "Calcular el promedio de salarios con ceros en vez de nulos: los ceros bajan el promedio; los nulos son ignorados.",
         "xpReward": 15
@@ -1407,7 +1467,7 @@ export const SQL_UNIT_04_LESSONS: Lesson[] = [
       {
         "id": "sql-u04-l08-e08",
         "type": "code_builder",
-        "prompt": "Construye la instrucción sintáctica complementaria para \"Diferencia entre NULL, cero, texto vacío y valor predeterminado\":",
+        "prompt": "Ordena los bloques para consultar las columnas \"id\" y \"nombre\" de la tabla \"estudiantes\" (finalizando con punto y coma):",
         "tokens": [
           "SELECT",
           "id,",
@@ -1431,7 +1491,11 @@ export const SQL_UNIT_04_LESSONS: Lesson[] = [
         "id": "sql-u04-l08-e09",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea con el error de diseño o sintaxis en \"Diferencia entre NULL, cero, texto vacío y valor predeterminado\":",
-        "codeSnippet": [ "-- Consulta sobre el esquema educativo", "SELECT id, nombre FROM estudiantes", "WHERE id == 10;" ],
+        "codeSnippet": [
+          "-- Consulta sobre el esquema educativo",
+          "SELECT id, nombre FROM estudiantes",
+          "WHERE id == 10;"
+        ],
         "bugLineIndex": 2,
         "explanation": "Calcular el promedio de salarios con ceros en vez de nulos: los ceros bajan el promedio; los nulos son ignorados.",
         "xpReward": 15

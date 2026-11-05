@@ -1,13 +1,14 @@
 import React, { useEffect, useRef, useState, useLayoutEffect } from 'react';
-import { CodeCompletionItem } from '../../types/autocomplete';
-import { Info, BookOpen } from 'lucide-react';
+import { createPortal } from 'react-dom';
+import { CodeCompletionItem, CaretCoordinates } from '../../types/autocomplete';
+import { Info, BookOpen, X } from 'lucide-react';
 
 interface CodeAutocompleteProps {
   items: CodeCompletionItem[];
   selectedIndex: number;
   onSelect: (item: CodeCompletionItem) => void;
   onHoverItem: (index: number) => void;
-  position: { top: number; left: number; lineHeight?: number };
+  position: CaretCoordinates;
   visible: boolean;
   onClose: () => void;
   filterPrefix?: string;
@@ -15,12 +16,14 @@ interface CodeAutocompleteProps {
 }
 
 const BADGE_CONFIG: Record<string, { label: string; bg: string; text: string; border: string }> = {
+  table: { label: 'tbl', bg: '#DCFCE7', text: '#15803D', border: '#86EFAC' },
+  column: { label: 'col', bg: '#E0F2FE', text: '#0369A1', border: '#7DD3FC' },
+  variable: { label: 'var', bg: '#FEF9C3', text: '#A16207', border: '#FDE047' },
   function: { label: 'fn', bg: '#FFE4E6', text: '#BE123C', border: '#FDA4AF' },
   keyword: { label: 'kw', bg: '#F3E8FF', text: '#7E22CE', border: '#D8B4FE' },
   statement: { label: 'stmt', bg: '#FEF3C7', text: '#B45309', border: '#FCD34D' },
   type: { label: 'typ', bg: '#E0F2FE', text: '#0369A1', border: '#BAE6FD' },
-  snippet: { label: 'snip', bg: '#D1FAE5', text: '#047857', border: '#6EE7B7' },
-  variable: { label: 'var', bg: '#F1F5F9', text: '#475569', border: '#CBD5E1' }
+  snippet: { label: 'snip', bg: '#D1FAE5', text: '#047857', border: '#6EE7B7' }
 };
 
 export const CodeAutocomplete: React.FC<CodeAutocompleteProps> = ({
@@ -30,48 +33,60 @@ export const CodeAutocomplete: React.FC<CodeAutocompleteProps> = ({
   onHoverItem,
   position,
   visible,
+  onClose,
   filterPrefix = '',
   theme = 'kotlin'
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const listRef = useRef<HTMLDivElement>(null);
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
-  const [adjustedPos, setAdjustedPos] = useState<{ top: number; left: number }>({
-    top: position.top,
-    left: position.left
+  const [adjustedPos, setAdjustedPos] = useState<{ top: number; left: number; maxHeight: number }>({
+    top: (position.viewportTop ?? position.top) + (position.lineHeight || 22) + 8,
+    left: position.viewportLeft ?? position.left,
+    maxHeight: 250
   });
 
-  // Ajuste inteligente de posición para no salirse de los bordes del editor
+  // Posicionamiento fijo inteligente (estilo NetBeans / SQL Server) que JAMÁS tapa la línea del cursor
   useLayoutEffect(() => {
     if (!visible || !containerRef.current) return;
 
     const el = containerRef.current;
-    const parent = el.parentElement;
-    if (!parent) return;
-
-    const parentRect = parent.getBoundingClientRect();
+    const vw = window.innerWidth;
+    const vh = window.innerHeight;
     const popupWidth = el.offsetWidth || 520;
-    const popupHeight = el.offsetHeight || 260;
+    const naturalHeight = Math.min(el.scrollHeight || 240, 250);
     const lineHeight = position.lineHeight || 22;
 
-    let targetTop = position.top + lineHeight + 4;
-    let targetLeft = position.left;
+    const caretTop = position.viewportTop ?? position.top;
+    const caretBottom = caretTop + lineHeight;
+    const caretLeft = position.viewportLeft ?? position.left;
 
-    // Si se desborda verticalmente por abajo, colocar arriba del cursor
-    if (targetTop + popupHeight > parentRect.height && position.top - popupHeight > 0) {
-      targetTop = position.top - popupHeight - 4;
-    } else if (targetTop + popupHeight > parentRect.height) {
-      targetTop = Math.max(4, parentRect.height - popupHeight - 8);
+    const spaceBelow = vh - caretBottom - 14;
+    const spaceAbove = caretTop - 14;
+
+    let targetTop: number;
+    let allowedHeight = 250;
+
+    // Prioridad 1: Debajo de la línea actual del cursor (con margen de 8px para no estorbar)
+    if (spaceBelow >= Math.min(naturalHeight, 175) || spaceBelow >= spaceAbove) {
+      targetTop = caretBottom + 8;
+      allowedHeight = Math.max(130, Math.min(250, spaceBelow - 6));
+    } else {
+      // Prioridad 2: Arriba de la línea actual del cursor si el cursor está muy abajo en la pantalla
+      allowedHeight = Math.max(130, Math.min(250, spaceAbove - 6));
+      const actualH = Math.min(naturalHeight, allowedHeight);
+      targetTop = Math.max(8, caretTop - actualH - 8);
     }
 
-    // Si se desborda horizontalmente por la derecha
-    if (targetLeft + popupWidth > parentRect.width - 8) {
-      targetLeft = Math.max(8, parentRect.width - popupWidth - 12);
+    let targetLeft = caretLeft;
+    if (targetLeft + popupWidth > vw - 12) {
+      targetLeft = Math.max(10, vw - popupWidth - 14);
     }
 
     setAdjustedPos({
-      top: Math.max(4, targetTop),
-      left: Math.max(8, targetLeft)
+      top: Math.max(8, targetTop),
+      left: Math.max(10, targetLeft),
+      maxHeight: allowedHeight
     });
   }, [position, visible, items.length]);
 
@@ -129,13 +144,16 @@ export const CodeAutocomplete: React.FC<CodeAutocompleteProps> = ({
     );
   };
 
-  return (
+  const popupNode = (
     <div
       ref={containerRef}
       className={`neo-autocomplete-popup theme-${theme}`}
       style={{
+        position: 'fixed',
+        zIndex: 99999,
         top: `${adjustedPos.top}px`,
-        left: `${adjustedPos.left}px`
+        left: `${adjustedPos.left}px`,
+        maxHeight: `${adjustedPos.maxHeight}px`
       }}
       role="listbox"
       aria-label="Recomendaciones de código"
@@ -146,9 +164,30 @@ export const CodeAutocomplete: React.FC<CodeAutocompleteProps> = ({
           <div className="neo-ac-header-title">
             <span>Sugerencias ({items.length})</span>
           </div>
-          <span className="neo-ac-header-badge">
-            {theme === 'kotlin' ? 'Kotlin IDE' : 'SQL IDE'}
-          </span>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+            <span className="neo-ac-header-badge">
+              {theme === 'kotlin' ? 'Kotlin IDE' : 'SQL IDE'}
+            </span>
+            <button
+              type="button"
+              onMouseDown={(e) => {
+                e.preventDefault();
+                onClose();
+              }}
+              title="Cerrar sugerencias (Esc)"
+              style={{
+                background: 'transparent',
+                border: 'none',
+                cursor: 'pointer',
+                padding: '2px',
+                display: 'inline-flex',
+                alignItems: 'center',
+                color: '#475569'
+              }}
+            >
+              <X size={13} strokeWidth={2.5} />
+            </button>
+          </div>
         </div>
 
         <div ref={listRef} className="neo-ac-items-scroll">
@@ -254,4 +293,6 @@ export const CodeAutocomplete: React.FC<CodeAutocompleteProps> = ({
       )}
     </div>
   );
+
+  return typeof document !== 'undefined' ? createPortal(popupNode, document.body) : popupNode;
 };

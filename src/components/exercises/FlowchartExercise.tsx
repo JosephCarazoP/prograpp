@@ -16,6 +16,7 @@ import { soundService } from '../../services/soundService';
 interface FlowchartProps {
   exercise: FlowchartExercise;
   onOrderChange: (order: number[]) => void;
+  externalOrder?: number[];
 }
 
 /**
@@ -181,7 +182,8 @@ export const FlowchartShapeGraphic: React.FC<{
 
 export const FlowchartExerciseComponent: React.FC<FlowchartProps> = ({
   exercise,
-  onOrderChange
+  onOrderChange,
+  externalOrder
 }) => {
   // Genera un orden mezclado garantizado
   const getScrambledOrder = (len: number) => {
@@ -230,6 +232,13 @@ export const FlowchartExerciseComponent: React.FC<FlowchartProps> = ({
     clearSimulationState();
     onOrderChange(scrambled);
   }, [exercise.id, exercise.blocks.length]);
+
+  // Sincronizar cuando un comodín actualiza el orden desde el contenedor padre
+  useEffect(() => {
+    if (externalOrder && externalOrder.length === exercise.blocks.length) {
+      setCurrentOrder(externalOrder);
+    }
+  }, [externalOrder, exercise.blocks.length]);
 
   const clearSimulationState = () => {
     if (simulationTimerRef.current) clearTimeout(simulationTimerRef.current);

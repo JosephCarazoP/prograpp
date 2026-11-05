@@ -8,7 +8,6 @@ import {
   Code2,
   Database,
   GraduationCap,
-  Lock,
   Zap,
   Layers
 } from 'lucide-react';
@@ -17,7 +16,6 @@ import { TheoryLesson } from '../types/theory';
 import { LessonProgress } from '../types/progress';
 import { UserProfile } from '../types/user';
 import { soundService } from '../services/soundService';
-import { progressionEngine } from '../services/progressionEngine';
 
 interface CoursesViewProps {
   units: Unit[];
@@ -37,24 +35,33 @@ export const CoursesView: React.FC<CoursesViewProps> = ({
   currentPath,
   onSelectTheory,
   onSelectPractice,
-  onOpenSqliteLab,
-  user
+  onOpenSqliteLab: _onOpenSqliteLab,
+  user: _user
 }) => {
   const [selectedUnitId, setSelectedUnitId] = useState<number>(1);
   const [searchQuery, setSearchQuery] = useState('');
 
   const activeUnit = units.find(u => u.id === selectedUnitId) || units[0];
+  const isSearching = searchQuery.trim().length > 0;
 
-  // Filtrar lecciones por búsqueda
-  const filteredLessons = (activeUnit?.lessons || []).filter(lesson => {
-    if (!searchQuery.trim()) return true;
-    const q = searchQuery.toLowerCase();
-    const th = theories[lesson.id];
-    return (
-      lesson.title.toLowerCase().includes(q) ||
-      (th && (th.title.toLowerCase().includes(q) || th.subtitle.toLowerCase().includes(q)))
-    );
-  });
+  // Filtrar lecciones en TODAS las unidades cuando se usa el buscador por el título o descripción de la lección
+  const displayedLessonItems = isSearching
+    ? units.flatMap(u =>
+        (u.lessons || [])
+          .map((lesson, idx) => ({ lesson, unit: u, idxInUnit: idx }))
+          .filter(({ lesson }) => {
+            const q = searchQuery.trim().toLowerCase();
+            return (
+              lesson.title.toLowerCase().includes(q) ||
+              (lesson.description && lesson.description.toLowerCase().includes(q))
+            );
+          })
+      )
+    : (activeUnit?.lessons || []).map((lesson, idx) => ({
+        lesson,
+        unit: activeUnit,
+        idxInUnit: idx
+      }));
 
   const isKotlin = currentPath === 'kotlin';
   const pathThemeColor = isKotlin ? '#0284C7' : '#4F46E5';
@@ -178,81 +185,6 @@ export const CoursesView: React.FC<CoursesViewProps> = ({
           </div>
         </div>
       </div>
-
-      {/* ═══ BANNER ACCESO A LABORATORIO SQLITE (WASM REAL) ═══ */}
-      {onOpenSqliteLab && (
-        <div
-          style={{
-            background: '#0F172A',
-            border: '2.5px solid #000000',
-            boxShadow: '4px 4px 0px #000000',
-            borderRadius: '16px',
-            padding: '16px 20px',
-            marginBottom: '20px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            gap: '14px',
-            flexWrap: 'wrap'
-          }}
-        >
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-            <div
-              style={{
-                width: 44,
-                height: 44,
-                borderRadius: '12px',
-                background: '#0284C7',
-                border: '2px solid #000000',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                color: '#FFFFFF',
-                boxShadow: '2px 2px 0px #000000'
-              }}
-            >
-              <Database size={22} />
-            </div>
-            <div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <h3 style={{ margin: 0, fontSize: '1rem', fontWeight: 900, color: '#FFFFFF' }}>
-                  Laboratorio SQLite Integrado
-                </h3>
-                <span className="sqlite-badge-engine">Motor Real</span>
-              </div>
-              <p style={{ margin: '3px 0 0 0', fontSize: '0.78rem', color: '#94A3B8' }}>
-                Crea tus propias tablas, define PKs/FKs, ejecuta JOINs y programa botones CRUD sin instalar software.
-              </p>
-            </div>
-          </div>
-
-          <button
-            type="button"
-            onClick={() => {
-              soundService.playToken();
-              onOpenSqliteLab();
-            }}
-            className="btn-3d btn-green"
-            style={{
-              padding: '9px 18px',
-              fontSize: '0.82rem',
-              fontWeight: 900,
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '6px',
-              background: '#22C55E',
-              color: '#000000',
-              border: '2px solid #000000',
-              boxShadow: '2px 2px 0px #000000',
-              borderRadius: '10px',
-              cursor: 'pointer'
-            }}
-          >
-            <Play size={14} fill="currentColor" />
-            <span>Abrir Laboratorio SQLite</span>
-          </button>
-        </div>
-      )}
 
       {/* ═══ BUSCADOR DE CONCEPTOS NEO-BRUTALISM ═══ */}
       <div style={{ position: 'relative', marginBottom: '20px' }}>
@@ -388,33 +320,74 @@ export const CoursesView: React.FC<CoursesViewProps> = ({
         </div>
       </div>
 
+      {/* ═══ BANNER DE BÚSQUEDA GLOBAL EN TODAS LAS UNIDADES ═══ */}
+      {isSearching && (
+        <div
+          style={{
+            background: '#FEF9C3',
+            border: '2.5px solid #000000',
+            boxShadow: '3.5px 3.5px 0px #000000',
+            borderRadius: '14px',
+            padding: '12px 16px',
+            marginBottom: '20px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            gap: '12px',
+            flexWrap: 'wrap'
+          }}
+        >
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontWeight: 900, fontSize: '0.88rem', color: '#0F172A' }}>
+            <Search size={16} color="#000000" strokeWidth={2.8} />
+            <span>
+              Mostrando {displayedLessonItems.length} resultado{displayedLessonItems.length === 1 ? '' : 's'} para "{searchQuery}" en todas las unidades de {currentPath.toUpperCase()}
+            </span>
+          </div>
+          <button
+            type="button"
+            onClick={() => setSearchQuery('')}
+            style={{
+              background: '#FFFFFF',
+              border: '2px solid #000000',
+              boxShadow: '2px 2px 0px #000000',
+              borderRadius: '8px',
+              padding: '4px 10px',
+              fontSize: '0.76rem',
+              fontWeight: 900,
+              color: '#0F172A',
+              cursor: 'pointer'
+            }}
+          >
+            Limpiar búsqueda ✕
+          </button>
+        </div>
+      )}
+
       {/* ═══ LISTA DE LECCIONES TEÓRICAS Y PRÁCTICAS ═══ */}
       <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-        {filteredLessons.map((lesson, idx) => {
+        {displayedLessonItems.map(({ lesson, unit: lessonUnit, idxInUnit: idx }) => {
           const prog = progress[lesson.id];
           const isCompleted = !!prog && (prog.starsEarned || 0) > 0;
           const th = theories[lesson.id];
 
-          const access = user
-            ? progressionEngine.canAccessNode(lesson.id, activeUnit, user, progress)
-            : { allowed: idx === 0 && activeUnit.id === 1 };
-          const isUnlocked = access.allowed || isCompleted;
+          // Toda la materia de Cursos (tanto Kotlin como SQL) está desbloqueada para que los alumnos puedan estudiar libremente
+          const isUnlocked = true;
 
           return (
             <div
-              key={lesson.id}
+              key={`${lessonUnit.id}-${lesson.id}`}
               style={{
                 position: 'relative',
                 marginTop: '12px'
               }}
             >
-              {/* Pestaña tipo folder sobresaliente superior */}
+              {/* Pestaña tipo folder sobresaliente superior con tag de Unidad */}
               <div
                 style={{
                   position: 'absolute',
                   top: '-15px',
                   left: '16px',
-                  background: isCompleted ? '#22C55E' : isUnlocked ? pathThemeColor : '#CBD5E1',
+                  background: isCompleted ? '#22C55E' : pathThemeColor,
                   border: '2px solid #000000',
                   borderBottom: 'none',
                   borderRadius: '8px 8px 0 0',
@@ -424,14 +397,14 @@ export const CoursesView: React.FC<CoursesViewProps> = ({
                   gap: '6px',
                   fontSize: '0.72rem',
                   fontWeight: 900,
-                  color: isUnlocked || isCompleted ? '#FFFFFF' : '#475569',
+                  color: '#FFFFFF',
                   letterSpacing: '0.5px',
                   boxShadow: '2px -2px 0px #000000',
                   zIndex: 2
                 }}
               >
                 <span>
-                  LECCIÓN {idx + 1} • {isCompleted ? 'COMPLETADA' : isUnlocked ? 'DISPONIBLE' : 'BLOQUEADA'}
+                  UNIDAD {lessonUnit.id} • LECCIÓN {idx + 1} • {isCompleted ? 'COMPLETADA' : 'DISPONIBLE'}
                 </span>
               </div>
 
@@ -446,7 +419,7 @@ export const CoursesView: React.FC<CoursesViewProps> = ({
                   flexDirection: 'column',
                   gap: '14px',
                   boxSizing: 'border-box',
-                  opacity: isUnlocked || isCompleted ? 1 : 0.88
+                  opacity: 1
                 }}
               >
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '12px' }}>
@@ -456,10 +429,10 @@ export const CoursesView: React.FC<CoursesViewProps> = ({
                         width: '42px',
                         height: '42px',
                         borderRadius: '12px',
-                        background: isCompleted ? '#22C55E' : isUnlocked ? (isKotlin ? '#EFF6FF' : '#EEF2FF') : '#F1F5F9',
+                        background: isCompleted ? '#22C55E' : (isKotlin ? '#EFF6FF' : '#EEF2FF'),
                         border: '2px solid #000000',
                         boxShadow: '2.5px 2.5px 0px #000000',
-                        color: isCompleted ? '#FFFFFF' : isUnlocked ? pathThemeColor : '#64748B',
+                        color: isCompleted ? '#FFFFFF' : pathThemeColor,
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
@@ -470,10 +443,8 @@ export const CoursesView: React.FC<CoursesViewProps> = ({
                     >
                       {isCompleted ? (
                         <CheckCircle2 size={24} color="#FFFFFF" strokeWidth={2.8} />
-                      ) : isUnlocked ? (
-                        idx + 1
                       ) : (
-                        <Lock size={19} color="#64748B" strokeWidth={2.5} />
+                        idx + 1
                       )}
                     </div>
 
@@ -482,6 +453,26 @@ export const CoursesView: React.FC<CoursesViewProps> = ({
                         <h3 style={{ fontSize: '1.1rem', fontWeight: 900, color: '#0F172A', margin: 0, lineHeight: 1.3 }}>
                           {lesson.title}
                         </h3>
+
+                        {/* Tag de Unidad visible siempre (especialmente útil al buscar en todas las unidades) */}
+                        <span
+                          style={{
+                            background: isSearching ? '#FEF08A' : (isKotlin ? '#E0F2FE' : '#EEF2FF'),
+                            border: '1.5px solid #000000',
+                            boxShadow: '1.5px 1.5px 0px #000000',
+                            color: isSearching ? '#000000' : pathThemeColor,
+                            fontSize: '0.72rem',
+                            fontWeight: 900,
+                            padding: '2px 8px',
+                            borderRadius: '6px',
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: '4px'
+                          }}
+                        >
+                          <Layers size={11} strokeWidth={2.6} color={isSearching ? '#000000' : pathThemeColor} />
+                          Unidad {lessonUnit.id}: {lessonUnit.title.replace(/^\d+\.\s*/, '')}
+                        </span>
 
                         {prog?.theoryCompleted && (
                           <span
@@ -500,23 +491,6 @@ export const CoursesView: React.FC<CoursesViewProps> = ({
                             }}
                           >
                             <CheckCircle2 size={12} strokeWidth={2.8} color="#15803D" /> Teoría Aprobada
-                          </span>
-                        )}
-
-                        {!isUnlocked && (
-                          <span
-                            style={{
-                              background: '#F1F5F9',
-                              border: '1.5px solid #000000',
-                              boxShadow: '1.5px 1.5px 0px #000000',
-                              color: '#64748B',
-                              fontSize: '0.72rem',
-                              fontWeight: 900,
-                              padding: '2px 8px',
-                              borderRadius: '6px'
-                            }}
-                          >
-                            Bloqueado
                           </span>
                         )}
 
@@ -599,7 +573,7 @@ export const CoursesView: React.FC<CoursesViewProps> = ({
                           id: `th-${lesson.id}`,
                           lessonId: lesson.id,
                           pathId: currentPath,
-                          unitId: activeUnit.id,
+                          unitId: lessonUnit.id,
                           levelId: idx + 1,
                           title: lesson.title,
                           subtitle: 'Estudio de fundamentos y código conceptual.',
@@ -675,43 +649,35 @@ export const CoursesView: React.FC<CoursesViewProps> = ({
                       justifyContent: 'center',
                       gap: '8px',
                       borderRadius: '14px',
-                      background: isUnlocked ? '#22C55E' : '#E2E8F0',
-                      color: isUnlocked ? '#FFFFFF' : '#94A3B8',
-                      border: isUnlocked ? '2.5px solid #000000' : '2px solid #CBD5E1',
-                      boxShadow: isUnlocked ? '3.5px 3.5px 0px #000000' : '2px 2px 0px #94A3B8',
-                      cursor: isUnlocked ? 'pointer' : 'not-allowed',
+                      background: '#22C55E',
+                      color: '#FFFFFF',
+                      border: '2.5px solid #000000',
+                      boxShadow: '3.5px 3.5px 0px #000000',
+                      cursor: 'pointer',
                       transition: 'transform 0.08s ease, box-shadow 0.08s ease, background-color 0.12s ease'
                     }}
                     onMouseEnter={(e) => {
-                      if (!isUnlocked) return;
                       e.currentTarget.style.backgroundColor = '#16A34A';
                       e.currentTarget.style.transform = 'translate(-1px, -1px)';
                       e.currentTarget.style.boxShadow = '4.5px 4.5px 0px #000000';
                     }}
                     onMouseLeave={(e) => {
-                      if (!isUnlocked) return;
                       e.currentTarget.style.backgroundColor = '#22C55E';
                       e.currentTarget.style.transform = 'translate(0px, 0px)';
                       e.currentTarget.style.boxShadow = '3.5px 3.5px 0px #000000';
                     }}
                     onMouseDown={(e) => {
-                      if (!isUnlocked) return;
                       e.currentTarget.style.transform = 'translate(2px, 2px)';
                       e.currentTarget.style.boxShadow = '1px 1px 0px #000000';
                     }}
                     onMouseUp={(e) => {
-                      if (!isUnlocked) return;
                       e.currentTarget.style.transform = 'translate(-1px, -1px)';
                       e.currentTarget.style.boxShadow = '4.5px 4.5px 0px #000000';
                     }}
-                    title={isUnlocked ? 'Comenzar práctica interactiva' : 'Debes completar el nivel anterior para desbloquear este reto'}
+                    title="Comenzar práctica interactiva"
                   >
-                    {isUnlocked ? (
-                      <Play size={18} fill="#FFFFFF" color="#FFFFFF" />
-                    ) : (
-                      <Lock size={16} color="#94A3B8" strokeWidth={2.5} />
-                    )}
-                    <span>{isUnlocked ? 'Practicar Reto' : 'Bloqueado'}</span>
+                    <Play size={18} fill="#FFFFFF" color="#FFFFFF" />
+                    <span>Practicar Reto</span>
                   </button>
                 </div>
               </div>
@@ -719,7 +685,7 @@ export const CoursesView: React.FC<CoursesViewProps> = ({
           );
         })}
 
-        {filteredLessons.length === 0 && (
+        {displayedLessonItems.length === 0 && (
           <div
             style={{
               background: '#FFFFFF',

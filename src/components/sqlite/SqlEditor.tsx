@@ -11,6 +11,8 @@ import { splitSqlStatements } from '../../services/sqliteService';
 import { CodeAutocomplete } from '../common/CodeAutocomplete';
 import { SQL_COMPLETIONS } from '../../data/sqlCompletions';
 import { useCodeAutocomplete } from '../../hooks/useCodeAutocomplete';
+import { TableSchemaInfo } from '../../types/sqliteLab';
+import { CodeCompletionItem } from '../../types/autocomplete';
 
 export interface QueryTab {
   id: string;
@@ -30,6 +32,7 @@ interface SqlEditorProps {
   onExecuteAll: (sql?: string) => void;
   onSelectionChange?: (selectedSql: string) => void;
   isRunning?: boolean;
+  schemaTables?: TableSchemaInfo[];
 }
 
 const SQL_KEYWORDS = new Set([
@@ -126,16 +129,93 @@ export const SqlEditor: React.FC<SqlEditorProps> = ({
   onExecuteStatement,
   onExecuteAll,
   onSelectionChange,
-  isRunning = false
+  isRunning = false,
+  schemaTables = []
 }) => {
   const [copied, setCopied] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const highlightRef = useRef<HTMLPreElement>(null);
   const lineNumbersRef = useRef<HTMLDivElement>(null);
 
-  // Hook de autocompletado y recomendaciones SQL estilo NetBeans
+  // Construir diccionario dinámico combinando Tablas y Columnas de la BD activa + DDL en vivo del script + Palabras Reservadas SQL
+  const dynamicSqlDictionary = useMemo<CodeCompletionItem[]>(() => {
+    const items: CodeCompletionItem[] = [];
+
+    // 1. Tablas y vistas reales de la base de datos SQLite activa
+    for (const tbl of schemaTables) {
+      const colNames = tbl.columns.map(c => c.name);
+      const colSignature = tbl.columns.map(c => `${c.name} ${c.type || 'ANY'}${c.pk ? ' PK' : ''}`).join(', ');
+      items.push({
+        label: tbl.name,
+        insertText: tbl.name,
+        kind: 'table',
+        detail: tbl.type === 'view' ? 'Vista BD' : 'Tabla BD',
+        signature: `${tbl.type === 'view' ? 'VIEW' : 'TABLE'} ${tbl.name} (${colSignature || '...'})`,
+        description: `Tabla existente en la base de datos activa (${tbl.rowCount} registros). Columnas: ${colNames.join(', ') || 'ninguna'}.`,
+        example: `SELECT * FROM ${tbl.name};`
+      });
+
+      for (const col of tbl.columns) {
+        items.push({
+          label: col.name,
+          insertText: col.name,
+          kind: 'column',
+          detail: `${tbl.name}.${col.type || 'COL'}`,
+          signature: `${tbl.name}.${col.name} : ${col.type || 'ANY'}${col.pk ? ' PRIMARY KEY' : ''}`,
+          description: `Columna "${col.name}" perteneciente a la tabla "${tbl.name}" (tipo ${col.type || 'dinámico'}${col.pk ? ', Llave Primaria' : ''}).`,
+          example: `SELECT ${col.name} FROM ${tbl.name};`
+        });
+      }
+    }
+
+    // 2. Extraer tablas y columnas definidas en el texto actual del editor (CREATE TABLE ...) aún no ejecutadas
+    const allSqlText = [value, ...tabs.map(t => t.sql)].join('\n');
+    const createTableRegex = /CREATE\s+TABLE\s+(?:IF\s+NOT\s+EXISTS\s+)?["`[]?([a-zA-Z_][a-zA-Z0-9_]*)["`\]]?\s*\(([\s\S]*?)\)/gi;
+    let match: RegExpExecArray | null;
+    while ((match = createTableRegex.exec(allSqlText)) !== null) {
+      const tableName = match[1];
+      const body = match[2] || '';
+      items.push({
+        label: tableName,
+        insertText: tableName,
+        kind: 'table',
+        detail: 'Tabla Script',
+        signature: `CREATE TABLE ${tableName} (...)`,
+        description: `Tabla "${tableName}" declarada en tu script SQL actual.`,
+        example: `SELECT * FROM ${tableName};`
+      });
+
+      const lines = body.split(',');
+      for (const rawLine of lines) {
+        const clean = rawLine.replace(/--.*$/gm, '').trim();
+        if (!clean) continue;
+        const firstTokens = clean.split(/\s+/);
+        const colCandidate = firstTokens[0]?.replace(/^["`[]|["`\]]$/g, '');
+        const colType = firstTokens[1]?.toUpperCase() || '';
+        if (
+          colCandidate &&
+          /^[a-zA-Z_][a-zA-Z0-9_]*$/.test(colCandidate) &&
+          !['PRIMARY', 'FOREIGN', 'UNIQUE', 'CHECK', 'CONSTRAINT'].includes(colCandidate.toUpperCase())
+        ) {
+          items.push({
+            label: colCandidate,
+            insertText: colCandidate,
+            kind: 'column',
+            detail: `${tableName}.${colType || 'COL'}`,
+            signature: `${tableName}.${colCandidate} ${colType}`,
+            description: `Columna "${colCandidate}" definida en la tabla "${tableName}".`,
+            example: `SELECT ${colCandidate} FROM ${tableName};`
+          });
+        }
+      }
+    }
+
+    return [...items, ...SQL_COMPLETIONS];
+  }, [schemaTables, value, tabs]);
+
+  // Hook de autocompletado y recomendaciones SQL estilo NetBeans / SQL Server
   const autocomplete = useCodeAutocomplete({
-    dictionary: SQL_COMPLETIONS,
+    dictionary: dynamicSqlDictionary,
     value,
     onChange,
     textareaRef,

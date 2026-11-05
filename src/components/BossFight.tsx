@@ -368,6 +368,17 @@ export const BossFightArena: React.FC<BossFightProps> = ({
         text: '🛡️ Escudo Cuántico activo: Tu próximo fallo será protegido contra daño.',
         isError: false
       });
+    } else if (key === 'codePeek') {
+      soundService.playCorrect();
+      const correctOpt = currentStage.options[currentStage.correctOptionIndex];
+      const snippetPreview = correctOpt?.code ? correctOpt.code.split('\n')[0] : '';
+      setTeacherHintActive(
+        `💻 Pista de Código: El parche correcto aplica "${snippetPreview}" (${currentStage.teacherHint})`
+      );
+      setFeedbackMessage({
+        text: '💻 Pista de Código activada: Se reveló la estructura sintáctica del parche correcto.',
+        isError: false
+      });
     }
   };
 

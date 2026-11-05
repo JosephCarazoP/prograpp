@@ -22,6 +22,9 @@ import { SqliteLimitationsModal } from './SqliteLimitationsModal';
 import { CreateTableModal } from './CreateTableModal';
 import { NewDatabaseModal } from './NewDatabaseModal';
 import { RelationWarningModal } from './RelationWarningModal';
+import { LabInstructionsModal, formatInstructionDate } from '../common/LabInstructionsModal';
+import { labInstructionService } from '../../services/labInstructionService';
+import { LabInstructionPost } from '../../types/labInstruction';
 
 // Iconos
 import {
@@ -45,7 +48,8 @@ import {
   MousePointerClick,
   Layers,
   Check,
-  X
+  X,
+  ClipboardList
 } from 'lucide-react';
 
 export interface UserDatabase {
@@ -102,6 +106,8 @@ export const SqliteLab: React.FC<SqliteLabProps> = ({
 
   // Modales
   const [isLimitationsOpen, setIsLimitationsOpen] = useState(false);
+  const [isInstructionsOpen, setIsInstructionsOpen] = useState(false);
+  const [labInstructions, setLabInstructions] = useState<LabInstructionPost[]>([]);
   const [isResetConfirmOpen, setIsResetConfirmOpen] = useState(false);
   const [isExportDropdownOpen, setIsExportDropdownOpen] = useState(false);
   const [isDbDropdownOpen, setIsDbDropdownOpen] = useState(false);
@@ -173,6 +179,14 @@ export const SqliteLab: React.FC<SqliteLabProps> = ({
       }
     }
     loadExercises();
+  }, []);
+
+  // Suscripción en tiempo real a las instrucciones del Laboratorio SQL
+  useEffect(() => {
+    const unsubscribe = labInstructionService.subscribeToInstructions('sql', posts => {
+      setLabInstructions(posts);
+    });
+    return () => unsubscribe();
   }, []);
 
   // Gestión de bases de datos del usuario
@@ -272,47 +286,9 @@ export const SqliteLab: React.FC<SqliteLabProps> = ({
           setActiveTabId('q1');
         }
 
-        let savedBinary = await sqliteStorageService.loadDatabase(storageKey);
+        const savedBinary = await sqliteStorageService.loadDatabase(storageKey);
 
-        // ════ RECUPERACIÓN AUTOMÁTICA DESDE LA NUBE ════
-        let restoredFromCloud = false;
-        if (user.uid && user.uid !== 'guest') {
-          try {
-            const cloudRecord = await sqliteCloudSyncService.loadFromCloud(user.uid, storageKey);
-            if (cloudRecord) {
-              const localTs = sqliteCloudSyncService.getLocalSyncedTimestamp(storageKey);
-
-              // Caso 1: En esta máquina no existe la base local (ej. otra computadora o borraron historial)
-              if (!savedBinary || savedBinary.length === 0) {
-                const bytes = await sqliteCloudSyncService.restoreToLocal(cloudRecord);
-                if (bytes) {
-                  savedBinary = bytes;
-                  savedSql = cloudRecord.sql || savedSql;
-                  setTabs([{ id: 'q1', title: 'Query 1', sql: savedSql }]);
-                  setSyncStatus('synced');
-                  restoredFromCloud = true;
-                  const timeStr = new Date(cloudRecord.updatedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-                  setCloudNotice({
-                    type: 'success',
-                    message: `☁️ ¡Base de datos y consultas recuperadas desde tu cuenta en la nube! (Última actualización: ${timeStr})`
-                  });
-                  setTimeout(() => setCloudNotice(null), 7000);
-                }
-              }
-              // Caso 2: La nube tiene una versión significativamente más reciente (ej. trabajó en otra PC)
-              else if (cloudRecord.updatedAt > (localTs + 15000) && cloudRecord.binaryBase64) {
-                const timeStr = new Date(cloudRecord.updatedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-                setPendingCloudRestore({
-                  record: cloudRecord,
-                  message: `Se encontró una versión más reciente guardada en la nube (${timeStr}). ¿Deseas cargarla?`
-                });
-              }
-            }
-          } catch (cloudErr) {
-            console.warn('[SqliteLab] Error verificando respaldo en la nube:', cloudErr);
-          }
-        }
-
+        // 1. Inicializar motor SQLite localmente DE INMEDIATO sin esperar a la red
         if (savedBinary && savedBinary.length > 0) {
           await sqliteService.openDatabase(savedBinary);
         } else {
@@ -329,9 +305,59 @@ export const SqliteLab: React.FC<SqliteLabProps> = ({
         if (!isCancelled) {
           const tables = await sqliteService.introspectSchema();
           setSchemaTables(tables);
-          if (!restoredFromCloud) {
-            setSyncStatus(sqliteCloudSyncService.isDirty(storageKey) ? 'dirty' : 'synced');
-          }
+          setSyncStatus(sqliteCloudSyncService.isDirty(storageKey) ? 'dirty' : 'synced');
+          // Liberar la interfaz inmediatamente para que el alumno pueda trabajar sin esperas
+          setIsInitializing(false);
+        }
+
+        // 2. Verificación y recuperación desde la nube EN SEGUNDO PLANO (No bloqueante)
+        if (user.uid && user.uid !== 'guest' && !isCancelled) {
+          sqliteCloudSyncService
+            .loadFromCloud(user.uid, storageKey)
+            .then(async cloudRecord => {
+              if (!cloudRecord || isCancelled) return;
+              const localTs = sqliteCloudSyncService.getLocalSyncedTimestamp(storageKey);
+
+              // Caso 1: En esta máquina no existía base local y en la nube sí hay respaldo
+              if (!savedBinary || savedBinary.length === 0) {
+                const bytes = await sqliteCloudSyncService.restoreToLocal(cloudRecord);
+                if (bytes && !isCancelled) {
+                  await sqliteService.openDatabase(bytes);
+                  const restoredSql = cloudRecord.sql || savedSql;
+                  setTabs(prev =>
+                    prev.length === 1 && prev[0].id === 'q1'
+                      ? [{ id: 'q1', title: 'Query 1', sql: restoredSql }]
+                      : prev
+                  );
+                  const refreshedTables = await sqliteService.introspectSchema();
+                  setSchemaTables(refreshedTables);
+                  setSyncStatus('synced');
+                  const timeStr = new Date(cloudRecord.updatedAt).toLocaleTimeString([], {
+                    hour: '2-digit',
+                    minute: '2-digit'
+                  });
+                  setCloudNotice({
+                    type: 'success',
+                    message: `☁️ ¡Base de datos y consultas recuperadas desde tu cuenta en la nube! (Última actualización: ${timeStr})`
+                  });
+                  setTimeout(() => setCloudNotice(null), 7000);
+                }
+              }
+              // Caso 2: La nube tiene una versión significativamente más reciente
+              else if (cloudRecord.updatedAt > localTs + 15000 && cloudRecord.binaryBase64) {
+                const timeStr = new Date(cloudRecord.updatedAt).toLocaleTimeString([], {
+                  hour: '2-digit',
+                  minute: '2-digit'
+                });
+                setPendingCloudRestore({
+                  record: cloudRecord,
+                  message: `Se encontró una versión más reciente guardada en la nube (${timeStr}). ¿Deseas cargarla?`
+                });
+              }
+            })
+            .catch(cloudErr => {
+              console.warn('[SqliteLab] Error verificando respaldo en la nube en segundo plano:', cloudErr);
+            });
         }
       } catch (err: any) {
         console.error('Error inicializando SQLite Lab:', err);
@@ -560,6 +586,26 @@ export const SqliteLab: React.FC<SqliteLabProps> = ({
     const nextVal = currentSql.trim() ? `${currentSql}\n\n${sql}` : sql;
     handleSqlChange(nextVal);
     setMobileTab('editor');
+  };
+
+  // Cargar un script adjunto desde la sección de Instrucciones en una nueva pestaña del editor
+  const handleLoadInstructionScript = (code: string, title: string) => {
+    const cleanTitle = title.trim() ? title.trim().slice(0, 24) : `Script ${tabs.length + 1}`;
+    const newTabId = `q_${Date.now()}`;
+    const newTab: QueryTab = {
+      id: newTabId,
+      title: cleanTitle,
+      sql: code
+    };
+    setTabs(prev => [...prev, newTab]);
+    setActiveTabId(newTabId);
+    setSelectedSql('');
+    setMobileTab('editor');
+    sqliteStorageService.saveStudentSql(storageKey, code);
+    sqliteCloudSyncService.markDirty(storageKey);
+    setSyncStatus('dirty');
+    setSubmitSuccessMsg(`¡Script "${cleanTitle}" cargado en tu editor!`);
+    setTimeout(() => setSubmitSuccessMsg(null), 3500);
   };
 
   // Ver datos de una tabla (SELECT * FROM tabla;) directamente en la tabla de resultados
@@ -1064,6 +1110,45 @@ INSERT INTO articulos (nombre, precio, stock) VALUES
               <Plus size={14} />
               <span className="sqlite-btn-label-desktop">Nueva BD</span>
               <span className="sqlite-btn-label-mobile">BD</span>
+            </button>
+
+            {/* Botón Instrucciones de Ejercicios */}
+            <button
+              type="button"
+              className="sqlite-btn-util"
+              onClick={() => {
+                soundService.playToken();
+                setIsInstructionsOpen(true);
+              }}
+              style={{
+                background: '#FDE047',
+                color: '#000',
+                borderColor: '#000',
+                fontWeight: 900,
+                position: 'relative'
+              }}
+              title="Abrir instrucciones, enunciados y scripts del ejercicio"
+            >
+              <ClipboardList size={14} strokeWidth={2.5} />
+              <span>Instrucciones</span>
+              {labInstructions.length > 0 && (
+                <span
+                  style={{
+                    background: labInstructions.some(p => formatInstructionDate(p.createdAt).isToday)
+                      ? '#10B981'
+                      : '#0284C7',
+                    color: '#FFF',
+                    border: '1.5px solid #000',
+                    borderRadius: 999,
+                    padding: '0 6px',
+                    fontSize: 10,
+                    fontWeight: 900,
+                    lineHeight: '16px'
+                  }}
+                >
+                  {labInstructions.length}
+                </span>
+              )}
             </button>
 
             {/* Si es una base personalizada creada por el usuario (no default), botón para eliminarla */}
@@ -1753,6 +1838,7 @@ INSERT INTO articulos (nombre, precio, stock) VALUES
               <ButtonProgrammingLab
                 exercise={activeExercise}
                 storageKey={storageKey}
+                schemaTables={schemaTables}
                 onDatabaseModified={refreshSchema}
               />
             ) : (
@@ -1774,6 +1860,7 @@ INSERT INTO articulos (nombre, precio, stock) VALUES
                   onExecuteAll={(sql) => handleExecute(sql || currentSql)}
                   onSelectionChange={setSelectedSql}
                   isRunning={isRunning}
+                  schemaTables={schemaTables}
                 />
 
                 {/* Tabla de Resultados */}
@@ -1902,6 +1989,17 @@ INSERT INTO articulos (nombre, precio, stock) VALUES
         targetTable={tableToDelete}
         allTables={schemaTables}
         onConfirmDrop={handleConfirmDropTable}
+      />
+
+      {/* ═══ MODAL Y MURO DE INSTRUCCIONES DE EJERCICIOS (ESTILO PUBLICACIÓN) ═══ */}
+      <LabInstructionsModal
+        labType="sql"
+        userUid={user.uid}
+        userEmail={user.email}
+        userName={user.displayName}
+        isOpen={isInstructionsOpen}
+        onClose={() => setIsInstructionsOpen(false)}
+        onLoadScriptToEditor={(code, title) => handleLoadInstructionScript(code, title)}
       />
     </div>
   );

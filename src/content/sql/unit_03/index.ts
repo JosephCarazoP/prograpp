@@ -42,7 +42,7 @@ export const SQL_UNIT_03_LESSONS: Lesson[] = [
       {
         "id": "sql-u03-l01-e03",
         "type": "code_builder",
-        "prompt": "Ordena los bloques para construir la sentencia correcta de: \"Estructura de CREATE TABLE\":",
+        "prompt": "Ordena los bloques para construir la sentencia CREATE TABLE válida:",
         "tokens": [
           "CREATE",
           "TABLE",
@@ -136,7 +136,7 @@ export const SQL_UNIT_03_LESSONS: Lesson[] = [
       {
         "id": "sql-u03-l01-e08",
         "type": "code_builder",
-        "prompt": "Construye la instrucción sintáctica complementaria para \"Estructura de CREATE TABLE\":",
+        "prompt": "Ordena los bloques para consultar las columnas \"id\" y \"nombre\" de la tabla \"estudiantes\" (finalizando con punto y coma):",
         "tokens": [
           "SELECT",
           "id,",
@@ -160,7 +160,11 @@ export const SQL_UNIT_03_LESSONS: Lesson[] = [
         "id": "sql-u03-l01-e09",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea con el error de diseño o sintaxis en \"Estructura de CREATE TABLE\":",
-        "codeSnippet": [ "-- Consulta sobre el esquema educativo", "SELECT id, nombre FROM estudiantes", "WHERE id == 10;" ],
+        "codeSnippet": [
+          "-- Consulta sobre el esquema educativo",
+          "SELECT id, nombre FROM estudiantes",
+          "WHERE id == 10;"
+        ],
         "bugLineIndex": 2,
         "explanation": "Olvidar la coma entre columnas o poner una coma de más después de la última columna antes del paréntesis de cierre.",
         "xpReward": 15
@@ -203,8 +207,8 @@ export const SQL_UNIT_03_LESSONS: Lesson[] = [
       {
         "id": "sql-u03-l02-e01",
         "type": "predict_output",
-        "prompt": "¿Cuál es el resultado exacto en consola tras evaluar la siguiente instrucción sobre \"Nombres de tablas y columnas\"?",
-        "code": "SELECT id, nombre, carrera FROM estudiantes LIMIT 1;",
+        "prompt": "Observa los registros de la tabla \"estudiantes\" y determina el resultado exacto de la consulta:",
+        "code": "-- Tabla estudiantes (5 registros):\n-- | id | nombre          | carrera                | semestre | promedio |\n-- | 1  | Valeria Morales | Ingeniería de Software | 3        | 9.4      |\n-- | 2  | Diego Fernández | Ciberseguridad         | 5        | 8.7      |\n-- | 3  | Camila Gómez    | Ciencia de Datos       | 4        | 9.8      |\n-- | 4  | Mateo Rojas     | Ciberseguridad         | 2        | 8.3      |\n-- | 5  | Lucía Vargas    | Computación            | 6        | 9.1      |\n\nSELECT id, nombre, carrera FROM estudiantes LIMIT 1;",
         "options": [
           "1 row returned",
           "Error",
@@ -233,7 +237,7 @@ export const SQL_UNIT_03_LESSONS: Lesson[] = [
       {
         "id": "sql-u03-l02-e03",
         "type": "code_builder",
-        "prompt": "Ordena los bloques para construir la sentencia correcta de: \"Nombres de tablas y columnas\":",
+        "prompt": "Ordena los bloques para declarar la columna 'fecha_registro' con la restricción obligatoria NOT NULL:",
         "tokens": [
           "fecha_registro",
           "TEXT",
@@ -253,7 +257,11 @@ export const SQL_UNIT_03_LESSONS: Lesson[] = [
         "id": "sql-u03-l02-e04",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea que contiene el error en este código de \"Nombres de tablas y columnas\":",
-        "codeSnippet": [ "CREATE TABLE usuarios (", "    primer nombre TEXT", ")" ],
+        "codeSnippet": [
+          "CREATE TABLE usuarios (",
+          "    primer nombre TEXT",
+          ")"
+        ],
         "bugLineIndex": 1,
         "explanation": "Usar palabras reservadas de SQL como nombres de columnas (ej. llamar a una columna \"select\", \"where\" o \"table\").",
         "xpReward": 15
@@ -316,7 +324,7 @@ export const SQL_UNIT_03_LESSONS: Lesson[] = [
       {
         "id": "sql-u03-l02-e08",
         "type": "code_builder",
-        "prompt": "Construye la instrucción sintáctica complementaria para \"Nombres de tablas y columnas\":",
+        "prompt": "Ordena los bloques para consultar las columnas \"id\" y \"nombre\" de la tabla \"estudiantes\" (finalizando con punto y coma):",
         "tokens": [
           "SELECT",
           "id,",
@@ -340,7 +348,11 @@ export const SQL_UNIT_03_LESSONS: Lesson[] = [
         "id": "sql-u03-l02-e09",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea con el error de diseño o sintaxis en \"Nombres de tablas y columnas\":",
-        "codeSnippet": [ "-- Consulta sobre el esquema educativo", "SELECT id, nombre FROM estudiantes", "WHERE id == 10;" ],
+        "codeSnippet": [
+          "-- Consulta sobre el esquema educativo",
+          "SELECT id, nombre FROM estudiantes",
+          "WHERE id == 10;"
+        ],
         "bugLineIndex": 2,
         "explanation": "Usar palabras reservadas de SQL como nombres de columnas (ej. llamar a una columna \"select\", \"where\" o \"table\").",
         "xpReward": 15
@@ -502,7 +514,7 @@ export const SQL_UNIT_03_LESSONS: Lesson[] = [
       {
         "id": "sql-u03-l03-e08",
         "type": "code_builder",
-        "prompt": "Construye la instrucción sintáctica complementaria para \"INTEGER, REAL y TEXT\":",
+        "prompt": "Ordena los bloques para consultar las columnas \"id\" y \"nombre\" de la tabla \"estudiantes\" (finalizando con punto y coma):",
         "tokens": [
           "SELECT",
           "id,",
@@ -526,7 +538,11 @@ export const SQL_UNIT_03_LESSONS: Lesson[] = [
         "id": "sql-u03-l03-e09",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea con el error de diseño o sintaxis en \"INTEGER, REAL y TEXT\":",
-        "codeSnippet": [ "-- Consulta sobre el esquema educativo", "SELECT id, nombre FROM estudiantes", "WHERE id == 10;" ],
+        "codeSnippet": [
+          "-- Consulta sobre el esquema educativo",
+          "SELECT id, nombre FROM estudiantes",
+          "WHERE id == 10;"
+        ],
         "bugLineIndex": 2,
         "explanation": "Usar TEXT para números que vas a sumar o promediar: la comparación alfabética hará que \"10\" sea menor que \"2\".",
         "xpReward": 15
@@ -621,7 +637,11 @@ export const SQL_UNIT_03_LESSONS: Lesson[] = [
         "id": "sql-u03-l04-e04",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea que contiene el error en este código de \"Reconocimiento de BLOB\":",
-        "codeSnippet": [ "CREATE TABLE img (", "    foto IMAGE", ")" ],
+        "codeSnippet": [
+          "CREATE TABLE img (",
+          "    foto IMAGE",
+          ")"
+        ],
         "bugLineIndex": 1,
         "explanation": "Guardar archivos de video de 500 MB en columnas BLOB ralentizará enormemente las copias de seguridad de la base de datos.",
         "xpReward": 15
@@ -684,7 +704,7 @@ export const SQL_UNIT_03_LESSONS: Lesson[] = [
       {
         "id": "sql-u03-l04-e08",
         "type": "code_builder",
-        "prompt": "Construye la instrucción sintáctica complementaria para \"Reconocimiento de BLOB\":",
+        "prompt": "Ordena los bloques para consultar las columnas \"id\" y \"nombre\" de la tabla \"estudiantes\" (finalizando con punto y coma):",
         "tokens": [
           "SELECT",
           "id,",
@@ -708,7 +728,11 @@ export const SQL_UNIT_03_LESSONS: Lesson[] = [
         "id": "sql-u03-l04-e09",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea con el error de diseño o sintaxis en \"Reconocimiento de BLOB\":",
-        "codeSnippet": [ "-- Consulta sobre el esquema educativo", "SELECT id, nombre FROM estudiantes", "WHERE id == 10;" ],
+        "codeSnippet": [
+          "-- Consulta sobre el esquema educativo",
+          "SELECT id, nombre FROM estudiantes",
+          "WHERE id == 10;"
+        ],
         "bugLineIndex": 2,
         "explanation": "Guardar archivos de video de 500 MB en columnas BLOB ralentizará enormemente las copias de seguridad de la base de datos.",
         "xpReward": 15
@@ -781,7 +805,7 @@ export const SQL_UNIT_03_LESSONS: Lesson[] = [
       {
         "id": "sql-u03-l05-e03",
         "type": "code_builder",
-        "prompt": "Ordena los bloques para construir la sentencia correcta de: \"Representación de valores lógicos y fechas\":",
+        "prompt": "Ordena los bloques para definir la columna booleana 'activo' de tipo entero (INTEGER) con valor por defecto (DEFAULT) igual a 1 (verdadero):",
         "tokens": [
           "activo",
           "INTEGER",
@@ -794,16 +818,20 @@ export const SQL_UNIT_03_LESSONS: Lesson[] = [
           "DEFAULT",
           "1"
         ],
-        "explanation": "Almacena siempre fechas en formato ISO-8601 (\"AAAA-MM-DD HH:MM:SS\") para que el orden alfabético coincida con el orden cronológico.",
+        "explanation": "En SQLite los valores booleanos se almacenan usando INTEGER (1 para verdadero, 0 para falso), por lo que 'activo INTEGER DEFAULT 1' define una columna booleana activa por defecto.",
         "xpReward": 15
       },
       {
         "id": "sql-u03-l05-e04",
         "type": "spot_the_bug",
-        "prompt": "Identifica la línea que contiene el error en este código de \"Representación de valores lógicos y fechas\":",
-        "codeSnippet": [ "-- Consulta sobre estudiantes", "// Guardar fecha como \"15 de marzo de 2024\": imposible de ordenar con ORDER BY", "ORDER BY id ASC;" ],
+        "prompt": "Identifica la línea con el comentario inválido (//) y mal formato de fecha para ordenamiento cronológico en SQLite:",
+        "codeSnippet": [
+          "-- Consulta sobre estudiantes",
+          "// Guardar fecha como \"15 de marzo de 2024\": imposible de ordenar con ORDER BY",
+          "ORDER BY id ASC;"
+        ],
         "bugLineIndex": 1,
-        "explanation": "Guardar fechas en formato \"DD/MM/AAAA\": si ordenas alfabéticamente, \"01/12/2024\" saldrá antes que \"02/01/2020\", ¡lo cual es un desastre!",
+        "explanation": "En SQL los comentarios usan '--' (no '//') y las fechas deben guardarse en formato ISO-8601 ('AAAA-MM-DD') para poder ordenarse cronológicamente.",
         "xpReward": 15
       },
       {
@@ -812,23 +840,23 @@ export const SQL_UNIT_03_LESSONS: Lesson[] = [
         "prompt": "Empareja cada concepto clave de \"Representación de valores lógicos y fechas\" con su definición correspondiente:",
         "pairs": [
           {
-            "left": "SQLite no tiene un tipo BOOLEAN separado",
-            "right": "utiliza INTEGER con valores 0 (false) y 1 (true)."
+            "left": "Booleanos en SQLite",
+            "right": "No existe un tipo BOOLEAN separado; se usa INTEGER con 0 (false) y 1 (true)."
           },
           {
-            "left": "Principio 2",
-            "right": "Las fechas se gestionan mediante funciones integradas como DATE(), TIME() y DATETIME()."
+            "left": "Funciones temporales",
+            "right": "Las fechas y horas se procesan con funciones integradas como DATE(), TIME() y DATETIME()."
           },
           {
-            "left": "Principio 3",
-            "right": "El formato TEXT estándar ISO-8601 permite comparaciones cronológicas con < y >."
+            "left": "Formato ISO-8601",
+            "right": "Almacenar fechas como TEXT 'AAAA-MM-DD HH:MM:SS' permite compararlas con < y >."
           },
           {
-            "left": "Buena práctica",
-            "right": "Almacena siempre fechas en formato ISO-8601 (\"AAAA-M..."
+            "left": "Orden cronológico",
+            "right": "En formato 'AAAA-MM-DD', el orden alfabético coincide exactamente con el orden cronológico."
           }
         ],
-        "explanation": "Dominio de los conceptos esenciales y fundamentos teóricos de la lección.",
+        "explanation": "Dominio de la representación de booleanos (INTEGER 0/1) y fechas ISO-8601 en SQLite.",
         "xpReward": 15
       },
       {
@@ -864,7 +892,7 @@ export const SQL_UNIT_03_LESSONS: Lesson[] = [
       {
         "id": "sql-u03-l05-e08",
         "type": "code_builder",
-        "prompt": "Construye la instrucción sintáctica complementaria para \"Representación de valores lógicos y fechas\":",
+        "prompt": "Ordena los bloques para consultar las columnas \"id\" y \"nombre\" de la tabla \"estudiantes\" (finalizando con punto y coma):",
         "tokens": [
           "SELECT",
           "id,",
@@ -888,7 +916,11 @@ export const SQL_UNIT_03_LESSONS: Lesson[] = [
         "id": "sql-u03-l05-e09",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea con el error de diseño o sintaxis en \"Representación de valores lógicos y fechas\":",
-        "codeSnippet": [ "-- Consulta sobre el esquema educativo", "SELECT id, nombre FROM estudiantes", "WHERE id == 10;" ],
+        "codeSnippet": [
+          "-- Consulta sobre el esquema educativo",
+          "SELECT id, nombre FROM estudiantes",
+          "WHERE id == 10;"
+        ],
         "bugLineIndex": 2,
         "explanation": "Guardar fechas en formato \"DD/MM/AAAA\": si ordenas alfabéticamente, \"01/12/2024\" saldrá antes que \"02/01/2020\", ¡lo cual es un desastre!",
         "xpReward": 15
@@ -961,7 +993,7 @@ export const SQL_UNIT_03_LESSONS: Lesson[] = [
       {
         "id": "sql-u03-l06-e03",
         "type": "code_builder",
-        "prompt": "Ordena los bloques para construir la sentencia correcta de: \"Flexibilidad de tipos en SQLite\":",
+        "prompt": "Ordena los bloques para construir la consulta SQL que inspecciona el tipo de dato almacenado en la columna 'promedio' de la tabla 'estudiantes' usando la función typeof():",
         "tokens": [
           "SELECT",
           "typeof",
@@ -980,16 +1012,28 @@ export const SQL_UNIT_03_LESSONS: Lesson[] = [
           "FROM",
           "estudiantes"
         ],
-        "explanation": "Aunque SQLite sea flexible, escribe siempre tus sentencias como si fuera estricto para garantizar portabilidad con PostgreSQL.",
+        "acceptableAlternatives": [
+          [
+            "SELECT",
+            "typeof(promedio)",
+            "FROM",
+            "estudiantes"
+          ]
+        ],
+        "explanation": "La sentencia 'SELECT typeof(promedio) FROM estudiantes' evalúa y devuelve la clase de almacenamiento real de la columna 'promedio' para cada fila de 'estudiantes'.",
         "xpReward": 15
       },
       {
         "id": "sql-u03-l06-e04",
         "type": "spot_the_bug",
-        "prompt": "Identifica la línea que contiene el error en este código de \"Flexibilidad de tipos en SQLite\":",
-        "codeSnippet": [ "-- Consulta sobre estudiantes", "SELECT type(columna)", "ORDER BY id ASC;" ],
+        "prompt": "Identifica la línea donde se usa un nombre de función inexistente (type en vez de typeof) y falta la cláusula FROM:",
+        "codeSnippet": [
+          "-- Consulta sobre estudiantes",
+          "SELECT type(columna)",
+          "ORDER BY id ASC;"
+        ],
         "bugLineIndex": 1,
-        "explanation": "Aprovecharse del tipado flexible para meter texto en una columna INTEGER: arruinará tus funciones AVG() o SUM().",
+        "explanation": "En SQLite la función para consultar el tipo de almacenamiento es typeof(columna), no type(columna), además de requerir la tabla en FROM.",
         "xpReward": 15
       },
       {
@@ -999,22 +1043,22 @@ export const SQL_UNIT_03_LESSONS: Lesson[] = [
         "pairs": [
           {
             "left": "Afinidad de tipos",
-            "right": "SQLite intenta convertir el valor al tipo preferido de la columna."
+            "right": "SQLite intenta convertir el valor insertado al tipo preferido de la columna."
           },
           {
-            "left": "Las 5 clases de almacenamiento fundamentales",
-            "right": "NULL, INTEGER, REAL, TEXT, BLOB."
+            "left": "Clases de almacenamiento",
+            "right": "Las 5 categorías internas de SQLite: NULL, INTEGER, REAL, TEXT y BLOB."
           },
           {
-            "left": "Principio 3",
-            "right": "La función typeof() devuelve la clase de almacenamiento real de cualquier expresión."
+            "left": "Función typeof()",
+            "right": "Devuelve la clase de almacenamiento real de cualquier valor o expresión."
           },
           {
-            "left": "Buena práctica",
-            "right": "Aunque SQLite sea flexible, escribe siempre tus sent..."
+            "left": "Portabilidad SQL",
+            "right": "Respetar los tipos declarados facilita migrar a motores estrictos como PostgreSQL."
           }
         ],
-        "explanation": "Dominio de los conceptos esenciales y fundamentos teóricos de la lección.",
+        "explanation": "Dominio del tipado dinámico, afinidad de tipos y la función typeof() en SQLite.",
         "xpReward": 15
       },
       {
@@ -1050,7 +1094,7 @@ export const SQL_UNIT_03_LESSONS: Lesson[] = [
       {
         "id": "sql-u03-l06-e08",
         "type": "code_builder",
-        "prompt": "Construye la instrucción sintáctica complementaria para \"Flexibilidad de tipos en SQLite\":",
+        "prompt": "Ordena los bloques para consultar las columnas \"id\" y \"nombre\" de la tabla \"estudiantes\" (finalizando con punto y coma):",
         "tokens": [
           "SELECT",
           "id,",
@@ -1074,7 +1118,11 @@ export const SQL_UNIT_03_LESSONS: Lesson[] = [
         "id": "sql-u03-l06-e09",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea con el error de diseño o sintaxis en \"Flexibilidad de tipos en SQLite\":",
-        "codeSnippet": [ "-- Consulta sobre el esquema educativo", "SELECT id, nombre FROM estudiantes", "WHERE id == 10;" ],
+        "codeSnippet": [
+          "-- Consulta sobre el esquema educativo",
+          "SELECT id, nombre FROM estudiantes",
+          "WHERE id == 10;"
+        ],
         "bugLineIndex": 2,
         "explanation": "Aprovecharse del tipado flexible para meter texto en una columna INTEGER: arruinará tus funciones AVG() o SUM().",
         "xpReward": 15

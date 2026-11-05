@@ -6,11 +6,13 @@ import { soundService } from '../../services/soundService';
 interface ParsonsProps {
   exercise: ParsonsPuzzleType;
   onOrderChange: (order: number[]) => void;
+  externalOrder?: number[];
 }
 
 export const ParsonsPuzzleComponent: React.FC<ParsonsProps> = ({
   exercise,
-  onOrderChange
+  onOrderChange,
+  externalOrder
 }) => {
   // Genera un orden mezclado determinístico para que sea un verdadero reto a ordenar
   const getScrambledOrder = (len: number) => {
@@ -27,6 +29,13 @@ export const ParsonsPuzzleComponent: React.FC<ParsonsProps> = ({
     setCurrentOrder(scrambled);
     onOrderChange(scrambled);
   }, [exercise.id, exercise.lines.length]);
+
+  // Sincronizar cuando un comodín actualiza el orden desde el contenedor padre
+  useEffect(() => {
+    if (externalOrder && externalOrder.length === exercise.lines.length) {
+      setCurrentOrder(externalOrder);
+    }
+  }, [externalOrder, exercise.lines.length]);
 
   const moveLine = (index: number, direction: 'up' | 'down') => {
     soundService.playToken();

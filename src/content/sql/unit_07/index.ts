@@ -12,8 +12,8 @@ export const SQL_UNIT_07_LESSONS: Lesson[] = [
       {
         "id": "sql-u07-l01-e01",
         "type": "predict_output",
-        "prompt": "¿Cuál es el resultado exacto en consola tras evaluar la siguiente instrucción sobre \"WHERE y comparaciones\"?",
-        "code": "SELECT COUNT(*) FROM estudiantes WHERE promedio < 9.0;",
+        "prompt": "Observa los registros de la tabla \"estudiantes\" y determina el resultado exacto de la consulta:",
+        "code": "-- Tabla estudiantes (5 registros):\n-- | id | nombre          | carrera                | semestre | promedio |\n-- | 1  | Valeria Morales | Ingeniería de Software | 3        | 9.4      |\n-- | 2  | Diego Fernández | Ciberseguridad         | 5        | 8.7      |\n-- | 3  | Camila Gómez    | Ciencia de Datos       | 4        | 9.8      |\n-- | 4  | Mateo Rojas     | Ciberseguridad         | 2        | 8.3      |\n-- | 5  | Lucía Vargas    | Computación            | 6        | 9.1      |\n\nSELECT COUNT(*) FROM estudiantes WHERE promedio < 9.0;",
         "options": [
           "2",
           "3",
@@ -42,7 +42,7 @@ export const SQL_UNIT_07_LESSONS: Lesson[] = [
       {
         "id": "sql-u07-l01-e03",
         "type": "code_builder",
-        "prompt": "Ordena los bloques para construir la sentencia correcta de: \"WHERE y comparaciones\":",
+        "prompt": "Ordena los bloques para construir la consulta SELECT válida (SELECT * FROM estudiantes WHERE promedio >= 9.0):",
         "tokens": [
           "SELECT",
           "*",
@@ -70,7 +70,11 @@ export const SQL_UNIT_07_LESSONS: Lesson[] = [
         "id": "sql-u07-l01-e04",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea que contiene el error en este código de \"WHERE y comparaciones\":",
-        "codeSnippet": [ "-- Consulta sobre estudiantes", "SELECT * FROM estudiantes WHERE promedio == 9.0", "ORDER BY id ASC;" ],
+        "codeSnippet": [
+          "-- Consulta sobre estudiantes",
+          "SELECT * FROM estudiantes WHERE promedio == 9.0",
+          "ORDER BY id ASC;"
+        ],
         "bugLineIndex": 1,
         "explanation": "Para desigualdad puedes usar != o <>, pero nunca uses !==.",
         "xpReward": 15
@@ -133,7 +137,7 @@ export const SQL_UNIT_07_LESSONS: Lesson[] = [
       {
         "id": "sql-u07-l01-e08",
         "type": "code_builder",
-        "prompt": "Construye la instrucción sintáctica complementaria para \"WHERE y comparaciones\":",
+        "prompt": "Ordena los bloques para consultar las columnas \"id\" y \"nombre\" de la tabla \"estudiantes\" (finalizando con punto y coma):",
         "tokens": [
           "SELECT",
           "id,",
@@ -157,7 +161,11 @@ export const SQL_UNIT_07_LESSONS: Lesson[] = [
         "id": "sql-u07-l01-e09",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea con el error de diseño o sintaxis en \"WHERE y comparaciones\":",
-        "codeSnippet": [ "-- Consulta sobre el esquema educativo", "SELECT id, nombre FROM estudiantes", "WHERE id == 10;" ],
+        "codeSnippet": [
+          "-- Consulta sobre el esquema educativo",
+          "SELECT id, nombre FROM estudiantes",
+          "WHERE id == 10;"
+        ],
         "bugLineIndex": 2,
         "explanation": "Para desigualdad puedes usar != o <>, pero nunca uses !==.",
         "xpReward": 15
@@ -200,8 +208,8 @@ export const SQL_UNIT_07_LESSONS: Lesson[] = [
       {
         "id": "sql-u07-l02-e01",
         "type": "predict_output",
-        "prompt": "¿Cuál es el resultado exacto en consola tras evaluar la siguiente instrucción sobre \"AND, OR y NOT\"?",
-        "code": "SELECT COUNT(*) FROM estudiantes WHERE carrera = 'Ingeniería de Software' OR carrera = 'Ciberseguridad';",
+        "prompt": "Observa los registros de la tabla \"estudiantes\" y determina el resultado exacto de la consulta:",
+        "code": "-- Tabla estudiantes (5 registros):\n-- | id | nombre          | carrera                | semestre | promedio |\n-- | 1  | Valeria Morales | Ingeniería de Software | 3        | 9.4      |\n-- | 2  | Diego Fernández | Ciberseguridad         | 5        | 8.7      |\n-- | 3  | Camila Gómez    | Ciencia de Datos       | 4        | 9.8      |\n-- | 4  | Mateo Rojas     | Ciberseguridad         | 2        | 8.3      |\n-- | 5  | Lucía Vargas    | Computación            | 6        | 9.1      |\n\nSELECT COUNT(*) FROM estudiantes WHERE carrera = 'Ingeniería de Software' OR carrera = 'Ciberseguridad';",
         "options": [
           "3",
           "2",
@@ -258,7 +266,11 @@ export const SQL_UNIT_07_LESSONS: Lesson[] = [
         "id": "sql-u07-l02-e04",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea que contiene el error en este código de \"AND, OR y NOT\":",
-        "codeSnippet": [ "-- Consulta sobre estudiantes", "SELECT * FROM t WHERE col = 'A' && col = 'B'", "ORDER BY id ASC;" ],
+        "codeSnippet": [
+          "-- Consulta sobre estudiantes",
+          "SELECT * FROM t WHERE col = 'A' && col = 'B'",
+          "ORDER BY id ASC;"
+        ],
         "bugLineIndex": 1,
         "explanation": "Escribir `carrera = \"A\" OR \"B\"` es incorrecto: debes repetir la columna `carrera = \"A\" OR carrera = \"B\"`.",
         "xpReward": 15
@@ -321,7 +333,7 @@ export const SQL_UNIT_07_LESSONS: Lesson[] = [
       {
         "id": "sql-u07-l02-e08",
         "type": "code_builder",
-        "prompt": "Construye la instrucción sintáctica complementaria para \"AND, OR y NOT\":",
+        "prompt": "Ordena los bloques para consultar las columnas \"id\" y \"nombre\" de la tabla \"estudiantes\" (finalizando con punto y coma):",
         "tokens": [
           "SELECT",
           "id,",
@@ -345,7 +357,11 @@ export const SQL_UNIT_07_LESSONS: Lesson[] = [
         "id": "sql-u07-l02-e09",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea con el error de diseño o sintaxis en \"AND, OR y NOT\":",
-        "codeSnippet": [ "-- Consulta sobre el esquema educativo", "SELECT id, nombre FROM estudiantes", "WHERE id == 10;" ],
+        "codeSnippet": [
+          "-- Consulta sobre el esquema educativo",
+          "SELECT id, nombre FROM estudiantes",
+          "WHERE id == 10;"
+        ],
         "bugLineIndex": 2,
         "explanation": "Escribir `carrera = \"A\" OR \"B\"` es incorrecto: debes repetir la columna `carrera = \"A\" OR carrera = \"B\"`.",
         "xpReward": 15
@@ -388,8 +404,8 @@ export const SQL_UNIT_07_LESSONS: Lesson[] = [
       {
         "id": "sql-u07-l03-e01",
         "type": "predict_output",
-        "prompt": "¿Cuál es el resultado exacto en consola tras evaluar la siguiente instrucción sobre \"Paréntesis en condiciones\"?",
-        "code": "SELECT COUNT(*) FROM estudiantes WHERE (carrera = 'Ciberseguridad') AND semestre = 5;",
+        "prompt": "Observa los registros de la tabla \"estudiantes\" y determina el resultado exacto de la consulta:",
+        "code": "-- Tabla estudiantes (5 registros):\n-- | id | nombre          | carrera                | semestre | promedio |\n-- | 1  | Valeria Morales | Ingeniería de Software | 3        | 9.4      |\n-- | 2  | Diego Fernández | Ciberseguridad         | 5        | 8.7      |\n-- | 3  | Camila Gómez    | Ciencia de Datos       | 4        | 9.8      |\n-- | 4  | Mateo Rojas     | Ciberseguridad         | 2        | 8.3      |\n-- | 5  | Lucía Vargas    | Computación            | 6        | 9.1      |\n\nSELECT COUNT(*) FROM estudiantes WHERE (carrera = 'Ciberseguridad') AND semestre = 5;",
         "options": [
           "1",
           "2",
@@ -446,7 +462,11 @@ export const SQL_UNIT_07_LESSONS: Lesson[] = [
         "id": "sql-u07-l03-e04",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea que contiene el error en este código de \"Paréntesis en condiciones\":",
-        "codeSnippet": [ "-- Consulta sobre estudiantes", "WHERE (a AND b", "ORDER BY id ASC;" ],
+        "codeSnippet": [
+          "-- Consulta sobre estudiantes",
+          "WHERE (a AND b",
+          "ORDER BY id ASC;"
+        ],
         "bugLineIndex": 1,
         "explanation": "Omitir los paréntesis cambiará el significado del filtro mostrando registros que no querías autorizar.",
         "xpReward": 15
@@ -509,7 +529,7 @@ export const SQL_UNIT_07_LESSONS: Lesson[] = [
       {
         "id": "sql-u07-l03-e08",
         "type": "code_builder",
-        "prompt": "Construye la instrucción sintáctica complementaria para \"Paréntesis en condiciones\":",
+        "prompt": "Ordena los bloques para consultar las columnas \"id\" y \"nombre\" de la tabla \"estudiantes\" (finalizando con punto y coma):",
         "tokens": [
           "SELECT",
           "id,",
@@ -533,7 +553,11 @@ export const SQL_UNIT_07_LESSONS: Lesson[] = [
         "id": "sql-u07-l03-e09",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea con el error de diseño o sintaxis en \"Paréntesis en condiciones\":",
-        "codeSnippet": [ "-- Consulta sobre el esquema educativo", "SELECT id, nombre FROM estudiantes", "WHERE id == 10;" ],
+        "codeSnippet": [
+          "-- Consulta sobre el esquema educativo",
+          "SELECT id, nombre FROM estudiantes",
+          "WHERE id == 10;"
+        ],
         "bugLineIndex": 2,
         "explanation": "Omitir los paréntesis cambiará el significado del filtro mostrando registros que no querías autorizar.",
         "xpReward": 15
@@ -576,8 +600,8 @@ export const SQL_UNIT_07_LESSONS: Lesson[] = [
       {
         "id": "sql-u07-l04-e01",
         "type": "predict_output",
-        "prompt": "¿Cuál es el resultado exacto en consola tras evaluar la siguiente instrucción sobre \"BETWEEN\"?",
-        "code": "SELECT COUNT(*) FROM estudiantes WHERE semestre BETWEEN 3 AND 5;",
+        "prompt": "Observa los registros de la tabla \"estudiantes\" y determina el resultado exacto de la consulta:",
+        "code": "-- Tabla estudiantes (5 registros):\n-- | id | nombre          | carrera                | semestre | promedio |\n-- | 1  | Valeria Morales | Ingeniería de Software | 3        | 9.4      |\n-- | 2  | Diego Fernández | Ciberseguridad         | 5        | 8.7      |\n-- | 3  | Camila Gómez    | Ciencia de Datos       | 4        | 9.8      |\n-- | 4  | Mateo Rojas     | Ciberseguridad         | 2        | 8.3      |\n-- | 5  | Lucía Vargas    | Computación            | 6        | 9.1      |\n\nSELECT COUNT(*) FROM estudiantes WHERE semestre BETWEEN 3 AND 5;",
         "options": [
           "3",
           "5",
@@ -630,7 +654,11 @@ export const SQL_UNIT_07_LESSONS: Lesson[] = [
         "id": "sql-u07-l04-e04",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea que contiene el error en este código de \"BETWEEN\":",
-        "codeSnippet": [ "-- Consulta sobre estudiantes", "WHERE precio BETWEEN 100", "ORDER BY id ASC;" ],
+        "codeSnippet": [
+          "-- Consulta sobre estudiantes",
+          "WHERE precio BETWEEN 100",
+          "ORDER BY id ASC;"
+        ],
         "bugLineIndex": 1,
         "explanation": "Escribir el valor mayor primero: `BETWEEN 9.5 AND 8.5` no devolverá ninguna fila porque el límite inferior debe ir primero.",
         "xpReward": 15
@@ -693,7 +721,7 @@ export const SQL_UNIT_07_LESSONS: Lesson[] = [
       {
         "id": "sql-u07-l04-e08",
         "type": "code_builder",
-        "prompt": "Construye la instrucción sintáctica complementaria para \"BETWEEN\":",
+        "prompt": "Ordena los bloques para consultar las columnas \"id\" y \"nombre\" de la tabla \"estudiantes\" (finalizando con punto y coma):",
         "tokens": [
           "SELECT",
           "id,",
@@ -717,7 +745,11 @@ export const SQL_UNIT_07_LESSONS: Lesson[] = [
         "id": "sql-u07-l04-e09",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea con el error de diseño o sintaxis en \"BETWEEN\":",
-        "codeSnippet": [ "-- Consulta sobre el esquema educativo", "SELECT id, nombre FROM estudiantes", "WHERE id == 10;" ],
+        "codeSnippet": [
+          "-- Consulta sobre el esquema educativo",
+          "SELECT id, nombre FROM estudiantes",
+          "WHERE id == 10;"
+        ],
         "bugLineIndex": 2,
         "explanation": "Escribir el valor mayor primero: `BETWEEN 9.5 AND 8.5` no devolverá ninguna fila porque el límite inferior debe ir primero.",
         "xpReward": 15
@@ -760,8 +792,8 @@ export const SQL_UNIT_07_LESSONS: Lesson[] = [
       {
         "id": "sql-u07-l05-e01",
         "type": "predict_output",
-        "prompt": "¿Cuál es el resultado exacto en consola tras evaluar la siguiente instrucción sobre \"IN\"?",
-        "code": "SELECT COUNT(*) FROM estudiantes WHERE id IN (1, 3, 5);",
+        "prompt": "Observa los registros de la tabla \"estudiantes\" y determina el resultado exacto de la consulta:",
+        "code": "-- Tabla estudiantes (5 registros):\n-- | id | nombre          | carrera                | semestre | promedio |\n-- | 1  | Valeria Morales | Ingeniería de Software | 3        | 9.4      |\n-- | 2  | Diego Fernández | Ciberseguridad         | 5        | 8.7      |\n-- | 3  | Camila Gómez    | Ciencia de Datos       | 4        | 9.8      |\n-- | 4  | Mateo Rojas     | Ciberseguridad         | 2        | 8.3      |\n-- | 5  | Lucía Vargas    | Computación            | 6        | 9.1      |\n\nSELECT COUNT(*) FROM estudiantes WHERE id IN (1, 3, 5);",
         "options": [
           "3",
           "5",
@@ -822,7 +854,11 @@ export const SQL_UNIT_07_LESSONS: Lesson[] = [
         "id": "sql-u07-l05-e04",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea que contiene el error en este código de \"IN\":",
-        "codeSnippet": [ "-- Consulta sobre estudiantes", "WHERE departamento IN \"Informática\", \"Matemáticas\"", "ORDER BY id ASC;" ],
+        "codeSnippet": [
+          "-- Consulta sobre estudiantes",
+          "WHERE departamento IN \"Informática\", \"Matemáticas\"",
+          "ORDER BY id ASC;"
+        ],
         "bugLineIndex": 1,
         "explanation": "Olvidar entrecomillar los elementos de texto dentro de los paréntesis del IN.",
         "xpReward": 15
@@ -885,7 +921,7 @@ export const SQL_UNIT_07_LESSONS: Lesson[] = [
       {
         "id": "sql-u07-l05-e08",
         "type": "code_builder",
-        "prompt": "Construye la instrucción sintáctica complementaria para \"IN\":",
+        "prompt": "Ordena los bloques para consultar las columnas \"id\" y \"nombre\" de la tabla \"estudiantes\" (finalizando con punto y coma):",
         "tokens": [
           "SELECT",
           "id,",
@@ -909,7 +945,11 @@ export const SQL_UNIT_07_LESSONS: Lesson[] = [
         "id": "sql-u07-l05-e09",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea con el error de diseño o sintaxis en \"IN\":",
-        "codeSnippet": [ "-- Consulta sobre el esquema educativo", "SELECT id, nombre FROM estudiantes", "WHERE id == 10;" ],
+        "codeSnippet": [
+          "-- Consulta sobre el esquema educativo",
+          "SELECT id, nombre FROM estudiantes",
+          "WHERE id == 10;"
+        ],
         "bugLineIndex": 2,
         "explanation": "Olvidar entrecomillar los elementos de texto dentro de los paréntesis del IN.",
         "xpReward": 15
@@ -952,8 +992,8 @@ export const SQL_UNIT_07_LESSONS: Lesson[] = [
       {
         "id": "sql-u07-l06-e01",
         "type": "predict_output",
-        "prompt": "¿Cuál es el resultado exacto en consola tras evaluar la siguiente instrucción sobre \"LIKE con % y _\"?",
-        "code": "SELECT COUNT(*) FROM usuarios WHERE email LIKE '%@bletchley.org';",
+        "prompt": "Observa los registros de la tabla \"usuarios\" y determina el resultado exacto de la consulta:",
+        "code": "-- Tabla usuarios (3 registros):\n-- | id | nombre         | email              | activo |\n-- | 1  | Alan Turing    | alan@bletchley.org | true   |\n-- | 2  | Ada Lovelace   | ada@pioneers.org   | true   |\n-- | 3  | Linus Torvalds | linus@linux.org    | true   |\n\nSELECT COUNT(*) FROM usuarios WHERE email LIKE '%@bletchley.org';",
         "options": [
           "1",
           "5",
@@ -1002,7 +1042,11 @@ export const SQL_UNIT_07_LESSONS: Lesson[] = [
         "id": "sql-u07-l06-e04",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea que contiene el error en este código de \"LIKE con % y _\":",
-        "codeSnippet": [ "-- Consulta sobre estudiantes", "WHERE nombre LIKE '*Val*'", "ORDER BY id ASC;" ],
+        "codeSnippet": [
+          "-- Consulta sobre estudiantes",
+          "WHERE nombre LIKE '*Val*'",
+          "ORDER BY id ASC;"
+        ],
         "bugLineIndex": 1,
         "explanation": "LIKE con % al inicio (ej. '%texto') no puede usar índices tradicionales en bases de datos enormes y será más lento.",
         "xpReward": 15
@@ -1065,7 +1109,7 @@ export const SQL_UNIT_07_LESSONS: Lesson[] = [
       {
         "id": "sql-u07-l06-e08",
         "type": "code_builder",
-        "prompt": "Construye la instrucción sintáctica complementaria para \"LIKE con % y _\":",
+        "prompt": "Ordena los bloques para consultar las columnas \"id\" y \"nombre\" de la tabla \"estudiantes\" (finalizando con punto y coma):",
         "tokens": [
           "SELECT",
           "id,",
@@ -1089,7 +1133,11 @@ export const SQL_UNIT_07_LESSONS: Lesson[] = [
         "id": "sql-u07-l06-e09",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea con el error de diseño o sintaxis en \"LIKE con % y _\":",
-        "codeSnippet": [ "-- Consulta sobre el esquema educativo", "SELECT id, nombre FROM estudiantes", "WHERE id == 10;" ],
+        "codeSnippet": [
+          "-- Consulta sobre el esquema educativo",
+          "SELECT id, nombre FROM estudiantes",
+          "WHERE id == 10;"
+        ],
         "bugLineIndex": 2,
         "explanation": "LIKE con % al inicio (ej. '%texto') no puede usar índices tradicionales en bases de datos enormes y será más lento.",
         "xpReward": 15
@@ -1132,8 +1180,8 @@ export const SQL_UNIT_07_LESSONS: Lesson[] = [
       {
         "id": "sql-u07-l07-e01",
         "type": "predict_output",
-        "prompt": "¿Cuál es el resultado exacto en consola tras evaluar la siguiente instrucción sobre \"IS NULL e IS NOT NULL\"?",
-        "code": "SELECT COUNT(*) FROM estudiantes WHERE id IS NOT NULL;",
+        "prompt": "Observa los registros de la tabla \"estudiantes\" y determina el resultado exacto de la consulta:",
+        "code": "-- Tabla estudiantes (5 registros):\n-- | id | nombre          | carrera                | semestre | promedio |\n-- | 1  | Valeria Morales | Ingeniería de Software | 3        | 9.4      |\n-- | 2  | Diego Fernández | Ciberseguridad         | 5        | 8.7      |\n-- | 3  | Camila Gómez    | Ciencia de Datos       | 4        | 9.8      |\n-- | 4  | Mateo Rojas     | Ciberseguridad         | 2        | 8.3      |\n-- | 5  | Lucía Vargas    | Computación            | 6        | 9.1      |\n\nSELECT COUNT(*) FROM estudiantes WHERE id IS NOT NULL;",
         "options": [
           "5",
           "0",
@@ -1162,7 +1210,7 @@ export const SQL_UNIT_07_LESSONS: Lesson[] = [
       {
         "id": "sql-u07-l07-e03",
         "type": "code_builder",
-        "prompt": "Ordena los bloques para construir la sentencia correcta de: \"IS NULL e IS NOT NULL\":",
+        "prompt": "Ordena los bloques para declarar la columna 'WHERE' con la restricción obligatoria NOT NULL:",
         "tokens": [
           "WHERE",
           "telefono",
@@ -1184,7 +1232,11 @@ export const SQL_UNIT_07_LESSONS: Lesson[] = [
         "id": "sql-u07-l07-e04",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea que contiene el error en este código de \"IS NULL e IS NOT NULL\":",
-        "codeSnippet": [ "-- Consulta sobre estudiantes", "SELECT * FROM t WHERE email = NULL // Trampa: en SQL siempre se usa IS NULL", "ORDER BY id ASC;" ],
+        "codeSnippet": [
+          "-- Consulta sobre estudiantes",
+          "SELECT * FROM t WHERE email = NULL // Trampa: en SQL siempre se usa IS NULL",
+          "ORDER BY id ASC;"
+        ],
         "bugLineIndex": 1,
         "explanation": "Intentar usar `!= NULL`: en SQL no existe, debes escribir obligatoriamente `IS NOT NULL`.",
         "xpReward": 15
@@ -1247,7 +1299,7 @@ export const SQL_UNIT_07_LESSONS: Lesson[] = [
       {
         "id": "sql-u07-l07-e08",
         "type": "code_builder",
-        "prompt": "Construye la instrucción sintáctica complementaria para \"IS NULL e IS NOT NULL\":",
+        "prompt": "Ordena los bloques para consultar las columnas \"id\" y \"nombre\" de la tabla \"estudiantes\" (finalizando con punto y coma):",
         "tokens": [
           "SELECT",
           "id,",
@@ -1271,7 +1323,11 @@ export const SQL_UNIT_07_LESSONS: Lesson[] = [
         "id": "sql-u07-l07-e09",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea con el error de diseño o sintaxis en \"IS NULL e IS NOT NULL\":",
-        "codeSnippet": [ "-- Consulta sobre el esquema educativo", "SELECT id, nombre FROM estudiantes", "WHERE id == 10;" ],
+        "codeSnippet": [
+          "-- Consulta sobre el esquema educativo",
+          "SELECT id, nombre FROM estudiantes",
+          "WHERE id == 10;"
+        ],
         "bugLineIndex": 2,
         "explanation": "Intentar usar `!= NULL`: en SQL no existe, debes escribir obligatoriamente `IS NOT NULL`.",
         "xpReward": 15
@@ -1314,8 +1370,8 @@ export const SQL_UNIT_07_LESSONS: Lesson[] = [
       {
         "id": "sql-u07-l08-e01",
         "type": "predict_output",
-        "prompt": "¿Cuál es el resultado exacto en consola tras evaluar la siguiente instrucción sobre \"ORDER BY\"?",
-        "code": "SELECT nombre FROM estudiantes ORDER BY promedio DESC LIMIT 1;",
+        "prompt": "Observa los registros de la tabla \"estudiantes\" y determina el resultado exacto de la consulta:",
+        "code": "-- Tabla estudiantes (5 registros):\n-- | id | nombre          | carrera                | semestre | promedio |\n-- | 1  | Valeria Morales | Ingeniería de Software | 3        | 9.4      |\n-- | 2  | Diego Fernández | Ciberseguridad         | 5        | 8.7      |\n-- | 3  | Camila Gómez    | Ciencia de Datos       | 4        | 9.8      |\n-- | 4  | Mateo Rojas     | Ciberseguridad         | 2        | 8.3      |\n-- | 5  | Lucía Vargas    | Computación            | 6        | 9.1      |\n\nSELECT nombre FROM estudiantes ORDER BY promedio DESC LIMIT 1;",
         "options": [
           "Camila Gómez",
           "Valeria Morales",
@@ -1344,7 +1400,7 @@ export const SQL_UNIT_07_LESSONS: Lesson[] = [
       {
         "id": "sql-u07-l08-e03",
         "type": "code_builder",
-        "prompt": "Ordena los bloques para construir la sentencia correcta de: \"ORDER BY\":",
+        "prompt": "Ordena los bloques para construir la consulta SELECT válida (SELECT * FROM estudiantes ORDER BY promedio DESC):",
         "tokens": [
           "SELECT",
           "*",
@@ -1372,7 +1428,11 @@ export const SQL_UNIT_07_LESSONS: Lesson[] = [
         "id": "sql-u07-l08-e04",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea que contiene el error en este código de \"ORDER BY\":",
-        "codeSnippet": [ "-- Consulta sobre estudiantes", "SELECT * FROM t SORT BY nombre", "ORDER BY id ASC;" ],
+        "codeSnippet": [
+          "-- Consulta sobre estudiantes",
+          "SELECT * FROM t SORT BY nombre",
+          "ORDER BY id ASC;"
+        ],
         "bugLineIndex": 1,
         "explanation": "Asumir que los datos en una tabla relacional ya vienen ordenados: sin ORDER BY, el orden de las filas es impredecible.",
         "xpReward": 15
@@ -1435,7 +1495,7 @@ export const SQL_UNIT_07_LESSONS: Lesson[] = [
       {
         "id": "sql-u07-l08-e08",
         "type": "code_builder",
-        "prompt": "Construye la instrucción sintáctica complementaria para \"ORDER BY\":",
+        "prompt": "Ordena los bloques para consultar las columnas \"id\" y \"nombre\" de la tabla \"estudiantes\" (finalizando con punto y coma):",
         "tokens": [
           "SELECT",
           "id,",
@@ -1459,7 +1519,11 @@ export const SQL_UNIT_07_LESSONS: Lesson[] = [
         "id": "sql-u07-l08-e09",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea con el error de diseño o sintaxis en \"ORDER BY\":",
-        "codeSnippet": [ "-- Consulta sobre el esquema educativo", "SELECT id, nombre FROM estudiantes", "WHERE id == 10;" ],
+        "codeSnippet": [
+          "-- Consulta sobre el esquema educativo",
+          "SELECT id, nombre FROM estudiantes",
+          "WHERE id == 10;"
+        ],
         "bugLineIndex": 2,
         "explanation": "Asumir que los datos en una tabla relacional ya vienen ordenados: sin ORDER BY, el orden de las filas es impredecible.",
         "xpReward": 15
@@ -1502,8 +1566,8 @@ export const SQL_UNIT_07_LESSONS: Lesson[] = [
       {
         "id": "sql-u07-l09-e01",
         "type": "predict_output",
-        "prompt": "¿Cuál es el resultado exacto en consola tras evaluar la siguiente instrucción sobre \"LIMIT\"?",
-        "code": "SELECT COUNT(*) FROM (SELECT * FROM estudiantes LIMIT 3);",
+        "prompt": "Observa los registros de la tabla \"estudiantes\" y determina el resultado exacto de la consulta:",
+        "code": "-- Tabla estudiantes (5 registros):\n-- | id | nombre          | carrera                | semestre | promedio |\n-- | 1  | Valeria Morales | Ingeniería de Software | 3        | 9.4      |\n-- | 2  | Diego Fernández | Ciberseguridad         | 5        | 8.7      |\n-- | 3  | Camila Gómez    | Ciencia de Datos       | 4        | 9.8      |\n-- | 4  | Mateo Rojas     | Ciberseguridad         | 2        | 8.3      |\n-- | 5  | Lucía Vargas    | Computación            | 6        | 9.1      |\n\nSELECT COUNT(*) FROM (SELECT * FROM estudiantes LIMIT 3);",
         "options": [
           "3",
           "5",
@@ -1556,7 +1620,11 @@ export const SQL_UNIT_07_LESSONS: Lesson[] = [
         "id": "sql-u07-l09-e04",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea que contiene el error en este código de \"LIMIT\":",
-        "codeSnippet": [ "-- Consulta sobre estudiantes", "LIMIT 5 SELECT * FROM t // LIMIT va al final de la consulta SQL", "ORDER BY id ASC;" ],
+        "codeSnippet": [
+          "-- Consulta sobre estudiantes",
+          "LIMIT 5 SELECT * FROM t // LIMIT va al final de la consulta SQL",
+          "ORDER BY id ASC;"
+        ],
         "bugLineIndex": 1,
         "explanation": "Usar LIMIT sin ORDER BY te dará filas arbitrarias, porque el motor no sabrá cuáles son los \"primeros\".",
         "xpReward": 15
@@ -1619,7 +1687,7 @@ export const SQL_UNIT_07_LESSONS: Lesson[] = [
       {
         "id": "sql-u07-l09-e08",
         "type": "code_builder",
-        "prompt": "Construye la instrucción sintáctica complementaria para \"LIMIT\":",
+        "prompt": "Ordena los bloques para consultar las columnas \"id\" y \"nombre\" de la tabla \"estudiantes\" (finalizando con punto y coma):",
         "tokens": [
           "SELECT",
           "id,",
@@ -1643,7 +1711,11 @@ export const SQL_UNIT_07_LESSONS: Lesson[] = [
         "id": "sql-u07-l09-e09",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea con el error de diseño o sintaxis en \"LIMIT\":",
-        "codeSnippet": [ "-- Consulta sobre el esquema educativo", "SELECT id, nombre FROM estudiantes", "WHERE id == 10;" ],
+        "codeSnippet": [
+          "-- Consulta sobre el esquema educativo",
+          "SELECT id, nombre FROM estudiantes",
+          "WHERE id == 10;"
+        ],
         "bugLineIndex": 2,
         "explanation": "Usar LIMIT sin ORDER BY te dará filas arbitrarias, porque el motor no sabrá cuáles son los \"primeros\".",
         "xpReward": 15

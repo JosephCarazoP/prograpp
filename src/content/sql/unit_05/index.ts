@@ -12,8 +12,8 @@ export const SQL_UNIT_05_LESSONS: Lesson[] = [
       {
         "id": "sql-u05-l01-e01",
         "type": "predict_output",
-        "prompt": "¿Cuál es el resultado exacto en consola tras evaluar la siguiente instrucción sobre \"INSERT INTO con columnas explícitas\"?",
-        "code": "SELECT COUNT(*) FROM estudiantes;",
+        "prompt": "Observa los registros de la tabla \"estudiantes\" y determina el resultado exacto de la consulta:",
+        "code": "-- Tabla estudiantes (5 registros):\n-- | id | nombre          | carrera                | semestre | promedio |\n-- | 1  | Valeria Morales | Ingeniería de Software | 3        | 9.4      |\n-- | 2  | Diego Fernández | Ciberseguridad         | 5        | 8.7      |\n-- | 3  | Camila Gómez    | Ciencia de Datos       | 4        | 9.8      |\n-- | 4  | Mateo Rojas     | Ciberseguridad         | 2        | 8.3      |\n-- | 5  | Lucía Vargas    | Computación            | 6        | 9.1      |\n\nSELECT COUNT(*) FROM estudiantes;",
         "options": [
           "5",
           "6",
@@ -42,7 +42,7 @@ export const SQL_UNIT_05_LESSONS: Lesson[] = [
       {
         "id": "sql-u05-l01-e03",
         "type": "code_builder",
-        "prompt": "Ordena los bloques para construir la sentencia correcta de: \"INSERT INTO con columnas explícitas\":",
+        "prompt": "Ordena los bloques para construir la sentencia INSERT INTO válida:",
         "tokens": [
           "INSERT",
           "INTO",
@@ -74,7 +74,11 @@ export const SQL_UNIT_05_LESSONS: Lesson[] = [
         "id": "sql-u05-l01-e04",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea que contiene el error en este código de \"INSERT INTO con columnas explícitas\":",
-        "codeSnippet": [ "-- Consulta sobre estudiantes", "INSERT estudiantes VALUES (\"Ana\")", "ORDER BY id ASC;" ],
+        "codeSnippet": [
+          "-- Consulta sobre estudiantes",
+          "INSERT estudiantes VALUES (\"Ana\")",
+          "ORDER BY id ASC;"
+        ],
         "bugLineIndex": 1,
         "explanation": "Escribir `INSERT INTO tabla VALUES (...)` sin lista de columnas es peligroso ante cambios de esquema.",
         "xpReward": 15
@@ -137,7 +141,7 @@ export const SQL_UNIT_05_LESSONS: Lesson[] = [
       {
         "id": "sql-u05-l01-e08",
         "type": "code_builder",
-        "prompt": "Construye la instrucción sintáctica complementaria para \"INSERT INTO con columnas explícitas\":",
+        "prompt": "Ordena los bloques para consultar las columnas \"id\" y \"nombre\" de la tabla \"estudiantes\" (finalizando con punto y coma):",
         "tokens": [
           "SELECT",
           "id,",
@@ -161,7 +165,11 @@ export const SQL_UNIT_05_LESSONS: Lesson[] = [
         "id": "sql-u05-l01-e09",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea con el error de diseño o sintaxis en \"INSERT INTO con columnas explícitas\":",
-        "codeSnippet": [ "-- Consulta sobre el esquema educativo", "SELECT id, nombre FROM estudiantes", "WHERE id == 10;" ],
+        "codeSnippet": [
+          "-- Consulta sobre el esquema educativo",
+          "SELECT id, nombre FROM estudiantes",
+          "WHERE id == 10;"
+        ],
         "bugLineIndex": 2,
         "explanation": "Escribir `INSERT INTO tabla VALUES (...)` sin lista de columnas es peligroso ante cambios de esquema.",
         "xpReward": 15
@@ -204,8 +212,8 @@ export const SQL_UNIT_05_LESSONS: Lesson[] = [
       {
         "id": "sql-u05-l02-e01",
         "type": "predict_output",
-        "prompt": "¿Cuál es el resultado exacto en consola tras evaluar la siguiente instrucción sobre \"Correspondencia entre columnas y valores\"?",
-        "code": "SELECT nombre FROM asignaturas WHERE id = 101;",
+        "prompt": "Observa los registros de la tabla \"asignaturas\" y determina el resultado exacto de la consulta:",
+        "code": "-- Tabla asignaturas (5 registros, 4 columnas):\n-- | id  | nombre                  | creditos | departamento   |\n-- | 101 | Bases de Datos I        | 4        | Informática    |\n-- | 102 | Estructuras de Datos    | 5        | Informática    |\n-- | 103 | Inteligencia Artificial | 4        | Computación    |\n-- | 104 | Cálculo Diferencial     | 4        | Matemáticas    |\n-- | 105 | Seguridad en Redes      | 3        | Ciberseguridad |\n\nSELECT nombre FROM asignaturas WHERE id = 101;",
         "options": [
           "Bases de Datos I",
           "Estructuras de Datos",
@@ -234,7 +242,7 @@ export const SQL_UNIT_05_LESSONS: Lesson[] = [
       {
         "id": "sql-u05-l02-e03",
         "type": "code_builder",
-        "prompt": "Ordena los bloques para construir la sentencia correcta de: \"Correspondencia entre columnas y valores\":",
+        "prompt": "Ordena los bloques para construir la sentencia INSERT INTO válida:",
         "tokens": [
           "INSERT",
           "INTO",
@@ -266,7 +274,11 @@ export const SQL_UNIT_05_LESSONS: Lesson[] = [
         "id": "sql-u05-l02-e04",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea que contiene el error en este código de \"Correspondencia entre columnas y valores\":",
-        "codeSnippet": [ "-- Consulta sobre estudiantes", "INSERT INTO t (col1, col2) VALUES (1)", "ORDER BY id ASC;" ],
+        "codeSnippet": [
+          "-- Consulta sobre estudiantes",
+          "INSERT INTO t (col1, col2) VALUES (1)",
+          "ORDER BY id ASC;"
+        ],
         "bugLineIndex": 1,
         "explanation": "Poner el texto en la posición de un entero causará fallo de afinidad o datos corruptos.",
         "xpReward": 15
@@ -329,7 +341,7 @@ export const SQL_UNIT_05_LESSONS: Lesson[] = [
       {
         "id": "sql-u05-l02-e08",
         "type": "code_builder",
-        "prompt": "Construye la instrucción sintáctica complementaria para \"Correspondencia entre columnas y valores\":",
+        "prompt": "Ordena los bloques para consultar las columnas \"id\" y \"nombre\" de la tabla \"estudiantes\" (finalizando con punto y coma):",
         "tokens": [
           "SELECT",
           "id,",
@@ -353,7 +365,11 @@ export const SQL_UNIT_05_LESSONS: Lesson[] = [
         "id": "sql-u05-l02-e09",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea con el error de diseño o sintaxis en \"Correspondencia entre columnas y valores\":",
-        "codeSnippet": [ "-- Consulta sobre el esquema educativo", "SELECT id, nombre FROM estudiantes", "WHERE id == 10;" ],
+        "codeSnippet": [
+          "-- Consulta sobre el esquema educativo",
+          "SELECT id, nombre FROM estudiantes",
+          "WHERE id == 10;"
+        ],
         "bugLineIndex": 2,
         "explanation": "Poner el texto en la posición de un entero causará fallo de afinidad o datos corruptos.",
         "xpReward": 15
@@ -462,7 +478,11 @@ export const SQL_UNIT_05_LESSONS: Lesson[] = [
         "id": "sql-u05-l03-e04",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea que contiene el error en este código de \"Insertar varios registros\":",
-        "codeSnippet": [ "-- Consulta sobre estudiantes", "VALUES (1, \"A\") (2, \"B\")", "ORDER BY id ASC;" ],
+        "codeSnippet": [
+          "-- Consulta sobre estudiantes",
+          "VALUES (1, \"A\") (2, \"B\")",
+          "ORDER BY id ASC;"
+        ],
         "bugLineIndex": 1,
         "explanation": "Olvidar la coma entre cada grupo de paréntesis en la lista de tuplas de VALUES.",
         "xpReward": 15
@@ -525,7 +545,7 @@ export const SQL_UNIT_05_LESSONS: Lesson[] = [
       {
         "id": "sql-u05-l03-e08",
         "type": "code_builder",
-        "prompt": "Construye la instrucción sintáctica complementaria para \"Insertar varios registros\":",
+        "prompt": "Ordena los bloques para consultar las columnas \"id\" y \"nombre\" de la tabla \"estudiantes\" (finalizando con punto y coma):",
         "tokens": [
           "SELECT",
           "id,",
@@ -549,7 +569,11 @@ export const SQL_UNIT_05_LESSONS: Lesson[] = [
         "id": "sql-u05-l03-e09",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea con el error de diseño o sintaxis en \"Insertar varios registros\":",
-        "codeSnippet": [ "-- Consulta sobre el esquema educativo", "SELECT id, nombre FROM estudiantes", "WHERE id == 10;" ],
+        "codeSnippet": [
+          "-- Consulta sobre el esquema educativo",
+          "SELECT id, nombre FROM estudiantes",
+          "WHERE id == 10;"
+        ],
         "bugLineIndex": 2,
         "explanation": "Olvidar la coma entre cada grupo de paréntesis en la lista de tuplas de VALUES.",
         "xpReward": 15
@@ -592,8 +616,8 @@ export const SQL_UNIT_05_LESSONS: Lesson[] = [
       {
         "id": "sql-u05-l04-e01",
         "type": "predict_output",
-        "prompt": "¿Cuál es el resultado exacto en consola tras evaluar la siguiente instrucción sobre \"Textos, números y comillas\"?",
-        "code": "SELECT nombre FROM estudiantes WHERE id = 2;",
+        "prompt": "Observa los registros de la tabla \"estudiantes\" y determina el resultado exacto de la consulta:",
+        "code": "-- Tabla estudiantes (5 registros):\n-- | id | nombre          | carrera                | semestre | promedio |\n-- | 1  | Valeria Morales | Ingeniería de Software | 3        | 9.4      |\n-- | 2  | Diego Fernández | Ciberseguridad         | 5        | 8.7      |\n-- | 3  | Camila Gómez    | Ciencia de Datos       | 4        | 9.8      |\n-- | 4  | Mateo Rojas     | Ciberseguridad         | 2        | 8.3      |\n-- | 5  | Lucía Vargas    | Computación            | 6        | 9.1      |\n\nSELECT nombre FROM estudiantes WHERE id = 2;",
         "options": [
           "Diego Fernández",
           "Valeria",
@@ -646,7 +670,11 @@ export const SQL_UNIT_05_LESSONS: Lesson[] = [
         "id": "sql-u05-l04-e04",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea que contiene el error en este código de \"Textos, números y comillas\":",
-        "codeSnippet": [ "-- Consulta sobre estudiantes", "INSERT INTO t (precio) VALUES (19,99)", "ORDER BY id ASC;" ],
+        "codeSnippet": [
+          "-- Consulta sobre estudiantes",
+          "INSERT INTO t (precio) VALUES (19,99)",
+          "ORDER BY id ASC;"
+        ],
         "bugLineIndex": 1,
         "explanation": "Si un texto contiene una comilla simple interna (como O'Connor), debes duplicarla para escaparla: 'O''Connor'.",
         "xpReward": 15
@@ -709,7 +737,7 @@ export const SQL_UNIT_05_LESSONS: Lesson[] = [
       {
         "id": "sql-u05-l04-e08",
         "type": "code_builder",
-        "prompt": "Construye la instrucción sintáctica complementaria para \"Textos, números y comillas\":",
+        "prompt": "Ordena los bloques para consultar las columnas \"id\" y \"nombre\" de la tabla \"estudiantes\" (finalizando con punto y coma):",
         "tokens": [
           "SELECT",
           "id,",
@@ -733,7 +761,11 @@ export const SQL_UNIT_05_LESSONS: Lesson[] = [
         "id": "sql-u05-l04-e09",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea con el error de diseño o sintaxis en \"Textos, números y comillas\":",
-        "codeSnippet": [ "-- Consulta sobre el esquema educativo", "SELECT id, nombre FROM estudiantes", "WHERE id == 10;" ],
+        "codeSnippet": [
+          "-- Consulta sobre el esquema educativo",
+          "SELECT id, nombre FROM estudiantes",
+          "WHERE id == 10;"
+        ],
         "bugLineIndex": 2,
         "explanation": "Si un texto contiene una comilla simple interna (como O'Connor), debes duplicarla para escaparla: 'O''Connor'.",
         "xpReward": 15
@@ -776,8 +808,8 @@ export const SQL_UNIT_05_LESSONS: Lesson[] = [
       {
         "id": "sql-u05-l05-e01",
         "type": "predict_output",
-        "prompt": "¿Cuál es el resultado exacto en consola tras evaluar la siguiente instrucción sobre \"Valores nulos y predeterminados\"?",
-        "code": "SELECT promedio FROM estudiantes WHERE id = 1;",
+        "prompt": "Observa los registros de la tabla \"estudiantes\" y determina el resultado exacto de la consulta:",
+        "code": "-- Tabla estudiantes (5 registros):\n-- | id | nombre          | carrera                | semestre | promedio |\n-- | 1  | Valeria Morales | Ingeniería de Software | 3        | 9.4      |\n-- | 2  | Diego Fernández | Ciberseguridad         | 5        | 8.7      |\n-- | 3  | Camila Gómez    | Ciencia de Datos       | 4        | 9.8      |\n-- | 4  | Mateo Rojas     | Ciberseguridad         | 2        | 8.3      |\n-- | 5  | Lucía Vargas    | Computación            | 6        | 9.1      |\n\nSELECT promedio FROM estudiantes WHERE id = 1;",
         "options": [
           "9.4",
           "0.0",
@@ -834,7 +866,11 @@ export const SQL_UNIT_05_LESSONS: Lesson[] = [
         "id": "sql-u05-l05-e04",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea que contiene el error en este código de \"Valores nulos y predeterminados\":",
-        "codeSnippet": [ "-- Consulta sobre estudiantes", "INSERT INTO t (col_not_null) VALUES (NULL)", "ORDER BY id ASC;" ],
+        "codeSnippet": [
+          "-- Consulta sobre estudiantes",
+          "INSERT INTO t (col_not_null) VALUES (NULL)",
+          "ORDER BY id ASC;"
+        ],
         "bugLineIndex": 1,
         "explanation": "Intentar insertar NULL en una columna con restricción NOT NULL provocará un error inmediato.",
         "xpReward": 15
@@ -897,7 +933,7 @@ export const SQL_UNIT_05_LESSONS: Lesson[] = [
       {
         "id": "sql-u05-l05-e08",
         "type": "code_builder",
-        "prompt": "Construye la instrucción sintáctica complementaria para \"Valores nulos y predeterminados\":",
+        "prompt": "Ordena los bloques para consultar las columnas \"id\" y \"nombre\" de la tabla \"estudiantes\" (finalizando con punto y coma):",
         "tokens": [
           "SELECT",
           "id,",
@@ -921,7 +957,11 @@ export const SQL_UNIT_05_LESSONS: Lesson[] = [
         "id": "sql-u05-l05-e09",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea con el error de diseño o sintaxis en \"Valores nulos y predeterminados\":",
-        "codeSnippet": [ "-- Consulta sobre el esquema educativo", "SELECT id, nombre FROM estudiantes", "WHERE id == 10;" ],
+        "codeSnippet": [
+          "-- Consulta sobre el esquema educativo",
+          "SELECT id, nombre FROM estudiantes",
+          "WHERE id == 10;"
+        ],
         "bugLineIndex": 2,
         "explanation": "Intentar insertar NULL en una columna con restricción NOT NULL provocará un error inmediato.",
         "xpReward": 15
@@ -964,8 +1004,8 @@ export const SQL_UNIT_05_LESSONS: Lesson[] = [
       {
         "id": "sql-u05-l06-e01",
         "type": "predict_output",
-        "prompt": "¿Cuál es el resultado exacto en consola tras evaluar la siguiente instrucción sobre \"Orden de inserción cuando hay relaciones\"?",
-        "code": "SELECT COUNT(*) FROM estudiantes;",
+        "prompt": "Observa los registros de la tabla \"estudiantes\" y determina el resultado exacto de la consulta:",
+        "code": "-- Tabla estudiantes (5 registros):\n-- | id | nombre          | carrera                | semestre | promedio |\n-- | 1  | Valeria Morales | Ingeniería de Software | 3        | 9.4      |\n-- | 2  | Diego Fernández | Ciberseguridad         | 5        | 8.7      |\n-- | 3  | Camila Gómez    | Ciencia de Datos       | 4        | 9.8      |\n-- | 4  | Mateo Rojas     | Ciberseguridad         | 2        | 8.3      |\n-- | 5  | Lucía Vargas    | Computación            | 6        | 9.1      |\n\nSELECT COUNT(*) FROM estudiantes;",
         "options": [
           "5",
           "7",
@@ -1018,7 +1058,11 @@ export const SQL_UNIT_05_LESSONS: Lesson[] = [
         "id": "sql-u05-l06-e04",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea que contiene el error en este código de \"Orden de inserción cuando hay relaciones\":",
-        "codeSnippet": [ "-- Consulta sobre estudiantes", "// Intentar insertar en matriculas con estudiante_id inexistente en tabla estudiantes", "ORDER BY id ASC;" ],
+        "codeSnippet": [
+          "-- Consulta sobre estudiantes",
+          "// Intentar insertar en matriculas con estudiante_id inexistente en tabla estudiantes",
+          "ORDER BY id ASC;"
+        ],
         "bugLineIndex": 1,
         "explanation": "Insertar en matriculas con estudiante_id = 999 provocará `FOREIGN KEY constraint failed` si 999 no existe.",
         "xpReward": 15
@@ -1081,7 +1125,7 @@ export const SQL_UNIT_05_LESSONS: Lesson[] = [
       {
         "id": "sql-u05-l06-e08",
         "type": "code_builder",
-        "prompt": "Construye la instrucción sintáctica complementaria para \"Orden de inserción cuando hay relaciones\":",
+        "prompt": "Ordena los bloques para consultar las columnas \"id\" y \"nombre\" de la tabla \"estudiantes\" (finalizando con punto y coma):",
         "tokens": [
           "SELECT",
           "id,",
@@ -1105,7 +1149,11 @@ export const SQL_UNIT_05_LESSONS: Lesson[] = [
         "id": "sql-u05-l06-e09",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea con el error de diseño o sintaxis en \"Orden de inserción cuando hay relaciones\":",
-        "codeSnippet": [ "-- Consulta sobre el esquema educativo", "SELECT id, nombre FROM estudiantes", "WHERE id == 10;" ],
+        "codeSnippet": [
+          "-- Consulta sobre el esquema educativo",
+          "SELECT id, nombre FROM estudiantes",
+          "WHERE id == 10;"
+        ],
         "bugLineIndex": 2,
         "explanation": "Insertar en matriculas con estudiante_id = 999 provocará `FOREIGN KEY constraint failed` si 999 no existe.",
         "xpReward": 15
@@ -1148,8 +1196,8 @@ export const SQL_UNIT_05_LESSONS: Lesson[] = [
       {
         "id": "sql-u05-l07-e01",
         "type": "predict_output",
-        "prompt": "¿Cuál es el resultado exacto en consola tras evaluar la siguiente instrucción sobre \"Errores por restricciones\"?",
-        "code": "SELECT nombre FROM estudiantes WHERE id = 1;",
+        "prompt": "Observa los registros de la tabla \"estudiantes\" y determina el resultado exacto de la consulta:",
+        "code": "-- Tabla estudiantes (5 registros):\n-- | id | nombre          | carrera                | semestre | promedio |\n-- | 1  | Valeria Morales | Ingeniería de Software | 3        | 9.4      |\n-- | 2  | Diego Fernández | Ciberseguridad         | 5        | 8.7      |\n-- | 3  | Camila Gómez    | Ciencia de Datos       | 4        | 9.8      |\n-- | 4  | Mateo Rojas     | Ciberseguridad         | 2        | 8.3      |\n-- | 5  | Lucía Vargas    | Computación            | 6        | 9.1      |\n\nSELECT nombre FROM estudiantes WHERE id = 1;",
         "options": [
           "Valeria Morales",
           "Diego",
@@ -1178,7 +1226,7 @@ export const SQL_UNIT_05_LESSONS: Lesson[] = [
       {
         "id": "sql-u05-l07-e03",
         "type": "code_builder",
-        "prompt": "Ordena los bloques para construir la sentencia correcta de: \"Errores por restricciones\":",
+        "prompt": "Ordena los bloques para construir la consulta SELECT válida (SELECT id FROM estudiantes):",
         "tokens": [
           "SELECT",
           "id",
@@ -1198,7 +1246,11 @@ export const SQL_UNIT_05_LESSONS: Lesson[] = [
         "id": "sql-u05-l07-e04",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea que contiene el error en este código de \"Errores por restricciones\":",
-        "codeSnippet": [ "-- Consulta sobre estudiantes", "INSERT INTO estudiantes (id) VALUES (1) // Fallará por clave primaria id duplicada", "ORDER BY id ASC;" ],
+        "codeSnippet": [
+          "-- Consulta sobre estudiantes",
+          "INSERT INTO estudiantes (id) VALUES (1) // Fallará por clave primaria id duplicada",
+          "ORDER BY id ASC;"
+        ],
         "bugLineIndex": 1,
         "explanation": "Desactivar restricciones de integridad para que \"no dé error\": destruye la fiabilidad de tu base de datos.",
         "xpReward": 15
@@ -1261,7 +1313,7 @@ export const SQL_UNIT_05_LESSONS: Lesson[] = [
       {
         "id": "sql-u05-l07-e08",
         "type": "code_builder",
-        "prompt": "Construye la instrucción sintáctica complementaria para \"Errores por restricciones\":",
+        "prompt": "Ordena los bloques para consultar las columnas \"id\" y \"nombre\" de la tabla \"estudiantes\" (finalizando con punto y coma):",
         "tokens": [
           "SELECT",
           "id,",
@@ -1285,7 +1337,11 @@ export const SQL_UNIT_05_LESSONS: Lesson[] = [
         "id": "sql-u05-l07-e09",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea con el error de diseño o sintaxis en \"Errores por restricciones\":",
-        "codeSnippet": [ "-- Consulta sobre el esquema educativo", "SELECT id, nombre FROM estudiantes", "WHERE id == 10;" ],
+        "codeSnippet": [
+          "-- Consulta sobre el esquema educativo",
+          "SELECT id, nombre FROM estudiantes",
+          "WHERE id == 10;"
+        ],
         "bugLineIndex": 2,
         "explanation": "Desactivar restricciones de integridad para que \"no dé error\": destruye la fiabilidad de tu base de datos.",
         "xpReward": 15

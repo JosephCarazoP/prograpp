@@ -54,20 +54,40 @@ export function useCodeAutocomplete({
     if (word && word.length >= 1) {
       const lowerWord = word.toLowerCase();
 
-      // Priorizar primero los que comienzan con el prefijo, luego los que lo contienen
-      const startsWithMatches: CodeCompletionItem[] = [];
-      const containsMatches: CodeCompletionItem[] = [];
+      // Priorizar:
+      // 1. Tablas, columnas y variables del usuario que comienzan con el prefijo
+      // 2. Palabras reservadas y funciones que comienzan con el prefijo
+      // 3. Tablas, columnas y variables del usuario que contienen el prefijo
+      // 4. Palabras reservadas y funciones que contienen el prefijo
+      const userSymbolStarts: CodeCompletionItem[] = [];
+      const keywordStarts: CodeCompletionItem[] = [];
+      const userSymbolContains: CodeCompletionItem[] = [];
+      const keywordContains: CodeCompletionItem[] = [];
+      const seenKeys = new Set<string>();
 
       for (const item of dictionary) {
+        const dedupKey = `${item.kind}:${item.label.toLowerCase()}`;
+        if (seenKeys.has(dedupKey)) continue;
         const lowerLabel = item.label.toLowerCase();
+        const isUserSymbol = item.kind === 'table' || item.kind === 'column' || item.kind === 'variable';
+
         if (lowerLabel.startsWith(lowerWord)) {
-          startsWithMatches.push(item);
+          seenKeys.add(dedupKey);
+          if (isUserSymbol) userSymbolStarts.push(item);
+          else keywordStarts.push(item);
         } else if (lowerLabel.includes(lowerWord)) {
-          containsMatches.push(item);
+          seenKeys.add(dedupKey);
+          if (isUserSymbol) userSymbolContains.push(item);
+          else keywordContains.push(item);
         }
       }
 
-      const allMatches = [...startsWithMatches, ...containsMatches].slice(0, 16);
+      const allMatches = [
+        ...userSymbolStarts,
+        ...keywordStarts,
+        ...userSymbolContains,
+        ...keywordContains
+      ].slice(0, 20);
 
       if (allMatches.length > 0) {
         const caretPos = getCaretCoordinates(textarea, start);
@@ -173,11 +193,24 @@ export function useCodeAutocomplete({
       }
     };
 
+    const handleViewportChange = (e: Event) => {
+      if (!isOpenRef.current) return;
+      const target = e.target as HTMLElement | null;
+      if (target && typeof target.closest === 'function' && target.closest('.neo-autocomplete-popup')) {
+        return;
+      }
+      handleScroll();
+    };
+
     document.addEventListener('mousedown', handleDocumentClick);
+    window.addEventListener('scroll', handleViewportChange, true);
+    window.addEventListener('resize', handleViewportChange);
     return () => {
       document.removeEventListener('mousedown', handleDocumentClick);
+      window.removeEventListener('scroll', handleViewportChange, true);
+      window.removeEventListener('resize', handleViewportChange);
     };
-  }, [close, textareaRef]);
+  }, [close, textareaRef, handleScroll]);
 
   return {
     isOpen,

@@ -73,26 +73,26 @@ export const KOTLIN_UNIT_01_LESSONS: Lesson[] = [
       {
         "id": "kt-u01-l01-e05",
         "type": "matching_pairs",
-        "prompt": "Empareja cada concepto básico con su definición:",
+        "prompt": "Relaciona cada concepto fundamental de la computación (columna izquierda) con su función exacta (columna derecha):",
         "pairs": [
           {
             "left": "Software",
-            "right": "Conjunto de instrucciones y programas lógicos"
+            "right": "Conjunto de programas e instrucciones lógicas que guían al equipo"
           },
           {
             "left": "Hardware",
-            "right": "Componentes físicos y circuitos electrónicos"
+            "right": "Componentes físicos, tangibles y circuitos electrónicos"
           },
           {
-            "left": "CPU",
-            "right": "Unidad de procesamiento que ejecuta las instrucciones"
+            "left": "CPU (Procesador)",
+            "right": "Unidad central encargada de interpretar y ejecutar las instrucciones"
           },
           {
             "left": "Automatización",
-            "right": "Ejecución de tareas sin intervención manual repetida"
+            "right": "Capacidad de ejecutar procesos repetitivos sin intervención manual"
           }
         ],
-        "explanation": "Diferenciar software, hardware y procesamiento es el cimiento de la informática.",
+        "explanation": "El hardware es la parte física (como la CPU) y el software son los programas e instrucciones lógicas que automatizan tareas.",
         "xpReward": 15
       },
       {
@@ -571,7 +571,7 @@ export const KOTLIN_UNIT_01_LESSONS: Lesson[] = [
       {
         "id": "kt-u01-l04-e03",
         "type": "code_builder",
-        "prompt": "Ordena la asignación secuencial para que x termine valiendo 20:",
+        "prompt": "Sabiendo que inicialmente la variable vale 10 (var x = 10), ordena los bloques para sumarle 10 al valor actual de 'x' y que pase a valer 20 (x = x + 10):",
         "tokens": [
           "x",
           "=",
@@ -586,7 +586,10 @@ export const KOTLIN_UNIT_01_LESSONS: Lesson[] = [
           "+",
           "10"
         ],
-        "explanation": "Si x valía 10, sumarle 10 la actualiza a 20.",
+        "acceptableAlternatives": [
+          ["x", "=", "10", "+", "x"]
+        ],
+        "explanation": "Partiendo de x = 10, la expresión 'x = x + 10' toma el valor actual de x (10), le suma 10 y guarda el resultado (20) en x.",
         "xpReward": 15
       },
       {
@@ -605,26 +608,26 @@ export const KOTLIN_UNIT_01_LESSONS: Lesson[] = [
       {
         "id": "kt-u01-l04-e05",
         "type": "matching_pairs",
-        "prompt": "Empareja cada línea de código con el valor de la variable x tras ejecutarse:",
+        "prompt": "Siguiendo un programa paso a paso del Paso 1 al Paso 4, relaciona cada instrucción con el valor que toma 'x' al ejecutarse:",
         "pairs": [
           {
-            "left": "var x = 2",
-            "right": "x vale 2"
+            "left": "Paso 1: var x = 2",
+            "right": "x se inicializa con el valor 2"
           },
           {
-            "left": "x = x + 5",
-            "right": "x pasa a valer 7"
+            "left": "Paso 2 (si x vale 2): x = x + 5",
+            "right": "x pasa a valer 7 (porque 2 + 5 = 7)"
           },
           {
-            "left": "x = x * 3",
-            "right": "x pasa a valer 21"
+            "left": "Paso 3 (si x vale 7): x = x * 3",
+            "right": "x pasa a valer 21 (porque 7 * 3 = 21)"
           },
           {
-            "left": "x = 0",
-            "right": "x se reinicia a 0"
+            "left": "Paso 4 (si x vale 21): x = 0",
+            "right": "x se reinicia y queda valiendo 0"
           }
         ],
-        "explanation": "El seguimiento manual anota el estado de cada variable instrucción por instrucción.",
+        "explanation": "En el seguimiento secuencial: Paso 1 deja x=2; Paso 2 suma 5 (x=7); Paso 3 multiplica por 3 (x=21); y Paso 4 asigna directamente 0.",
         "xpReward": 15
       },
       {

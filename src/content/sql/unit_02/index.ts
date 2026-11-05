@@ -12,8 +12,8 @@ export const SQL_UNIT_02_LESSONS: Lesson[] = [
       {
         "id": "sql-u02-l01-e01",
         "type": "predict_output",
-        "prompt": "¿Cuál es el resultado exacto en consola tras evaluar la siguiente instrucción sobre \"Entidades y atributos\"?",
-        "code": "SELECT carrera FROM estudiantes WHERE id = 4;",
+        "prompt": "Observa los registros de la tabla 'estudiantes' y determina qué devuelve exactamente la siguiente consulta:",
+        "code": "-- Tabla estudiantes:\n-- | id | nombre        | carrera         |\n-- | 3  | Mateo Rojas   | Software        |\n-- | 4  | Lucía Vargas  | Ciberseguridad  |\n-- | 5  | Andrés Castro | Computación     |\n\nSELECT carrera FROM estudiantes WHERE id = 4;",
         "options": [
           "Ciberseguridad",
           "Software",
@@ -21,7 +21,7 @@ export const SQL_UNIT_02_LESSONS: Lesson[] = [
           "null"
         ],
         "correctOptionIndex": 0,
-        "explanation": "Entidad: objeto del mundo real distinguible de otros (ej. Estudiante, Asignatura).",
+        "explanation": "La cláusula WHERE id = 4 selecciona la fila de Lucía Vargas (id = 4) y proyecta únicamente el atributo 'carrera', cuyo valor es 'Ciberseguridad'.",
         "xpReward": 10
       },
       {
@@ -36,13 +36,13 @@ export const SQL_UNIT_02_LESSONS: Lesson[] = [
           "consulta"
         ],
         "correctOption": "entidad",
-        "explanation": "Atributo: característica o propiedad de la entidad (ej. nombre, creditos).",
+        "explanation": "Entidad: objeto del mundo real distinguible de otros (ej. Estudiante, Asignatura), mientras que sus características son atributos.",
         "xpReward": 10
       },
       {
         "id": "sql-u02-l01-e03",
         "type": "code_builder",
-        "prompt": "Ordena los bloques para construir la sentencia correcta de: \"Entidades y atributos\":",
+        "prompt": "Ordena los bloques para construir la consulta SQL que selecciona los atributos 'id, nombre, promedio' de la tabla 'estudiantes':",
         "tokens": [
           "SELECT",
           "id, nombre, promedio",
@@ -55,16 +55,20 @@ export const SQL_UNIT_02_LESSONS: Lesson[] = [
           "FROM",
           "estudiantes"
         ],
-        "explanation": "Una entidad debe tener un propósito claro en el negocio; los atributos deben ser propiedades atómicas.",
+        "explanation": "Para proyectar atributos específicos de una entidad (tabla), se listan después de SELECT seguidos de FROM y el nombre de la tabla.",
         "xpReward": 15
       },
       {
         "id": "sql-u02-l01-e04",
         "type": "spot_the_bug",
-        "prompt": "Identifica la línea que contiene el error en este código de \"Entidades y atributos\":",
-        "codeSnippet": [ "-- Consulta sobre estudiantes", "SELECT id, nombre FROM", "ORDER BY id ASC;" ],
+        "prompt": "Identifica la línea con el error de sintaxis (falta el nombre de la tabla después de FROM):",
+        "codeSnippet": [
+          "-- Consulta sobre estudiantes",
+          "SELECT id, nombre FROM",
+          "ORDER BY id ASC;"
+        ],
         "bugLineIndex": 1,
-        "explanation": "Crear entidades con atributos irrelevantes que el sistema nunca utilizará (ej. color favorito de zapatos del alumno).",
+        "explanation": "En la línea 2 falta indicar el nombre de la tabla (por ejemplo, 'SELECT id, nombre FROM estudiantes') antes de ORDER BY.",
         "xpReward": 15
       },
       {
@@ -74,22 +78,22 @@ export const SQL_UNIT_02_LESSONS: Lesson[] = [
         "pairs": [
           {
             "left": "Entidad",
-            "right": "objeto del mundo real distinguible de otros (ej. Estudiante, Asignatura)."
+            "right": "Objeto del mundo real distinguible de otros (ej. Estudiante, Asignatura)."
           },
           {
             "left": "Atributo",
-            "right": "característica o propiedad de la entidad (ej. nombre, creditos)."
+            "right": "Característica o propiedad descriptiva de una entidad (ej. nombre, créditos)."
           },
           {
-            "left": "Principio 3",
-            "right": "En el diseño físico, cada entidad se convierte en una tabla."
+            "left": "Tabla relacional",
+            "right": "Representación física de una entidad dentro del diseño de la base de datos."
           },
           {
-            "left": "Buena práctica",
-            "right": "Una entidad debe tener un propósito claro en el nego..."
+            "left": "Atributo atómico",
+            "right": "Propiedad indivisible que almacena un único valor por columna y fila."
           }
         ],
-        "explanation": "Dominio de los conceptos esenciales y fundamentos teóricos de la lección.",
+        "explanation": "Dominio de los conceptos esenciales de entidades, atributos y tablas en el modelo relacional.",
         "xpReward": 15
       },
       {
@@ -125,7 +129,7 @@ export const SQL_UNIT_02_LESSONS: Lesson[] = [
       {
         "id": "sql-u02-l01-e08",
         "type": "code_builder",
-        "prompt": "Construye la instrucción sintáctica complementaria para \"Entidades y atributos\":",
+        "prompt": "Ordena los bloques para consultar las columnas \"id\" y \"nombre\" de la tabla \"estudiantes\" (finalizando con punto y coma):",
         "tokens": [
           "SELECT",
           "id,",
@@ -149,7 +153,11 @@ export const SQL_UNIT_02_LESSONS: Lesson[] = [
         "id": "sql-u02-l01-e09",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea con el error de diseño o sintaxis en \"Entidades y atributos\":",
-        "codeSnippet": [ "-- Consulta sobre el esquema educativo", "SELECT id, nombre FROM estudiantes", "WHERE id == 10;" ],
+        "codeSnippet": [
+          "-- Consulta sobre el esquema educativo",
+          "SELECT id, nombre FROM estudiantes",
+          "WHERE id == 10;"
+        ],
         "bugLineIndex": 2,
         "explanation": "Crear entidades con atributos irrelevantes que el sistema nunca utilizará (ej. color favorito de zapatos del alumno).",
         "xpReward": 15
@@ -192,8 +200,8 @@ export const SQL_UNIT_02_LESSONS: Lesson[] = [
       {
         "id": "sql-u02-l02-e01",
         "type": "predict_output",
-        "prompt": "¿Cuál es el resultado exacto en consola tras evaluar la siguiente instrucción sobre \"Selección de los datos necesarios\"?",
-        "code": "SELECT COUNT(*) FROM estudiantes WHERE semestre >= 4;",
+        "prompt": "Observa los registros de la tabla \"estudiantes\" y determina el resultado exacto de la consulta:",
+        "code": "-- Tabla estudiantes (5 registros):\n-- | id | nombre          | carrera                | semestre | promedio |\n-- | 1  | Valeria Morales | Ingeniería de Software | 3        | 9.4      |\n-- | 2  | Diego Fernández | Ciberseguridad         | 5        | 8.7      |\n-- | 3  | Camila Gómez    | Ciencia de Datos       | 4        | 9.8      |\n-- | 4  | Mateo Rojas     | Ciberseguridad         | 2        | 8.3      |\n-- | 5  | Lucía Vargas    | Computación            | 6        | 9.1      |\n\nSELECT COUNT(*) FROM estudiantes WHERE semestre >= 4;",
         "options": [
           "3",
           "5",
@@ -222,7 +230,7 @@ export const SQL_UNIT_02_LESSONS: Lesson[] = [
       {
         "id": "sql-u02-l02-e03",
         "type": "code_builder",
-        "prompt": "Ordena los bloques para construir la sentencia correcta de: \"Selección de los datos necesarios\":",
+        "prompt": "Ordena los bloques para construir la consulta SELECT válida (SELECT nombre, semestre FROM estudiantes):",
         "tokens": [
           "SELECT",
           "nombre, semestre",
@@ -242,7 +250,11 @@ export const SQL_UNIT_02_LESSONS: Lesson[] = [
         "id": "sql-u02-l02-e04",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea que contiene el error en este código de \"Selección de los datos necesarios\":",
-        "codeSnippet": [ "-- Consulta sobre estudiantes", "SELECT * FROM estudiantes WHERE semestre == 4", "ORDER BY id ASC;" ],
+        "codeSnippet": [
+          "-- Consulta sobre estudiantes",
+          "SELECT * FROM estudiantes WHERE semestre == 4",
+          "ORDER BY id ASC;"
+        ],
         "bugLineIndex": 1,
         "explanation": "Guardar datos que cambian con el tiempo sin auditoría (como precios volátiles sin historial).",
         "xpReward": 15
@@ -305,7 +317,7 @@ export const SQL_UNIT_02_LESSONS: Lesson[] = [
       {
         "id": "sql-u02-l02-e08",
         "type": "code_builder",
-        "prompt": "Construye la instrucción sintáctica complementaria para \"Selección de los datos necesarios\":",
+        "prompt": "Ordena los bloques para consultar las columnas \"id\" y \"nombre\" de la tabla \"estudiantes\" (finalizando con punto y coma):",
         "tokens": [
           "SELECT",
           "id,",
@@ -329,7 +341,11 @@ export const SQL_UNIT_02_LESSONS: Lesson[] = [
         "id": "sql-u02-l02-e09",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea con el error de diseño o sintaxis en \"Selección de los datos necesarios\":",
-        "codeSnippet": [ "-- Consulta sobre el esquema educativo", "SELECT id, nombre FROM estudiantes", "WHERE id == 10;" ],
+        "codeSnippet": [
+          "-- Consulta sobre el esquema educativo",
+          "SELECT id, nombre FROM estudiantes",
+          "WHERE id == 10;"
+        ],
         "bugLineIndex": 2,
         "explanation": "Guardar datos que cambian con el tiempo sin auditoría (como precios volátiles sin historial).",
         "xpReward": 15
@@ -372,8 +388,8 @@ export const SQL_UNIT_02_LESSONS: Lesson[] = [
       {
         "id": "sql-u02-l03-e01",
         "type": "predict_output",
-        "prompt": "¿Cuál es el resultado exacto en consola tras evaluar la siguiente instrucción sobre \"Llave primaria (PK)\"?",
-        "code": "SELECT nombre FROM estudiantes WHERE id = 1;",
+        "prompt": "Observa los registros de la tabla 'estudiantes' (donde 'id' es su PRIMARY KEY) y determina qué devuelve la consulta:",
+        "code": "-- Tabla estudiantes:\n-- | id (PK) | nombre          | carrera    |\n-- | 1       | Valeria Morales | Ingeniería |\n-- | 2       | Diego Fernández | Medicina   |\n-- | 3       | Camila Gómez    | Derecho    |\n\nSELECT nombre FROM estudiantes WHERE id = 1;",
         "options": [
           "Valeria Morales",
           "Diego Fernández",
@@ -381,7 +397,7 @@ export const SQL_UNIT_02_LESSONS: Lesson[] = [
           "null"
         ],
         "correctOptionIndex": 0,
-        "explanation": "PRIMARY KEY: restricción que asegura unicidad absoluta y prohíbe valores nulos.",
+        "explanation": "Al filtrar por la llave primaria WHERE id = 1, se recupera de forma única el registro de Valeria Morales y se proyecta su columna 'nombre'.",
         "xpReward": 10
       },
       {
@@ -396,13 +412,13 @@ export const SQL_UNIT_02_LESSONS: Lesson[] = [
           "Compuesta"
         ],
         "correctOption": "Primaria (PK)",
-        "explanation": "Cada tabla relacional bien diseñada debe tener una y solo una llave primaria.",
+        "explanation": "Cada tabla relacional bien diseñada debe tener una llave primaria (PRIMARY KEY) que identifique cada fila sin duplicados.",
         "xpReward": 10
       },
       {
         "id": "sql-u02-l03-e03",
         "type": "code_builder",
-        "prompt": "Ordena los bloques para construir la sentencia correcta de: \"Llave primaria (PK)\":",
+        "prompt": "Ordena los bloques para declarar la columna 'id' de tipo entero (INTEGER) como llave primaria (PRIMARY KEY):",
         "tokens": [
           "id",
           "INTEGER",
@@ -415,13 +431,13 @@ export const SQL_UNIT_02_LESSONS: Lesson[] = [
           "PRIMARY",
           "KEY"
         ],
-        "explanation": "En SQLite, INTEGER PRIMARY KEY es automáticamente autoincremental y súper eficiente para búsquedas.",
+        "explanation": "En SQLite, declarar 'id INTEGER PRIMARY KEY' define la columna como llave primaria entera única y autoincremental.",
         "xpReward": 15
       },
       {
         "id": "sql-u02-l03-e04",
         "type": "spot_the_bug",
-        "prompt": "Identifica la línea que contiene el error en este código de \"Llave primaria (PK)\":",
+        "prompt": "Identifica la línea donde falta declarar la restricción PRIMARY KEY para el identificador de la tabla:",
         "codeSnippet": [
           "CREATE TABLE test (",
           "    id INTEGER, // Olvidó designar la PRIMARY KEY",
@@ -429,7 +445,7 @@ export const SQL_UNIT_02_LESSONS: Lesson[] = [
           ")"
         ],
         "bugLineIndex": 1,
-        "explanation": "Nunca uses datos mutables como Llave Primaria (como el correo o el teléfono que el usuario puede cambiar).",
+        "explanation": "La columna 'id' debe declararse como 'id INTEGER PRIMARY KEY' (y los comentarios en SQL usan -- en lugar de //).",
         "xpReward": 15
       },
       {
@@ -439,22 +455,22 @@ export const SQL_UNIT_02_LESSONS: Lesson[] = [
         "pairs": [
           {
             "left": "PRIMARY KEY",
-            "right": "restricción que asegura unicidad absoluta y prohíbe valores nulos."
+            "right": "Restricción que asegura unicidad absoluta e impide valores repetidos en la tabla."
           },
           {
-            "left": "Principio 2",
+            "left": "Unicidad de tabla",
             "right": "Cada tabla relacional bien diseñada debe tener una y solo una llave primaria."
           },
           {
-            "left": "Principio 3",
-            "right": "Permite recuperar una fila específica en tiempo récord."
+            "left": "Índice automático",
+            "right": "Permite localizar y recuperar una fila específica en tiempo récord mediante su PK."
           },
           {
-            "left": "Buena práctica",
-            "right": "En SQLite, INTEGER PRIMARY KEY es automáticamente au..."
+            "left": "INTEGER PRIMARY KEY",
+            "right": "Declaración en SQLite que asigna automáticamente un entero incremental único."
           }
         ],
-        "explanation": "Dominio de los conceptos esenciales y fundamentos teóricos de la lección.",
+        "explanation": "Dominio de los conceptos esenciales de llaves primarias (PRIMARY KEY) en SQLite.",
         "xpReward": 15
       },
       {
@@ -490,7 +506,7 @@ export const SQL_UNIT_02_LESSONS: Lesson[] = [
       {
         "id": "sql-u02-l03-e08",
         "type": "code_builder",
-        "prompt": "Construye la instrucción sintáctica complementaria para \"Llave primaria (PK)\":",
+        "prompt": "Ordena los bloques para consultar las columnas \"id\" y \"nombre\" de la tabla \"estudiantes\" (finalizando con punto y coma):",
         "tokens": [
           "SELECT",
           "id,",
@@ -514,7 +530,11 @@ export const SQL_UNIT_02_LESSONS: Lesson[] = [
         "id": "sql-u02-l03-e09",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea con el error de diseño o sintaxis en \"Llave primaria (PK)\":",
-        "codeSnippet": [ "-- Consulta sobre el esquema educativo", "SELECT id, nombre FROM estudiantes", "WHERE id == 10;" ],
+        "codeSnippet": [
+          "-- Consulta sobre el esquema educativo",
+          "SELECT id, nombre FROM estudiantes",
+          "WHERE id == 10;"
+        ],
         "bugLineIndex": 2,
         "explanation": "Nunca uses datos mutables como Llave Primaria (como el correo o el teléfono que el usuario puede cambiar).",
         "xpReward": 15
@@ -587,7 +607,7 @@ export const SQL_UNIT_02_LESSONS: Lesson[] = [
       {
         "id": "sql-u02-l04-e03",
         "type": "code_builder",
-        "prompt": "Ordena los bloques para construir la sentencia correcta de: \"Llave foránea (FK)\":",
+        "prompt": "Ordena los bloques para definir la restricción de llave foránea (FOREIGN KEY / REFERENCES):",
         "tokens": [
           "FOREIGN",
           "KEY",
@@ -619,7 +639,11 @@ export const SQL_UNIT_02_LESSONS: Lesson[] = [
         "id": "sql-u02-l04-e04",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea que contiene el error en este código de \"Llave foránea (FK)\":",
-        "codeSnippet": [ "-- Consulta sobre estudiantes", "FOREIGN KEY estudiante_id", "ORDER BY id ASC;" ],
+        "codeSnippet": [
+          "-- Consulta sobre estudiantes",
+          "FOREIGN KEY estudiante_id",
+          "ORDER BY id ASC;"
+        ],
         "bugLineIndex": 1,
         "explanation": "Crear relaciones lógicas sin declarar formalmente la FOREIGN KEY permite que queden registros huérfanos.",
         "xpReward": 15
@@ -682,7 +706,7 @@ export const SQL_UNIT_02_LESSONS: Lesson[] = [
       {
         "id": "sql-u02-l04-e08",
         "type": "code_builder",
-        "prompt": "Construye la instrucción sintáctica complementaria para \"Llave foránea (FK)\":",
+        "prompt": "Ordena los bloques para consultar las columnas \"id\" y \"nombre\" de la tabla \"estudiantes\" (finalizando con punto y coma):",
         "tokens": [
           "SELECT",
           "id,",
@@ -706,7 +730,11 @@ export const SQL_UNIT_02_LESSONS: Lesson[] = [
         "id": "sql-u02-l04-e09",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea con el error de diseño o sintaxis en \"Llave foránea (FK)\":",
-        "codeSnippet": [ "-- Consulta sobre el esquema educativo", "SELECT id, nombre FROM estudiantes", "WHERE id == 10;" ],
+        "codeSnippet": [
+          "-- Consulta sobre el esquema educativo",
+          "SELECT id, nombre FROM estudiantes",
+          "WHERE id == 10;"
+        ],
         "bugLineIndex": 2,
         "explanation": "Crear relaciones lógicas sin declarar formalmente la FOREIGN KEY permite que queden registros huérfanos.",
         "xpReward": 15
@@ -749,8 +777,8 @@ export const SQL_UNIT_02_LESSONS: Lesson[] = [
       {
         "id": "sql-u02-l05-e01",
         "type": "predict_output",
-        "prompt": "¿Cuál es el resultado exacto en consola tras evaluar la siguiente instrucción sobre \"Relaciones uno a uno y uno a muchos\"?",
-        "code": "SELECT COUNT(*) FROM asignaturas WHERE departamento = 'Matemáticas';",
+        "prompt": "Observa los registros de la tabla 'asignaturas' y determina qué devuelve la siguiente consulta con COUNT(*):",
+        "code": "-- Tabla asignaturas:\n-- | id | nombre          | departamento |\n-- | 1  | Cálculo I       | Matemáticas  |\n-- | 2  | Bases de Datos  | Informática  |\n-- | 3  | Redes           | Informática  |\n\nSELECT COUNT(*) FROM asignaturas WHERE departamento = 'Matemáticas';",
         "options": [
           "1",
           "3",
@@ -758,7 +786,7 @@ export const SQL_UNIT_02_LESSONS: Lesson[] = [
           "5"
         ],
         "correctOptionIndex": 0,
-        "explanation": "1:1 (Uno a Uno): cada registro de A se asocia con máximo un registro de B.",
+        "explanation": "Solo existe 1 registro cuyo departamento es 'Matemáticas' (Cálculo I), por lo que COUNT(*) devuelve 1.",
         "xpReward": 10
       },
       {
@@ -773,35 +801,39 @@ export const SQL_UNIT_02_LESSONS: Lesson[] = [
           "indiferente"
         ],
         "correctOption": "muchos (N)",
-        "explanation": "1:N (Uno a Muchos): un registro de A se relaciona con múltiples registros de B.",
+        "explanation": "1:N (Uno a Muchos): un registro de A se relaciona con múltiples registros de B, por lo que la llave foránea va en la tabla del lado muchos (N).",
         "xpReward": 10
       },
       {
         "id": "sql-u02-l05-e03",
         "type": "code_builder",
-        "prompt": "Ordena los bloques para construir la sentencia correcta de: \"Relaciones uno a uno y uno a muchos\":",
+        "prompt": "Ordena los bloques para declarar la llave foránea 'departamento_id' que referencia a 'departamentos(id)' en una relación 1:N:",
         "tokens": [
-          "val",
-          "relacion",
-          "=",
-          "\"1:N\""
+          "FOREIGN KEY",
+          "(departamento_id)",
+          "REFERENCES",
+          "departamentos(id)"
         ],
         "solution": [
-          "val",
-          "relacion",
-          "=",
-          "\"1:N\""
+          "FOREIGN KEY",
+          "(departamento_id)",
+          "REFERENCES",
+          "departamentos(id)"
         ],
-        "explanation": "En una relación 1:N, la llave foránea SIEMPRE se coloca en la tabla del lado \"Muchos\" (N).",
+        "explanation": "En una relación 1:N (un departamento tiene muchas asignaturas), la tabla del lado 'Muchos' incluye FOREIGN KEY (departamento_id) REFERENCES departamentos(id).",
         "xpReward": 15
       },
       {
         "id": "sql-u02-l05-e04",
         "type": "spot_the_bug",
-        "prompt": "Identifica la línea que contiene el error en este código de \"Relaciones uno a uno y uno a muchos\":",
-        "codeSnippet": [ "-- Consulta sobre estudiantes", "", "ORDER BY id ASC;" ],
+        "prompt": "Identifica la línea incompleta que provoca un error de sintaxis antes de ORDER BY:",
+        "codeSnippet": [
+          "-- Consulta sobre estudiantes",
+          "SELECT id, nombre FROM",
+          "ORDER BY id ASC;"
+        ],
         "bugLineIndex": 1,
-        "explanation": "Poner la llave foránea en la tabla del lado 1 limitaría a ese departamento a tener una sola asignatura.",
+        "explanation": "En la segunda línea falta especificar el nombre de la tabla después de la palabra clave FROM ('SELECT id, nombre FROM estudiantes').",
         "xpReward": 15
       },
       {
@@ -810,23 +842,23 @@ export const SQL_UNIT_02_LESSONS: Lesson[] = [
         "prompt": "Empareja cada concepto clave de \"Relaciones uno a uno y uno a muchos\" con su definición correspondiente:",
         "pairs": [
           {
-            "left": "1",
-            "right": "1 (Uno a Uno): cada registro de A se asocia con máximo un registro de B."
+            "left": "Relación 1:1 (Uno a Uno)",
+            "right": "Cada registro de la tabla A se asocia como máximo con un único registro de la tabla B."
           },
           {
-            "left": "1",
-            "right": "N (Uno a Muchos): un registro de A se relaciona con múltiples registros de B."
+            "left": "Relación 1:N (Uno a Muchos)",
+            "right": "Un registro de la tabla A puede asociarse con múltiples registros de la tabla B."
           },
           {
-            "left": "Principio 3",
-            "right": "La FK viaja a la tabla que representa la parte múltiple de la relación."
+            "left": "Ubicación de la FK en 1:N",
+            "right": "La llave foránea (FOREIGN KEY) siempre se coloca en la tabla del lado 'Muchos' (N)."
           },
           {
-            "left": "Buena práctica",
-            "right": "En una relación 1:N, la llave foránea SIEMPRE se col..."
+            "left": "Restricción UNIQUE en FK",
+            "right": "Añadir UNIQUE a una llave foránea restringe una relación 1:N para convertirla en 1:1."
           }
         ],
-        "explanation": "Dominio de los conceptos esenciales y fundamentos teóricos de la lección.",
+        "explanation": "En relaciones 1:1 cada fila se vincula como máximo con una fila; en 1:N la llave foránea siempre se ubica en la tabla del lado 'Muchos' (N).",
         "xpReward": 15
       },
       {
@@ -862,7 +894,7 @@ export const SQL_UNIT_02_LESSONS: Lesson[] = [
       {
         "id": "sql-u02-l05-e08",
         "type": "code_builder",
-        "prompt": "Construye la instrucción sintáctica complementaria para \"Relaciones uno a uno y uno a muchos\":",
+        "prompt": "Ordena los bloques para consultar las columnas \"id\" y \"nombre\" de la tabla \"estudiantes\" (finalizando con punto y coma):",
         "tokens": [
           "SELECT",
           "id,",
@@ -886,7 +918,11 @@ export const SQL_UNIT_02_LESSONS: Lesson[] = [
         "id": "sql-u02-l05-e09",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea con el error de diseño o sintaxis en \"Relaciones uno a uno y uno a muchos\":",
-        "codeSnippet": [ "-- Consulta sobre el esquema educativo", "SELECT id, nombre FROM estudiantes", "WHERE id == 10;" ],
+        "codeSnippet": [
+          "-- Consulta sobre el esquema educativo",
+          "SELECT id, nombre FROM estudiantes",
+          "WHERE id == 10;"
+        ],
         "bugLineIndex": 2,
         "explanation": "Poner la llave foránea en la tabla del lado 1 limitaría a ese departamento a tener una sola asignatura.",
         "xpReward": 15
@@ -959,7 +995,7 @@ export const SQL_UNIT_02_LESSONS: Lesson[] = [
       {
         "id": "sql-u02-l06-e03",
         "type": "code_builder",
-        "prompt": "Ordena los bloques para construir la sentencia correcta de: \"Relaciones muchos a muchos y tablas intermedias\":",
+        "prompt": "Ordena los bloques para construir la sentencia CREATE TABLE válida:",
         "tokens": [
           "CREATE",
           "TABLE",
@@ -991,7 +1027,11 @@ export const SQL_UNIT_02_LESSONS: Lesson[] = [
         "id": "sql-u02-l06-e04",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea que contiene el error en este código de \"Relaciones muchos a muchos y tablas intermedias\":",
-        "codeSnippet": [ "-- Consulta sobre estudiantes", "// Intentar vincular directamente Estudiante <-> Asignatura sin tabla intermedia", "ORDER BY id ASC;" ],
+        "codeSnippet": [
+          "-- Consulta sobre estudiantes",
+          "// Intentar vincular directamente Estudiante <-> Asignatura sin tabla intermedia",
+          "ORDER BY id ASC;"
+        ],
         "bugLineIndex": 1,
         "explanation": "Intentar guardar múltiples IDs en una sola columna: \"asignaturas: 101,102,103\". Esto imposibilita hacer búsquedas y sumas.",
         "xpReward": 15
@@ -1054,7 +1094,7 @@ export const SQL_UNIT_02_LESSONS: Lesson[] = [
       {
         "id": "sql-u02-l06-e08",
         "type": "code_builder",
-        "prompt": "Construye la instrucción sintáctica complementaria para \"Relaciones muchos a muchos y tablas intermedias\":",
+        "prompt": "Ordena los bloques para consultar las columnas \"id\" y \"nombre\" de la tabla \"estudiantes\" (finalizando con punto y coma):",
         "tokens": [
           "SELECT",
           "id,",
@@ -1078,7 +1118,11 @@ export const SQL_UNIT_02_LESSONS: Lesson[] = [
         "id": "sql-u02-l06-e09",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea con el error de diseño o sintaxis en \"Relaciones muchos a muchos y tablas intermedias\":",
-        "codeSnippet": [ "-- Consulta sobre el esquema educativo", "SELECT id, nombre FROM estudiantes", "WHERE id == 10;" ],
+        "codeSnippet": [
+          "-- Consulta sobre el esquema educativo",
+          "SELECT id, nombre FROM estudiantes",
+          "WHERE id == 10;"
+        ],
         "bugLineIndex": 2,
         "explanation": "Intentar guardar múltiples IDs en una sola columna: \"asignaturas: 101,102,103\". Esto imposibilita hacer búsquedas y sumas.",
         "xpReward": 15
@@ -1151,7 +1195,7 @@ export const SQL_UNIT_02_LESSONS: Lesson[] = [
       {
         "id": "sql-u02-l07-e03",
         "type": "code_builder",
-        "prompt": "Ordena los bloques para construir la sentencia correcta de: \"Lectura de diagramas sencillos\":",
+        "prompt": "Ordena los bloques para construir la consulta SELECT válida (SELECT estudiantes.nombre FROM estudiantes):",
         "tokens": [
           "SELECT",
           "estudiantes.nombre",
@@ -1171,7 +1215,11 @@ export const SQL_UNIT_02_LESSONS: Lesson[] = [
         "id": "sql-u02-l07-e04",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea que contiene el error en este código de \"Lectura de diagramas sencillos\":",
-        "codeSnippet": [ "-- Consulta sobre estudiantes", "SELECT * FROM estudiantes, // Coma huérfana en la cláusula FROM", "ORDER BY id ASC;" ],
+        "codeSnippet": [
+          "-- Consulta sobre estudiantes",
+          "SELECT * FROM estudiantes, // Coma huérfana en la cláusula FROM",
+          "ORDER BY id ASC;"
+        ],
         "bugLineIndex": 1,
         "explanation": "Interpretar al revés el sentido de una flecha o relación confundiendo quién es el padre y quién el hijo.",
         "xpReward": 15
@@ -1234,7 +1282,7 @@ export const SQL_UNIT_02_LESSONS: Lesson[] = [
       {
         "id": "sql-u02-l07-e08",
         "type": "code_builder",
-        "prompt": "Construye la instrucción sintáctica complementaria para \"Lectura de diagramas sencillos\":",
+        "prompt": "Ordena los bloques para consultar las columnas \"id\" y \"nombre\" de la tabla \"estudiantes\" (finalizando con punto y coma):",
         "tokens": [
           "SELECT",
           "id,",
@@ -1258,7 +1306,11 @@ export const SQL_UNIT_02_LESSONS: Lesson[] = [
         "id": "sql-u02-l07-e09",
         "type": "spot_the_bug",
         "prompt": "Identifica la línea con el error de diseño o sintaxis en \"Lectura de diagramas sencillos\":",
-        "codeSnippet": [ "-- Consulta sobre el esquema educativo", "SELECT id, nombre FROM estudiantes", "WHERE id == 10;" ],
+        "codeSnippet": [
+          "-- Consulta sobre el esquema educativo",
+          "SELECT id, nombre FROM estudiantes",
+          "WHERE id == 10;"
+        ],
         "bugLineIndex": 2,
         "explanation": "Interpretar al revés el sentido de una flecha o relación confundiendo quién es el padre y quién el hijo.",
         "xpReward": 15

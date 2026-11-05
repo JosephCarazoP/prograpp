@@ -101,7 +101,7 @@ function randomizeExercise(exercise: Exercise): Exercise {
   } else if (cloned.type === 'code_builder') {
     cloned.tokens = shuffleArray([...cloned.tokens]);
   } else if (cloned.type === 'matching_pairs') {
-    cloned.pairs = shuffleArray([...cloned.pairs]);
+    // Mantener orden lógico de la columna izquierda (ej. Paso 1..4); la derecha se baraja en shuffledRightIndices
   } else if (cloned.type === 'spot_the_bug') {
     if (Array.isArray(cloned.codeSnippet)) {
       // 1. Quitar comentarios spoiler y numeración manual que ensucian el código
@@ -750,7 +750,7 @@ export default function App() {
     const lessonPath = lesson.path || currentPath;
     const targetUnits = getUnitsByPath(lessonPath);
     const unitObj = targetUnits.find(u => u.id === lesson.unit);
-    if (unitObj) {
+    if (unitObj && mainTab !== 'courses' && !bypassCheckpoint) {
       const check = progressionEngine.canAccessNode(lesson.id, unitObj, activeUser, activeProg);
       if (!check.allowed) {
         soundService.playError();
@@ -838,6 +838,7 @@ export default function App() {
     setActiveRightPair(null);
     setMatchedPairs([]);
     setLastAttemptedPairs([]);
+    setFeedbackExplanation('');
     setShuffledRightIndices([]);
     setTraceInputsReady(false);
     setTraceUserValues({});
@@ -875,7 +876,7 @@ export default function App() {
       return selectedOption !== null ? currentExercise.options[selectedOption] : undefined;
     }
     if (currentExercise.type === 'matching_pairs') {
-      return matchedPairs.length > 0 ? `${matchedPairs.length / 2} parejas formadas` : undefined;
+      return matchedPairs.length > 0 ? Array.from({ length: Math.floor(matchedPairs.length / 2) }, (_, i) => `[Par ${i + 1}] "${matchedPairs[i * 2]}" <-> "${matchedPairs[i * 2 + 1]}"`).join(' | ') : undefined;
     }
     if (currentExercise.type === 'trace_step') {
       return JSON.stringify(traceUserValues);
@@ -902,7 +903,7 @@ export default function App() {
   useEffect(() => {
     if (currentExercise?.type === 'matching_pairs') {
       const len = currentExercise.pairs.length;
-      const indices = Array.from({ length: len }, (_, i) => len - 1 - i);
+      const base = Array.from({ length: len }, (_, i) => i); const shuffled = shuffleArray([...base]); const indices = (len > 1 && shuffled.every((v, idx) => v === idx)) ? Array.from({ length: len }, (_, i) => len - 1 - i) : shuffled;
       setShuffledRightIndices(indices);
     }
   }, [currentExercise?.id, currentExercise?.type]);
@@ -942,7 +943,7 @@ export default function App() {
       const chosenWord = selectedOption !== null ? currentExercise.options[selectedOption] : '';
       isCorrect = chosenWord === currentExercise.correctOption;
     } else if (currentExercise.type === 'matching_pairs') {
-      isCorrect = matchedPairs.length === currentExercise.pairs.length * 2;
+      isCorrect = matchedPairs.length === currentExercise.pairs.length * 2 && Array.from({ length: currentExercise.pairs.length }, (_, i) => currentExercise.pairs.some(p => p.left === matchedPairs[i * 2] && p.right === matchedPairs[i * 2 + 1])).every(Boolean);
     } else if (currentExercise.type === 'trace_step') {
       isCorrect = currentExercise.iterations.every(iter =>
         Object.entries(iter.expectedVariables).every(
@@ -1060,32 +1061,83 @@ export default function App() {
     soundService.playCorrect();
 
     if (key === 'teacherHint') {
-      const hint = currentExercise?.hint || currentExercise?.explanation || 'Analiza detalladamente la sintaxis y tipos de datos requeridos.';
+      let hint = currentExercise?.hint || currentExercise?.explanation || 'Analiza detalladamente la sintaxis y tipos de datos requeridos.';
+      if (currentExercise?.type === 'code_builder') {
+        const firstTok = currentExercise.solution[0];
+        const lastTok = currentExercise.solution[currentExercise.solution.length - 1];
+        hint = `Pista del Profesor: La sentencia inicia con "${firstTok}" y termina con "${lastTok}" (${currentExercise.solution.length} bloques). ${currentExercise.explanation || ''}`;
+      } else if (currentExercise?.type === 'matching_pairs') {
+        const samplePair = currentExercise.pairs.find(p => {
+          for (let i = 0; i < matchedPairs.length; i += 2) {
+            if (matchedPairs[i] === p.left && matchedPairs[i + 1] === p.right) return false;
+          }
+          return true;
+        }) || currentExercise.pairs[0];
+        hint = samplePair
+          ? `Pista del Profesor: "${samplePair.left}" se relaciona con "${samplePair.right}". ${currentExercise.explanation || ''}`
+          : hint;
+      } else if (currentExercise?.type === 'parsons_puzzle') {
+        const firstLine = currentExercise.lines[currentExercise.correctOrder[0]];
+        const lastLine = currentExercise.lines[currentExercise.correctOrder[currentExercise.correctOrder.length - 1]];
+        hint = `Pista del Profesor: La primera línea debe ser "${firstLine}" y la última "${lastLine}". ${currentExercise.explanation || ''}`;
+      } else if (currentExercise?.type === 'flowchart_builder') {
+        const firstBlock = currentExercise.blocks[currentExercise.correctOrder[0]];
+        const secondBlock = currentExercise.blocks[currentExercise.correctOrder[1]];
+        hint = `Pista del Profesor: Inicia con [${firstBlock?.text}]${secondBlock ? ` seguido de [${secondBlock.text}]` : ''}. Usa el botón "Probar Flujo" para validar tu orden paso a paso.`;
+      } else if (currentExercise?.type === 'trace_step') {
+        const firstIter = currentExercise.iterations[0];
+        const varsSummary = firstIter
+          ? Object.entries(firstIter.expectedVariables).map(([k, v]) => `${k} = ${v}`).join(', ')
+          : '';
+        hint = `Pista del Profesor: En el Paso ${firstIter?.iteration ?? 1}, los valores esperados son: ${varsSummary}. ${currentExercise.explanation || ''}`;
+      } else if (currentExercise?.type === 'spot_the_bug') {
+        hint = `Pista del Profesor: Revisa la Línea ${currentExercise.bugLineIndex + 1}. ${currentExercise.explanation || ''}`;
+      }
       setTeacherHintText(hint);
     } else if (key === 'eliminateOptions') {
       if (currentExercise?.type === 'predict_output') {
         const wrongIndices = currentExercise.options
           .map((_, i) => i)
           .filter(i => i !== currentExercise.correctOptionIndex);
-        setEliminatedOptionIndices(wrongIndices.slice(0, 2));
+        const toEliminate = wrongIndices.slice(0, 2);
+        setEliminatedOptionIndices(toEliminate);
+        if (selectedOption !== null && toEliminate.includes(selectedOption)) {
+          setSelectedOption(null);
+        }
         setCodePeekClueText('¡50 / 50 Activado! Se descartaron 2 opciones incorrectas.');
       } else if (currentExercise?.type === 'code_cloze') {
         const wrongIndices = currentExercise.options
           .map((_, i) => i)
           .filter(i => currentExercise.options[i] !== currentExercise.correctOption);
-        setEliminatedOptionIndices(wrongIndices.slice(0, 2));
+        const toEliminate = wrongIndices.slice(0, 2);
+        setEliminatedOptionIndices(toEliminate);
+        if (selectedOption !== null && toEliminate.includes(selectedOption)) {
+          setSelectedOption(null);
+        }
         setCodePeekClueText('¡50 / 50 Activado! Se descartaron 2 opciones incorrectas.');
       } else if (currentExercise?.type === 'matching_pairs') {
-        // Resolver y emparejar automáticamente el 50% de las parejas restantes
-        const unmatched = currentExercise.pairs.filter(p => !matchedPairs.includes(p.left));
+        // Conservar únicamente las parejas ya unidas que sean correctas y resolver el 50% de las restantes
+        const validExisting: string[] = [];
+        const matchedLefts = new Set<string>();
+        for (let i = 0; i < matchedPairs.length; i += 2) {
+          const l = matchedPairs[i];
+          const r = matchedPairs[i + 1];
+          if (currentExercise.pairs.some(p => p.left === l && p.right === r)) {
+            validExisting.push(l, r);
+            matchedLefts.add(l);
+          }
+        }
+        const unmatched = currentExercise.pairs.filter(p => !matchedLefts.has(p.left));
         if (unmatched.length > 0) {
-          const count = Math.max(1, Math.floor(unmatched.length / 2));
+          const count = Math.max(1, Math.ceil(unmatched.length / 2));
           const autoMatched = unmatched.slice(0, count);
           const pairsToAdd: string[] = [];
           autoMatched.forEach(p => pairsToAdd.push(p.left, p.right));
-          setMatchedPairs(prev => [...prev, ...pairsToAdd]);
+          setMatchedPairs([...validExisting, ...pairsToAdd]);
+          setActiveLeftPair(null);
+          setActiveRightPair(null);
           confetti({ particleCount: 35, spread: 60, origin: { y: 0.6 } });
-          setCodePeekClueText(`¡50 / 50 Activado! Se resolvieron ${count} pareja(s) automáticamente.`);
+          setCodePeekClueText(`¡50 / 50 Activado! Se resolvieron ${count} pareja(s) correctamente.`);
         }
       } else if (currentExercise?.type === 'code_builder') {
         // 1. Descartar fichas distractoras que no pertenezcan a la solución
@@ -1101,12 +1153,13 @@ export default function App() {
         });
         setEliminatedTokenIndices(distractorIndices);
 
-        // 2. Colocar automáticamente el primer 50% de las fichas de la solución
-        const half = Math.max(1, Math.floor(currentExercise.solution.length / 2));
-        const firstHalfTokens = currentExercise.solution.slice(0, half);
+        // 2. Colocar automáticamente al menos el primer 50% de las fichas de la solución (o avanzar si ya las tenía)
+        const half = Math.max(1, Math.ceil(currentExercise.solution.length / 2));
+        const targetCount = Math.min(currentExercise.solution.length, Math.max(half, selectedTokenIndices.length + 1));
+        const targetTokens = currentExercise.solution.slice(0, targetCount);
         const autoIndices: number[] = [];
         const used = new Set<number>();
-        firstHalfTokens.forEach(st => {
+        targetTokens.forEach(st => {
           const found = currentExercise.tokens.findIndex((t, idx) => t === st && !used.has(idx) && !distractorIndices.includes(idx));
           if (found !== -1) {
             used.add(found);
@@ -1115,42 +1168,150 @@ export default function App() {
         });
         setSelectedTokenIndices(autoIndices);
         confetti({ particleCount: 35, spread: 60, origin: { y: 0.6 } });
-        setCodePeekClueText('¡50 / 50 Activado! Distractores eliminados y primeras fichas colocadas.');
+        setCodePeekClueText(`¡50 / 50 Activado! Distractores eliminados y primeras ${autoIndices.length} fichas colocadas.`);
       } else if (currentExercise?.type === 'spot_the_bug') {
         // Descartar el 50% de las líneas correctas
         const total = currentExercise.codeSnippet.length;
         const nonBug = Array.from({ length: total }, (_, i) => i).filter(i => i !== currentExercise.bugLineIndex);
-        const discardCount = Math.max(1, Math.floor(nonBug.length / 2));
-        setEliminatedBugLines(nonBug.slice(0, discardCount));
-        setCodePeekClueText(`¡50 / 50 Activado! Se descartaron ${discardCount} línea(s) correctas.`);
+        const discardCount = Math.max(1, Math.ceil(nonBug.length / 2));
+        const toDiscard = nonBug.slice(0, discardCount);
+        setEliminatedBugLines(toDiscard);
+        if (selectedBugLine !== null && toDiscard.includes(selectedBugLine)) {
+          setSelectedBugLine(null);
+        }
+        setCodePeekClueText(`¡50 / 50 Activado! Se descartaron ${discardCount} línea(s) sin errores.`);
       } else if (currentExercise?.type === 'parsons_puzzle') {
-        const count = Math.max(1, Math.floor(currentExercise.correctOrder.length / 2));
-        setParsonsOrder(currentExercise.correctOrder.slice(0, count));
-        setCodePeekClueText('¡50 / 50 Activado! Se ordenaron las primeras líneas.');
+        const total = currentExercise.correctOrder.length;
+        const count = Math.max(1, Math.ceil(total / 2));
+        const firstHalf = currentExercise.correctOrder.slice(0, count);
+        const currentPool = parsonsOrder.length === total ? parsonsOrder : currentExercise.correctOrder;
+        const remaining = currentPool.filter(idx => !firstHalf.includes(idx));
+        const newOrder = [...firstHalf, ...remaining];
+        setParsonsOrder(newOrder);
+        confetti({ particleCount: 35, spread: 60, origin: { y: 0.6 } });
+        setCodePeekClueText(`¡50 / 50 Activado! Las primeras ${count} línea(s) quedaron ordenadas en su posición correcta.`);
+      } else if (currentExercise?.type === 'flowchart_builder') {
+        const total = currentExercise.correctOrder.length;
+        const count = Math.max(1, Math.ceil(total / 2));
+        const firstHalf = currentExercise.correctOrder.slice(0, count);
+        const currentPool = flowchartOrder.length === total ? flowchartOrder : currentExercise.correctOrder;
+        const remaining = currentPool.filter(idx => !firstHalf.includes(idx));
+        const newOrder = [...firstHalf, ...remaining];
+        setFlowchartOrder(newOrder);
+        confetti({ particleCount: 35, spread: 60, origin: { y: 0.6 } });
+        setCodePeekClueText(`¡50 / 50 Activado! Los primeros ${count} bloque(s) del diagrama quedaron en su orden exacto.`);
+      } else if (currentExercise?.type === 'trace_step') {
+        const updatedVals: Record<number, Record<string, string>> = { ...traceUserValues };
+        const allCells: { iter: number; varName: string; val: string }[] = [];
+        currentExercise.iterations.forEach(it => {
+          Object.entries(it.expectedVariables).forEach(([varName, expectedVal]) => {
+            allCells.push({ iter: it.iteration, varName, val: expectedVal });
+          });
+        });
+        const fillCount = Math.max(1, Math.ceil(allCells.length / 2));
+        allCells.slice(0, fillCount).forEach(cell => {
+          updatedVals[cell.iter] = {
+            ...(updatedVals[cell.iter] || {}),
+            [cell.varName]: cell.val
+          };
+        });
+        const allFilled = currentExercise.iterations.every(it =>
+          Object.keys(it.expectedVariables).every(k => (updatedVals[it.iteration]?.[k] || '').trim().length > 0)
+        );
+        setTraceUserValues(updatedVals);
+        setTraceInputsReady(allFilled);
+        confetti({ particleCount: 35, spread: 60, origin: { y: 0.6 } });
+        setCodePeekClueText(`¡50 / 50 Activado! Se completaron automáticamente ${fillCount} celda(s) de la tabla de seguimiento.`);
       }
     } else if (key === 'codePeek') {
       setIsCodePeekActive(true);
       if (currentExercise?.type === 'matching_pairs') {
-        const firstUnmatched = currentExercise.pairs.find(p => !matchedPairs.includes(p.left));
+        const firstUnmatched = currentExercise.pairs.find(p => {
+          for (let i = 0; i < matchedPairs.length; i += 2) {
+            if (matchedPairs[i] === p.left && matchedPairs[i + 1] === p.right) return false;
+          }
+          return true;
+        }) || currentExercise.pairs[0];
         if (firstUnmatched) {
           setCodePeekHighlightedPair(firstUnmatched);
           setCodePeekClueText(`Pista de Pareja: "${firstUnmatched.left}" conecta directamente con "${firstUnmatched.right}"`);
         }
       } else if (currentExercise?.type === 'code_builder') {
-        const currentPos = selectedTokenIndices.length;
-        const nextSolToken = currentExercise.solution[currentPos] || currentExercise.solution[0];
-        const tokenIdx = currentExercise.tokens.findIndex((t, idx) => t === nextSolToken && !selectedTokenIndices.includes(idx));
+        let mismatchPos = 0;
+        while (
+          mismatchPos < selectedTokenIndices.length &&
+          mismatchPos < currentExercise.solution.length &&
+          currentExercise.tokens[selectedTokenIndices[mismatchPos]] === currentExercise.solution[mismatchPos]
+        ) {
+          mismatchPos++;
+        }
+        const nextSolToken = currentExercise.solution[mismatchPos] || currentExercise.solution[0];
+        const tokenIdx = currentExercise.tokens.findIndex((t, idx) => t === nextSolToken && !selectedTokenIndices.slice(0, mismatchPos).includes(idx));
         if (tokenIdx !== -1) {
           setCodePeekTokenIndex(tokenIdx);
-          setCodePeekClueText(`Pista: La siguiente ficha requerida es "${nextSolToken}"`);
+          setCodePeekClueText(`Pista de Código: En la posición #${mismatchPos + 1} va la ficha "${nextSolToken}"`);
         }
       } else if (currentExercise?.type === 'spot_the_bug') {
         setCodePeekBugLineIndex(currentExercise.bugLineIndex);
-        setCodePeekClueText(`¡Pista de Código! El error reside en la Línea ${currentExercise.bugLineIndex + 1}`);
+        setCodePeekClueText(`¡Pista de Código! El error reside en la Línea ${currentExercise.bugLineIndex + 1}: "${currentExercise.codeSnippet[currentExercise.bugLineIndex]?.trim()}"`);
       } else if (currentExercise?.type === 'code_cloze') {
-        setCodePeekClueText(`Pista de Sintaxis: La palabra clave para el espacio en blanco es "${currentExercise.correctOption}"`);
+        setCodePeekClueText(`Pista de Sintaxis: La respuesta correcta para completar el espacio en blanco es "${currentExercise.correctOption}"`);
       } else if (currentExercise?.type === 'predict_output') {
-        setCodePeekClueText('Observa atentamente la lógica en el editor para predecir la salida.');
+        const correctAns = currentExercise.options[currentExercise.correctOptionIndex];
+        setCodePeekClueText(`Pista de Código: Al evaluar la instrucción se obtiene "${correctAns}". (${currentExercise.explanation || ''})`);
+      } else if (currentExercise?.type === 'parsons_puzzle') {
+        const total = currentExercise.correctOrder.length;
+        const currentPool = parsonsOrder.length === total ? [...parsonsOrder] : currentExercise.correctOrder.map((_, i) => total - 1 - i);
+        let targetPos = currentPool.findIndex((lineIdx, pos) => lineIdx !== currentExercise.correctOrder[pos]);
+        if (targetPos === -1) targetPos = 0;
+        const expectedLineIdx = currentExercise.correctOrder[targetPos];
+        const swapFromPos = currentPool.indexOf(expectedLineIdx);
+        if (swapFromPos !== -1 && swapFromPos !== targetPos) {
+          const tmp = currentPool[targetPos];
+          currentPool[targetPos] = currentPool[swapFromPos];
+          currentPool[swapFromPos] = tmp;
+          setParsonsOrder(currentPool);
+        }
+        setCodePeekClueText(`Pista de Código: En la posición #${targetPos + 1} se ubicó la línea "${currentExercise.lines[expectedLineIdx]}"`);
+      } else if (currentExercise?.type === 'flowchart_builder') {
+        const total = currentExercise.correctOrder.length;
+        const currentPool = flowchartOrder.length === total ? [...flowchartOrder] : currentExercise.correctOrder.map((_, i) => i);
+        let targetPos = currentPool.findIndex((blkIdx, pos) => blkIdx !== currentExercise.correctOrder[pos]);
+        if (targetPos === -1) targetPos = 0;
+        const expectedBlkIdx = currentExercise.correctOrder[targetPos];
+        const swapFromPos = currentPool.indexOf(expectedBlkIdx);
+        if (swapFromPos !== -1 && swapFromPos !== targetPos) {
+          const tmp = currentPool[targetPos];
+          currentPool[targetPos] = currentPool[swapFromPos];
+          currentPool[swapFromPos] = tmp;
+          setFlowchartOrder(currentPool);
+        }
+        const blk = currentExercise.blocks[expectedBlkIdx];
+        setCodePeekClueText(`Pista de Diagrama: En el Paso #${targetPos + 1} se ubicó el bloque "${blk?.text}"`);
+      } else if (currentExercise?.type === 'trace_step') {
+        const updatedVals: Record<number, Record<string, string>> = { ...traceUserValues };
+        let revealedText = '';
+        for (const it of currentExercise.iterations) {
+          for (const [varName, expectedVal] of Object.entries(it.expectedVariables)) {
+            const currentVal = (updatedVals[it.iteration]?.[varName] || '').trim().replace(/^['"]|['"]$/g, '');
+            const cleanExpected = expectedVal.trim().replace(/^['"]|['"]$/g, '');
+            if (currentVal.toLowerCase() !== cleanExpected.toLowerCase()) {
+              updatedVals[it.iteration] = {
+                ...(updatedVals[it.iteration] || {}),
+                [varName]: expectedVal
+              };
+              revealedText = `Paso ${it.iteration} → ${varName} = ${expectedVal}`;
+              break;
+            }
+          }
+          if (revealedText) break;
+        }
+        const allFilled = currentExercise.iterations.every(it =>
+          Object.keys(it.expectedVariables).every(k => (updatedVals[it.iteration]?.[k] || '').trim().length > 0)
+        );
+        setTraceUserValues(updatedVals);
+        setTraceInputsReady(allFilled);
+        setCodePeekClueText(`Pista de Trazabilidad: Se resolvió la celda (${revealedText || 'Tabla completa'})`);
       }
     }
   };
@@ -1309,7 +1470,16 @@ export default function App() {
   // Parejas en cascada
   const handlePairClick = (side: 'left' | 'right', val: string) => {
     soundService.playToken();
-    if (matchedPairs.includes(val)) return;
+    if (feedbackState !== 'idle') return;
+    const existingPairIdx = Array.from({ length: Math.floor(matchedPairs.length / 2) }, (_, i) => i).find(i => (side === 'left' ? matchedPairs[i * 2] === val : matchedPairs[i * 2 + 1] === val));
+    if (existingPairIdx !== undefined) {
+      setMatchedPairs(prev => prev.filter((_, idx) => idx !== existingPairIdx * 2 && idx !== existingPairIdx * 2 + 1));
+      setActiveLeftPair(null);
+      setActiveRightPair(null);
+      return;
+    }
+    if (side === 'left' && activeLeftPair === val) { setActiveLeftPair(null); return; }
+    if (side === 'right' && activeRightPair === val) { setActiveRightPair(null); return; }
 
     if (side === 'left') {
       setActiveLeftPair(val);
@@ -1328,10 +1498,12 @@ export default function App() {
     setLastAttemptedPairs(prev => [...prev, `Intentó unir: "${left}" con "${right}"`]);
     if (currentExercise?.type !== 'matching_pairs') return;
     const pair = currentExercise.pairs.find(p => p.left === left && p.right === right);
-    if (pair) {
+    const shouldLinkImmediately = true;
+
+    if (shouldLinkImmediately) {
       soundService.playToken();
       setMatchedPairs(prev => [...prev, left, right]);
-      setLastAttemptedPairs(prev => [...prev, `"${left}" <-> "${right}" (Correcto)`]);
+      setLastAttemptedPairs(prev => [...prev, `"${left}" <-> "${right}" (${pair ? 'Correcto' : 'Incorrecto'})`]);
     } else {
       soundService.playError();
     }
@@ -2475,18 +2647,20 @@ export default function App() {
             <div className="pairs-grid">
               <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
                 {currentExercise.pairs.map((p, idx) => {
-                  const isMatched = matchedPairs.includes(p.left);
+                  const isMatched = matchedPairs.some((v, idx) => idx % 2 === 0 && v === p.left);
+                  const pairNumber = matchedPairs.findIndex((v, idx) => idx % 2 === 0 && v === p.left) / 2 + 1;
                   const isHighlighted = codePeekHighlightedPair?.left === p.left;
                   return (
                     <button
                       key={`l-${idx}`}
-                      disabled={isMatched}
+                      disabled={feedbackState !== 'idle'}
                       className={`pair-card ${isMatched ? 'matched' : ''} ${
                         activeLeftPair === p.left ? 'active-select' : ''
                       } ${isHighlighted ? 'pair-peek-highlight' : ''}`}
                       onClick={() => handlePairClick('left', p.left)}
                     >
                       {p.left}
+                      {isMatched && <span className="pair-peek-badge" style={{ background: '#DBEAFE', color: '#1E40AF', borderColor: '#1E40AF' }}>Par {pairNumber} ✕</span>}
                       {isHighlighted && !isMatched && (
                         <span className="pair-peek-badge">Pista</span>
                       )}
@@ -2501,18 +2675,20 @@ export default function App() {
                 ).map((origIdx) => {
                   const p = currentExercise.pairs[origIdx];
                   if (!p) return null;
-                  const isMatched = matchedPairs.includes(p.right);
+                  const isMatched = matchedPairs.some((v, idx) => idx % 2 === 1 && v === p.right);
+                  const pairNumber = (matchedPairs.findIndex((v, idx) => idx % 2 === 1 && v === p.right) - 1) / 2 + 1;
                   const isHighlighted = codePeekHighlightedPair?.right === p.right;
                   return (
                     <button
                       key={`r-${origIdx}`}
-                      disabled={isMatched}
+                      disabled={feedbackState !== 'idle'}
                       className={`pair-card ${isMatched ? 'matched' : ''} ${
                         activeRightPair === p.right ? 'active-select' : ''
                       } ${isHighlighted ? 'pair-peek-highlight' : ''}`}
                       onClick={() => handlePairClick('right', p.right)}
                     >
                       {p.right}
+                      {isMatched && <span className="pair-peek-badge" style={{ background: '#DBEAFE', color: '#1E40AF', borderColor: '#1E40AF' }}>Par {pairNumber} ✕</span>}
                       {isHighlighted && !isMatched && (
                         <span className="pair-peek-badge">Pista</span>
                       )}
@@ -2560,6 +2736,7 @@ export default function App() {
           {currentExercise.type === 'trace_step' && (
             <TraceStepComponent
               exercise={currentExercise}
+              externalValues={traceUserValues}
               onAnswerChange={(isReady, vals) => {
                 setTraceInputsReady(isReady);
                 setTraceUserValues(vals);
@@ -2571,6 +2748,7 @@ export default function App() {
           {currentExercise.type === 'parsons_puzzle' && (
             <ParsonsPuzzleComponent
               exercise={currentExercise}
+              externalOrder={parsonsOrder}
               onOrderChange={(order) => setParsonsOrder(order)}
             />
           )}
@@ -2579,6 +2757,7 @@ export default function App() {
           {currentExercise.type === 'flowchart_builder' && (
             <FlowchartExerciseComponent
               exercise={currentExercise}
+              externalOrder={flowchartOrder}
               onOrderChange={(order) => setFlowchartOrder(order)}
             />
           )}
